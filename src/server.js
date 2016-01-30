@@ -1,27 +1,31 @@
 import express from "express"
+import React from "react"
 import App from "./components/App"
 import ReactDOMServer from "react-dom/server"
-import React from "react"
+import { match, RoutingContext } from 'react-router'
+import routes from "./lib/routes"
 
 const app = express()
 
 app.use(express.static("static"))
 
-app.use("*", (req, res) => {
-  res.send(
-    `<!DOCTYPE html>
-    <html>
-      <head>
-        <title>Hello World</title>
-      </head>
-      <body>
-        <div id="main">`
-          + ReactDOMServer.renderToString(<App />) +
-        `</div>
-        <script src="/build/client.js"></script>
-      </body>
-    </html>`
-  )
+app.get("*", (req, res) => {
+  match({ routes, location: req.url },
+    (error, redirectLocation, renderProps) => {
+      if (error) {
+        res.status(500).send(error.message)
+      } else if (redirectLocation) {
+        res.redirect(302, redirectLocation.pathname + redirectLocation.serach)
+      } else if (renderProps) {
+        res.status(200).send(
+          ReactDOMServer.renderToString(
+            <RoutingContext {...renderProps} />
+          )
+        )
+      } else {
+        res.status(404).send("Not Found")
+      }
+  })
 })
 
 app.listen(3000, err => {
