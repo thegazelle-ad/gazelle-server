@@ -1,4 +1,5 @@
 build/
+static/build/
 
 ## Below this is automatically generated
 # Created by https://www.gitignore.io/api/linux,osx,windows,node

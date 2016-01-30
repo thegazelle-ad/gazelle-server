@@ -5,6 +5,8 @@ import React from "react"
 
 const app = express()
 
+app.use(express.static("static"))
+
 app.use("*", (req, res) => {
   res.send(
     `<!DOCTYPE html>
@@ -13,10 +15,10 @@ app.use("*", (req, res) => {
         <title>Hello World</title>
       </head>
       <body>
-        <div id="main">
-          ${ReactDOMServer.renderToString(<App />)}
-        </div>
-        <script src="/static/client.js"></script>
+        <div id="main">`
+          + ReactDOMServer.renderToString(<App />) +
+        `</div>
+        <script src="/build/client.js"></script>
       </body>
     </html>`
   )

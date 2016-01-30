@@ -1,3 +1,4 @@
+// For excluding /node_modules/
 var Fs = require('fs')
 var nodeModules = {}
 Fs.readdirSync('node_modules').forEach(function (module) {
@@ -23,7 +24,7 @@ var nodeModulesTransform = function(context, request, callback) {
   }
 }
 
-module.exports = {
+module.exports = [{
   target: 'node',
   entry: './src/server.js',
   output: {
@@ -34,7 +35,7 @@ module.exports = {
     loaders: [
       {
         loader: 'babel',
-        test: /\.js$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         query: {
           presets: ['es2015', 'react']
@@ -43,4 +44,23 @@ module.exports = {
     ]
   },
   devtool: 'source-map'
-}
+}, {
+  target: 'web',
+  entry: './src/client.js',
+  output: {
+    filename: "./static/build/client.js"
+  },
+  module: {
+    loaders: [
+      {
+        loader: 'babel',
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        query: {
+          presets: ['es2015', 'react']
+        }
+      }
+    ]
+  },
+  devtool: 'source-map'
+}]
