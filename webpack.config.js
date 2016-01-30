@@ -1,8 +1,27 @@
 var Fs = require('fs')
 var nodeModules = {}
 Fs.readdirSync('node_modules').forEach(function (module) {
-  if (module !== '.bin') nodeModules[module] = 'commonjs ' + module
+  if (module !== '.bin') {
+    nodeModules[module] = true
+  }
 })
+var nodeModulesTransform = function(context, request, callback) {
+  // search for a '/' indicating a nested module
+  var slashIndex = request.indexOf("/");
+  var rootModuleName;
+  if (slashIndex == -1) {
+    rootModuleName = request;
+  } else {
+    rootModuleName = request.substr(0, slashIndex);
+  }
+
+  // Match for root modules that are in our node_modules
+  if (nodeModules.hasOwnProperty(rootModuleName)) {
+    callback(null, "commonjs " + request);
+  } else {
+    callback();
+  }
+}
 
 module.exports = {
   target: 'node',
@@ -10,14 +29,13 @@ module.exports = {
   output: {
     filename: "./build/server.js"
   },
-  // Every non-relative module is external
-  // abc -> require("abc")
-  externals: /^[a-z\/\-0-9]+$/i,
+  externals: nodeModulesTransform,
   module: {
     loaders: [
       {
         loader: 'babel',
         test: /\.js$/,
+        exclude: /node_modules/,
         query: {
           presets: ['es2015', 'react']
         }
