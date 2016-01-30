@@ -7,7 +7,11 @@ export default class App extends React.Component {
       <div>
         <h1>Hello World!</h1>
         <ul>
+          <li><Link to="/">Home</Link></li>
           <li><Link to="/counter">Counter</Link></li>
+          <li><Link to="/page/1">Page 1</Link></li>
+          <li><Link to="/page/2">Page 2</Link></li>
+          <li><Link to="/page/3">Page 3</Link></li>
         </ul>
         <div>
           {this.props.children}
