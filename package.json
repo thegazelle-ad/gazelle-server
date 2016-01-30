@@ -1,0 +1,25 @@
+{
+  "name": "react-falcor-universal-minimal-starter",
+  "version": "1.0.0",
+  "description": "Minimal starter kit for React, Falcor, and Universal rendering with ES6",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lingz/react-falcor-universal-minimal-starter.git"
+  },
+  "keywords": [
+    "react",
+    "es6",
+    "falcor",
+    "universal"
+  ],
+  "author": "Lingliang Zhang (lingliangz@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lingz/react-falcor-universal-minimal-starter/issues"
+  },
+  "homepage": "https://github.com/lingz/react-falcor-universal-minimal-starter#readme"
+}
