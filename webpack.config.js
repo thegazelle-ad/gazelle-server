@@ -10,14 +10,16 @@ module.exports = {
   output: {
     filename: "./build/server.js"
   },
-  externals: nodeModules,
+  // Every non-relative module is external
+  // abc -> require("abc")
+  externals: /^[a-z\/\-0-9]+$/i,
   module: {
     loaders: [
       {
         loader: 'babel',
         test: /\.js$/,
         query: {
-          presets: ['es2015']
+          presets: ['es2015', 'react']
         }
       }
     ]

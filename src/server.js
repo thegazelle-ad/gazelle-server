@@ -1,9 +1,25 @@
 import express from "express"
+import App from "./components/App"
+import ReactDOMServer from "react-dom/server"
+import React from "react"
 
 const app = express()
 
-app.use("/", (req, res) => {
-  res.send("Hello World!")
+app.use("*", (req, res) => {
+  res.send(
+    `<!DOCTYPE html>
+    <html>
+      <head>
+        <title>Hello World</title>
+      </head>
+      <body>
+        <div id="main">
+          ${ReactDOMServer.renderToString(<App />)}
+        </div>
+        <script src="/static/client.js"></script>
+      </body>
+    </html>`
+  )
 })
 
 app.listen(3000, err => {
