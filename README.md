@@ -1,15 +1,14 @@
 # Minimal React Starter Kit
 
-Intended to be as small as possible
+Intended to be as simple as small as possible for the advertised features:
 
-Includes:
+Features:
 - React for UI Rendering
 - Falcor for Data Fetching
 - Express for Server Side Rendering
-- Building with Webpack
-- Hot Reloading
 - React Router
-- ES6 with Babel 6
+- Webpack building ES6 with Babel 6
+- Hot Reloading
 
 # License
 
