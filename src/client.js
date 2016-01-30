@@ -1,5 +1,4 @@
-import App from "./components/App"
-import React from "react"
+import routes from "./lib/routes"
 import ReactDOM from "react-dom"
 
-ReactDOM.render(<App />, document.getElementById("main"))
+ReactDOM.render(routes, document.getElementById("main"))

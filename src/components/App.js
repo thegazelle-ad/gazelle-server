@@ -1,29 +1,17 @@
 import React from "react"
+import { Link } from 'react-router'
 
 export default class App extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      count: 0
-    }
-  }
-  increment() {
-    this.setState({
-      count: this.state.count + 1
-    })
-  }
   render() {
     return (
       <div>
-        <h1>
-          Hello World
-        </h1>
+        <h1>Hello World!</h1>
+        <ul>
+          <li><Link to="/counter">Counter</Link></li>
+        </ul>
         <div>
-          Counter: {this.state.count}
+          {this.props.children}
         </div>
-        <button onClick={this.increment.bind(this)}>
-          Increment counter
-        </button>
       </div>
     )
   }
