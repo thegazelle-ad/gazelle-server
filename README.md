@@ -9,7 +9,7 @@ Includes:
 - Building with Webpack
 - Hot Reloading
 - React Router
-- ES6 with Babel
+- ES6 with Babel 6
 
 # License
 
