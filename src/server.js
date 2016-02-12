@@ -18,9 +18,20 @@ app.get("*", (req, res) => {
         res.redirect(302, redirectLocation.pathname + redirectLocation.serach)
       } else if (renderProps) {
         res.status(200).send(
-          ReactDOMServer.renderToString(
-            <RoutingContext {...renderProps} />
-          )
+          `<!DOCTYPE html>
+            <html>
+              <head>
+                <title>Hello World</title>
+              </head>
+              <body>
+                <div id="main">`
+                  + ReactDOMServer.renderToString(
+                      <RoutingContext {...renderProps} />
+                    ) +
+                `</div>
+                <script src="/build/client.js"></script>
+              </body>
+            </html>`
         )
       } else {
         res.status(404).send("Not Found")
