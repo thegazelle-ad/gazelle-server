@@ -1,6 +1,7 @@
 import React from "react"
+import FalcorController from "../lib/falcor/FalcorController"
 
-export default class Page extends React.Component {
+export default class PageController extends FalcorController {
   render() {
     return (
       <div>
