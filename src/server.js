@@ -50,4 +50,4 @@ app.listen(3000, err => {
   console.log("Server started on port 3000");
 })
 
-model.getValue(['pages', 0, "body"]).then(x => console.log(JSON.stringify(x)))
+model.get(['pages', 0, "body"]).then(x => console.log(JSON.stringify(x.json)))
