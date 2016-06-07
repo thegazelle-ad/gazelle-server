@@ -14,24 +14,30 @@ export default class FalcorController extends BaseComponent {
 
   // Return falcor paths as specified by:
   // http://netflix.github.io/falcor/documentation/paths.html
-  getFalcorPath() {
+  getFalcorPath(props, state) {
     throw new TypeError(
       "You must implement the getFalcorPath method " +
       "in children of FalcorController"
     )
   }
 
-  falcorFetch(falcorPath) {
+  // Returns a promise of the falcor data
+  falcorFetch(falcorPath = this.getFalcorPath(this.props, this.state)) {
     this.safeSetState({dataReady: false})
 
-    setTimeout(() => {
-      model.get(falcorPath).then((x) => {
-        this.safeSetState({
-          dataReady: true,
-          data: x.json
+    const x = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        model.get(falcorPath).then((x) => {
+          this.safeSetState({
+            dataReady: true,
+            data: x.json
+          })
+          resolve(x)
         })
-      })
-    }, 2000)
+      }, 2000)
+    })
+    
+    return x
   }
 
   // If the new props / state requires a new falcor call
@@ -49,7 +55,7 @@ export default class FalcorController extends BaseComponent {
   }
 
   componentWillMount() {
-    this.falcorFetch(this.getFalcorPath(this.props, this.state))
+    this.falcorFetch()
   }
 
   // Following are for example purposes. You must always call
@@ -59,6 +65,6 @@ export default class FalcorController extends BaseComponent {
   }
 
   componentWillUnmount() {
-    this.mounted = false
+    super.componentWillUnmount()
   }
 }
