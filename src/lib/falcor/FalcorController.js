@@ -31,33 +31,26 @@ export default class FalcorController extends BaseComponent {
   // It actually returns nothing, but it lets the outside function
   // know that the falcor fetch finished
   falcorFetch() {
-    console.log("FALCOR FETCH for")
-    console.log(this.constructor)
     const falcorPath = this.constructor.getFalcorPath(this.props.params)
     if (this.props.isServer) {
-      // scary undocumented API. Liable to break at any point
-      // be warned!
-      console.log("SERVER FETCH")
-      console.log(falcorPath)
-      console.log(this.props.model)
-      const data = this.props.model._getValueSync(this.props.model, falcorPath, true)
-      this.safeSetState({
-        fetching: false,
-        data: data.value
-      })
-      console.log("DONE")
+      const data = this.props.model.getCache(falcorPath)
+      if (data) {
+        this.safeSetState({
+          fetching: false,
+          data: data
+        })
+      } else {
+        throw new Error("Serverside render of component: " + this.constructor.name +
+                        " failed. Data not in cache")
+      }
     } else {
       this.safeSetState({fetching: true})
       this.props.model.get(falcorPath).then((x) => {
-        console.log(x)
         if (x) {
-          console.log("SETTING")
           this.safeSetState({
             fetching: false,
             data: x.json
           })
-          console.log("SET SUCCESS")
-          console.log(this.state.data)
         } else {
           throw new Error("FalcorPath: " + falcorPath + " returned no data")
         }
@@ -83,7 +76,6 @@ export default class FalcorController extends BaseComponent {
   }
 
   componentWillMount() {
-    console.log("WILL MOUNT")
     this.falcorFetch()
   }
 

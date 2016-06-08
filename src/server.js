@@ -32,10 +32,9 @@ const buildHtmlString = (body) => {
 // Asynchronously render this application
 // Returns a promise
 const renderApp = (renderProps) => {
-  console.log("RENDERING REQUEST")
   // create a new model for our specific application
   // make it source from the main server model
-  const localModel = new falcor.Model({ source: model.asDataSource() })
+  const localModel = new falcor.Model({ source: model.asDataSource() }).batch()
 
   // create a curried createElement that injects this specific
   // localModel into each of the controllers in our routes
@@ -49,7 +48,6 @@ const renderApp = (renderProps) => {
       {...renderProps}
     />
   )
-  console.log("AFTER APP")
 
   const falcorPaths = _.compact(renderProps.routes.map((route) => {
     const component = route.component
@@ -59,8 +57,7 @@ const renderApp = (renderProps) => {
     return null
   }))
   
-  return localModel.get(...falcorPaths).then((x) => {
-    console.log("BUILDING HTML")
+  return localModel.preload(...falcorPaths).then((x) => {
     return (
       buildHtmlString(
         renderToString(
@@ -84,7 +81,6 @@ server.get("*", (req, res) => {
         res.redirect(302, redirectLocation.pathname + redirectLocation.serach)
       } else if (renderProps) {
         renderApp(renderProps).then((html) => {
-          console.log("WRITING RESPONSE")
           res.status(200).send(html)
         }).catch((err) => {
           console.error("Failed to render: " + req.url)

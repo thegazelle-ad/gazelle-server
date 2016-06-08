@@ -1,25 +1,20 @@
 import React from "react"
 import FalcorController from "../lib/falcor/FalcorController"
-import model from "../lib/falcor/model"
+import Page from "./Page"
 
 export default class PageController extends FalcorController {
   static getFalcorPath(params) {
-    return ['pages', parseInt(params.id), "body"]
+    return ['pages', parseInt(params.id), ["title", "body"]]
   }
 
   render() {
-    console.log("RENDER")
-    console.log(this.state)
+    const articleData = this.state.data.pages[parseInt(this.props.params.id)]
     return (
       <div>
-        <h2>Welcome to page: {this.props.params.id}</h2>
+        <h2>Controller for page: {this.props.params.id}</h2>
         <div>Ready: {this.state.data ? "true" : "false"}</div>
         <div>Fetching: {this.state.fetching ? "true" : "false"}</div>
-        <div>
-          Hello there
-          {this.state.data}
-          {this.state.fetching}
-        </div>
+        <Page title={articleData.title} body={articleData.body} />
       </div>
     )
   }
