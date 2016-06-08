@@ -1,5 +1,4 @@
 import BaseComponent from "../BaseComponent"
-import model from "./model"
 import _ from "lodash"
 
 // Abstract class for fetching falcor objects
