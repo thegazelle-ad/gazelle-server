@@ -45,6 +45,8 @@ export default class BaseComponent extends React.Component {
   safeSetState(newState) {
     if (this.mounted) {
       this.setState(newState)
+    } else {
+      Object.assign(this.state, newState)
     }
   }
 

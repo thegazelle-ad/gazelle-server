@@ -9,10 +9,10 @@ export default class FalcorController extends BaseComponent {
     if (this.constructor == FalcorController) {
       throw new TypeError("FalcorController is abstract")
     }
-    this.state = {
+    this.safeSetState({
       fetching: false,
       data: null
-    }
+    })
   }
 
   // Return falcor paths as specified by:
@@ -30,21 +30,42 @@ export default class FalcorController extends BaseComponent {
   // mass fetch on results from getFalcorPath
   // It actually returns nothing, but it lets the outside function
   // know that the falcor fetch finished
-  falcorFetch(falcorPath = this.constructor.getFalcorPath(this.props.params)) {
-    this.safeSetState({fetching: true})
-    const dataPromise = new Promise((resolve, reject) => {
-      setTimeout(() => {
-        this.props.model.get(falcorPath).then((x) => {
+  falcorFetch() {
+    console.log("FALCOR FETCH for")
+    console.log(this.constructor)
+    const falcorPath = this.constructor.getFalcorPath(this.props.params)
+    if (this.props.isServer) {
+      // scary undocumented API. Liable to break at any point
+      // be warned!
+      console.log("SERVER FETCH")
+      console.log(falcorPath)
+      console.log(this.props.model)
+      const data = this.props.model._getValueSync(this.props.model, falcorPath, true)
+      this.safeSetState({
+        fetching: false,
+        data: data.value
+      })
+      console.log("DONE")
+    } else {
+      this.safeSetState({fetching: true})
+      this.props.model.get(falcorPath).then((x) => {
+        console.log(x)
+        if (x) {
+          console.log("SETTING")
           this.safeSetState({
             fetching: false,
             data: x.json
           })
-          resolve()
-        })
-      }, 2000)
-    })
-    
-    return dataPromise
+          console.log("SET SUCCESS")
+          console.log(this.state.data)
+        } else {
+          throw new Error("FalcorPath: " + falcorPath + " returned no data")
+        }
+      }).catch((e) => {
+        console.error("Failed to fetch for falcorPath: " + falcorPath)
+        console.error(e.stack)
+      })
+    }
   }
 
   // If the new props requires a new falcor call
@@ -62,6 +83,7 @@ export default class FalcorController extends BaseComponent {
   }
 
   componentWillMount() {
+    console.log("WILL MOUNT")
     this.falcorFetch()
   }
 

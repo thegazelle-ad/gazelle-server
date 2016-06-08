@@ -32,6 +32,7 @@ const buildHtmlString = (body) => {
 // Asynchronously render this application
 // Returns a promise
 const renderApp = (renderProps) => {
+  console.log("RENDERING REQUEST")
   // create a new model for our specific application
   // make it source from the main server model
   const localModel = new falcor.Model({ source: model.asDataSource() })
@@ -48,6 +49,7 @@ const renderApp = (renderProps) => {
       {...renderProps}
     />
   )
+  console.log("AFTER APP")
 
   const falcorPaths = _.compact(renderProps.routes.map((route) => {
     const component = route.component
@@ -56,11 +58,9 @@ const renderApp = (renderProps) => {
     }
     return null
   }))
-
-  console.log("FETCHING:")
-  console.log(falcorPaths)
   
-  return localModel.get(falcorPaths).then(() => {
+  return localModel.get(...falcorPaths).then((x) => {
+    console.log("BUILDING HTML")
     return (
       buildHtmlString(
         renderToString(
@@ -71,11 +71,11 @@ const renderApp = (renderProps) => {
   })
 }
 
-const app = express()
+const server = express()
 
-app.use(express.static("static"))
+server.use(express.static("static"))
 
-app.get("*", (req, res) => {
+server.get("*", (req, res) => {
   match({ routes, location: req.url },
     (error, redirectLocation, renderProps) => {
       if (error) {
@@ -84,7 +84,12 @@ app.get("*", (req, res) => {
         res.redirect(302, redirectLocation.pathname + redirectLocation.serach)
       } else if (renderProps) {
         renderApp(renderProps).then((html) => {
+          console.log("WRITING RESPONSE")
           res.status(200).send(html)
+        }).catch((err) => {
+          console.error("Failed to render: " + req.url)
+          console.error(err.stack)
+          res.status(500).send(err.stack)
         })
       } else {
         res.status(404).send("Not Found")
@@ -92,7 +97,7 @@ app.get("*", (req, res) => {
   })
 })
 
-app.listen(3000, err => {
+server.listen(3000, err => {
   if (err) {
     console.error(err)
     return

@@ -4,14 +4,22 @@ import model from "../lib/falcor/model"
 
 export default class PageController extends FalcorController {
   static getFalcorPath(params) {
-    return ['pages', params.id, "body"]
+    return ['pages', parseInt(params.id), "body"]
   }
 
   render() {
+    console.log("RENDER")
+    console.log(this.state)
     return (
       <div>
         <h2>Welcome to page: {this.props.params.id}</h2>
-        <span>Ready: + {this.state.dataReady ? "true" : "false"}</span>
+        <div>Ready: {this.state.data ? "true" : "false"}</div>
+        <div>Fetching: {this.state.fetching ? "true" : "false"}</div>
+        <div>
+          Hello there
+          {this.state.data}
+          {this.state.fetching}
+        </div>
       </div>
     )
   }

@@ -29,7 +29,7 @@
     "babel-preset-react": "^6.3.13",
     "eslint-plugin-react": "^3.16.1",
     "source-map-support": "^0.4.0",
-    "webpack": "^1.12.12"
+    "webpack": "^1.13.1"
   },
   "dependencies": {
     "express": "^4.13.4",
