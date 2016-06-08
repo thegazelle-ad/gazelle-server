@@ -3,9 +3,10 @@ import FalcorController from "../lib/falcor/FalcorController"
 import model from "../lib/falcor/model"
 
 export default class PageController extends FalcorController {
-  getFalcorPath(props, state) {
-    return ['pages', props.params.id, "body"]
+  static getFalcorPath(params) {
+    return ['pages', params.id, "body"]
   }
+
   render() {
     return (
       <div>

@@ -40,11 +40,11 @@ export default class BaseComponent extends React.Component {
   }
 
   // Set state that only triggers an update if the component is mounted
+  // This is so that falcor returns after the component has unmounted
+  // don't throw errors
   safeSetState(newState) {
     if (this.mounted) {
       this.setState(newState)
-    } else {
-      Object.assign(this.state, newState)
     }
   }
 

@@ -1,15 +1,15 @@
 import express from "express"
 import React from "react"
-import App from "./components/App"
 import { renderToString } from "react-dom/server"
 import { match, RouterContext } from 'react-router'
 import routes from "./lib/routes"
 import FalcorController from "./lib/falcor/FalcorController"
 import model from "./lib/falcor/model"
 import falcor from "falcor"
-import sourcemap from 'source-map-support'
+import sourcemap from "source-map-support"
+import _ from "lodash"
 
-sourcemap.install();
+sourcemap.install()
 
 
 const buildHtmlString = (body) => {
@@ -30,6 +30,7 @@ const buildHtmlString = (body) => {
 }
 
 // Asynchronously render this application
+// Returns a promise
 const renderApp = (renderProps) => {
   // create a new model for our specific application
   // make it source from the main server model
@@ -38,26 +39,36 @@ const renderApp = (renderProps) => {
   // create a curried createElement that injects this specific
   // localModel into each of the controllers in our routes
   const createElement = (Component, props) => {
-    return <Component model={localModel} {...props} />
+    return <Component isServer={true} model={localModel} {...props} />
   }
 
-  // TODO: Fetch the data
-  // const falcorRoutes = []
-  // for (component of renderProps.components) {
-  //   if (component instanceof FalcorController) {
-  //     falcorRoutes.push(component.falcorFetch())
-  //   }
-  // }
-  //
-
-  return buildHtmlString(
-    renderToString(
-      <RouterContext
-        createElement={createElement}
-        {...renderProps}
-      />
-    )
+  const app = (
+    <RouterContext
+      createElement={createElement}
+      {...renderProps}
+    />
   )
+
+  const falcorPaths = _.compact(renderProps.routes.map((route) => {
+    const component = route.component
+    if (component.prototype instanceof FalcorController) {
+      return component.getFalcorPath(renderProps.params)
+    }
+    return null
+  }))
+
+  console.log("FETCHING:")
+  console.log(falcorPaths)
+  
+  return localModel.get(falcorPaths).then(() => {
+    return (
+      buildHtmlString(
+        renderToString(
+          app
+        )
+      )
+    )
+  })
 }
 
 const app = express()
@@ -67,17 +78,14 @@ app.use(express.static("static"))
 app.get("*", (req, res) => {
   match({ routes, location: req.url },
     (error, redirectLocation, renderProps) => {
-      console.log(renderProps)
       if (error) {
         res.status(500).send(error.message)
       } else if (redirectLocation) {
         res.redirect(302, redirectLocation.pathname + redirectLocation.serach)
       } else if (renderProps) {
-        //getData(renderProps.components).then(() => {
-          res.status(200).send(
-            renderApp(renderProps)
-          )
-        //})
+        renderApp(renderProps).then((html) => {
+          res.status(200).send(html)
+        })
       } else {
         res.status(404).send("Not Found")
       }
@@ -86,11 +94,9 @@ app.get("*", (req, res) => {
 
 app.listen(3000, err => {
   if (err) {
-    console.log(err)
+    console.error(err)
     return
   }
 
   console.log("Server started on port 3000");
 })
-
-model.get(['pages', 0, "body"]).then(x => console.log(JSON.stringify(x.json)))
