@@ -35,20 +35,13 @@ const buildHtmlString = (body, cache) => {
 }
 
 // Shared serverModel
+// You can also hardcode / stub parts of the model here
 const serverModel = new falcor.Model({
   cache: {
     pages: [
       {
         title: "Page 0 title",
         body: "Page 0 body"
-      },
-      {
-        title: "Page 1 title",
-        body: "Page 1 body"
-      },
-      {
-        title: "Page 2 title",
-        body: "Page 2 body"
       }
     ]
   },
@@ -70,6 +63,8 @@ const renderApp = (renderProps) => {
   // the reason we do this is so that the serverModel
   // cache won't expire records we need during the unlikely
   // event of heavy concurrent and unique traffic
+  // And also it creates the minimum set of data we can send down
+  // to the client and reload on the falcor there
   const localModel = new falcor.Model({ source: serverModel.asDataSource() })
 
   // create a curried createElement that injects this specific
@@ -80,9 +75,7 @@ const renderApp = (renderProps) => {
 
   console.log("FETCHING Falcor Paths:")
   console.log(falcorPaths)
-  return localModel.get(...falcorPaths).then((x) => {
-    console.log("Got data:")
-    console.log(x)
+  return localModel.preload(...falcorPaths).then((x) => {
     return (
       buildHtmlString(
         renderToString(
