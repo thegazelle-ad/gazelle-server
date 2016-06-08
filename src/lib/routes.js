@@ -1,7 +1,6 @@
 import { Route } from 'react-router'
 import App from "../components/App"
 import Counter from "../components/Counter"
-import Page from "../components/Page"
 import PageController from "../components/PageController"
 import React from "react"
 

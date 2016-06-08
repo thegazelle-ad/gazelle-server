@@ -1,12 +1,15 @@
 import express from "express"
 import React from "react"
 import App from "./components/App"
-import ReactDOMServer from "react-dom/server"
-import { match, RoutingContext } from 'react-router'
+import { renderToString } from "react-dom/server"
+import { match, RouterContext } from 'react-router'
 import routes from "./lib/routes"
 import FalcorController from "./lib/falcor/FalcorController"
 import model from "./lib/falcor/model"
 import falcor from "falcor"
+import sourcemap from 'source-map-support'
+
+sourcemap.install();
 
 
 const buildHtmlString = (body) => {
@@ -48,8 +51,8 @@ const renderApp = (renderProps) => {
   //
 
   return buildHtmlString(
-    ReactDOMServer.renderToString(
-      <RoutingContext
+    renderToString(
+      <RouterContext
         createElement={createElement}
         {...renderProps}
       />
@@ -72,7 +75,7 @@ app.get("*", (req, res) => {
       } else if (renderProps) {
         //getData(renderProps.components).then(() => {
           res.status(200).send(
-            renderApp()
+            renderApp(renderProps)
           )
         //})
       } else {
