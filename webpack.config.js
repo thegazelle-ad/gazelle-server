@@ -1,6 +1,9 @@
 // For excluding /node_modules/
 var Fs = require('fs')
 var nodeModules = {}
+var path = require('path')
+var webpack = require('webpack')
+
 Fs.readdirSync('node_modules').forEach(function (module) {
   if (module !== '.bin') {
     nodeModules[module] = true
@@ -28,13 +31,26 @@ module.exports = [{
   target: 'node',
   entry: './src/server.js',
   output: {
+    path: __dirname,
     filename: "./build/server.js"
   },
   externals: nodeModulesTransform,
+  resolve: {
+    root: __dirname,
+    modulesDirectories: [
+      'node_modules',
+      './src/components',
+      './src/lib/falcor',
+      './src/lib'
+    ],
+    alias: {
+    },
+    extensions: ['', '.js', '.jsx']
+  },
   module: {
     loaders: [
       {
-        loader: 'babel',
+        loader: 'babel-loader',
         test: /\.jsx?$/,
         exclude: /node_modules/,
         query: {
@@ -49,6 +65,18 @@ module.exports = [{
   entry: './src/client.js',
   output: {
     filename: "./static/build/client.js"
+  },
+  resolve: {
+    root: __dirname,
+    modulesDirectories: [
+      'node_modules',
+      './src/components',
+      './src/lib/falcor',
+      './src/lib'
+    ],
+    alias: {
+    },
+    extensions: ['', '.js', '.jsx']
   },
   module: {
     loaders: [

@@ -1,5 +1,5 @@
 import React from "react"
-import BaseComponent from "../lib/BaseComponent.js"
+import BaseComponent from "BaseComponent"
 
 export default class Page extends BaseComponent {
   render() {

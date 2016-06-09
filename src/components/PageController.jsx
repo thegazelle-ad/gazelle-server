@@ -1,6 +1,6 @@
 import React from "react"
-import FalcorController from "../lib/falcor/FalcorController"
-import Page from "./Page"
+import FalcorController from "FalcorController"
+import Page from "Page"
 
 export default class PageController extends FalcorController {
   static getFalcorPath(params) {

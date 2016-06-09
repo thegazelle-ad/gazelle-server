@@ -1,4 +1,4 @@
-import BaseComponent from "../BaseComponent"
+import BaseComponent from "BaseComponent"
 import _ from "lodash"
 
 // Abstract class for fetching falcor objects

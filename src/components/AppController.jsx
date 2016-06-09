@@ -1,5 +1,5 @@
 import React from "react"
-import FalcorController from "../lib/falcor/FalcorController"
+import FalcorController from "FalcorController"
 import { Link } from "react-router"
 
 export default class AppController extends FalcorController {
