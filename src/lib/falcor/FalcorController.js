@@ -1,15 +1,21 @@
 import BaseComponent from "../BaseComponent"
 import _ from "lodash"
+import { isAppReady } from "./falcorUtils"
 
 // Abstract class for fetching falcor objects
 export default class FalcorController extends BaseComponent {
   constructor(props) {
     super(props)
+    console.log("BEING CONSTRUCTED")
     if (this.constructor == FalcorController) {
       throw new TypeError("FalcorController is abstract")
     }
+    // It might seem like fetching and ready are redundant
+    // But you can be ready = true and fetching = true if
+    // doing a refresh on data
     this.safeSetState({
       fetching: false,
+      ready: false,
       data: null
     })
   }
@@ -20,71 +26,93 @@ export default class FalcorController extends BaseComponent {
   static getFalcorPath(params) {
     throw new TypeError(
       "You must implement the getFalcorPath method " +
-      "in children of FalcorController"
+      "in children of FalcorControlleNULLr"
     )
   }
 
-  // Returns a promise of the falcor data
-  // This should only be called on client side, as server side does a
-  // mass fetch on results from getFalcorPath
-  // It actually returns nothing, but it lets the outside function
-  // know that the falcor fetch finished
-  falcorFetch() {
+  // Retrieves all the data for this component from the Falcor cache
+  // and store on state. Used for server side render and first client side render
+  // this should always contain all the data the component needs
+  loadFalcorCache() {
+    console.log("LOADING FROM CACHE")
     const falcorPath = this.constructor.getFalcorPath(this.props.params)
-    if (this.props.isServer) {
-      const data = this.props.model.getCache(falcorPath)
-      if (data) {
-        this.safeSetState({
-          fetching: false,
-          data: data
-        })
-      } else {
-        throw new Error("Serverside render of component: " + this.constructor.name +
-                        " failed. Data not in cache")
-      }
-    } else {
-      this.safeSetState({fetching: true})
-      this.props.model.get(falcorPath).then((x) => {
-        if (x) {
-          this.safeSetState({
-            fetching: false,
-            data: x.json
-          })
-        } else {
-          throw new Error("FalcorPath: " + falcorPath + " returned no data")
-        }
-      }).catch((e) => {
-        console.error("Failed to fetch for falcorPath: " + falcorPath)
-        console.error(e.stack)
+
+    const data = this.props.model.getCache(falcorPath)
+    if (data) {
+      this.safeSetState({
+        ready: true,
+        data: data
       })
+    } else {
+      throw new Error("Serverside render of component: " + this.constructor.name +
+                      " failed. Data not in cache")
     }
   }
 
+  // Makes falcor fetch its paths
+  falcorFetch() {
+    console.log("STARTING FETCH")
+    const falcorPath = this.constructor.getFalcorPath(this.props.params)
+
+    // Then if we are a client, we can try to do a fetch as well
+    this.safeSetState({fetching: false})
+    this.props.model.get(falcorPath).then((x) => {
+      console.log("FALCOR FETCH COMPLETED")
+      if (x) {
+        this.safeSetState({
+          ready: true,
+          fetching: false,
+          data: x.json
+        })
+      } else {
+        throw new Error("FalcorPath: " + falcorPath + " returned no data")
+      }
+    }).catch((e) => {
+      console.error("Failed to fetch for falcorPath: " + falcorPath)
+      console.error(e.stack)
+    })
+  }
+
+  // Causes this component to gain a new falcor state
+  falcorNewState() {
+    this.safeSetState({
+      fetching: false,
+      ready: false,
+      data: null
+    })
+    this.falcorFetch(newPath)
+  }
+
   // If the new props requires a new falcor call
-  // this will pick it up and make the new fetch request
+  // this will pick it up and refresh the falcor state
   shouldComponentUpdate(nextProps, nextState) {
+    super.shouldComponentUpdate()
     const shouldUpdate = super.shouldComponentUpdate(nextProps, nextState)
     if (shouldUpdate) {
       const newPath = this.constructor.getFalcorPath(nextProps.params)
       const oldPath = this.constructor.getFalcorPath(this.props.params)
       if (!_.isEqual(oldPath, newPath)) {
-        this.falcorFetch(newPath)
+        this.falcorNewState()
       }
     }
+
     return shouldUpdate
   }
 
+  // isAppReady() is always false on server, and false for first
+  // render on client only. This is to avoid an immediate falcorFetch
+  // on the first clientside render
   componentWillMount() {
-    this.falcorFetch()
+    if (!isAppReady()) {
+      this.loadFalcorCache()
+    } else {
+      this.falcorFetch()
+    }
   }
 
   // Following are for example purposes. You must always call
   // the super for componentDidMount and componentWillUnmount
   componentDidMount() {
     super.componentDidMount()
-  }
-
-  componentWillUnmount() {
-    super.componentWillUnmount()
   }
 }

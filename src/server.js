@@ -8,6 +8,7 @@ import FalcorRouter from "./lib/falcor/FalcorRouter"
 import falcor from "falcor"
 import sourcemap from "source-map-support"
 import _ from "lodash"
+import { injectModelCreateElement } from "./lib/falcor/falcorUtils"
 
 sourcemap.install()
 
@@ -23,12 +24,12 @@ const buildHtmlString = (body, cache) => {
           <div id="main">`
             + body +
           `</div>
-          <script src="/build/client.js"></script>
           <script>
             var _initialCache =
             ` + JSON.stringify(cache) + `
             ;
           </script>
+          <script src="/build/client.js"></script>
         </body>
       </html>`
   )
@@ -67,12 +68,6 @@ const renderApp = (renderProps) => {
   // to the client and reload on the falcor there
   const localModel = new falcor.Model({ source: serverModel.asDataSource() })
 
-  // create a curried createElement that injects this specific
-  // localModel into each of the controllers in our routes
-  const createElement = (Component, props) => {
-    return <Component isServer={true} model={localModel} {...props} />
-  }
-
   console.log("FETCHING Falcor Paths:")
   console.log(falcorPaths)
   return localModel.preload(...falcorPaths).then((x) => {
@@ -80,7 +75,7 @@ const renderApp = (renderProps) => {
       buildHtmlString(
         renderToString(
           <RouterContext
-            createElement={createElement}
+            createElement={injectModelCreateElement(localModel)}
             {...renderProps}
           />
         ),

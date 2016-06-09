@@ -1,4 +1,5 @@
 // For excluding /node_modules/
+var webpack = require("webpack");
 var Fs = require('fs')
 var nodeModules = {}
 Fs.readdirSync('node_modules').forEach(function (module) {
@@ -31,6 +32,9 @@ module.exports = [{
     filename: "./build/server.js"
   },
   externals: nodeModulesTransform,
+  plugins: [
+    new webpack.OldWatchingPlugin()
+  ],
   module: {
     loaders: [
       {
@@ -50,6 +54,9 @@ module.exports = [{
   output: {
     filename: "./static/build/client.js"
   },
+  plugins: [
+    new webpack.OldWatchingPlugin()
+  ],
   module: {
     loaders: [
       {
