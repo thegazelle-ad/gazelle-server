@@ -38,6 +38,5 @@ export default class FalcorRouter extends BaseRouter.createClass([
 {
   constructor() {
     super()
-    console.log("Router Constructed")
   }
 }

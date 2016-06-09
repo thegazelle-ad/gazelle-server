@@ -74,4 +74,4 @@ on the server, then the identical code is served to the client, and
 the web browser client does subsequent renders. If you want to know
 more about what isomorphism is, here's an article that might help:
 
-[https://www.lullabot.com/articles/what-is-an-isomorphic-applicationl](What is an isomorphic application?)
+[https://www.lullabot.com/articles/what-is-an-isomorphic-application](What is an isomorphic application?)

@@ -1,4 +1,5 @@
 // For excluding /node_modules/
+var webpack = require("webpack");
 var Fs = require('fs')
 var nodeModules = {}
 var path = require('path')
@@ -47,6 +48,11 @@ module.exports = [{
     },
     extensions: ['', '.js', '.jsx']
   },
+
+  plugins: [
+    new webpack.OldWatchingPlugin()
+  ],
+
   module: {
     loaders: [
       {
@@ -78,6 +84,11 @@ module.exports = [{
     },
     extensions: ['', '.js', '.jsx']
   },
+
+  plugins: [
+    new webpack.OldWatchingPlugin()
+  ],
+
   module: {
     loaders: [
       {
