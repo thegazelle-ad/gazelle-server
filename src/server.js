@@ -2,13 +2,13 @@ import express from "express"
 import React from "react"
 import { renderToString } from "react-dom/server"
 import { match, RouterContext } from 'react-router'
-import routes from "./lib/routes"
-import FalcorController from "./lib/falcor/FalcorController"
-import FalcorRouter from "./lib/falcor/FalcorRouter"
+import routes from "routes"
+import FalcorController from "FalcorController"
+import FalcorRouter from "FalcorRouter"
 import falcor from "falcor"
 import sourcemap from "source-map-support"
 import _ from "lodash"
-import { injectModelCreateElement } from "./lib/falcor/falcorUtils"
+import { injectModelCreateElement } from "falcorUtils"
 
 sourcemap.install()
 

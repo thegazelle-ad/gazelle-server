@@ -1,4 +1,4 @@
-import FalcorController from "./FalcorController"
+import FalcorController from "FalcorController"
 import React from "react"
 
 // create a curried createElement that injects a
