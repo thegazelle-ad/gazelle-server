@@ -1,6 +1,6 @@
-import BaseComponent from "BaseComponent"
 import _ from "lodash"
-import { isAppReady } from "falcorUtils"
+import { isAppReady } from "lib/falcor/falcorUtils"
+import BaseComponent from "lib/BaseComponent"
 
 // Abstract class for fetching falcor objects
 export default class FalcorController extends BaseComponent {

@@ -1,5 +1,5 @@
-import FalcorController from "FalcorController"
 import React from "react"
+import FalcorController from "lib/falcor/FalcorController"
 
 // create a curried createElement that injects a
 // falcor model instance into each of the falcon controllers

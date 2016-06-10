@@ -1,10 +1,10 @@
 import React from "react"
-import FalcorController from "FalcorController"
-import { setAppReady } from "falcorUtils"
 import { Link } from "react-router"
+import FalcorController from "lib/falcor/FalcorController"
+import { setAppReady } from "lib/falcor/falcorUtils"
 
 export default class AppController extends FalcorController {
-  static getFalcorPath(params) {
+  static getFalcorPath() {
     return ['appName']
   }
 

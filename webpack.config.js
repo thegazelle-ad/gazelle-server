@@ -40,9 +40,7 @@ module.exports = [{
     root: __dirname,
     modulesDirectories: [
       'node_modules',
-      './src/components',
-      './src/lib/falcor',
-      './src/lib'
+      './src'
     ],
     alias: {
     },
@@ -76,9 +74,7 @@ module.exports = [{
     root: __dirname,
     modulesDirectories: [
       'node_modules',
-      './src/components',
-      './src/lib/falcor',
-      './src/lib'
+      './src/',
     ],
     alias: {
     },

@@ -1,10 +1,10 @@
 import React from "react"
-import { Router, browserHistory } from 'react-router'
-import routes from "routes"
 import ReactDOM from "react-dom"
-import FalcorController from "FalcorController"
-import { injectModelCreateElement } from "falcorUtils"
+import { Router, browserHistory } from 'react-router'
 import falcor from "falcor"
+import routes from "lib/routes"
+import FalcorController from "lib/falcor/FalcorController"
+import { injectModelCreateElement } from "lib/falcor/falcorUtils"
 
 let clientModel = new falcor.Model()
 

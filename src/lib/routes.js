@@ -1,7 +1,7 @@
 import { Route } from 'react-router'
-import AppController from "AppController"
-import PageController from "PageController"
 import React from "react"
+import AppController from "components/AppController"
+import PageController from "components/PageController"
 
 export default (
   <Route path="/" component={AppController}>
