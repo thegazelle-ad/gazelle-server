@@ -9,6 +9,7 @@ import routes from "lib/routes"
 import FalcorController from "lib/falcor/FalcorController"
 import FalcorRouter from "lib/falcor/FalcorRouter"
 import { injectModelCreateElement } from "lib/falcor/falcorUtils"
+import FalcorServer from 'falcor-express';
 
 // Allow node to use sorucemaps
 sourcemap.install()
@@ -88,6 +89,9 @@ const renderApp = (renderProps) => {
 
 const server = express()
 
+server.use("/model.json", FalcorServer.dataSourceRoute((req, res) => {
+  return serverModel.asDataSource()
+}))
 server.use(express.static("static"))
 
 server.get("*", (req, res) => {
@@ -114,6 +118,7 @@ server.get("*", (req, res) => {
       }
   })
 })
+
 
 server.listen(3000, err => {
   if (err) {

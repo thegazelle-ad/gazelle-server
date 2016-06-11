@@ -6,7 +6,6 @@ import BaseComponent from "lib/BaseComponent"
 export default class FalcorController extends BaseComponent {
   constructor(props) {
     super(props)
-    console.log("BEING CONSTRUCTED")
     if (this.constructor == FalcorController) {
       throw new TypeError("FalcorController is abstract")
     }
@@ -50,9 +49,8 @@ export default class FalcorController extends BaseComponent {
   }
 
   // Makes falcor fetch its paths
-  falcorFetch() {
+  falcorFetch(falcorPath) {
     console.log("STARTING FETCH")
-    const falcorPath = this.constructor.getFalcorPath(this.props.params)
 
     // Then if we are a client, we can try to do a fetch as well
     this.safeSetState({fetching: false})
@@ -73,30 +71,18 @@ export default class FalcorController extends BaseComponent {
     })
   }
 
-  // Causes this component to gain a new falcor state
-  falcorNewState() {
-    this.safeSetState({
-      fetching: false,
-      ready: false,
-      data: null
-    })
-    this.falcorFetch(newPath)
-  }
-
   // If the new props requires a new falcor call
   // this will pick it up and refresh the falcor state
-  shouldComponentUpdate(nextProps, nextState) {
-    super.shouldComponentUpdate()
-    const shouldUpdate = super.shouldComponentUpdate(nextProps, nextState)
-    if (shouldUpdate) {
-      const newPath = this.constructor.getFalcorPath(nextProps.params)
-      const oldPath = this.constructor.getFalcorPath(this.props.params)
-      if (!_.isEqual(oldPath, newPath)) {
-        this.falcorNewState()
-      }
+  componentWillReceiveProps(nextProps) {
+    const newPath = this.constructor.getFalcorPath(nextProps.params)
+    const oldPath = this.constructor.getFalcorPath(this.props.params)
+    if (!_.isEqual(oldPath, newPath)) {
+      this.safeSetState({
+        fetching: false,
+        ready: false,
+      })
+      this.falcorFetch(newPath)
     }
-
-    return shouldUpdate
   }
 
   // isAppReady() is always false on server, and false for first
@@ -106,13 +92,8 @@ export default class FalcorController extends BaseComponent {
     if (!isAppReady()) {
       this.loadFalcorCache()
     } else {
-      this.falcorFetch()
+      const falcorPath = this.constructor.getFalcorPath(this.props.params)
+      this.falcorFetch(falcorPath)
     }
-  }
-
-  // Following are for example purposes. You must always call
-  // the super for componentDidMount and componentWillUnmount
-  componentDidMount() {
-    super.componentDidMount()
   }
 }

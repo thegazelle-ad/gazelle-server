@@ -8,9 +8,7 @@ export default class PageController extends FalcorController {
   }
 
   render() {
-    console.log("RENDERING")
-    console.log(this.state.ready)
-    console.log(this.state.data)
+    console.log("RENDERING PAGE CONTROLLER")
     if (this.state.ready) {
       const articleData = this.state.data.pages[parseInt(this.props.params.id)]
       return (
@@ -23,14 +21,7 @@ export default class PageController extends FalcorController {
     } else {
       return (
         <div>
-          <h1>Ready</h1>
-          <h1>Ready</h1>
-          <h1>Ready</h1>
-          <h1>Ready</h1>
-          <h1>Ready</h1>
-          <h1>Ready</h1>
-          <h1>Ready</h1>
-          <h1>Ready</h1>
+          <h1>Loading</h1>
         </div>
       )
     }
