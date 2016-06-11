@@ -1,0 +1,33 @@
+{
+  "root": true,
+  "plugins": ["react", "import", "jsx-a11y"],
+  "settings": {
+    "resolve": {
+      "root": "src"
+    },
+    "react": {
+      "pragma": "React",
+      "version": "15.0"
+    },
+    "import/resolver": {
+      "webpack": {
+        config: "webpack.config.js",
+        config-index: 1
+      }
+    }
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx":true
+    }
+  },
+  "extends": [
+    "airbnb",
+    "eslint:recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+  ],
+  "env": {
+    "es6": true
+  }
+}

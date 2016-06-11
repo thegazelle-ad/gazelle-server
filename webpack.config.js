@@ -1,32 +1,15 @@
 // For excluding /node_modules/
 var webpack = require("webpack");
+var nodeExternals = require('webpack-node-externals');
 var Fs = require('fs')
 var nodeModules = {}
 var path = require('path')
-var webpack = require('webpack')
 
 Fs.readdirSync('node_modules').forEach(function (module) {
   if (module !== '.bin') {
     nodeModules[module] = true
   }
 })
-var nodeModulesTransform = function(context, request, callback) {
-  // search for a '/' indicating a nested module
-  var slashIndex = request.indexOf("/");
-  var rootModuleName;
-  if (slashIndex == -1) {
-    rootModuleName = request;
-  } else {
-    rootModuleName = request.substr(0, slashIndex);
-  }
-
-  // Match for root modules that are in our node_modules
-  if (nodeModules.hasOwnProperty(rootModuleName)) {
-    callback(null, "commonjs " + request);
-  } else {
-    callback();
-  }
-}
 
 module.exports = [{
   target: 'node',
@@ -35,12 +18,12 @@ module.exports = [{
     path: __dirname,
     filename: "./build/server.js"
   },
-  externals: nodeModulesTransform,
+  externals: [nodeExternals()],
   resolve: {
     root: __dirname,
     modulesDirectories: [
       'node_modules',
-      './src'
+      './src/',
     ],
     alias: {
     },
@@ -48,7 +31,7 @@ module.exports = [{
   },
 
   plugins: [
-    new webpack.OldWatchingPlugin()
+    new webpack.OldWatchingPlugin(),
   ],
 
   module: {
@@ -82,7 +65,7 @@ module.exports = [{
   },
 
   plugins: [
-    new webpack.OldWatchingPlugin()
+    new webpack.OldWatchingPlugin(),
   ],
 
   module: {

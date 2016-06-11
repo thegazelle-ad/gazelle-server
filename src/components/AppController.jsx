@@ -1,4 +1,4 @@
-import React from "react"
+import React from 'react'
 import { Link } from "react-router"
 import FalcorController from "../lib/falcor/FalcorController"
 import { setAppReady } from "lib/falcor/falcorUtils"
@@ -6,12 +6,12 @@ import Navigation from '../components/Navigation';
 
 export default class AppController extends FalcorController {
   static getFalcorPath() {
-    return ['appName']
+    return (['appName']);
   }
 
   componentDidMount() {
-    super.componentDidMount()
-    setAppReady()
+    super.componentDidMount();
+    setAppReady();
   }
 
   render() {
@@ -22,6 +22,6 @@ export default class AppController extends FalcorController {
           {this.props.children}
         </div>
       </div>
-    )
+    );
   }
 }

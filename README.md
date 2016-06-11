@@ -75,3 +75,15 @@ the web browser client does subsequent renders. If you want to know
 more about what isomorphism is, here's an article that might help:
 
 [https://www.lullabot.com/articles/what-is-an-isomorphic-application](What is an isomorphic application?)
+
+# Note on linters
+
+To make sure your linter uses the plugins here, either change the lint command
+to run from ./node_modules/.bin/eslint or install all the eslint modules
+using npm globally. Like:
+
+```
+sudo npm install -g eslint
+sudo npm install -g eslint-import-resolver-webpack
+... etc (look inside node_modules to see relevant ones)
+```
