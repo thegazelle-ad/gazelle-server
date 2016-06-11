@@ -48,7 +48,7 @@ module.exports = [{
   },
 
   plugins: [
-    new webpack.OldWatchingPlugin()
+    new webpack.OldWatchingPlugin(),
   ],
 
   module: {
@@ -82,7 +82,7 @@ module.exports = [{
   },
 
   plugins: [
-    new webpack.OldWatchingPlugin()
+    new webpack.OldWatchingPlugin(),
   ],
 
   module: {
