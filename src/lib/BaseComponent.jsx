@@ -1,4 +1,4 @@
-import React from "react"
+import React from 'react';
 
 const shallowEquals = (objA, objB) => {
   if (objA === objB) {
@@ -26,16 +26,30 @@ const shallowEquals = (objA, objB) => {
   }
 
   return true;
-}
+};
 
 // Abstract class with utility functions
 export default class BaseComponent extends React.Component {
   constructor(props) {
-    super(props)
-    if (this.constructor == BaseComponent) {
-      throw new TypeError("BaseComponent is abstract")
+    super(props);
+    if (this.constructor === BaseComponent) {
+      throw new TypeError('BaseComponent is abstract');
     }
-    this.state = {}
+    this.state = {};
+    this.mounted = false;
+  }
+
+  componentDidMount() {
+    this.mounted = true;
+  }
+
+  // Pure render by default
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(shallowEquals(nextProps, this.props)
+      && shallowEquals(nextState, this.state));
+  }
+
+  componentWillUnmount() {
     this.mounted = false;
   }
 
@@ -44,23 +58,9 @@ export default class BaseComponent extends React.Component {
   // don't throw errors
   safeSetState(newState) {
     if (this.mounted) {
-      this.setState(newState)
+      this.setState(newState);
     } else {
-      Object.assign(this.state, newState)
+      Object.assign(this.state, newState);
     }
-  }
-
-  componentDidMount() {
-    this.mounted = true
-  }
-
-  componentWillUnmount() {
-    this.mounted = false
-  }
-
-  // Pure render by default
-  shouldComponentUpdate(nextProps, nextState) {
-    return !(shallowEquals(nextProps, this.props)
-      && shallowEquals(nextState, this.state))
   }
 }

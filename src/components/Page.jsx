@@ -1,5 +1,5 @@
-import React from "react"
-import BaseComponent from "lib/BaseComponent"
+import React from 'react';
+import BaseComponent from '../lib/BaseComponent';
 
 export default class Page extends BaseComponent {
   render() {
@@ -12,6 +12,6 @@ export default class Page extends BaseComponent {
           {this.props.body}
         </div>
       </div>
-    )
+    );
   }
 }
