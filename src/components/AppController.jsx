@@ -1,7 +1,8 @@
 import React from "react"
 import { Link } from "react-router"
-import FalcorController from "lib/falcor/FalcorController"
+import FalcorController from "../lib/falcor/FalcorController"
 import { setAppReady } from "lib/falcor/falcorUtils"
+import Navigation from '../components/Navigation';
 
 export default class AppController extends FalcorController {
   static getFalcorPath() {
@@ -16,13 +17,7 @@ export default class AppController extends FalcorController {
   render() {
     return (
       <div>
-        <h1>{this.state.data.appName}</h1>
-        <ul>
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/page/0">Page 0</Link></li>
-          <li><Link to="/page/1">Page 1</Link></li>
-          <li><Link to="/page/2">Page 2</Link></li>
-        </ul>
+        <Navigation appName={this.state.data.appName} />
         <div>
           {this.props.children}
         </div>
