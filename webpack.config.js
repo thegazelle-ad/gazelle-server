@@ -39,7 +39,7 @@ module.exports = [{
     root: __dirname,
     modulesDirectories: [
       'node_modules',
-      './src',
+      './src/',
     ],
     alias: {
     },
@@ -73,7 +73,7 @@ module.exports = [{
     root: __dirname,
     modulesDirectories: [
       'node_modules',
-      './src',
+      './src/',
     ],
     alias: {
     },
