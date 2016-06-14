@@ -1,5 +1,6 @@
 // For excluding /node_modules/
 var webpack = require("webpack");
+var nodeExternals = require('webpack-node-externals');
 var Fs = require('fs')
 var nodeModules = {}
 var path = require('path')
@@ -9,23 +10,6 @@ Fs.readdirSync('node_modules').forEach(function (module) {
     nodeModules[module] = true
   }
 })
-var nodeModulesTransform = function(context, request, callback) {
-  // search for a '/' indicating a nested module
-  var slashIndex = request.indexOf("/");
-  var rootModuleName;
-  if (slashIndex == -1) {
-    rootModuleName = request;
-  } else {
-    rootModuleName = request.substr(0, slashIndex);
-  }
-
-  // Match for root modules that are in our node_modules
-  if (nodeModules.hasOwnProperty(rootModuleName)) {
-    callback(null, "commonjs " + request);
-  } else {
-    callback();
-  }
-}
 
 module.exports = [{
   target: 'node',
@@ -34,7 +18,7 @@ module.exports = [{
     path: __dirname,
     filename: "./build/server.js"
   },
-  externals: nodeModulesTransform,
+  externals: [nodeExternals()],
   resolve: {
     root: __dirname,
     modulesDirectories: [

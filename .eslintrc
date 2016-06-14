@@ -1,15 +1,19 @@
 {
   "root": true,
-  "plugins": ["react", "import"],
+  "plugins": ["react", "import", "jsx-a11y"],
   "settings": {
+    "resolve": {
+      "root": "src"
+    },
     "react": {
       "pragma": "React",
       "version": "15.0"
     },
-    "import": {
-      "extensions": [".js", ".jsx"],
-      "ignore": "node_modules",
-      "resolver": "webpack",
+    "import/resolver": {
+      "webpack": {
+        config: "webpack.config.js",
+        config-index: 1
+      }
     }
   },
   "parserOptions": {
