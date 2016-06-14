@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, browserHistory } from 'react-router';
 import falcor from 'falcor';
-import routes from './lib/routes';
-import { injectModelCreateElement } from './lib/falcor/falcorUtils';
+import routes from 'lib/routes';
+import { injectModelCreateElement } from 'lib/falcor/falcorUtils';
 
 let clientModel = new falcor.Model();
 

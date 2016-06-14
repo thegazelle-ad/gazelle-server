@@ -3,7 +3,6 @@ var webpack = require("webpack");
 var Fs = require('fs')
 var nodeModules = {}
 var path = require('path')
-var webpack = require('webpack')
 
 Fs.readdirSync('node_modules').forEach(function (module) {
   if (module !== '.bin') {
@@ -40,7 +39,7 @@ module.exports = [{
     root: __dirname,
     modulesDirectories: [
       'node_modules',
-      './src'
+      './src',
     ],
     alias: {
     },
@@ -74,7 +73,7 @@ module.exports = [{
     root: __dirname,
     modulesDirectories: [
       'node_modules',
-      './src/',
+      './src',
     ],
     alias: {
     },

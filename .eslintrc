@@ -1,10 +1,15 @@
 {
   "root": true,
-  "plugins": ["react"],
+  "plugins": ["react", "import"],
   "settings": {
     "react": {
-      "pragma": "React",  // Pragma to use, default to "React"
-      "version": "15.0" // React version, default to the latest React stable release
+      "pragma": "React",
+      "version": "15.0"
+    },
+    "import": {
+      "extensions": [".js", ".jsx"],
+      "ignore": "node_modules",
+      "resolver": "webpack",
     }
   },
   "parserOptions": {
@@ -13,7 +18,10 @@
     }
   },
   "extends": [
-    "airbnb"
+    "airbnb",
+    "eslint:recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
   ],
   "env": {
     "es6": true

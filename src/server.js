@@ -5,10 +5,10 @@ import _ from 'lodash';
 import { renderToString } from 'react-dom/server';
 import { match, RouterContext } from 'react-router';
 import sourcemap from 'source-map-support';
-import routes from './lib/routes';
-import FalcorController from './lib/falcor/FalcorController';
-import FalcorRouter from './lib/falcor/FalcorRouter';
-import { injectModelCreateElement } from './lib/falcor/falcorUtils';
+import routes from 'lib/routes';
+import FalcorController from 'lib/falcor/FalcorController';
+import FalcorRouter from 'lib/falcor/FalcorRouter';
+import { injectModelCreateElement } from 'lib/falcor/falcorUtils';
 
 // Allow node to use sorucemaps
 sourcemap.install();

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
-import FalcorController from '../lib/falcor/FalcorController';
-import { setAppReady } from '../lib/falcor/falcorUtils';
+import FalcorController from 'lib/falcor/FalcorController';
+import { setAppReady } from 'lib/falcor/falcorUtils';
 
 export default class AppController extends FalcorController {
   static getFalcorPath() {
