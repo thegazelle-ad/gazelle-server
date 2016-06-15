@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from "react-router"
 import FalcorController from "../lib/falcor/FalcorController"
 import { setAppReady } from "lib/falcor/falcorUtils"
 import Navigation from '../components/Navigation';

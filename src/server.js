@@ -1,17 +1,4 @@
-<<<<<<< HEAD
-import express from "express"
-import React from "react"
-import falcor from "falcor"
-import _ from "lodash"
-import { renderToString } from "react-dom/server"
-import { match, RouterContext } from 'react-router'
-import sourcemap from "source-map-support"
-import routes from "lib/routes"
-import FalcorController from "lib/falcor/FalcorController"
-import FalcorRouter from "lib/falcor/FalcorRouter"
-import { injectModelCreateElement } from "lib/falcor/falcorUtils"
 import FalcorServer from 'falcor-express';
-=======
 import express from 'express';
 import React from 'react';
 import falcor from 'falcor';
@@ -23,7 +10,6 @@ import routes from 'lib/routes';
 import FalcorController from 'lib/falcor/FalcorController';
 import FalcorRouter from 'lib/falcor/FalcorRouter';
 import { injectModelCreateElement } from 'lib/falcor/falcorUtils';
->>>>>>> e2d22f4... Added eslint import plugin with webpack resolver
 
 // Allow node to use sourcemaps
 sourcemap.install();
