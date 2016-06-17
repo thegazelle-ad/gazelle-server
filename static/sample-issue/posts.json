@@ -1,12 +1,12 @@
-{
+{[
   {
     "issue": 55,
-    "id" : 1,
+    "id": 1,
     "category": "opinion",
-    "featured-image": "/images/palestine-hamilton.jpg",
-    "slug" : "palestine-hamilton",
-    "title" : "President Hamilton's Response to BDS is Unacceptable",
-    "description" : "This is a sample article description. This is meant to grab the reader's attention. It should be no longer than one hundred & 40 characters.",
+    "featured-image": "/images/parents.jpg",
+    "slug": "palestine-hamilton",
+    "title": "President Hamilton's Response to BDS is Unacceptable",
+    "description": "This is a sample article description. This is meant to grab the reader's attention. It should be no longer than one hundred & 40 characters.",
     "body": "In a historic move, the NYU Graduate Student Organizing Committee, a union that represents roughly 1,200 graduate students, recently voted to endorse and join the Boycott, Divestment and Sanctions movement, a global non-violent movement aimed at challenging Israeli apartheid. The BDS movement calls for NYU to withdraw from Israeli academic institutions involved in the violations of the human and civil rights of the Palestinian people. Out of the more than 645 union members who participated in the vote, a majority of 66% voted to endorse and join the BDS movement.
     For those who are unaware, the BDS movement’s objectives are:
     “1. Ending its [Israeli] occupation and colonization of all Arab lands occupied in June 1967 and dismantling the Wall;
@@ -16,23 +16,23 @@
     The GSOC’s vote called for NYU to break ties with academic institutions that are funded by the Israeli government. The intention of this decision was not to limit academic freedom but to advocate for the basic human rights of the Palestinian people, as well as to demonstrate against the academic restriction forced upon them by the Israeli occupation. It called for the academic freedom of Palestinians constrained by the violations of the Israeli government.
     We are deeply disheartened by President Hamilton’s inconsiderate statement since it undermines the voices of the Palestinian people and NYU’s own students who fell victims to the occupation, the academic freedom of Palestinian students and the democratic decision put forth by students that belong to the very institute he is leading. More importantly, this situation sheds light on a larger trend that we are frustrated with — the utter dismissal of student concerns and imbalance of responses in many situations that the NYU leadership might deem unimportant or  “at odds with the University’s position.”
     In response to President Hamilton’s discouraging position, members of the GSOC have issued an important statement that we fully agree with and choose to share with our NYU Abu Dhabi community. This statement conforms with the BDS movement’s objectives, which we stand by. We hope that this clarification of the objectives of the BDS movement will encourage President Hamilton to reconsider his public statements, which have only led to the marginalization of his own students.",
-    "author" : [{
-      "photo" : "/images/authors/author.png",
-      "name" : "Tala Nassar",
+    "author": [{
+      "photo": "/images/authors/author.png",
+      "name": "Tala Nassar",
     },{
-      "photo" : "images/authors/author.png",
-      "name" : "Daniah Kheetan",
+      "photo": "images/authors/author.png",
+      "name": "Daniah Kheetan",
     }],
   },
 
   {
     "issue": 55,
-    "id" : 2,
+    "id": 2,
     "category": "features",
     "featured-image": "/images/remembering-ruben.jpg",
-    "slug" : "remembering-ruben",
-    "title" : "Remembering Rubén",
-    "description" : "This is a sample article description. This is meant to grab the reader's attention. It should be no longer than one hundred & 40 characters.",
+    "slug": "remembering-ruben",
+    "title": "Remembering Rubén",
+    "description": "This is a sample article description. This is meant to grab the reader's attention. It should be no longer than one hundred & 40 characters.",
     "body": "On May 3, theater students received an email from the Head of Department Rubén Polendo, informing them of his imminent departure from NYU in Abu Dhabi. Starting in the Fall of 2016, Polendo will be the new Chair of Tisch Drama at New York University. Embodying the liberal arts spirit, Polendo had majored in Biochemistry, only to switch gears and pursue a lifelong journey into the arts. At NYUAD, Polendo has touched many hearts inside and outside the Theater Department. Below, students share memories of Polendo.
     ADAM ASHRAF, CLASS OF 2018
     Theater Major
@@ -68,20 +68,20 @@
     REND BEIRUTI, CLASS OF 2014
     Arab Crossroads Studies
     To say that Rubén changed my life is an understatement. When I think back on the most rewarding experiences of my time at NYU Abu Dhabi, Rubén is almost always in the picture. Thank you for being the greatest friend, and always knowing the right things to say. To the person that has opened me up to questions, challenged me to be more and pushed me to imagine, I owe so much. You’ll always be with me.",
-    "author" : [{
-      "photo" : "/images/authors/author.png",
-      "name" : "Rend Beiruti",
+    "author": [{
+      "photo": "/images/authors/author.png",
+      "name": "Rend Beiruti",
     }],
   },
 
   {
     "issue": 55,
-    "id" : 3,
+    "id": 3,
     "category": "news",
     "featured-image": "/images/parents.jpg",
-    "slug" : "parents",
-    "title" : "Introduction of College Parents Program at NYUAD",
-    "description" : "This is a sample article description. This is meant to grab the reader's attention. It should be no longer than one hundred & 40 characters.",
+    "slug": "parents",
+    "title": "Introduction of College Parents Program at NYUAD",
+    "description": "This is a sample article description. This is meant to grab the reader's attention. It should be no longer than one hundred & 40 characters.",
     "body": "On April 20, the Office of First Year Programming announced the introduction of the College Parents program, in which rising sophomores sign up in pairs to become advisors to a group of four to five students from the incoming freshmen class, to help them with their transition to university life during their first semester in college.
     72 pairs of rising sophomores have signed up for the program and each pair will be matched with their group, as soon as the list of the Class of 2020 students is finalized. Pairs will get in touch with their groups in the beginning of the summer and will meet for the first time during Marhaba Week, with a scheduled meet to be held on August 27.
     The main proponent of the program was Class of 2019 Representative Chris Wheeler, who initially got the idea from a friend studying in the United Kingdom.
@@ -98,4 +98,4 @@
       "name" : "Ahmed Meshref",
     }],
   },
-}
+]}
