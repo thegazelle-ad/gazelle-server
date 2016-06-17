@@ -41,12 +41,12 @@ module.exports = [{
         test: /\.jsx?$/,
         exclude: /node_modules/,
         query: {
-          presets: ['es2015', 'react']
-        }
-      }
-    ]
+          presets: ['es2015', 'react'],
+        },
+      },
+    ],
   },
-  devtool: 'source-map'
+  devtool: 'source-map',
 }, {
   target: 'web',
   entry: './src/client.js',
@@ -75,10 +75,10 @@ module.exports = [{
         test: /\.jsx?$/,
         exclude: /node_modules/,
         query: {
-          presets: ['es2015', 'react']
-        }
-      }
-    ]
+          presets: ['es2015', 'react'],
+        },
+      },
+    ],
   },
   devtool: 'source-map'
 }]
