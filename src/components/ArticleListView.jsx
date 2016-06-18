@@ -25,7 +25,7 @@ export default class ArticleListView extends React.Component {
     // TODO: establish featured article, editor's picks, and trending sections
     var articles = this.state.articles.map(function(article){
       return (
-        <ArticlePreview key={article.id} post={article} />
+        <ArticlePreview key={article.id} article={article} />
       );
     });
 
