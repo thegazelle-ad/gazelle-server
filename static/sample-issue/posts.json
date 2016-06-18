@@ -1,9 +1,10 @@
 {[
   {
     "issue": 55,
+    "pubDate": "May 1, 2016",
     "id": 1,
     "category": "opinion",
-    "featured-image": "/images/parents.jpg",
+    "image": "/images/palestine-hamilton.jpg",
     "slug": "palestine-hamilton",
     "title": "President Hamilton's Response to BDS is Unacceptable",
     "description": "This is a sample article description. This is meant to grab the reader's attention. It should be no longer than one hundred & 40 characters.",
@@ -28,8 +29,9 @@
   {
     "issue": 55,
     "id": 2,
+    "pubDate": "May 1, 2016",
     "category": "features",
-    "featured-image": "/images/remembering-ruben.jpg",
+    "image": "/images/remembering-ruben.jpg",
     "slug": "remembering-ruben",
     "title": "Remembering Rubén",
     "description": "This is a sample article description. This is meant to grab the reader's attention. It should be no longer than one hundred & 40 characters.",
@@ -77,8 +79,9 @@
   {
     "issue": 55,
     "id": 3,
+    "pubDate": "May 1, 2016",
     "category": "news",
-    "featured-image": "/images/parents.jpg",
+    "image": "/images/parents.jpg",
     "slug": "parents",
     "title": "Introduction of College Parents Program at NYUAD",
     "description": "This is a sample article description. This is meant to grab the reader's attention. It should be no longer than one hundred & 40 characters.",
