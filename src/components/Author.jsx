@@ -2,10 +2,6 @@ import React from 'react';
 
 export default class Author extends React.Component {
 
-  getInitialState() {
-   // getState();
-  }
-
   render() {
     var currentAuthor = this.state.currentAuthor;
     return (
