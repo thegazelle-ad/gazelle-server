@@ -47,6 +47,12 @@ const serverModel = new falcor.Model({
         body: 'Page 0 body',
       },
     ],
+    articles: [
+      {
+        title: 'Article 1 title',
+        body: 'Article 1 body',
+      },
+    ],
   },
   source: new FalcorRouter(),
 }).batch();

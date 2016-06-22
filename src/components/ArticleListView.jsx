@@ -1,23 +1,8 @@
 import React from 'react';
 import ArticlePreview from 'components/ArticlePreview';
 
-export default class ArticleListView extends React.Component {
-  getInitialState() {
-    //getState()
-  }
-
-  componentDidMount() {
-    //subscribes to store
-  }
-
-  componentWillUnmount() {
-    //unsubscribes from store
-  }
-
-  onChange(state) {
-    //setState(state)
-  }
-
+// TODO: create controller component to fetch list of articles in issue
+export default class ArticleList extends React.Component {
   render() {
 
     // Returns list of <ArticlePreview/> components with their respective posts

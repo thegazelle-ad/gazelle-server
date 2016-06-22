@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class AuthorView extends React.Component {
+export default class Author extends React.Component {
 
   getInitialState() {
    // getState();
