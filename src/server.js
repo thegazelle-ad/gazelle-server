@@ -13,6 +13,7 @@ import { injectModelCreateElement } from 'lib/falcor/falcorUtils';
 
 // Load in static issue articles for development
 import articles from '../static/sample-issue/posts.js';
+import authors from '../static/sample-issue/authors.js';
 
 // Allow node to use sourcemaps
 sourcemap.install();
@@ -45,12 +46,7 @@ const buildHtmlString = (body, cache) => {
 const serverModel = new falcor.Model({
   cache: {
     articles:articles,
-    authors: [
-      {
-        name: 'Author Name',
-        biography: 'This is the biography of author x',
-      },
-    ],
+    authors:authors,
   },
   source: new FalcorRouter(),
 }).batch();
