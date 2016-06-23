@@ -13,7 +13,7 @@ export default class AuthorController extends FalcorController {
       const authorData = this.state.data.authors[parseInt(this.props.params.authorId)];
       return (
         <div>
-          <h2>Controller for page: {this.props.params.authorId}</h2>
+          <h2>Controller for author: {this.props.params.authorId}</h2>
           <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
           <Author name={authorData.name} biography={authorData.biography} />
         </div>

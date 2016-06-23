@@ -6,7 +6,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
     get: (pathSet) => {
       return [{
         path: ["appName"],
-        value: "Demo App"
+        value: "The Gazelle"
       }]
     }
   },

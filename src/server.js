@@ -11,6 +11,9 @@ import FalcorController from 'lib/falcor/FalcorController';
 import FalcorRouter from 'lib/falcor/FalcorRouter';
 import { injectModelCreateElement } from 'lib/falcor/falcorUtils';
 
+// Load in static issue articles for development
+import articles from '../static/sample-issue/posts.js';
+
 // Allow node to use sourcemaps
 sourcemap.install();
 
@@ -41,18 +44,7 @@ const buildHtmlString = (body, cache) => {
 // You can also hardcode / stub parts of the model here
 const serverModel = new falcor.Model({
   cache: {
-    pages: [
-      {
-        title: 'Page 0 title',
-        body: 'Page 0 body',
-      },
-    ],
-    articles: [
-      {
-        title: 'Article title',
-        body: 'Article body',
-      },
-    ],
+    articles:articles,
     authors: [
       {
         name: 'Author Name',
