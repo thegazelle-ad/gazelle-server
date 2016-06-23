@@ -7,7 +7,7 @@ import AuthorController from 'components/AuthorController';
 
 export default (
   <Route path="/" component={AppController}>
-    <Route path="page/:id" component={PageController} />
     <Route path="article/:articleId" component={ArticleController} />
+    <Route path="author/:authorId" component={AuthorController} />
   </Route>
 );

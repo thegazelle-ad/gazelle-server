@@ -4,18 +4,18 @@ import FalcorController from 'lib/falcor/FalcorController';
 
 export default class AuthorController extends FalcorController {
   static getFalcorPath(params) {
-    return ['pages', parseInt(params.id), ["title", "body"]];
+    return ['authors', parseInt(params.authorId), ["name", "biography"]];
   }
 
   render() {
     console.log("RENDERING AUTHOR CONTROLLER")
     if (this.state.ready) {
-      const authorData = this.state.data.pages[parseInt(this.props.params.id)];
+      const authorData = this.state.data.authors[parseInt(this.props.params.authorId)];
       return (
         <div>
-          <h2>Controller for page: {this.props.params.id}</h2>
+          <h2>Controller for page: {this.props.params.authorId}</h2>
           <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
-          <Author title={authorData.title} body={authorData.body} />
+          <Author name={authorData.name} biography={authorData.biography} />
         </div>
       );
     } else {

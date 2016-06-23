@@ -49,8 +49,14 @@ const serverModel = new falcor.Model({
     ],
     articles: [
       {
-        title: 'Article 1 title',
-        body: 'Article 1 body',
+        title: 'Article title',
+        body: 'Article body',
+      },
+    ],
+    authors: [
+      {
+        name: 'Author Name',
+        biography: 'This is the biography of author x',
       },
     ],
   },
