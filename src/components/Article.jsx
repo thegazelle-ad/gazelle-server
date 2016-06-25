@@ -14,8 +14,6 @@ export default class Article extends React.Component {
     return (
       <div>
         <h1>{this.props.title}</h1>
-        <div>
-        </div>
         <div dangerouslySetInnerHTML={this.createMarkup(this.props.html)} />
       </div>
     );
@@ -23,6 +21,6 @@ export default class Article extends React.Component {
 }
 
 Article.propTypes = {
-  title: React.PropTypes.string,
-  html: React.PropTypes.string,
+  title: React.PropTypes.string.isRequired,
+  html: React.PropTypes.string.isRequired,
 }

@@ -5,13 +5,27 @@ export default class ArticlePreview extends React.Component {
 
   render () {
     var article = this.props.article;
+
+    // TODO: ensure ArticlePreview can handle multiple authors
+    // TODO: edit link routing and remove /0/
     return (
       <div>
-        <img src={article.image} alt="featured" />
-        // TODO: ensure ArticlePreview can handle multiple authors
-        <Link to={`/author/$(article.author)`}>{article.author}</Link>
-        <Link to={`/article/$(article.slug)`}>{article.title}</Link>
-        <p>{article.hook}</p>
+        <div>
+          <img src={article.image} alt="featured" />
+        </div>
+        <div>
+          <Link to={'/author/0/' + article.author}>
+            {article.author}
+          </Link>
+        </div>
+        <div>
+          <Link to={'/article/' + article.id + '/' + article.slug}>
+            {article.title}
+          </Link>
+        </div>
+        <div>
+          <p>{article.hook}</p>
+        </div>
       </div>
     );
   }
@@ -22,7 +36,8 @@ ArticlePreview.propTypes = {
   article: React.PropTypes.shape({
     issue: React.PropTypes.number.isRequired,
     slug: React.PropTypes.string.isRequired,
-    image: React.PropType.string.isRequired,
+    id: React.PropTypes.number.isRequired,
+    image: React.PropTypes.string.isRequired,
     title: React.PropTypes.string.isRequired,
     hook: React.PropTypes.isRequired,
   }),
