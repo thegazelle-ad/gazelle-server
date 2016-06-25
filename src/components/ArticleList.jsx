@@ -1,5 +1,5 @@
 import React from 'react';
-import ArticlePreview from 'src/components/ArticlePreview';
+import ArticlePreview from 'components/ArticlePreview';
 
 // TODO: create controller component to fetch list of articles in issue
 export default class ArticleList extends React.Component {
