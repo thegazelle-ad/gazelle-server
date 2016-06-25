@@ -11,9 +11,11 @@ import FalcorController from 'lib/falcor/FalcorController';
 import FalcorRouter from 'lib/falcor/FalcorRouter';
 import { injectModelCreateElement } from 'lib/falcor/falcorUtils';
 
+// *********************************************
 // Load in static issue articles for development
-import articles from '../static/sample-issue/posts.js';
-import authors from '../static/sample-issue/authors.js';
+// *********************************************
+import data from '../static/sample-issue/posts.js';
+//import authors from '../static/sample-issue/authors.js';
 
 // Allow node to use sourcemaps
 sourcemap.install();
@@ -44,23 +46,32 @@ const buildHtmlString = (body, cache) => {
 // Shared serverModel
 // You can also hardcode / stub parts of the model here
 const serverModel = new falcor.Model({
-  cache: {
-    articles:articles,
-    authors:authors,
-  },
+  cache: data,
   source: new FalcorRouter(),
 }).batch();
 
 // Asynchronously render this application
 // Returns a promise
 const renderApp = (renderProps) => {
-  const falcorPaths = _.compact(renderProps.routes.map((route) => {
+  let falcorPaths = _.compact(renderProps.routes.map((route) => {
     const component = route.component;
     if (component.prototype instanceof FalcorController) {
       return component.getFalcorPath(renderProps.params);
     }
     return null;
   }));
+
+// Merging pathsets
+var temp = [];
+falcorPaths.forEach((pathSet) => {
+  if (pathSet[0] instanceof Array) {
+    temp = temp.concat(pathSet);
+  }
+  else {
+    temp.push(pathSet);
+  }
+});
+falcorPaths = temp;
 
   // create a new model for this specific request
   // the reason we do this is so that the serverModel

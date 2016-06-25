@@ -3,31 +3,58 @@ import { Link } from 'react-router';
 
 export default class ArticlePreview extends React.Component {
 
-  loadPost(e) {
-    e.preventDefault();
-    // LOAD_ARTICLE action
-  }
-
   render () {
     var article = this.props.article;
+
+    // Render all contributing authors
+    function renderAuthors() {
+      // Return nothing if no authors listed
+      return (article.authors || []).map((author) => {
+          <div>
+            <Link to={'/author/' + author.slug}>
+              {author.name}
+            </Link>
+          </div>
+      });
+    }
+
     return (
       <div>
+        {/*
+          Featured image
+          TODO: change article image path before release
+        */}
         <img src={article.image} alt="featured" />
-        // TODO: ensure ArticlePreview can handle multiple authors
-        <Link to={`/$(article.author)`}>{article.author}</Link>
-        <Link to={`/$(article.issue)/$(article.slug)`}>{article.title}</Link>
+
+        {/* Author(s) */}
+        {renderAuthors()}
+
+        {/*
+          Article title with link to article
+          Link format: thegazelle.org/issue/:issueId/:articleCategory/:articleSlug
+        */}
+        <Link to={'/issue/' + article.issueId + '/' + article.category + '/' + article.slug}>
+          {article.title}
+        </Link>
+
+        {/* Article teaser */}
+        <p>{article.teaser}</p>
       </div>
     );
   }
 }
 
-// Validate shape of JSON object
+// Validate shape of article JSON object
 ArticlePreview.propTypes = {
   article: React.PropTypes.shape({
-    issue: React.PropTypes.number.isRequired,
-    slug: React.PropTypes.string.isRequired,
-    image: React.PropType.string.isRequired,
     title: React.PropTypes.string.isRequired,
-    description: React.PropTypes.isRequired,
+    image: React.PropTypes.string.isRequired,
+    slug: React.PropTypes.string.isRequired,
+    issueId: React.PropTypes.string.isRequired,
+    category: React.PropTypes.string.isRequired,
+    teaser: React.PropTypes.string.isRequired,
   }),
+  issueId: React.PropTypes.string.isRequired,
 }
+
+//    authors: React.PropTypes.array.isRequired,

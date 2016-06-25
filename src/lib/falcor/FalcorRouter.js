@@ -32,7 +32,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
         })(results);
       })
     }
-  }
+  },
 ])
 // Begin actual class methods below
 {
