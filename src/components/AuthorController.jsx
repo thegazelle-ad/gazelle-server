@@ -4,7 +4,7 @@ import FalcorController from 'lib/falcor/FalcorController';
 
 export default class AuthorController extends FalcorController {
   static getFalcorPath(params) {
-    return ['authors', parseInt(params.authorId), ["name", "biography"]];
+    return ['authors', parseInt(params.authorId), ["name", "biography", "slug"]];
   }
 
   render() {
@@ -13,7 +13,7 @@ export default class AuthorController extends FalcorController {
       const authorData = this.state.data.authors[parseInt(this.props.params.authorId)];
       return (
         <div>
-          <h2>Controller for author: {this.props.params.authorId}</h2>
+          <div>Controller for author: {authorData.name}</div>
           <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
           <Author name={authorData.name} biography={authorData.biography} />
         </div>

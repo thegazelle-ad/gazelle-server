@@ -4,7 +4,7 @@ import FalcorController from 'lib/falcor/FalcorController';
 
 export default class ArticleController extends FalcorController {
   static getFalcorPath(params) {
-    return ['articles', parseInt(params.articleId), ["title", "body"]];
+    return ['articles', parseInt(params.articleId), ["title", "body", "slug", "html"]];
   }
 
   render() {
@@ -13,11 +13,11 @@ export default class ArticleController extends FalcorController {
       const articleData = this.state.data.articles[parseInt(this.props.params.articleId)];
       return (
         <div>
-          <h2>Controller for article: {this.props.params.articleId}</h2>
+          <div>Controller for article: {articleData.title}</div>
           <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
           <Article
             title={articleData.title}
-            body={articleData.body}
+            html={articleData.html}
           />
         </div>
       );

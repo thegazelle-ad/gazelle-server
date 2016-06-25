@@ -8,8 +8,8 @@ export default class Navigation extends React.Component {
         <h1>{this.props.appName}</h1>
         <ul>
           <li><Link to="/">Home</Link></li>
-          <li><Link to="/article/0">Article</Link></li>
-          <li><Link to="/author/0">Author</Link></li>
+          <li><Link to="/article/0/palestine-hamilton">Article</Link></li>
+          <li><Link to="/author/0/ahmed-meshref">Author</Link></li>
         </ul>
       </div>
     )

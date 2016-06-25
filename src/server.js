@@ -11,7 +11,9 @@ import FalcorController from 'lib/falcor/FalcorController';
 import FalcorRouter from 'lib/falcor/FalcorRouter';
 import { injectModelCreateElement } from 'lib/falcor/falcorUtils';
 
+// *********************************************
 // Load in static issue articles for development
+// *********************************************
 import articles from '../static/sample-issue/posts.js';
 import authors from '../static/sample-issue/authors.js';
 
