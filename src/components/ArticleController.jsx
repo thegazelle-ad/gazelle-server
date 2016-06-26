@@ -4,7 +4,7 @@ import FalcorController from 'lib/falcor/FalcorController';
 
 export default class ArticleController extends FalcorController {
   static getFalcorPath(params) {
-    return ['articles', parseInt(params.articleId), ["title", "body", "slug", "html"]];
+    return ['articles', parseInt(params.articleId), ["title", "slug", "html"]];
   }
 
   render() {
