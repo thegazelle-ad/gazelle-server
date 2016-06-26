@@ -9,7 +9,8 @@ export default class Navigation extends React.Component {
         <ul>
           <li><Link to="/">Home</Link></li>
           <li><Link to="/article/0/palestine-hamilton">Article</Link></li>
-          <li><Link to="/author/0/ahmed-meshref">Author</Link></li>
+          <li><Link to="/issue/55/opinion/palestine-hamilton">New Article</Link></li>
+          <li><Link to="/author/ahmed-meshref">New Author</Link></li>
         </ul>
       </div>
     )
