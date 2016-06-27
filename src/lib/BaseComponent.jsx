@@ -10,22 +10,17 @@ const shallowEquals = (objA, objB) => {
     return false;
   }
 
-  var keysA = Object.keys(objA);
-  var keysB = Object.keys(objB);
+  let keysA = Object.keys(objA);
+  let keysB = Object.keys(objB);
 
   if (keysA.length !== keysB.length) {
     return false;
   }
 
   // Test for A's keys different from B.
-  var bHasOwnProperty = Object.prototype.hasOwnProperty.bind(objB);
-  for (var i = 0; i < keysA.length; i++) {
-    if (!bHasOwnProperty(keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
-      return false;
-    }
-  }
-
-  return true;
+  return keysA.every((key) => {
+    return (objB.hasOwnProperty(key) && objA[key] === objB[key]);
+  });
 };
 
 // Abstract class with utility functions
@@ -45,8 +40,8 @@ export default class BaseComponent extends React.Component {
 
   // Pure render by default
   shouldComponentUpdate(nextProps, nextState) {
-    return !(shallowEquals(nextProps, this.props)
-      && shallowEquals(nextState, this.state));
+    return (!shallowEquals(nextProps, this.props)
+      || !shallowEquals(nextState, this.state));
   }
 
   componentWillUnmount() {

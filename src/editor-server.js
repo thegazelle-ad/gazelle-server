@@ -6,16 +6,14 @@ import _ from 'lodash';
 import { renderToString } from 'react-dom/server';
 import { match, RouterContext } from 'react-router';
 import sourcemap from 'source-map-support';
-import routes from 'lib/routes';
+import routes from 'lib/editor-routes';
 import FalcorController from 'lib/falcor/FalcorController';
 import FalcorRouter from 'lib/falcor/FalcorRouter';
 import { injectModelCreateElement } from 'lib/falcor/falcorUtils';
 
-// *********************************************
 // Load in static issue articles for development
-// *********************************************
-import data from '../static/sample-issue/posts.js';
-//import authors from '../static/sample-issue/authors.js';
+import articles from '../static/sample-issue/posts.js';
+import authors from '../static/sample-issue/authors.js';
 
 // Allow node to use sourcemaps
 sourcemap.install();
@@ -24,9 +22,12 @@ sourcemap.install();
 const buildHtmlString = (body, cache) => {
   return (
     `<!DOCTYPE html>
-      <html>
+      <html style>
         <head>
-          <title>Hello World</title>
+          <title>Gazelle Editor Tools</title>
+          <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+          <link rel="stylesheet" type="text/css" href="/editorStyles.css">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
         </head>
         <body>
           <div id="main">`
@@ -37,7 +38,7 @@ const buildHtmlString = (body, cache) => {
             ` + JSON.stringify(cache) + `
             ;
           </script>
-          <script src="/build/client.js"></script>
+          <script src="/build/editor-client.js"></script>
         </body>
       </html>`
   );
@@ -46,8 +47,11 @@ const buildHtmlString = (body, cache) => {
 // Shared serverModel
 // You can also hardcode / stub parts of the model here
 const serverModel = new falcor.Model({
-  cache: data,
-  source: new FalcorRouter(),
+  /*cache: {
+    articlesBySlug:articles,
+    authorsBySlug:authors, 
+  },*/
+  source: new FalcorRouter()
 }).batch();
 
 // Asynchronously render this application
@@ -70,18 +74,6 @@ const renderApp = (renderProps) => {
       return currentPathSets;
     }
   }, []);
-
-// Merging pathsets
-var temp = [];
-falcorPaths.forEach((pathSet) => {
-  if (pathSet[0] instanceof Array) {
-    temp = temp.concat(pathSet);
-  }
-  else {
-    temp.push(pathSet);
-  }
-});
-falcorPaths = temp;
 
   // create a new model for this specific request
   // the reason we do this is so that the serverModel

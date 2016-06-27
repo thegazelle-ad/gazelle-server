@@ -8,8 +8,7 @@ import IssueController from "components/IssueController";
 import articles from "../../static/sample-issue/posts.js";
 
 export default class AppController extends FalcorController {
-  static getFalcorPath() {
-    return (['appName']);
+  static getFalcorPathSets() {
   }
 
   componentDidMount() {
@@ -22,7 +21,7 @@ export default class AppController extends FalcorController {
   render() {
     return (
       <div>
-        <Navigation appName={this.state.data.appName} />
+        <Navigation appName={"The Gazelle"} />
         <div>
           {this.props.children}
         </div>
