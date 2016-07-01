@@ -11,7 +11,11 @@ export default class ArticleController extends FalcorController {
   render() {
     console.log("RENDERING ARTICLE CONTROLLER");
     if (this.state.ready) {
-      const articleData = this.state.data.articles[this.props.params.articleSlug];
+      var issueId = this.props.params.issueId;
+      var articleCategory = this.props.params.articleCategory;
+      var articleSlug = this.props.params.articleSlug;
+      const articleData = this.state.data.issues[issueId["articles"[articleCategory[articleSlug]]]];
+
       return (
         <div>
           <div>Controller for article: {articleData.title}</div>
