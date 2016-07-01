@@ -4,14 +4,14 @@ import FalcorController from 'lib/falcor/FalcorController';
 
 export default class ArticleController extends FalcorController {
   static getFalcorPath(params) {
-    // Format: thegazelle.org/issue/:issueId/:category/:articleSlug
-    return ["data", "articles", params.issueId, params.category, params.articleSlug, ["title", "slug", "html"]];
+    // Format: thegazelle.org/issue/:issueId/:articleCategory/:articleSlug
+    return ["issues", params.issueId, "articles", params.articleCategory, params.articleSlug, ["title", "html"]];
   }
 
   render() {
     console.log("RENDERING ARTICLE CONTROLLER");
     if (this.state.ready) {
-      const articleData = this.state.data.articles[this.props.params.issueId];
+      const articleData = this.state.data.articles[this.props.params.articleSlug];
       return (
         <div>
           <div>Controller for article: {articleData.title}</div>

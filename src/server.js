@@ -46,9 +46,7 @@ const buildHtmlString = (body, cache) => {
 // Shared serverModel
 // You can also hardcode / stub parts of the model here
 const serverModel = new falcor.Model({
-  cache: {
-    data:data,
-  },
+  cache: data,
   source: new FalcorRouter(),
 }).batch();
 

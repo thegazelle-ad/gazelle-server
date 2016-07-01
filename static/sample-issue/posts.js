@@ -1,15 +1,17 @@
 const data = {
   issues: {
-    55: {
+    "55": {
       pubDate: "May 1, 2016", // TODO: convert to unix time and format with Moment.js before release
-      opinion: {
-        "palestine-hamilton": { $type: "ref", value: ["articlesById", 0] },
-      },
-      features: {
-        "remembering-ruben": { $type: "ref", value: ["articlesById", 1] },
-      },
-      news: {
-        "parents": { $type: "ref", value: ["articlesById", 2] },
+      articles: {
+        opinion: {
+          "palestine-hamilton": { $type: "ref", value: ["articlesById", 0] },
+        },
+        features: {
+          "remembering-ruben": { $type: "ref", value: ["articlesById", 1] },
+        },
+        news: {
+          "parents": { $type: "ref", value: ["articlesById", 2] },
+        },
       },
     },
   },
@@ -22,8 +24,9 @@ const data = {
   },
 
   // JSON Graph structure maintains data by reference rather than by duplication
+  // to avoid stale data
   articlesById: {
-    0: {
+    "0": {
       title: "President Hamilton's Response to BDS is Unacceptable",
       image: "/images/palestine-hamilton.jpg",
       teaser: "This is a sample article description. This is meant to grab the reader's attention. It should be no longer than one hundred & 40 characters.",
@@ -34,7 +37,7 @@ const data = {
         { $type: "ref", value: ["authorsById", 2] },
       ],
     },
-    1: {
+    "1": {
       title: "Remembering Rubén",
       image: "/images/remembering-ruben.jpg",
       teaser: "This is a sample article description. This is meant to grab the reader's attention. It should be no longer than one hundred & 40 characters.",
@@ -44,7 +47,7 @@ const data = {
         { $type: "ref", value: ["authorsById", 1] },
       ],
     },
-    2: {
+    "2": {
       title: "Introduction of College Parents Program at NYUAD",
       image: "/images/parents.jpg",
       teaser: "This is a sample article description. This is meant to grab the reader's attention. It should be no longer than one hundred & 40 characters.",
@@ -57,7 +60,7 @@ const data = {
   },
 
   authorsById: {
-    0: {
+    "0": {
       name: 'Ahmed Meshref',
       photo: '/images/authors/author.png',
       biography: "This is Ahmed Meshref's biography.",
@@ -65,7 +68,7 @@ const data = {
         { $type: "ref", value: ["articlesById", 2] },
       ],
     },
-    1: {
+    "1": {
       name: 'Rend Beiruti',
       photo: '/images/authors/author.png',
       biography: "This is Rend Beiruti's biography.",
@@ -73,7 +76,7 @@ const data = {
         { $type: "ref", value: ["articlesById", 1] },
       ],
     },
-    2: {
+    "2": {
       name: 'Daniah Kheetan',
       photo: '/images/authors/author.png',
       biography: "This is Daniah Kheetan's biography.",
@@ -81,7 +84,7 @@ const data = {
         { $type: "ref", value: ["articlesById", 0] },
       ],
     },
-    3: {
+    "3": {
       name: 'Tala Nassar',
       photo: '/images/authors/author.png',
       biography: "This is Tala Nassar's biography.",
@@ -91,4 +94,5 @@ const data = {
     },
   },
 };
+
 export default data;
