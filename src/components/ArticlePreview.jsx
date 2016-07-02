@@ -6,26 +6,37 @@ export default class ArticlePreview extends React.Component {
   render () {
     var article = this.props.article;
 
-    // TODO: ensure ArticlePreview can handle multiple authors
-    // TODO: edit link routing and remove /0/
+    // Render all contributing authors
+    function renderAuthors() {
+      if(article.authors.length > 0){
+        return article.authors.map((author) => {
+            <div>
+              <Link to={'/author/' + author.slug}>
+                {author.name}
+              </Link>
+            </div>
+        });
+      }
+    }
+
     return (
       <div>
-        <div>
-          <img src={article.image} alt="featured" />
-        </div>
-        <div>
-          <Link to={'/author/0/' + article.author}>
-            {article.author}
-          </Link>
-        </div>
-        <div>
-          <Link to={'/article/' + article.id + '/' + article.slug}>
-            {article.title}
-          </Link>
-        </div>
-        <div>
-          <p>{article.hook}</p>
-        </div>
+        {/* Featured image */}
+        <img src={article.image} alt="featured" />
+
+        {/* Author(s) */}
+        {renderAuthors()}
+
+        {/*
+          Article title with link to article
+          Link format: thegazelle.org/issue/:issueId/:articleCategory/:articleSlug
+        */}
+        <Link to={'/issue/' + article.issueId + '/' + article.category + '/' + article.slug}>
+          {article.title}
+        </Link>
+
+        {/* Article teaser */}
+        <p>{article.teaser}</p>
       </div>
     );
   }
@@ -34,11 +45,13 @@ export default class ArticlePreview extends React.Component {
 // Validate shape of article JSON object
 ArticlePreview.propTypes = {
   article: React.PropTypes.shape({
-    issue: React.PropTypes.number.isRequired,
-    slug: React.PropTypes.string.isRequired,
-    id: React.PropTypes.number.isRequired,
-    image: React.PropTypes.string.isRequired,
     title: React.PropTypes.string.isRequired,
-    hook: React.PropTypes.isRequired,
+    image: React.PropTypes.string.isRequired,
+    slug: React.PropTypes.string.isRequired,
+    issueId: React.PropTypes.string.isRequired,
+    category: React.PropTypes.string.isRequired,
+    teaser: React.PropTypes.string.isRequired,
+    authors: React.PropTypes.array.isRequired,
   }),
+  issueId: React.PropTypes.string.isRequired,
 }
