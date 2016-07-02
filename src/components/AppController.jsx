@@ -17,13 +17,13 @@ export default class AppController extends FalcorController {
     setAppReady();
   }
 
-// <ArticleList key={articles.id} articles={articles} />
+  //<ArticleList key={articles.id} articles={articles} />
 
   render() {
     return (
       <div>
         <Navigation appName={this.state.data.appName} />
-
+        
         <div>
           {this.props.children}
         </div>

@@ -9,6 +9,7 @@ export default class AuthorController extends FalcorController {
     return ["authors", params.authorSlug, ["name", "biography"]];
   }
 
+  // TODO: list all articles written by author x
   render() {
     console.log("RENDERING AUTHOR CONTROLLER");
     if (this.state.ready) {
