@@ -6,7 +6,7 @@ export default class AuthorController extends FalcorController {
   static getFalcorPath(params) {
     // // Format: thegazelle.org/author/:authorSlug
     // TODO: add full author parameters: ["name", "biography", "articles", [{"from": 0, "to": 10}, "title", "image", "description"]]]
-    return ["authors", params.authorSlug, ["name", "biography"]];
+    return ["authors", params.authorSlug, ["name", "biography", "articles", [{"from": 0, "to": 10}, "title"]]];
   }
 
   // TODO: list all articles written by author x
@@ -14,6 +14,7 @@ export default class AuthorController extends FalcorController {
     console.log("RENDERING AUTHOR CONTROLLER");
     if (this.state.ready) {
       const authorData = this.state.data.authors[this.props.params.authorSlug];
+      console.log("Articles: " + authorData.articles);
       return (
         <div>
           <div>Controller for author: {authorData.name}</div>

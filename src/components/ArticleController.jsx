@@ -5,18 +5,18 @@ import FalcorController from 'lib/falcor/FalcorController';
 export default class ArticleController extends FalcorController {
   static getFalcorPath(params) {
     // Format: thegazelle.org/issue/:issueId/:articleCategory/:articleSlug
-    return ["issues", params.issueId, "articles", params.articleCategory, params.articleSlug, ["title", "html"]];
+    return ["issues", params.issueId, "articles", params.articleCategory, params.articleSlug, ["title", "html", "authors", [{"from": 0, "to": 10}, "name", "slug"]]];
   }
 
   render() {
     console.log("RENDERING ARTICLE CONTROLLER");
     if (this.state.ready) {
-      var issueId = this.props.params.issueId;
-      var articleCategory = this.props.params.articleCategory;
-      var articleSlug = this.props.params.articleSlug;
+      let issueId = this.props.params.issueId;
+      let articleCategory = this.props.params.articleCategory;
+      let articleSlug = this.props.params.articleSlug;
       // Access data fetched via Falcor
       const articleData = this.state.data.issues[issueId]["articles"][articleCategory][articleSlug];
-
+      console.log("Authors: " + articleData.authors);
       return (
         <div>
           <div>Controller for article: {articleData.title}</div>

@@ -21,7 +21,10 @@ export default class ArticlePreview extends React.Component {
 
     return (
       <div>
-        {/* Featured image */}
+        {/*
+          Featured image
+          TODO: change article image path before release
+        */}
         <img src={article.image} alt="featured" />
 
         {/* Author(s) */}
@@ -51,7 +54,9 @@ ArticlePreview.propTypes = {
     issueId: React.PropTypes.string.isRequired,
     category: React.PropTypes.string.isRequired,
     teaser: React.PropTypes.string.isRequired,
-    authors: React.PropTypes.array.isRequired,
+
   }),
   issueId: React.PropTypes.string.isRequired,
 }
+
+//    authors: React.PropTypes.array.isRequired,
