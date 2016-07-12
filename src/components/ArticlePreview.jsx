@@ -8,15 +8,14 @@ export default class ArticlePreview extends React.Component {
 
     // Render all contributing authors
     function renderAuthors() {
-      if(article.authors.length > 0){
-        return article.authors.map((author) => {
-            <div>
-              <Link to={'/author/' + author.slug}>
-                {author.name}
-              </Link>
-            </div>
-        });
-      }
+      // Return nothing if no authors listed
+      return (article.authors || []).map((author) => {
+          <div>
+            <Link to={'/author/' + author.slug}>
+              {author.name}
+            </Link>
+          </div>
+      });
     }
 
     return (
@@ -54,7 +53,6 @@ ArticlePreview.propTypes = {
     issueId: React.PropTypes.string.isRequired,
     category: React.PropTypes.string.isRequired,
     teaser: React.PropTypes.string.isRequired,
-
   }),
   issueId: React.PropTypes.string.isRequired,
 }

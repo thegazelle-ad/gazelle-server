@@ -1,11 +1,11 @@
-// Render home page data as all articles from respective issue
+// Render article preview data as all articles from respective issue
 // Parents: AppController
 // Children: ArticleList
 
 import React from "react";
 import ArticleList from "components/ArticleList";
 
-export default class ArticleListController extends React.Component {
+export default class IssueController extends React.Component {
   // Render top article
   // Render Editor's Picks and trending sections
   // Render categories
@@ -20,7 +20,7 @@ export default class ArticleListController extends React.Component {
   }
 }
 
-ArticleListController.propTypes = {
+IssueController.propTypes = {
     // article: React.PropTypes.shape({
     //   title: React.PropTypes.string.isRequired,
     //   image: React.PropTypes.string.isRequired,

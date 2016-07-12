@@ -26,5 +26,5 @@ export default class Article extends React.Component {
 Article.propTypes = {
   title: React.PropTypes.string.isRequired,
   html: React.PropTypes.string.isRequired,
-  authors: React.PropTypes.array,
+  authors: React.PropTypes.array.isRequired,
 }

@@ -2,7 +2,7 @@ import React from "react";
 import FalcorController from "../lib/falcor/FalcorController";
 import { setAppReady } from "lib/falcor/falcorUtils";
 import Navigation from "components/Navigation";
-import ArticleListController from "components/ArticleListController";
+import IssueController from "components/IssueController";
 
 // Importing static articles
 import articles from "../../static/sample-issue/posts.js";
