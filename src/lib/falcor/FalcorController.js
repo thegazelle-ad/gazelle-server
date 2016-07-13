@@ -30,46 +30,71 @@ export default class FalcorController extends BaseComponent {
   }
 
   // Retrieves all the data for this component from the Falcor cache
-  // and store on state. Used for server side render and first client side render
-  // this should always contain all the data the component needs
-  loadFalcorCache() {
-    console.log("LOADING FROM CACHE")
-    const falcorPath = this.constructor.getFalcorPath(this.props.params)
+ // and store on state. Used for server side render and first client side render
+ // this should always contain all the data the component needs
+ loadFalcorCache() {
+   console.log("LOADING FROM CACHE")
+   let falcorPath = this.constructor.getFalcorPath(this.props.params)
+   // If the component doesn't want any data
+   if (falcorPath === undefined || falcorPath.length === 0) {
+     console.log("NO PATHS WERE GIVEN");
+     this.safeSetState({
+       ready: true,
+       data: null
+     })
+     return;
+   }
+   // If we're only passing a single pathSet we compensate for the spread operator
+   if (!(falcorPath[0] instanceof Array)) {
+     falcorPath = [falcorPath];
+   }
 
-    const data = this.props.model.getCache(falcorPath)
-    if (data) {
-      this.safeSetState({
-        ready: true,
-        data: data
-      })
-    } else {
-      throw new Error("Serverside render of component: " + this.constructor.name +
-                      " failed. Data not in cache")
-    }
-  }
+   const data = this.props.model.getCache(...falcorPath);
+   if (data) {
+     this.safeSetState({
+       ready: true,
+       data: data
+     })
+   } else {
+     throw new Error("Serverside render of component: " + this.constructor.name +
+                     " failed. Data not in cache")
+   }
+ }
 
-  // Makes falcor fetch its paths
-  falcorFetch(falcorPath) {
-    console.log("STARTING FETCH")
-
-    // Then if we are a client, we can try to do a fetch as well
-    this.safeSetState({fetching: false})
-    this.props.model.get(falcorPath).then((x) => {
-      console.log("FALCOR FETCH COMPLETED")
-      if (x) {
-        this.safeSetState({
-          ready: true,
-          fetching: false,
-          data: x.json
-        })
-      } else {
-        throw new Error("FalcorPath: " + falcorPath + " returned no data")
-      }
-    }).catch((e) => {
-      console.error("Failed to fetch for falcorPath: " + falcorPath)
-      console.error(e.stack)
-    })
-  }
+ // Makes falcor fetch its paths
+ falcorFetch(falcorPath) {
+   console.log("STARTING FETCH")
+   // If the component doesn't want any data
+   if (falcorPath === undefined || falcorPath.length === 0) {
+     console.log("NO PATHS WERE GIVEN");
+     this.safeSetState({
+       ready: true,
+       data: null
+     })
+     return;
+   }
+   // If we're only passing a single pathSet we compensate for the spread operator
+   if (!(falcorPath[0] instanceof Array)) {
+     falcorPath = [falcorPath];
+   }
+   // Then if we are a client, we can try to do a fetch as well
+   this.safeSetState({fetching: false})
+   this.props.model.get(...falcorPath).then((x) => {
+     console.log("FALCOR FETCH COMPLETED")
+     if (x) {
+       this.safeSetState({
+         ready: true,
+         fetching: false,
+         data: x.json
+       });
+     } else {
+       throw new Error("FalcorPath: " + falcorPath + " returned no data")
+     }
+   }).catch((e) => {
+     console.error("Failed to fetch for falcorPath: " + falcorPath)
+     console.error(e.stack)
+   })
+ }
 
   // If the new props requires a new falcor call
   // this will pick it up and refresh the falcor state

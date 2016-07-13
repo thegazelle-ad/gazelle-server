@@ -61,6 +61,18 @@ const renderApp = (renderProps) => {
     return null;
   }));
 
+// Merging pathsets
+var temp = [];
+falcorPaths.forEach((pathSet) => {
+  if (pathSet[0] instanceof Array) {
+    temp = temp.concat(pathSet);
+  }
+  else {
+    temp.push(pathSet);
+  }
+});
+falcorPaths = temp;
+
   // create a new model for this specific request
   // the reason we do this is so that the serverModel
   // cache won't expire records we need during the unlikely
