@@ -32,13 +32,13 @@ export default class IssueController extends FalcorController {
     console.log("RENDERING ISSUE CONTROLLER");
 
     var renderArticleLists = () => {
-      var rows = [];
+      var data = [];
       let categories = issueData.articles;
       console.log(categories);
       for (let category in categories) {
         if (categories.hasOwnProperty(category)) {
           console.log("Category: " + category);
-          rows.push(
+          data.push(
             <h2>{category}</h2>
           )
           let articles = categories[category];
@@ -46,7 +46,7 @@ export default class IssueController extends FalcorController {
             if (category.hasOwnProperty(article)) {
               var a = articles[article];
               console.log("Article: " + a.title);
-              rows.push(
+              data.push(
                 <div>
                   <Link to={'/issue/' + a.issueId + '/' + a.category + '/' + a.slug}>
                     {a.title}
@@ -58,12 +58,7 @@ export default class IssueController extends FalcorController {
           }
         }
       }
-      return rows;
-      // return this.props.authors.map((author) => {
-      //     <Link to={'/author/' + author.slug}>
-      //       {author.name}
-      //     </Link>
-      // });
+      return data;
     }
 
     if (this.state.ready) {
