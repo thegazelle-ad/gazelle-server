@@ -1,5 +1,5 @@
 import _ from "lodash"
-import { isAppReady } from "lib/falcor/falcorUtils"
+import { isAppReady, expandCache } from "lib/falcor/falcorUtils"
 import BaseComponent from "lib/BaseComponent"
 
 // Abstract class for fetching falcor objects
@@ -49,7 +49,7 @@ export default class FalcorController extends BaseComponent {
      falcorPath = [falcorPath];
    }
 
-   const data = this.props.model.getCache(...falcorPath);
+   const data = expandCache(this.props.model.getCache(...falcorPath));
    if (data) {
      this.safeSetState({
        ready: true,

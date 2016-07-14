@@ -19,7 +19,7 @@ export default class ArticleController extends FalcorController {
       let articleSlug = this.props.params.articleSlug;
       // Access data fetched via Falcor
       const articleData = this.state.data.articlesBySlug[articleSlug];
-      console.log("Data: " + JSON.stringify(articleData.authors));
+      console.log("Data: " + JSON.stringify(articleData));
       return (
         <div>
           <div>Controller for article: {articleData.title}</div>
