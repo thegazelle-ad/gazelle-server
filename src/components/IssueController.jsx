@@ -16,17 +16,38 @@ export default class IssueController extends FalcorController {
     // URL Format: thegazelle.org/issue/:issueId/:articleCategory/:articleSlug
 
     // Multilevel request requires Falcor Path for each level of data requested
+    // TODO: change hardcoded issueId
     return [
-      ["issues", params.issueId, ["pubDate", "articles"]],
+      ["issues", 55, ["pubDate"]],
+      ["issues", 55, "articles", ["opinion", "features", "news"], {to: 30}, ["title", "teaser"]],
     ];
   }
 
   render () {
-    return (
-      <div>
-        test
-      </div>
-    )
+    console.log("RENDERING ISSUE CONTROLLER");
+    // renderArticleLists () {
+    //
+    // }
+
+    if (this.state.ready) {
+      let issueId = 55;
+      const issueData = this.state.data.issues[issueId];
+      console.log("Data: " + JSON.stringify(issueData));
+
+      return (
+        <div>
+          <div>Controller for issue: {issueId}</div>
+          <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
+          {/*renderArticleLists(issueData.articles)*/}
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <h1>Loading</h1>
+        </div>
+      );
+    }
   }
 }
 
@@ -35,5 +56,5 @@ IssueController.propTypes = {
       pubDate: React.PropTypes.string,
       articles: React.PropTypes.object,
     }),
-    issueId: React.PropTypes.string.isRequired,
+    issueId: React.PropTypes.string,
 }
