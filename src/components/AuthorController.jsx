@@ -4,17 +4,22 @@ import FalcorController from 'lib/falcor/FalcorController';
 
 export default class AuthorController extends FalcorController {
   static getFalcorPath(params) {
-    // // Format: thegazelle.org/author/:authorSlug
-    // TODO: add full author parameters: ["name", "biography", "articles", [{"from": 0, "to": 10}, "title", "image", "description"]]]
-    return ["authors", params.authorSlug, ["name", "biography", "articles", [{"from": 0, "to": 10}, "title"]]];
+    // URL Format: thegazelle.org/author/:authorSlug
+
+    // Multilevel request requires Falcor Path for each level of data requested
+    return [
+      ["authorsBySlug", params.authorSlug, ["name", "biography"]],
+      ["authorsBySlug", params.authorSlug, "articles", {"from": 0, "to": 10}, ["title", "image", "teaser"]],
+    ];
   }
 
   // TODO: list all articles written by author x
   render() {
     console.log("RENDERING AUTHOR CONTROLLER");
     if (this.state.ready) {
-      const authorData = this.state.data.authors[this.props.params.authorSlug];
-      console.log("Articles: " + authorData.articles);
+      let authorSlug = this.props.params.authorSlug;
+      const authorData = this.state.data.authorsBySlug[authorSlug];
+      //console.log("Articles: " + authorData.articles);
       return (
         <div>
           <div>Controller for author: {authorData.name}</div>

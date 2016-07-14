@@ -53,7 +53,7 @@ const serverModel = new falcor.Model({
 // Asynchronously render this application
 // Returns a promise
 const renderApp = (renderProps) => {
-  const falcorPaths = _.compact(renderProps.routes.map((route) => {
+  let falcorPaths = _.compact(renderProps.routes.map((route) => {
     const component = route.component;
     if (component.prototype instanceof FalcorController) {
       return component.getFalcorPath(renderProps.params);
