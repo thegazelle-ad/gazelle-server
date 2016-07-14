@@ -12,15 +12,33 @@ export default class ArticleList extends React.Component {
     // Returns list of <ArticlePreview/> components with their respective posts
     // TODO: sort article previews by category
     // TODO: establish featured article, editor's picks, and trending sections
-    var articles = this.props.articles.map(function(article){
-      return (
-        <ArticlePreview key={article.id} article={article} />
-      );
-    });
+    var renderArticles = () => {
+      console.log("test");
+      articles = this.props.articles;
+      for (let article in articles) {
+        if (category.hasOwnProperty(article)) {
+          var a = articles[article];
+          console.log("Article: " + a.title);
+          return (
+            <div>
+              <br />
+              <Link to={'/issue/' + a.issueId + '/' + a.category + '/' + a.slug}>
+                {a.title}
+              </Link>
+              <p>{a.teaser}</p>
+            </div>
+          )
+        }
+      }
+      // return (
+      //   <ArticlePreview key={article.id} article={article} />
+      // );
+    };
 
     return (
       <div>
-        {articles}
+        {console.log("test")}
+        {renderArticles()}
       </div>
     );
   }
@@ -28,5 +46,5 @@ export default class ArticleList extends React.Component {
 
 // Formatted as list of objects
 ArticleList.propTypes = {
-  articles: React.PropTypes.array.isRequired,
+  articles: React.PropTypes.object.isRequired,
 }
