@@ -16,7 +16,7 @@ The Gazelle's website was redesigned from the ground up during the 2015-2016 aca
 
 ## Development
 
-For technical documentation, see our [wiki](https://github.com/thegazelle-ad/gazelle-front-end/wiki) page. To get the site up and running locally, check out the [setting up](https://github.com/thegazelle-ad/gazelle-front-end/wiki/Setting-Up) page.
+For technical documentation and instructions on getting the site up and running locally, see our [wiki](https://github.com/thegazelle-ad/gazelle-front-end/wiki) page.
 
 ## Join the Herd
 
