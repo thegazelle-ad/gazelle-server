@@ -14,7 +14,7 @@ export default (
     <Route path="issue/:issueId/:articleCategory/:articleSlug" component={ArticleController} />
     <Route path="author/:authorSlug" component={AuthorController} />
     <Route path="issue/:issueId" component={IssueController} />
-    <Route path="/:category" component={CategoryController} />
+    <Route path="category/:category" component={CategoryController} />
     <IndexRoute component={IssueController} />
   </Route>
 );
