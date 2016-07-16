@@ -40,6 +40,7 @@ const data = {
   articlesBySlug: {
     "palestine-hamilton": {
       title: "President Hamilton's Response to BDS is Unacceptable",
+      uuid: "031adfd5-186c-4a96-b0b6-48287c343358",
       image: "/images/palestine-hamilton.jpg",
       slug: "palestine-hamilton",
       issueId: "55",
@@ -54,6 +55,7 @@ const data = {
     },
     "remembering-ruben": {
       title: "Remembering Rubén",
+      uuid: "65ab3e5d-8e31-4f01-9572-c62ef4ce092e",
       image: "/images/remembering-ruben.jpg",
       slug: "remembering-ruben",
       issueId: "55",
@@ -67,6 +69,7 @@ const data = {
     },
     "parents": {
       title: "Introduction of College Parents Program at NYUAD",
+      uuid: "0f5e8fbe-4b16-11e6-beb8-9e71128cae77",
       image: "/images/parents.jpg",
       slug: "parents",
       issueId: "55",
