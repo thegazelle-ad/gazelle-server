@@ -20,7 +20,7 @@ For technical documentation and instructions on getting the site up and running 
 
 ## Join the Herd
 
-The Gazelle's website is managed by a team of dedicated student web developers. If you'd like to be part of the development team or any other aspect of The Gazelle, shoot an email to <*humans@thegazelle.org or some Gazelle email address like that*>.
+The Gazelle's website is managed by a team of dedicated student web developers. If you'd like to be part of the development team or any other aspect of The Gazelle, shoot an email to [zane.mountcastle@nyu.edu](mailto:zane.mountcastle@nyu.edu).
 
 ## License
 
