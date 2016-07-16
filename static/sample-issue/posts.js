@@ -16,6 +16,18 @@ const data = {
     },
   },
 
+  categories: {
+    opinion: {
+      "0": { $type: "ref", value: ["articlesBySlug", "palestine-hamilton"] },
+    },
+    features: {
+      "0": { $type: "ref", value: ["articlesBySlug", "remembering-ruben"] },
+    },
+    news: {
+      "0": { $type: "ref", value: ["articlesBySlug", "parents"] },
+    },
+  },
+
   authors: {
     "0": { $type: "ref", value: ["authorsBySlug", "ahmed-meshref"] },
     "1": { $type: "ref", value: ["authorsBySlug", "rend-beiruti"] },

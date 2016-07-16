@@ -3,42 +3,30 @@
 // Children: ArticlePreview
 
 import React from 'react';
+import _ from 'lodash';
 import ArticlePreview from 'components/ArticlePreview';
+
+import { Link } from 'react-router';
 
 // TODO: create controller component to fetch list of articles in issue
 export default class ArticleList extends React.Component {
   render() {
 
     // Returns list of <ArticlePreview/> components with their respective posts
-    // TODO: sort article previews by category
-    // TODO: establish featured article, editor's picks, and trending sections
-    var renderArticles = () => {
-      console.log("test");
-      articles = this.props.articles;
-      for (let article in articles) {
-        if (category.hasOwnProperty(article)) {
-          var a = articles[article];
-          console.log("Article: " + a.title);
-          return (
-            <div>
-              <br />
-              <Link to={'/issue/' + a.issueId + '/' + a.category + '/' + a.slug}>
-                {a.title}
-              </Link>
-              <p>{a.teaser}</p>
-            </div>
-          )
-        }
-      }
-      // return (
-      //   <ArticlePreview key={article.id} article={article} />
-      // );
-    };
+    let renderArticlePreviews =
+      // Render nothing if this.props.articles is empty
+      _.map((this.props.articles || []), function(article) {
+        console.log("Article: " + article.title);
+        return(
+          <div key={article.slug}>
+            <ArticlePreview article={article} />
+          </div>
+        )
+      });
 
     return (
       <div>
-        {console.log("test")}
-        {renderArticles()}
+        {renderArticlePreviews}
       </div>
     );
   }
