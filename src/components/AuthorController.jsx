@@ -8,8 +8,8 @@ export default class AuthorController extends FalcorController {
 
     // Multilevel request requires Falcor Path for each level of data requested
     return [
-      ["authorsBySlug", params.authorSlug, ["name", "biography"]],
-      ["authorsBySlug", params.authorSlug, "articles", {"from": 0, "to": 10}, ["title", "image", "teaser"]],
+      ["authorsBySlug", params.authorSlug, ["name", "biography", "slug"]],
+      ["authorsBySlug", params.authorSlug, "articles", {"to": 10}, ["title", "image", "teaser", "issueId", "category", "slug"]],
     ];
   }
 
@@ -24,7 +24,7 @@ export default class AuthorController extends FalcorController {
         <div>
           <div>Controller for author: {authorData.name}</div>
           <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
-          <Author name={authorData.name} biography={authorData.biography} />
+          <Author author={authorData} />
         </div>
       );
     } else {

@@ -19,7 +19,7 @@ export default class ArticlePreview extends React.Component {
           Article title with link to article
         */}
         <Link to={'/issue/' + article.issueId + '/' + article.category + '/' + article.slug}>
-          {article.title}
+          <h3>{article.title}</h3>
         </Link>
 
         {/* Author(s) */}
