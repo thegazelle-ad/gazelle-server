@@ -41,7 +41,7 @@ export default class IssueController extends FalcorController {
             console.log("Category: " + category);
             //console.log(categories[category]);
             data.push(
-              <div>
+              <div key={category}>
                 <h2>{category}</h2>
                 <ArticleList articles={categories[category]} />
               </div>

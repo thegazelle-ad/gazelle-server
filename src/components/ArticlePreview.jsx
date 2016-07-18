@@ -14,7 +14,7 @@ export default class ArticlePreview extends React.Component {
         for (var author in article.authors){
           if (article.authors.hasOwnProperty(author)) {
             data.push(
-              <div>
+              <div key={article.authors[author].slug}>
                 <Link to={'/author/' + article.authors[author].slug}>
                   {article.authors[author].name}
                 </Link>

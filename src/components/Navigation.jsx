@@ -12,7 +12,7 @@ export default class Navigation extends React.Component {
 
       categories.forEach(function(category) {
         data.push(
-          <li><Link to={"/category/"+category}>{category}</Link></li>
+          <li key={category}><Link to={"/category/"+category}>{category}</Link></li>
         )
       });
 

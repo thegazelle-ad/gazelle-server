@@ -26,10 +26,9 @@ export default class CategoryController extends FalcorController {
         for (let article in categoryData) {
           if (categoryData.hasOwnProperty(article)) {
             data.push(
-              <ArticlePreview
-                key={categoryData[article].uuid}
-                article={categoryData[article]}
-              />
+              <div key={categoryData[article].slug}>
+                <ArticlePreview article={categoryData[article]} />
+              </div>
             )
             console.log("Article: " + categoryData[article].title);
           }

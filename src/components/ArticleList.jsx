@@ -23,8 +23,8 @@ export default class ArticleList extends React.Component {
           var a = articles[article];
           console.log("Article: " + a.title);
           data.push(
-            <div>
-              <ArticlePreview article = {articles[article]} />
+            <div key={articles[article].slug}>
+              <ArticlePreview article={articles[article]} />
             </div>
           )
         }
