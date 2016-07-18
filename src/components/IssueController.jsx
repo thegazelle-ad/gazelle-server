@@ -31,7 +31,7 @@ export default class IssueController extends FalcorController {
       let issueId = 55;
       const issueData = this.state.data.issues[issueId];
       console.log("Data: " + JSON.stringify(issueData));
-      
+
       var renderArticleLists = () => {
         var data = [];
         let categories = issueData.articles;
@@ -39,24 +39,13 @@ export default class IssueController extends FalcorController {
         for (let category in categories) {
           if (categories.hasOwnProperty(category)) {
             console.log("Category: " + category);
+            //console.log(categories[category]);
             data.push(
-              <h2>{category}</h2>
+              <div>
+                <h2>{category}</h2>
+                <ArticleList articles={categories[category]} />
+              </div>
             )
-            let articles = categories[category];
-            for (let article in articles) {
-              if (category.hasOwnProperty(article)) {
-                var a = articles[article];
-                console.log("Article: " + a.title);
-                data.push(
-                  <div>
-                    <Link to={'/issue/' + a.issueId + '/' + a.category + '/' + a.slug}>
-                      {a.title}
-                    </Link>
-                    <p>{a.teaser}</p>
-                  </div>
-                )
-              }
-            }
           }
         }
         return data;

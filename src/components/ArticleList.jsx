@@ -5,6 +5,8 @@
 import React from 'react';
 import ArticlePreview from 'components/ArticlePreview';
 
+import { Link } from 'react-router';
+
 // TODO: create controller component to fetch list of articles in issue
 export default class ArticleList extends React.Component {
   render() {
@@ -12,33 +14,27 @@ export default class ArticleList extends React.Component {
     // Returns list of <ArticlePreview/> components with their respective posts
     // TODO: sort article previews by category
     // TODO: establish featured article, editor's picks, and trending sections
-    var renderArticles = () => {
-      console.log("test");
-      articles = this.props.articles;
+
+    var renderArticlePreviews = () => {
+      var data = [];
+      let articles = this.props.articles;
       for (let article in articles) {
-        if (category.hasOwnProperty(article)) {
+        if (articles.hasOwnProperty(article)) {
           var a = articles[article];
           console.log("Article: " + a.title);
-          return (
+          data.push(
             <div>
-              <br />
-              <Link to={'/issue/' + a.issueId + '/' + a.category + '/' + a.slug}>
-                {a.title}
-              </Link>
-              <p>{a.teaser}</p>
+              <ArticlePreview article = {articles[article]} />
             </div>
           )
         }
       }
-      // return (
-      //   <ArticlePreview key={article.id} article={article} />
-      // );
-    };
+      return data;
+    }
 
     return (
       <div>
-        {console.log("test")}
-        {renderArticles()}
+        {renderArticlePreviews()}
       </div>
     );
   }
