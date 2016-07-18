@@ -15,15 +15,15 @@ export default class ArticlePreview extends React.Component {
           <img src={article.image} alt="featured" />
         */}
 
-        {/* Author(s) */}
-        <AuthorList authors={article.authors} />
-
         {/*
           Article title with link to article
         */}
         <Link to={'/issue/' + article.issueId + '/' + article.category + '/' + article.slug}>
           {article.title}
         </Link>
+
+        {/* Author(s) */}
+        <AuthorList authors={article.authors} />
 
         {/* Article teaser */}
         <p>{article.teaser}</p>
