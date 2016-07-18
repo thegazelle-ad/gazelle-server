@@ -1,30 +1,12 @@
 import React from 'react';
+import AuthorList from 'components/AuthorList';
+
 import { Link } from 'react-router';
 
 export default class ArticlePreview extends React.Component {
 
   render () {
     let article = this.props.article;
-
-    // Render all contributing authors
-    function renderAuthors() {
-      // Return nothing if no authors listed
-      let data = [];
-      if (article.authors){
-        for (var author in article.authors){
-          if (article.authors.hasOwnProperty(author)) {
-            data.push(
-              <div key={article.authors[author].slug}>
-                <Link to={'/author/' + article.authors[author].slug}>
-                  {article.authors[author].name}
-                </Link>
-              </div>
-            );
-          }
-        }
-      }
-      return data;
-    }
     return (
       <div>
         {/*
@@ -34,7 +16,7 @@ export default class ArticlePreview extends React.Component {
         */}
 
         {/* Author(s) */}
-        {renderAuthors()}
+        <AuthorList authors={article.authors} />
 
         {/*
           Article title with link to article
