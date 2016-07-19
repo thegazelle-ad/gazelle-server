@@ -3,6 +3,7 @@
 // Children: ArticleList
 
 import React from "react";
+import _ from "lodash";
 import ArticleList from "components/ArticleList";
 import FalcorController from 'lib/falcor/FalcorController';
 import { Link } from 'react-router';
@@ -28,35 +29,30 @@ export default class IssueController extends FalcorController {
     console.log("RENDERING ISSUE CONTROLLER");
 
     if (this.state.ready) {
+      // TODO: Remove hardcoded issueId
       let issueId = 55;
       const issueData = this.state.data.issues[issueId];
       console.log("Data: " + JSON.stringify(issueData));
 
-      var renderArticleLists = () => {
-        var data = [];
-        let categories = issueData.articles;
-        console.log(categories);
-        for (let category in categories) {
-          if (categories.hasOwnProperty(category)) {
-            console.log("Category: " + category);
-            //console.log(categories[category]);
-            data.push(
-              <div key={category}>
-                <h2>{category}</h2>
-                <ArticleList articles={categories[category]} />
-              </div>
-            )
-          }
-        }
-        return data;
-      }
+      let renderCategories =
+        // Render nothing if this.props.articles is empty
+        // articles = value; category = key
+        _.map((issueData.articles || []), function(articles, category) {
+          console.log("Category: " + JSON.stringify(category));
+          return(
+            <div key={category}>
+              <h2>{category}</h2>
+              <ArticleList articles={articles} />
+            </div>
+          )
+        });
 
       return (
         <div>
           <div>Controller for issue: {issueId}</div>
           <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
           <div>Publication Date: {issueData.pubDate}</div>
-          {renderArticleLists()}
+          {renderCategories}
         </div>
       );
     } else {
