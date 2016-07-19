@@ -16,7 +16,7 @@ module.exports = [{
   entry: './src/server.js',
   output: {
     path: __dirname,
-    filename: "./build/server.js"
+    filename: "./build/server.js",
   },
   externals: [nodeExternals()],
   resolve: {
@@ -27,7 +27,7 @@ module.exports = [{
     ],
     alias: {
     },
-    extensions: ['', '.js', '.jsx']
+    extensions: ['', '.js', '.jsx'],
   },
 
   plugins: [
@@ -41,6 +41,7 @@ module.exports = [{
         test: /\.jsx?$/,
         exclude: /node_modules/,
         query: {
+          plugins: ['lodash'],
           presets: ['es2015', 'react'],
         },
       },
@@ -51,7 +52,7 @@ module.exports = [{
   target: 'web',
   entry: './src/client.js',
   output: {
-    filename: "./static/build/client.js"
+    filename: "./static/build/client.js",
   },
   resolve: {
     root: __dirname,
@@ -61,7 +62,7 @@ module.exports = [{
     ],
     alias: {
     },
-    extensions: ['', '.js', '.jsx']
+    extensions: ['', '.js', '.jsx'],
   },
 
   plugins: [
@@ -75,10 +76,11 @@ module.exports = [{
         test: /\.jsx?$/,
         exclude: /node_modules/,
         query: {
+          plugins: ['lodash'],
           presets: ['es2015', 'react'],
         },
       },
     ],
   },
-  devtool: 'source-map'
+  devtool: 'source-map',
 }]
