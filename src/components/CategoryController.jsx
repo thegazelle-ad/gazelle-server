@@ -14,6 +14,8 @@ export default class CategoryController extends FalcorController {
     ];
   }
 
+      // TODO: establish featured article, editor's picks, and trending sections
+
   render() {
     if (this.state.ready) {
       console.log("RENDERING CATEGORY CONTROLLER");

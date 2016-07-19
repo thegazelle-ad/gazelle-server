@@ -1,32 +1,27 @@
 import React from 'react';
+import _ from 'lodash';
 import { Link } from 'react-router';
 
 export default class AuthorList extends React.Component {
   render() {
     // Render all authors
-    let renderAuthors = () => {
-      let authors = this.props.authors;
-      let data = [];
-      // Return nothing if no authors listed
-      if (authors){
-        for (var author in authors){
-          if (authors.hasOwnProperty(author)) {
-            data.push(
-              <div key={authors[author].slug}>
-                <Link to={'/author/' + authors[author].slug}>
-                  {authors[author].name}
-                </Link>
-              </div>
-            );
-          }
-        }
-      }
-      return data;
-    }
+
+    let renderAuthors =
+      // Render nothing if this.props.authors is empty
+      _.map((this.props.authors || []), function(author) {
+        console.log("Author: " + author.name);
+        return(
+          <div key={author.slug}>
+            <Link to={'/author/' + author.slug}>
+              {author.name}
+            </Link>
+          </div>
+        )
+      });
 
     return (
       <div>
-        {renderAuthors()}
+        {renderAuthors}
       </div>
     );
   }

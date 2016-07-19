@@ -13,9 +13,6 @@ export default class ArticleList extends React.Component {
   render() {
 
     // Returns list of <ArticlePreview/> components with their respective posts
-    // TODO: sort article previews by category
-    // TODO: establish featured article, editor's picks, and trending sections
-
     let renderArticlePreviews =
       // Render nothing if this.props.articles is empty
       _.map((this.props.articles || []), function(article) {
