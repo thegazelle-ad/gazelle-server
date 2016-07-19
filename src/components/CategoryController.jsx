@@ -1,6 +1,6 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
-import ArticlePreview from 'components/ArticlePreview';
+import ArticleList from 'components/ArticleList';
 
 export default class CategoryController extends FalcorController {
   static getFalcorPath(params) {
@@ -21,29 +21,14 @@ export default class CategoryController extends FalcorController {
       console.log("RENDERING CATEGORY CONTROLLER");
       let category = this.props.params.category;
       const categoryData = this.state.data.categories[category];
-
-      // Render all articles in category as ArticlePreviews
-      let renderArticles = () => {
-        let data = [];
-        for (let article in categoryData) {
-          if (categoryData.hasOwnProperty(article)) {
-            data.push(
-              <div key={categoryData[article].slug}>
-                <ArticlePreview article={categoryData[article]} />
-              </div>
-            )
-            console.log("Article: " + categoryData[article].title);
-          }
-        }
-        return data;
-      }
-
       console.log("Data: " + JSON.stringify(categoryData));
       return (
         <div>
           <div>Controller for category: {category}</div>
           <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
-          {renderArticles()}
+
+          {/* Render all articles fetched through ArticleList */}
+          <ArticleList articles={categoryData} />
         </div>
       );
     } else {
