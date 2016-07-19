@@ -3,6 +3,7 @@
 // Children: ArticlePreview
 
 import React from 'react';
+import _ from 'lodash';
 import ArticlePreview from 'components/ArticlePreview';
 
 import { Link } from 'react-router';
@@ -15,26 +16,20 @@ export default class ArticleList extends React.Component {
     // TODO: sort article previews by category
     // TODO: establish featured article, editor's picks, and trending sections
 
-    var renderArticlePreviews = () => {
-      var data = [];
-      let articles = this.props.articles;
-      for (let article in articles) {
-        if (articles.hasOwnProperty(article)) {
-          var a = articles[article];
-          console.log("Article: " + a.title);
-          data.push(
-            <div key={articles[article].slug}>
-              <ArticlePreview article={articles[article]} />
-            </div>
-          )
-        }
-      }
-      return data;
-    }
+    let renderArticlePreviews =
+      // Render nothing if this.props.articles is empty
+      _.map((this.props.articles || []), function(article) {
+        console.log("Article: " + article.title);
+        return(
+          <div key={article.slug}>
+            <ArticlePreview article={article} />
+          </div>
+        )
+      });
 
     return (
       <div>
-        {renderArticlePreviews()}
+        {renderArticlePreviews}
       </div>
     );
   }
