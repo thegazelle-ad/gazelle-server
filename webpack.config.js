@@ -26,6 +26,7 @@ module.exports = [{
       './src/',
     ],
     alias: {
+      applicationStyles: '../styles/main.scss',
     },
     extensions: ['', '.js', '.jsx'],
   },
@@ -45,6 +46,10 @@ module.exports = [{
           presets: ['es2015', 'react'],
         },
       },
+      {
+        test: /\.scss$/,
+        loaders: ["style", "css", "sass"],
+      },
     ],
   },
   devtool: 'source-map',
@@ -61,6 +66,7 @@ module.exports = [{
       './src/',
     ],
     alias: {
+      applicationStyles: '../styles/main.scss',
     },
     extensions: ['', '.js', '.jsx'],
   },
@@ -79,6 +85,10 @@ module.exports = [{
           plugins: ['lodash'],
           presets: ['es2015', 'react'],
         },
+      },
+      {
+        test: /\.scss$/,
+        loaders: ["style", "css", "sass"],
       },
     ],
   },

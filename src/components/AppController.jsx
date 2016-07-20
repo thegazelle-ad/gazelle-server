@@ -2,10 +2,13 @@ import React from "react";
 import FalcorController from "../lib/falcor/FalcorController";
 import { setAppReady } from "lib/falcor/falcorUtils";
 import Navigation from "components/Navigation";
-import IssueController from "components/IssueController";
 
 // Importing static articles
 import articles from "../../static/sample-issue/posts.js";
+
+// Application CSS; applicationStyles alias,
+// CSS, SCSS, and Style loaders in webpack.config.js
+require('applicationStyles');
 
 export default class AppController extends FalcorController {
   static getFalcorPath() {
@@ -16,8 +19,6 @@ export default class AppController extends FalcorController {
     super.componentDidMount();
     setAppReady();
   }
-
-  //<ArticleList key={articles.id} articles={articles} />
 
   render() {
     return (
