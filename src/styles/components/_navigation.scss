@@ -1,11 +1,12 @@
 .navigation {
   display: flex;
   justify-content: center;
-  -webkit-display: flex;
   &__item {
     display: block;
-    text-align: center;
     text-decoration: none;
-    color: red;
+    padding: 1rem 1rem;
+    &--active{
+      font-weight: 700;
+    }
   }
 }

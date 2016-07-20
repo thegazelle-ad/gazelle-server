@@ -12,17 +12,25 @@ export default class Navigation extends React.Component {
       _.map((categories || []), function(category) {
         return(
           <li key={category} className="navigation__item">
-            <Link to={"/category/"+category}>{category}</Link>
+            <Link to={"/category/"+category} activeClassName="navigation__item--active">
+              {category}
+            </Link>
           </li>
         )
       });
 
     return (
-      <div className="header">
-        <h1><Link to="/">{this.props.appName}</Link></h1>
-        <ul className="navigation">
-          {renderCategories}
-        </ul>
+      <div>
+        <div className="header">
+          <div className="header__title">
+            <Link to="/">{this.props.appName}</Link>
+          </div>
+        </div>
+        <div className="navigation">
+          <ul>
+            {renderCategories}
+          </ul>
+        </div>
       </div>
     )
   }
