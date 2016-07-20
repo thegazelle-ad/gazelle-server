@@ -15,6 +15,7 @@
  * visit http://getbem.com/naming/.
  */
 
+
 @charset 'UTF-8';
 
 // 1. Configuration and helpers
@@ -39,7 +40,8 @@
 
 // 5. Components
 @import
-  'components/article-preview';
+  'components/article-preview',
+  'components/navigation';
 
 // 6. Page-specific styles
 @import

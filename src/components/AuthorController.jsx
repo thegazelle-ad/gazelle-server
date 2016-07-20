@@ -22,8 +22,10 @@ export default class AuthorController extends FalcorController {
       console.log("Data: " + JSON.stringify(authorData));
       return (
         <div>
-          <div>Controller for author: {authorData.name}</div>
-          <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
+          {/*
+            <div>Controller for author: {authorData.name}</div>
+            <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
+          */}
           <Author author={authorData} />
         </div>
       );

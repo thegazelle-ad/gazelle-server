@@ -49,9 +49,11 @@ export default class IssueController extends FalcorController {
 
       return (
         <div>
-          <div>Controller for issue: {issueId}</div>
-          <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
-          <div>Publication Date: {issueData.pubDate}</div>
+          {/*
+            <div>Controller for issue: {issueId}</div>
+            <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
+            <div>Publication Date: {issueData.pubDate}</div>
+          */}
           {renderCategories}
         </div>
       );

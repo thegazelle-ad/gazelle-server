@@ -22,8 +22,10 @@ export default class ArticleController extends FalcorController {
       console.log("Data: " + JSON.stringify(articleData));
       return (
         <div>
-          <div>Controller for article: {articleData.title}</div>
-          <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
+          {/*
+            <div>Controller for article: {articleData.title}</div>
+            <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
+          */}
           <Article
             title={articleData.title}
             html={articleData.html}

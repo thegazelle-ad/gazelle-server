@@ -1,0 +1,11 @@
+.navigation {
+  display: flex;
+  justify-content: center;
+  -webkit-display: flex;
+  &__item {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    color: red;
+  }
+}

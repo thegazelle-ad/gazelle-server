@@ -24,8 +24,10 @@ export default class CategoryController extends FalcorController {
       console.log("Data: " + JSON.stringify(categoryData));
       return (
         <div>
-          <div>Controller for category: {category}</div>
-          <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
+          {/*
+            <div>Controller for category: {category}</div>
+            <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
+          */}
 
           {/* Render all articles fetched through ArticleList */}
           <ArticleList articles={categoryData} />
