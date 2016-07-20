@@ -9,7 +9,7 @@ export default class CategoryController extends FalcorController {
     // Multilevel request requires Falcor Path for each level of data requested
     // Grab first 10 articles for category requested
     return [
-      ["categories", params.category, {to: 10}, ["title", "teaser", "issueId", "category", "slug"]],
+      ["categories", params.category, {to: 10}, ["title", "teaser", "issueId", "category", "slug", "featuredImage"]],
       ["categories", params.category, {to: 10}, "authors", {to: 10}, ["name", "slug"]],
     ];
   }
@@ -21,11 +21,13 @@ export default class CategoryController extends FalcorController {
       console.log("RENDERING CATEGORY CONTROLLER");
       let category = this.props.params.category;
       const categoryData = this.state.data.categories[category];
-      console.log("Data: " + JSON.stringify(categoryData));
+      //console.log("Data: " + JSON.stringify(categoryData));
       return (
         <div>
-          <div>Controller for category: {category}</div>
-          <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
+          {/*
+            <div>Controller for category: {category}</div>
+            <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
+          */}
 
           {/* Render all articles fetched through ArticleList */}
           <ArticleList articles={categoryData} />

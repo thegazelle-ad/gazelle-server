@@ -1,0 +1,36 @@
+.article {
+  max-width: 800px;
+  margin: auto;
+  &__title {
+    @include uppercase;
+    margin: 0.5rem 0 0.5rem 0;
+    font-size: 1.7rem;
+    text-align: center;
+  }
+  .author-list {
+    display: flex;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+  &__html {
+    font-family: 'Lora', serif;
+    font-size: $article;
+    line-height: 1.35rem;
+    max-width: 590px;
+    display: block;
+    margin: auto;
+    img {
+      // Scale image to div without distortion
+      // Maintains same proportions by scaling height proportionatly
+      max-width: 100%;
+      height: auto;
+    }
+
+    &:after {
+      content: url('../../static/article-end.png');
+      display: flex;
+      justify-content: center;
+    }
+  }
+}

@@ -1,0 +1,33 @@
+/*
+ * Make text uppercase
+ */
+@mixin uppercase() {
+  text-transform: uppercase;
+}
+
+/*
+ * Crop image to desired width and height without distortion
+ */
+@mixin image-container ($width, $height) {
+  width: $width;
+  height: $height;
+  overflow: hidden;
+}
+
+/*
+ * Typograpy
+ */
+ @mixin roboto-light {
+   font-family: 'Roboto', sans-serif;
+   font-weight: 300;
+ }
+
+ @mixin roboto-normal {
+   font-family: 'Roboto', sans-serif;
+   font-weight: 400;
+ }
+
+ @mixin roboto-bold {
+   font-family: 'Roboto', sans-serif;
+   font-weight: 500;
+ }

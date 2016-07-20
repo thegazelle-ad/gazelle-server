@@ -1,0 +1,21 @@
+.text-page {
+  max-width: 590px;
+  display: block;
+  margin: auto;
+  &__title {
+    @include uppercase;
+    @include roboto-bold;
+    text-align: center;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.7rem;
+    text-align: center;
+    @media (max-width: $small) {
+      margin: 0.75rem 0;
+    }
+  }
+  &__html {
+    font-family: 'Lora', serif;
+    font-size: $article;
+    line-height: 1.35rem;
+  }
+}

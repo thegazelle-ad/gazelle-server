@@ -1,14 +1,14 @@
 {
-  "name": "react-falcor-universal-minimal-starter",
+  "name": "the-gazelle",
   "version": "1.0.0",
   "description": "Minimal starter kit for React, Falcor, and Universal rendering with ES6",
   "main": "server.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lingz/react-falcor-universal-minimal-starter.git"
+    "url": "git+https://github.com/thegazelle-ad/gazelle-front-end.git"
   },
   "keywords": [
     "react",
@@ -19,9 +19,9 @@
   "author": "Lingliang Zhang (lingliangz@gmail.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lingz/react-falcor-universal-minimal-starter/issues"
+    "url": "https://github.com/thegazelle-ad/gazelle-front-end/issues"
   },
-  "homepage": "https://github.com/lingz/react-falcor-universal-minimal-starter#readme",
+  "homepage": "https://github.com/thegazelle-ad/gazelle-front-end#readme",
   "devDependencies": {
     "babel-cli": "^6.10.1",
     "babel-core": "^6.4.5",
@@ -31,6 +31,7 @@
     "babel-polyfill": "^6.9.1",
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-react": "^6.3.13",
+    "css-loader": "^0.23.1",
     "eslint": "^2.12.0",
     "eslint-config-airbnb": "^9.0.1",
     "eslint-import-resolver-webpack": "^0.3.0",
@@ -38,7 +39,12 @@
     "eslint-plugin-jsx-a11y": "^1.4.2",
     "eslint-plugin-react": "^5.1.1",
     "jest-cli": "^13.0.0",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "node-sass": "^3.8.0",
+    "null-loader": "^0.1.1",
+    "sass-loader": "^4.0.0",
     "source-map-support": "^0.4.0",
+    "style-loader": "^0.13.1",
     "webpack": "^1.13.1",
     "webpack-node-externals": "^1.2.0"
   },

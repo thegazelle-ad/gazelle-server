@@ -1,5 +1,6 @@
 import React from 'react';
 import AuthorList from 'components/AuthorList';
+//import image from '../static/sample-issue/images/articles/palestine-hamilton.jpg';
 
 import { Link } from 'react-router';
 
@@ -8,25 +9,33 @@ export default class ArticlePreview extends React.Component {
   render () {
     let article = this.props.article;
     return (
-      <div>
+      <div className="article-preview">
         {/*
           Featured image
-          TODO: change article image path before release
-          <img src={article.image} alt="featured" />
+          TODO: undo hardcode before release
         */}
+        <img
+          className="article-preview__featured-image"
+          src={article.featuredImage}
+          alt="featured"
+        />
 
         {/*
           Article title with link to article
         */}
-        <Link to={'/issue/' + article.issueId + '/' + article.category + '/' + article.slug}>
-          <h3>{article.title}</h3>
-        </Link>
+        <div className="article-preview__content">
+          <Link to={'/issue/' + article.issueId + '/' + article.category + '/' + article.slug}>
+            <h3 className="article-preview__content__title">{article.title}</h3>
+          </Link>
 
-        {/* Author(s) */}
-        <AuthorList authors={article.authors} />
+          {/* Author(s) */}
+          <div className="article-preview__content__authors">
+            <AuthorList authors={article.authors} />
+          </div>
 
-        {/* Article teaser */}
-        <p>{article.teaser}</p>
+          {/* Article teaser */}
+          <p className="article-preview__content__teaser">{article.teaser}</p>
+        </div>
       </div>
     );
   }
@@ -36,7 +45,8 @@ export default class ArticlePreview extends React.Component {
 ArticlePreview.propTypes = {
   article: React.PropTypes.shape({
     title: React.PropTypes.string.isRequired,
-    teaser: React.PropTypes.string.isRequired,
+    // Teaser not used for Trending component
+    teaser: React.PropTypes.string,
     issueId: React.PropTypes.string.isRequired,
     category: React.PropTypes.string.isRequired,
     slug: React.PropTypes.string.isRequired,

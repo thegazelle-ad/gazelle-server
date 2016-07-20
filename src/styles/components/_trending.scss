@@ -1,0 +1,40 @@
+.trending {
+  max-width: $column-3-1;
+  flex: 1 1 auto;
+
+  .article-list{
+    //display: flex;
+    // flex: 1 1 auto;
+    //align-items: flex-end;
+    //padding: 0;
+
+    .article-preview {
+      padding: 0 0 0.5rem 0;
+      max-width: $column-1;
+      flex: 0 1 auto;
+      &__featured-image {
+        display: none;
+      }
+      &__content {
+        &__title {
+          margin: 0;
+          font-size: 1rem;
+          line-height: normal;
+        }
+        &__authors {
+          @include uppercase();
+          font-size: 0.7rem;
+          margin: 0;
+        }
+        &__teaser {
+          /*
+           * If article exists in current issue, teaser will be passed to
+           * ArticlePreview To make sure the teaser does not appear in Trending,
+           * we hide it should it exist for robustness.
+           */
+          display: none;
+        }
+      }
+    }
+  }
+}

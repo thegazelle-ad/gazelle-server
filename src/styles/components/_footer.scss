@@ -1,0 +1,25 @@
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
+  font-size: 0.8rem;
+  color: $light-grey;
+  padding: 0;
+  border-top: 1px solid $border-grey;
+  text-align: center;
+  @media (max-width: $small) {
+    display: none;
+  }
+  &__item {
+    @include roboto-light;
+    @include uppercase;
+    padding: 1rem 2rem 0 2rem;
+    @media (max-width: $medium) {
+      padding: 1rem 1rem 0 1rem;
+    }
+    @media (max-width: $small) {
+      padding: none;
+    }
+  }
+}

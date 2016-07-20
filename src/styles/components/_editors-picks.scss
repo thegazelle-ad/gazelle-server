@@ -1,0 +1,19 @@
+.editors-picks {
+  max-width: 70%;
+  margin-right: 0.75rem;
+  .section-header {
+    // Extend line beyond .editors-picks div
+    margin-right: -30px;
+  }
+  .article-list {
+    padding: 0;
+
+    &:last-child {
+      // Divider between Editor's Picks and Trending
+      border-right: 1px solid $border-grey;
+    }
+    .article-preview {
+      max-width: $column-2;
+    }
+  }
+}

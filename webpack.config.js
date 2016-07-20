@@ -3,7 +3,7 @@ var webpack = require("webpack");
 var nodeExternals = require('webpack-node-externals');
 var Fs = require('fs')
 var nodeModules = {}
-var path = require('path')
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 Fs.readdirSync('node_modules').forEach(function (module) {
   if (module !== '.bin') {
@@ -27,12 +27,16 @@ module.exports = [{
       './src/',
     ],
     alias: {
+      applicationStyles: '../styles/main.scss',
     },
     extensions: ['', '.js', '.jsx'],
   },
 
   plugins: [
     new webpack.OldWatchingPlugin(),
+    new ExtractTextPlugin('./static/build/main.css', {
+      allChunks: true,
+    }),
   ],
 
   module: {
@@ -45,6 +49,14 @@ module.exports = [{
           plugins: ['lodash'],
           presets: ['es2015', 'react'],
         },
+      },
+      {
+        test: /\.scss$/,
+        loader: ExtractTextPlugin.extract(['css','sass']),
+      },
+      {
+        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+        loader: 'url-loader?limit=100000',
       },
     ],
   },
@@ -62,6 +74,7 @@ module.exports = [{
       './src/',
     ],
     alias: {
+      applicationStyles: '../styles/main.scss',
     },
     extensions: ['', '.js', '.jsx'],
   },
@@ -80,6 +93,10 @@ module.exports = [{
           plugins: ['lodash'],
           presets: ['es2015', 'react'],
         },
+      },
+      {
+        test: /\.scss$/,
+        loader: "null",
       },
     ],
   },

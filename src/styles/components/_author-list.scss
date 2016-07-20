@@ -1,0 +1,18 @@
+.author-list {
+  list-style: none;
+  display: flex;
+  align-items: flex-start;
+  padding: 0;
+
+  // Add commas and 'and' for legibility
+  // \00a0 designates space
+  li:after{
+    content: ",\00a0";
+  }
+  li:nth-last-child(2):after{
+    content: " and\00a0";
+  }
+  li:last-child:after{
+    content: "";
+  }
+}

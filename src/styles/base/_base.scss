@@ -1,0 +1,27 @@
+/*
+ * Default link styling
+ */
+a {
+  text-decoration: none;
+  color: inherit;
+  &:hover{
+    color: $dark-purple;
+  }
+}
+
+/*
+ * Default input box styling
+ */
+input {
+  width: 100%;
+  border: none;
+  box-sizing: border-box;
+  font-family: 'Roboto';
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: $dark-grey;
+  background: transparent;
+  outline-width: 0px;
+  align-items: center;
+  padding-bottom: 0.45rem;
+}

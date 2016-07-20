@@ -9,18 +9,18 @@ export default class AuthorList extends React.Component {
     let renderAuthors =
       // Render nothing if this.props.authors is empty
       _.map((this.props.authors || []), function(author) {
-        console.log("Author: " + author.name);
+        //console.log("Author: " + author.name);
         return(
-          <div key={author.slug}>
+          <li key={author.slug} className="author-list__author">
             <Link to={'/author/' + author.slug}>
               {author.name}
             </Link>
-          </div>
+          </li>
         )
       });
 
     return (
-      <div>
+      <div className="author-list">
         {renderAuthors}
       </div>
     );

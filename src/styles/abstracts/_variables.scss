@@ -1,0 +1,52 @@
+/*
+ * Variables used as standards throughout The Gazelle
+ */
+
+/*
+ * Colors
+ */
+$dark-purple:	#433362;
+$dark-grey: #595959;
+$light-grey: #ACACAC;
+$border-grey: #C6C6C6;
+
+/*
+ * Media Queries
+ */
+$medium: 780px;
+$small: 540px;
+
+/*
+ * Grid
+ */
+// 3 column grid
+  // Single column
+  $column-3-1: 30%;
+  // Spanning two columns
+  $column-3-2: 60%;
+
+// 2 column grid
+  $column-2: 45%;
+
+// 1 column grid
+  $column-1: 100%;
+
+
+/*
+ * Font Sizes
+ */
+// Category
+$category-large: 1.1rem;
+$category-small: 0.8rem;
+
+// Article Preview
+$title-large: 1.2rem;
+$authors-large: 0.8rem;
+$teaser-large: 0.8rem;
+
+$title-small: 1.2rem;
+$authors-small: 0.8rem;
+$teaser-small: 0.9rem;
+
+// Article
+$article: 1rem;
