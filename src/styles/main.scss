@@ -1,0 +1,47 @@
+/**
+ * The 7-1 architecture pattern is adopted from Hugo Giraudel and the Sass Guidelines
+ * Hugo Giraudel's Sass Boilerplate: https://github.com/HugoGiraudel/sass-boilerplate
+ * Sass Architecture Guidelines: http://sass-guidelin.es/#architecture
+ *
+ * By using SCSS as a meta-language and CSS preprocessor, we simplify our CSS by
+ * introducing variables, mixins, functions, etc. SCSS allows the developer to
+ * easily maintain DRY ("Don't Repeat Yourself") code making maintenance faster
+ * and more efficient.
+ *
+ * SCSS rather than Sass is used throughout The Gazelle because of its syntactic
+ * similiarity to CSS. For a SCSS syntax guide, visit http://sass-lang.com/guide.
+ *
+ * We follow the BEM naming conventions for futher clarity. For specifics,
+ * visit http://getbem.com/naming/.
+ */
+
+@charset 'UTF-8';
+
+// 1. Configuration and helpers
+@import
+  'abstracts/variables',
+  'abstracts/mixins';
+
+// 2. Vendors
+@import
+  'vendor/normalize';
+
+// 3. Base
+@import
+  'base/base',
+  'base/fonts',
+  'base/typography',
+  'base/helpers';
+
+// 4. Layout-related sections
+@import
+  'layout/header',
+  'layout/footer';
+
+// 5. Components
+@import
+  'components/article-preview';
+
+// 6. Page-specific styles
+@import
+  'pages/home';
