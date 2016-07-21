@@ -21,16 +21,12 @@ export default class Navigation extends React.Component {
 
     return (
       <div>
-        <div className="header">
-          <div className="header__title">
-            <Link to="/">{this.props.appName}</Link>
-          </div>
+        <div className="header__title">
+          <Link to="/">{this.props.appName}</Link>
         </div>
-        <div className="navigation">
-          <ul>
-            {renderCategories}
-          </ul>
-        </div>
+        <ul className="navigation">
+          {renderCategories}
+        </ul>
       </div>
     )
   }

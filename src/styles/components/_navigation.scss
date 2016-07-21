@@ -1,12 +1,27 @@
 .navigation {
+  list-style: none;
   display: flex;
-  justify-content: center;
+  margin: 1rem 0 1.5rem 0;
+  padding: 0;
+
   &__item {
     display: block;
+    flex: 1 1 100%;
+    text-align: center;
     text-decoration: none;
-    padding: 1rem 1rem;
+
     &--active{
+      // Make active navigation category bold for UX
       font-weight: 700;
     }
+  }
+}
+
+.header {
+  &__title{
+    display: block;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 500;
   }
 }

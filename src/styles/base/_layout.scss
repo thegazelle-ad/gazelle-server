@@ -1,0 +1,13 @@
+.app-container {
+  max-width: 480px;
+  &__header {
+    flex: 0 0 100%;
+  }
+
+  &__body {
+  }
+
+  &__footer {
+    flex: 0 0 100%;
+  }
+}

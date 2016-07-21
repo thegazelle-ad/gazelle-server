@@ -25,7 +25,7 @@ export default class ArticleList extends React.Component {
       });
 
     return (
-      <div>
+      <div className="article-list">
         {renderArticlePreviews}
       </div>
     );

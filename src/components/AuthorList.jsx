@@ -11,7 +11,7 @@ export default class AuthorList extends React.Component {
       _.map((this.props.authors || []), function(author) {
         console.log("Author: " + author.name);
         return(
-          <div key={author.slug}>
+          <div key={author.slug} className="authorList__author">
             <Link to={'/author/' + author.slug}>
               {author.name}
             </Link>
@@ -20,7 +20,7 @@ export default class AuthorList extends React.Component {
       });
 
     return (
-      <div>
+      <div className="author-list">
         {renderAuthors}
       </div>
     );

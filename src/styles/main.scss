@@ -32,15 +32,16 @@
   'base/base',
   'base/fonts',
   'base/typography',
-  'base/helpers';
-
-// 4. Layout-related sections
-@import
-  'layout/header';
+  'base/helpers',
+  'base/layout';
 
 // 5. Components
 @import
+  'components/article-list',
   'components/article-preview',
+  'components/article',
+  'components/author-list',
+  'components/author',
   'components/navigation';
 
 // 6. Page-specific styles

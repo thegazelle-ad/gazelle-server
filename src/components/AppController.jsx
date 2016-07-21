@@ -22,10 +22,15 @@ export default class AppController extends FalcorController {
 
   render() {
     return (
-      <div>
-        <Navigation appName={this.state.data.appName} />
-        <div>
+      <div className="app-container">
+        <div className="app-container__header">
+          <Navigation appName={this.state.data.appName} />
+        </div>
+        <div className="app-container__body">
           {this.props.children}
+        </div>
+        <div className="app-container__footer">
+          footer
         </div>
       </div>
     );

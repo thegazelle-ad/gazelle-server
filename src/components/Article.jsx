@@ -5,9 +5,9 @@ import AuthorList from 'components/AuthorList';
 
 export default class Article extends React.Component {
   render() {
-    
+
     return (
-      <div>
+      <div className="article">
         <h1>{this.props.title}</h1>
         <AuthorList authors={this.props.authors} />
         <div dangerouslySetInnerHTML={{__html: this.props.html}} />
