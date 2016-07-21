@@ -3,16 +3,16 @@
   display: flex;
   margin: 1rem 0 1.5rem 0;
   padding: 0;
+  font-weight: 300;
 
   &__item {
     display: block;
     flex: 1 1 100%;
     text-align: center;
-    text-decoration: none;
 
     &--active{
       // Make active navigation category bold for UX
-      font-weight: 700;
+      font-weight: 500;
     }
   }
 }

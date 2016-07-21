@@ -7,7 +7,7 @@ export default class Navigation extends React.Component {
   render() {
 
     // Render all categories in nav bar
-    let categories = ["opinion", "features", "news"];
+    let categories = ["off-campus", "on-campus", "commentary", "creative", "in-focus"];
     let renderCategories =
       _.map((categories || []), function(category) {
         return(

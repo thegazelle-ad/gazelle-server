@@ -21,7 +21,7 @@ export default class IssueController extends FalcorController {
     // TODO: change hardcoded issueId
     return [
       ["issues", 55, ["pubDate"]],
-      ["issues", 55, "articles", ["opinion", "features", "news"], {to: 30}, ["title", "teaser", "issueId", "category", "slug"]],
+      ["issues", 55, "articles", ["off-campus", "on-campus", "commentary", "creative", "in-focus"], {to: 30}, ["title", "teaser", "issueId", "category", "slug"]],
     ];
   }
 
