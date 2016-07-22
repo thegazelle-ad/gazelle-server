@@ -34,7 +34,7 @@ module.exports = [{
 
   plugins: [
     new webpack.OldWatchingPlugin(),
-    new ExtractTextPlugin('../styles/main.css', {
+    new ExtractTextPlugin('../../static/main.css', {
       allChunks: true
     }),
   ],
