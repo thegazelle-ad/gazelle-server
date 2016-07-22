@@ -1,2 +1,9 @@
 .article {
+  &__html img {
+    // Scale image to div without distortion
+    // Support for IE8
+    //width: auto;
+    max-width: 100%;
+    height: auto;
+  }
 }

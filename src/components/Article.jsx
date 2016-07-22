@@ -8,9 +8,9 @@ export default class Article extends React.Component {
 
     return (
       <div className="article">
-        <h1>{this.props.title}</h1>
+        <h1 className="article__title">{this.props.title}</h1>
         <AuthorList authors={this.props.authors} />
-        <div dangerouslySetInnerHTML={{__html: this.props.html}} />
+        <div className="article__html" dangerouslySetInnerHTML={{__html: this.props.html}} />
       </div>
     );
   }
