@@ -27,6 +27,7 @@ const buildHtmlString = (body, cache) => {
       <html>
         <head>
           <title>The Gazelle</title>
+          <link rel="stylesheet" type="text/css" href="/build/main.css">
         </head>
         <body>
           <div id="main">`
