@@ -1,3 +1,15 @@
 .article-list {
+  display: flex;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  flex-basis: 0;
+  padding: 10px;
 
+  // Apply spacing between articles
+  :first-child {
+    margin-left: 0;
+  }
+  :last-child {
+    margin-right: 0;
+  }
 }

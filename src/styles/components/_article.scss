@@ -1,8 +1,16 @@
 .article {
+  &__title {
+    @include uppercase;
+    border: 5rem 0 0.5rem 0;
+    font-size: 1.7rem;
+  }
+  &__authors {
+    font-size: 1rem;
+    font-weight: 400;
+  }
   &__html img {
     // Scale image to div without distortion
-    // Support for IE8
-    //width: auto;
+    // Maintains same proportions by scaling height proportionatly
     max-width: 100%;
     height: auto;
   }

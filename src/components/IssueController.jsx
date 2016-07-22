@@ -41,9 +41,11 @@ export default class IssueController extends FalcorController {
         _.map((issueData.articles || []), function(articles, category) {
           console.log("Category: " + JSON.stringify(category));
           return(
-            <div key={category}>
+            <div key={category} className="issue__category">
               <h2>{category}</h2>
-              <ArticleList articles={articles} />
+              <div className="issue__category__list">
+                <ArticleList articles={articles} />
+              </div>
             </div>
           )
         });

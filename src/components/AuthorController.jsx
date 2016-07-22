@@ -10,6 +10,7 @@ export default class AuthorController extends FalcorController {
     return [
       ["authorsBySlug", params.authorSlug, ["name", "biography", "slug"]],
       ["authorsBySlug", params.authorSlug, "articles", {"to": 10}, ["title", "image", "teaser", "issueId", "category", "slug"]],
+      //["authorsBySlug", params.authorSlug, "articles", {"to": 10}, "authors", {to: 10}, ["name", "slug"]],
     ];
   }
 
