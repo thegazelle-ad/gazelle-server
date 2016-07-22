@@ -1,5 +1,6 @@
 import React from 'react';
 import AuthorList from 'components/AuthorList';
+//import image from '../static/sample-issue/images/articles/palestine-hamilton.jpg';
 
 import { Link } from 'react-router';
 
@@ -11,12 +12,13 @@ export default class ArticlePreview extends React.Component {
       <div className="article-preview">
         {/*
           Featured image
-          TODO: change article image path before release
-          <img src={article.image} alt="featured" />
+          TODO: undo hardcode before release
         */}
-        <div className="article-preview__featured-image">
-
-        </div>
+        <img
+          className="article-preview__featured-image"
+          src={"http://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg "}
+          alt="featured"
+        />
 
         {/*
           Article title with link to article

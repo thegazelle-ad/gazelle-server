@@ -3,7 +3,8 @@ var webpack = require("webpack");
 var nodeExternals = require('webpack-node-externals');
 var Fs = require('fs')
 var nodeModules = {}
-var path = require('path')
+var path = require('path');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 Fs.readdirSync('node_modules').forEach(function (module) {
   if (module !== '.bin') {
@@ -33,6 +34,9 @@ module.exports = [{
 
   plugins: [
     new webpack.OldWatchingPlugin(),
+    new ExtractTextPlugin('../styles/main.css', {
+      allChunks: true
+    }),
   ],
 
   module: {
@@ -48,7 +52,7 @@ module.exports = [{
       },
       {
         test: /\.scss$/,
-        loaders: ["style", "css", "sass"],
+        loader: ExtractTextPlugin.extract(['css','sass']),
       },
     ],
   },

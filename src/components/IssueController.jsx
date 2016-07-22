@@ -22,6 +22,7 @@ export default class IssueController extends FalcorController {
     return [
       ["issues", 55, ["pubDate"]],
       ["issues", 55, "articles", ["off-campus", "on-campus", "commentary", "creative", "in-focus"], {to: 30}, ["title", "teaser", "issueId", "category", "slug"]],
+      ["issues", 55, "articles", ["off-campus", "on-campus", "commentary", "creative", "in-focus"], {to: 30}, "authors", {to: 10}, ["name", "slug"]],
     ];
   }
 
@@ -48,7 +49,7 @@ export default class IssueController extends FalcorController {
         });
 
       return (
-        <div>
+        <div className="issue">
           {/*
             <div>Controller for issue: {issueId}</div>
             <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
