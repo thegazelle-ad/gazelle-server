@@ -11,11 +11,11 @@ export default class AuthorList extends React.Component {
       _.map((this.props.authors || []), function(author) {
         console.log("Author: " + author.name);
         return(
-          <div key={author.slug} className="author-list__author">
+          <li key={author.slug} className="author-list__author">
             <Link to={'/author/' + author.slug}>
               {author.name}
             </Link>
-          </div>
+          </li>
         )
       });
 
