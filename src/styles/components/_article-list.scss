@@ -4,12 +4,4 @@
   padding: 10px;
   justify-content: justify;
   align-content: center;
-
-  // Apply spacing between articles
-  :first-child {
-    margin-left: 0;
-  }
-  :last-child {
-    margin-right: 0;
-  }
 }

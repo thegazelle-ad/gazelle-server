@@ -23,19 +23,19 @@ export default class ArticlePreview extends React.Component {
         {/*
           Article title with link to article
         */}
+        <div className="article-preview__content">
+          <Link to={'/issue/' + article.issueId + '/' + article.category + '/' + article.slug}>
+            <h3 className="article-preview__content__title">{article.title}</h3>
+          </Link>
 
-        <Link to={'/issue/' + article.issueId + '/' + article.category + '/' + article.slug}>
-          <h3 className="article-preview__title">{article.title}</h3>
-        </Link>
+          {/* Author(s) */}
+          <div className="article-preview__content__authors">
+            <AuthorList authors={article.authors} />
+          </div>
 
-        {/* Author(s) */}
-        <div className="article-preview__authors">
-          <AuthorList authors={article.authors} />
+          {/* Article teaser */}
+          <p className="article-preview__content__teaser">{article.teaser}</p>
         </div>
-
-        {/* Article teaser */}
-        <p className="article-preview__teaser">{article.teaser}</p>
-
       </div>
     );
   }

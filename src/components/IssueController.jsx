@@ -8,6 +8,11 @@ import ArticleList from "components/ArticleList";
 import FalcorController from 'lib/falcor/FalcorController';
 import { Link } from 'react-router';
 
+// Import components
+import FeaturedArticle from "components/FeaturedArticle";
+import EditorsPicks from "components/EditorsPicks";
+import Trending from "components/Trending";
+
 export default class IssueController extends FalcorController {
   // TODO: Render top article
   // TODO: Render Editor's Picks and trending sections
@@ -23,6 +28,8 @@ export default class IssueController extends FalcorController {
       ["issues", 55, ["pubDate"]],
       ["issues", 55, "articles", ["off-campus", "on-campus", "commentary", "creative", "in-focus"], {to: 30}, ["title", "teaser", "issueId", "category", "slug"]],
       ["issues", 55, "articles", ["off-campus", "on-campus", "commentary", "creative", "in-focus"], {to: 30}, "authors", {to: 10}, ["name", "slug"]],
+      ["issues", 55, "featured", ["title", "teaser", "issueId", "category", "slug"]],
+      ["issues", 55, "featured", "authors", {to: 10}, ["name", "slug"]],
     ];
   }
 
@@ -56,7 +63,11 @@ export default class IssueController extends FalcorController {
             <div>Controller for issue: {issueId}</div>
             <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
             <div>Publication Date: {issueData.pubDate}</div>
+            <EditorsPicks articles={issueData.articles} />
+            <Trending articles={issueData.articles} />
           */}
+          <FeaturedArticle article={issueData.featured} />
+
           {renderCategories}
         </div>
       );

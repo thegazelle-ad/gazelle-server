@@ -1,0 +1,32 @@
+.featured-article {
+  min-width: 740px;
+  .article-preview {
+    display: flex;
+    // Center featured article content vertically and horizontally
+    align-items: center;
+    justify-content: center;
+
+    &__featured-image {
+      @include image-container(70%, 40%);
+      //min-height: 40%;
+      margin: 0;
+    }
+
+    &__content {
+      max-width: 25%;
+      padding-left: 1rem;
+      &__title {
+        font-size: 2rem;
+        line-height: 2.2rem;
+      }
+
+      &__authors {
+        font-size: 0.9rem;
+      }
+
+      &__teaser {
+        font-size: 0.9rem;
+      }
+    }
+  }
+}

@@ -1,3 +1,15 @@
+/*
+ * Make text uppercase
+ */
 @mixin uppercase() {
   text-transform: uppercase;
+}
+
+/*
+ * Crop image to desired width and height without distortion
+ */
+@mixin image-container ($width, $height) {
+  width: $width;
+  height: $height;
+  overflow: hidden;
 }
