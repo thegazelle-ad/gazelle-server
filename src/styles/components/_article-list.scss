@@ -1,10 +1,9 @@
 .article-list {
   display: flex;
-  flex-wrap: wrap;
-  flex-grow: 1;
-  flex-basis: 0;
+  flex: 1 0 auto;
   padding: 10px;
-  justify-content: space-between;
+  justify-content: justify;
+  align-content: center;
 
   // Apply spacing between articles
   :first-child {
