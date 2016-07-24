@@ -36,8 +36,8 @@ export default class IssueController extends FalcorController {
       ["issues", 55, "picks", {to: 1}, "authors", {to: 10}, ["name", "slug"]],
 
       // Request first four Trending articles
-      ["issues", 55, "trending", {to: 2}, ["title", "issueId", "category", "slug"]],
-      ["issues", 55, "trending", {to: 2}, "authors", {to: 10}, ["name", "slug"]],
+      ["issues", 55, "trending", {to: 3}, ["title", "issueId", "category", "slug"]],
+      ["issues", 55, "trending", {to: 3}, "authors", {to: 10}, ["name", "slug"]],
 
       // Request all remaining articles from issue
       ["issues", 55, "articles", ["off-campus", "on-campus", "commentary", "creative", "in-focus"], {to: 30}, ["title", "teaser", "issueId", "category", "slug"]],
@@ -52,7 +52,7 @@ export default class IssueController extends FalcorController {
       // TODO: Remove hardcoded issueId
       let issueId = 55;
       const issueData = this.state.data.issues[issueId];
-      //console.log("Data: " + JSON.stringify(issueData));
+      console.log("Data: " + JSON.stringify(issueData.trending));
 
       let renderCategories =
         // Render nothing if this.props.articles is empty

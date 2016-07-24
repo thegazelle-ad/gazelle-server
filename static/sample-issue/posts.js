@@ -11,6 +11,7 @@ const data = {
                 "0": { $type: "ref", value: ["articlesBySlug", "tampon-tax"] },
                 "1": { $type: "ref", value: ["articlesBySlug", "bullying"] },
                 "2": { $type: "ref", value: ["articlesBySlug", "letter-4"] },
+                "3": { $type: "ref", value: ["articlesBySlug", "james-smoley-on-mental-health"] },
             },
             "articles": {
                 "off-campus": {
