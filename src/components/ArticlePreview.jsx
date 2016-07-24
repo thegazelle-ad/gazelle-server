@@ -45,7 +45,8 @@ export default class ArticlePreview extends React.Component {
 ArticlePreview.propTypes = {
   article: React.PropTypes.shape({
     title: React.PropTypes.string.isRequired,
-    teaser: React.PropTypes.string.isRequired,
+    // Teaser not used for Trending component
+    teaser: React.PropTypes.string,
     issueId: React.PropTypes.string.isRequired,
     category: React.PropTypes.string.isRequired,
     slug: React.PropTypes.string.isRequired,

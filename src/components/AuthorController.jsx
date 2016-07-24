@@ -20,7 +20,7 @@ export default class AuthorController extends FalcorController {
     if (this.state.ready) {
       let authorSlug = this.props.params.authorSlug;
       const authorData = this.state.data.authorsBySlug[authorSlug];
-      console.log("Data: " + JSON.stringify(authorData));
+      //console.log("Data: " + JSON.stringify(authorData));
       return (
         <div>
           {/*

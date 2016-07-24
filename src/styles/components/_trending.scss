@@ -1,0 +1,28 @@
+.trending {
+  max-width: 30%;
+  &__section-header {
+
+  }
+
+  .article-list{
+    display: flex;
+    flex-direction: column;
+    .article-preview {
+      padding: 0.2rem;
+      &__featured-image {
+        // DEV: remove when loading images in dynamically
+        display: none;
+      }
+      &__content {
+        &__teaser {
+          /*
+           * If article exists in current issue, teaser will be passed to
+           * ArticlePreview To make sure the teaser does not appear in Trending,
+           * we hide it should it exist for robustness.
+           */
+          display: none;
+        }
+      }
+    }
+  }
+}

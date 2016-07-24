@@ -16,7 +16,7 @@ export default class ArticleList extends React.Component {
     let renderArticlePreviews =
       // Render nothing if this.props.articles is empty
       _.map((this.props.articles || []), function(article) {
-        console.log("Article: " + article.title);
+        //console.log("Article: " + article.title);
         return(
           <div key={article.slug}>
             <ArticlePreview article={article} />

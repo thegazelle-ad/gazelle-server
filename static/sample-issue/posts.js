@@ -3,7 +3,7 @@ const data = {
         "55": {
             "pubDate": "May 1, 2016",
             "featured": { $type: "ref", value: ["articlesBySlug", "perfectionism"] },
-            "editors-picks": {
+            "picks": {
                 "0": { $type: "ref", value: ["articlesBySlug", "sleep"] },
                 "1": { $type: "ref", value: ["articlesBySlug", "taboos-on-sexual-abuse"] },
             },

@@ -26,10 +26,22 @@ export default class IssueController extends FalcorController {
     // TODO: change hardcoded issueId
     return [
       ["issues", 55, ["pubDate"]],
-      ["issues", 55, "articles", ["off-campus", "on-campus", "commentary", "creative", "in-focus"], {to: 30}, ["title", "teaser", "issueId", "category", "slug"]],
-      ["issues", 55, "articles", ["off-campus", "on-campus", "commentary", "creative", "in-focus"], {to: 30}, "authors", {to: 10}, ["name", "slug"]],
+
+      // Request the featured article
       ["issues", 55, "featured", ["title", "teaser", "issueId", "category", "slug"]],
       ["issues", 55, "featured", "authors", {to: 10}, ["name", "slug"]],
+
+      // Request first two Editor's Picks
+      ["issues", 55, "picks", {to: 1}, ["title", "teaser", "issueId", "category", "slug"]],
+      ["issues", 55, "picks", {to: 1}, "authors", {to: 10}, ["name", "slug"]],
+
+      // Request first three Trending articles
+      ["issues", 55, "trending", {to: 2}, ["title", "issueId", "category", "slug"]],
+      ["issues", 55, "trending", {to: 2}, "authors", {to: 10}, ["name", "slug"]],
+
+      // Request all remaining articles from issue
+      ["issues", 55, "articles", ["off-campus", "on-campus", "commentary", "creative", "in-focus"], {to: 30}, ["title", "teaser", "issueId", "category", "slug"]],
+      ["issues", 55, "articles", ["off-campus", "on-campus", "commentary", "creative", "in-focus"], {to: 30}, "authors", {to: 10}, ["name", "slug"]],
     ];
   }
 
@@ -40,13 +52,13 @@ export default class IssueController extends FalcorController {
       // TODO: Remove hardcoded issueId
       let issueId = 55;
       const issueData = this.state.data.issues[issueId];
-      console.log("Data: " + JSON.stringify(issueData));
+      //console.log("Data: " + JSON.stringify(issueData));
 
       let renderCategories =
         // Render nothing if this.props.articles is empty
         // articles = value; category = key
         _.map((issueData.articles || []), function(articles, category) {
-          console.log("Category: " + JSON.stringify(category));
+          //console.log("Category: " + JSON.stringify(category));
           return(
             <div key={category} className="issue__category">
               <h2>{category}</h2>
@@ -63,11 +75,13 @@ export default class IssueController extends FalcorController {
             <div>Controller for issue: {issueId}</div>
             <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
             <div>Publication Date: {issueData.pubDate}</div>
-            <EditorsPicks articles={issueData.articles} />
-            <Trending articles={issueData.articles} />
           */}
-          <FeaturedArticle article={issueData.featured} />
 
+          <FeaturedArticle article={issueData.featured} />
+          <div className="top-articles">
+            <EditorsPicks articles={issueData.picks} />
+            <Trending articles={issueData.trending} />
+          </div>
           {renderCategories}
         </div>
       );
