@@ -35,7 +35,7 @@ export default class IssueController extends FalcorController {
       ["issues", 55, "picks", {to: 1}, ["title", "teaser", "issueId", "category", "slug"]],
       ["issues", 55, "picks", {to: 1}, "authors", {to: 10}, ["name", "slug"]],
 
-      // Request first three Trending articles
+      // Request first four Trending articles
       ["issues", 55, "trending", {to: 2}, ["title", "issueId", "category", "slug"]],
       ["issues", 55, "trending", {to: 2}, "authors", {to: 10}, ["name", "slug"]],
 
@@ -61,7 +61,7 @@ export default class IssueController extends FalcorController {
           //console.log("Category: " + JSON.stringify(category));
           return(
             <div key={category} className="issue__category">
-              <h2>{category}</h2>
+              <h2 className="section-header">{category}</h2>
               <div className="issue__category__list">
                 <ArticleList articles={articles} />
               </div>

@@ -7,21 +7,21 @@
     justify-content: center;
 
     &__featured-image {
-      @include image-container(70%, 40%);
+      @include image-container(65%, 40%);
       //min-height: 40%;
       margin: 0;
     }
 
     &__content {
-      max-width: 25%;
-      padding-left: 1rem;
+      max-width: 30%;
+      padding-left: 1.3rem;
       &__title {
         font-size: 2rem;
         line-height: 2.2rem;
       }
 
       &__authors {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
       }
 
       &__teaser {

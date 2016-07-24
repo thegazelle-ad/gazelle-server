@@ -1,6 +1,17 @@
 .editors-picks {
   max-width: 70%;
-  &__section-header {
+  margin-right: 0.75rem;
+  .section-header {
+    &:after {
+      width: 79.5%;
+      margin-right: -40%;
+    }
+  }
+  .article-list {
+    padding: 0;
 
+    &:last-child {
+      border-right: 1px solid $border-grey;
+    }
   }
 }

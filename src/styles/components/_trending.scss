@@ -1,19 +1,38 @@
 .trending {
   max-width: 30%;
-  &__section-header {
+  flex: 1 1 auto;
 
+  .section-header {
+    // &:before {
+    //   right: 0.2rem;
+    //   margin-left: 0;
+    //   width: 30px;
+    // }
   }
 
   .article-list{
     display: flex;
+    flex: 1 1 auto;
     flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    flex-grow: 1;
+    padding: 0;
+
     .article-preview {
-      padding: 0.2rem;
+      padding: 0 0 0.5rem 0;
+      flex: 1 1 auto;
       &__featured-image {
         // DEV: remove when loading images in dynamically
         display: none;
       }
       &__content {
+        &__title {
+          margin: 0 0 0.1rem;
+        }
+        &__authors {
+          margin: 0;
+        }
         &__teaser {
           /*
            * If article exists in current issue, teaser will be passed to
