@@ -8,8 +8,8 @@
 
     &__featured-image {
       @include image-container(65%, 40%);
-      //min-height: 40%;
       margin: 0;
+
     }
 
     &__content {
@@ -26,6 +26,26 @@
 
       &__teaser {
         font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 750px) {
+  .featured-article{
+    min-width: 0;
+    .article-preview {
+      flex-direction: column;
+
+      &__featured-image {
+        @include image-container(100%, auto);
+        margin: 0;
+      }
+
+      &__content {
+        max-width: 100%;
+        padding-left: 0;
+        font-size: inherit;
       }
     }
   }

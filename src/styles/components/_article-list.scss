@@ -4,4 +4,8 @@
   padding: 0.5rem 0 0.5rem 0;
   justify-content: justify;
   align-content: center;
+
+  &:last-child {
+    padding: 0;
+  }
 }
