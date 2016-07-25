@@ -69,6 +69,17 @@ export default class IssueController extends FalcorController {
           )
         });
 
+      /*
+       * Create a dummy DOM element and add the string to it.
+       * Then, you can manipulate it like any DOM element.
+       */
+      let parseFeaturedImage = (html) => {
+        let el = document.createElement( 'html' );
+        el.innerHTML = html;
+        //return (el.getElementsByTagName( 'a' ));
+        console.log("ANCHOR TAG: " + el.getElementsByTagName( 'a' ))
+      }
+
       return (
         <div className="issue">
           {/*
