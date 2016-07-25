@@ -1,7 +1,6 @@
 import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
 
-// "Dumb" component written as pure function
 export default class NotFound extends BaseComponent {
   render() {
     return (

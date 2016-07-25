@@ -56,7 +56,20 @@
   &__search {
     display: flex;
     align-items: center;
-    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    &:active,
+    &:hover {
+  		.header__search__main{
+        width: 200px;
+        height: 35px;
+      }
+
+  		.header__search__tail,
+      .header__search__text {
+        visibility: hidden;
+  		}
+    }
     &__main {
       display: inline-block;
       position: relative;
@@ -70,15 +83,6 @@
       transition: all 250ms ease;
       cursor: text;
 
-      &--active,
-  	  &:hover {
-    		width: 200px;
-        height: 35px;
-
-    		&:after {
-    			height: 0px;
-    		}
-  	  }
     }
 
     &__tail{
@@ -94,8 +98,8 @@
         transition: all 200ms ease;
     }
 
-    &:after{
-      content: "SEARCH";
+    &__text{
+      display: inline-block;
       font-size: $authors-small;
       color: $dark-grey;
 

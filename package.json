@@ -4,7 +4,20 @@
   "description": "Minimal starter kit for React, Falcor, and Universal rendering with ES6",
   "main": "server.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --verbose"
+  },
+  "jest": {
+    "unmockedModulePathPatterns": ["<rootDir>/node_modules/react"],
+    "modulePaths": ["<rootDir>"],
+    "moduleFileExtensions": [
+      "",
+      "js",
+      "jsx"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "./src"
+    ]
   },
   "repository": {
     "type": "git",
@@ -25,7 +38,7 @@
   "devDependencies": {
     "babel-cli": "^6.10.1",
     "babel-core": "^6.4.5",
-    "babel-jest": "^13.0.0",
+    "babel-jest": "^13.2.2",
     "babel-loader": "^6.2.1",
     "babel-plugin-lodash": "^3.2.4",
     "babel-polyfill": "^6.9.1",
@@ -41,7 +54,7 @@
     "eslint-plugin-react": "^5.1.1",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
-    "jest-cli": "^13.0.0",
+    "jest-cli": "^13.2.3",
     "node-sass": "^3.8.0",
     "null-loader": "^0.1.1",
     "postcss-cssnext": "^2.7.0",

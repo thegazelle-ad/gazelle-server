@@ -4,6 +4,7 @@
 
 import React from 'react';
 import _ from 'lodash';
+
 import BaseComponent from 'lib/BaseComponent';
 
 // Components
@@ -28,7 +29,6 @@ export default class ArticleList extends BaseComponent {
       </div>
     );
   }
-  
 }
 
 // Formatted as list of objects

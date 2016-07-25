@@ -21,7 +21,6 @@ export default class ArticlePreview extends BaseComponent {
             alt="featured"
           />
         </Link>
-
         {/*
           Article title with link to article
         */}
@@ -29,7 +28,6 @@ export default class ArticlePreview extends BaseComponent {
           <Link to={'/issue/' + article.issueId + '/' + article.category + '/' + article.slug}>
             <h3 className="article-preview__content__title">{article.title}</h3>
           </Link>
-
           {/* Author(s) */}
           <div className="article-preview__content__authors">
             <AuthorList authors={article.authors} />
@@ -38,9 +36,8 @@ export default class ArticlePreview extends BaseComponent {
           {/* Article teaser */}
           <p className="article-preview__content__teaser">{article.teaser}</p>
         </div>
-      </div>
-    );
-  }
+    </div>
+  );
 }
 
 // Validate shape of article JSON object

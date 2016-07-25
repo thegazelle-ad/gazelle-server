@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import BaseComponent from 'lib/BaseComponent';
 import _ from 'lodash';
 
@@ -6,86 +7,43 @@ export default class EditAuthorsForm extends BaseComponent {
   constructor(props) {
     super(props);
     this.safeSetState({
-      // Key is slug, value is name
-      authorsAdded: {},
-      // An object where key is slug and value is whether it's deleted or not
-      authorsDeleted: _.reduce(this.props.data, (cur, next) => {
-        cur[next.slug] = false;
-        return cur;
-      }, {})
+      addAuthorValue: ""
     });
-    this.handleAddAuthor = this.handleAddAuthor.bind(this);
+    this.handleClickAddAuthor = this.handleClickAddAuthor.bind(this);
   }
 
   componentDidUpdate() {
-    this.props.onChange(this.state.authorsAdded, this.state.authorsDeleted);
+    this.props.onChange();
   }
 
-  handleAddAuthor() {
-    // TODO: Autocomplete which also includes validating that the authors indeed exist
-    let val = this.addAuthorNode.value;
-    // Is this author already added?
-    if (!val || this.state.authorsAdded.hasOwnProperty(val) || this.state.authorsDeleted.hasOwnProperty(val)) {
-      this.addAuthorNode.value = "";
-      return;
-    }
-    let newValue = {};
-    // Remember to change value of this to slug or however we end up storing
-    newValue[val] = val;
-    let newAuthorsAdded = Object.assign({}, this.state.authorsAdded, newValue);
-    this.safeSetState({
-      authorsAdded: newAuthorsAdded
-    });
-    // Clear input field
-    this.addAuthorNode.value = "";
-  }
-
-  handleDeleteAuthor(slug, originalAuthor) {
-    if (originalAuthor) {
-      let newValue = {};
-      newValue[slug] = true;
-      let newAuthorsDeleted = Object.assign({}, this.state.authorsDeleted, newValue);
-      this.safeSetState({
-        authorsDeleted: newAuthorsDeleted
-      });
-    }
-    else {
-      let copy = Object.assign({}, this.state.authorsAdded);
-      delete copy[slug];
-      this.safeSetState({
-        authorsAdded: copy
-      });
-    }
-  }
-
-  handleUnstrikeAuthor(slug) {
-    let newValue = {};
-    newValue[slug] = false;
-    let newAuthorsDeleted = Object.assign({}, this.state.authorsDeleted, newValue);
-    this.safeSetState({
-      authorsDeleted: newAuthorsDeleted
-    });
+  handleClickAddAuthor() {
+    this.props.handleAddAuthor(this.state.addAuthorValue, false);
+    this.safeSetState({addAuthorValue: ""});
   }
 
   render() {
     return (
       <div>
-        <input placeholder="Add Author" onChange={(e)=>{e.stopPropagation()}} ref={(ref) => {this.addAuthorNode = ref}} />
-        <button className="pure-button" type="button" onClick={this.handleAddAuthor}>Add Author</button>
+        <input placeholder="Add Author" value={this.state.addAuthorValue} onChange={(e)=>{e.stopPropagation(); this.safeSetState({addAuthorValue: e.target.value});}} />
+        <button className="pure-button" type="button" onClick={this.handleClickAddAuthor}>Add Author</button>
         {
-          _.map(this.props.data, (author) => {
-            let striked = this.state.authorsDeleted[author.slug];
-            let authorNameStyle = {};
+          _.map(this.props.authors, (author) => {
+            // Striked will correctly evaluate to false if there is no key
+            // with that slug yet, which means it has neither been striked nor unstriked yet
+            // It will return undefined which is a falsy value
+            let striked = this.props.authorsDeleted[author.slug];
+            let authorNameStyle = {marginLeft: "1em"};
             if (striked) {
               authorNameStyle.textDecoration = "line-through";
+              authorNameStyle.opacity = 0.5;
             }
 
             return(
               <div key={author.slug}>
                 {
                   !striked
-                    ? <a style={{float: "left", cursor: "pointer"}} aria-label="Remove Author Button" onClick={this.handleDeleteAuthor.bind(this, author.slug, true)}>&times;&nbsp;</a>
-                    : <a style={{float: "left", cursor: "pointer"}} aria-label="Remove Author Button" onClick={this.handleUnstrikeAuthor.bind(this, author.slug)}>~&nbsp;</a>
+                    ? <button type="button" className="reset-button-style" style={{float: "left"}} aria-label="Remove Author Button" onClick={this.props.handleDeleteAuthor.bind(null, author.slug, true)}>&times;&nbsp;</button>
+                    : <button type="button" className="reset-button-style" style={{float: "left"}} aria-label="Remove Author Button" onClick={this.props.handleAddAuthor.bind(null, author.slug, true)}>~&nbsp;</button>
                 }
                 <div style={authorNameStyle}>{author.name}</div>
               </div>
@@ -94,10 +52,10 @@ export default class EditAuthorsForm extends BaseComponent {
         }
         {
           // Key is slug, value is name
-          _.map(this.state.authorsAdded, (name, slug) => {
+          _.map(this.props.authorsAdded, (name, slug) => {
             return(
               <div key={slug}>
-                <a style={{float: "left", cursor: "pointer"}} aria-label="Remove Author Button" onClick={this.handleDeleteAuthor.bind(this, slug, false)}>&times;&nbsp;</a>
+                <a style={{float: "left", cursor: "pointer"}} aria-label="Remove Author Button" onClick={this.props.handleDeleteAuthor.bind(null, slug, false)}>&times;&nbsp;</a>
                 <div>{name}</div>
               </div>
             );
