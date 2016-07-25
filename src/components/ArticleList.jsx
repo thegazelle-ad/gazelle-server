@@ -18,9 +18,7 @@ export default class ArticleList extends React.Component {
       _.map((this.props.articles || []), function(article) {
         //console.log("Article: " + article.title);
         return(
-          <div key={article.slug}>
-            <ArticlePreview article={article} />
-          </div>
+          <ArticlePreview key={article.slug} article={article} />
         )
       });
 
