@@ -1,11 +1,16 @@
 .article-list {
   display: flex;
-  flex: 1 0 auto;
+  //flex: 1 0 auto;
+  //flex-wrap: wrap;
   padding: 0.5rem 0 0.5rem 0;
-  justify-content: justify;
+  justify-content: space-between;
   align-content: center;
 
   &:last-child {
     padding: 0;
+  }
+
+  @media (max-width: $small) {
+    flex-wrap: wrap;
   }
 }
