@@ -9,7 +9,7 @@ export default class Article extends React.Component {
     return (
       <div className="article">
         <h1 className="article__title">{this.props.title}</h1>
-        <AuthorList authors={this.props.authors} />
+        <AuthorList className="article__authors" authors={this.props.authors} />
         <div className="article__html" dangerouslySetInnerHTML={{__html: this.props.html}} />
       </div>
     );
