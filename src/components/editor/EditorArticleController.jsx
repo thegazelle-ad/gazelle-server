@@ -59,6 +59,14 @@ export default class EditorArticleController extends FalcorController {
     return [['articlesBySlug', params.slug, ['title', 'issue', 'category', 'description']], ['articlesBySlug', params.slug, 'authors', {to: 2}, ['slug', 'name']], ['latestIssue']];
   }
 
+  componentWillReceiveProps(nextProps) {
+    super.componentWillReceiveProps(nextProps);
+    this.safeSetState({
+      changed: "none",
+      saving: false
+    });
+  }
+
   handleSaveChanges(event) {
     event.preventDefault();
     const formNode = event.target;
