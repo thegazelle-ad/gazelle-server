@@ -1,16 +1,38 @@
 .article-list {
   display: flex;
   //flex: 1 0 auto;
-  //flex-wrap: wrap;
-  padding: 0.5rem 0 0.5rem 0;
+  flex-wrap: wrap;
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
   justify-content: space-between;
   align-content: center;
 
   &:last-child {
     padding: 0;
   }
+}
 
-  @media (max-width: $small) {
+@media (max-width: $small) {
+  .article-list {
     flex-wrap: wrap;
+
+    // Show featured image only of first article in section
+    :first-child {
+      .article-preview {
+        &__featured-image {
+          display: inherit;
+        }
+        &__content {
+          padding-top: 0.2rem;
+          &__teaser {
+            display: none;
+          }
+        }
+      }
+    }
+    .article-preview {
+      &__featured-image {
+        display: none;
+      }
+    }
   }
 }

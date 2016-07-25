@@ -4,8 +4,12 @@
 
 .app-container {
   max-width: 1000px;
+  min-width: 240px;
   // Center all content on page
   margin: 0.5rem auto 0 auto;
+  @media (max-width: $small) {
+    margin: 0.2rem auto 0 auto;
+  }
   display: block;
   &__header {
     flex: 0 0 100%;
@@ -15,7 +19,8 @@
     .top-articles {
       display: flex;
       flex-grow: 1;
-      @media (max-width: 750px) {
+      align-items: stretch;
+      @media (max-width: $medium) {
         display: none;
       }
     }

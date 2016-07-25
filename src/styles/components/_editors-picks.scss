@@ -12,5 +12,8 @@
       // Divider between Editor's Picks and Trending
       border-right: 1px solid $border-grey;
     }
+    .article-preview {
+      max-width: $column-2;
+    }
   }
 }

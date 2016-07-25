@@ -52,7 +52,7 @@ export default class IssueController extends FalcorController {
       // TODO: Remove hardcoded issueId
       let issueId = 55;
       const issueData = this.state.data.issues[issueId];
-      console.log("Data: " + JSON.stringify(issueData.trending));
+      //console.log("Data: " + JSON.stringify(issueData.trending));
 
       let renderCategories =
         // Render nothing if this.props.articles is empty

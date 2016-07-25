@@ -1,31 +1,29 @@
 .trending {
-  max-width: 30%;
+  max-width: $column-3-1;
   flex: 1 1 auto;
 
   .article-list{
-    display: flex;
-    flex: 1 1 auto;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    overflow: scroll;
-    flex-grow: 1;
-    padding: 0;
+    //display: flex;
+    // flex: 1 1 auto;
+    //align-items: flex-end;
+    //padding: 0;
 
     .article-preview {
-      display: block;
-
       padding: 0 0 0.5rem 0;
-      flex: 1 1 auto;
+      max-width: $column-1;
+      flex: 0 1 auto;
       &__featured-image {
-        // DEV: remove when loading images in dynamically
         display: none;
       }
       &__content {
         &__title {
-          margin: 0 0 0.1rem;
+          margin: 0;
+          font-size: $title-small;
+          line-height: normal;
         }
         &__authors {
+          @include uppercase();
+          font-size: $authors-small;
           margin: 0;
         }
         &__teaser {

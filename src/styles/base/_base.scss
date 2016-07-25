@@ -9,9 +9,13 @@ a {
 .section-header {
   padding: 0;
   margin: 0 0 0.3rem 0;
-  font-size: 1.1rem;
+  font-size: $category-large;
   font-weight: 300;
   color: $dark-grey;
+
+  @media (max-width: $small) {
+    font-size: $category-small;
+  }
 
   // Section deliniation lines
   overflow: hidden;
