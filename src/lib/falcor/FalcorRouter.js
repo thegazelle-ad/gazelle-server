@@ -207,6 +207,19 @@ export default class FalcorRouter extends BaseRouter.createClass([
         })
       })
     }
+  },
+  {
+    // Get latest issue
+    route: "latestIssue",
+    get: (pathSet) => {
+      // TODO: Change it to fetch proper data when we can
+      // TODO: Also in general implement falcor routes for everything about issues
+      // Make issue a complete object with creation date, refs to articles etc.
+      return [{
+        path: ['latestIssue'],
+        value: 50
+      }];
+    }
   }
 ])
 // Begin actual class methods below

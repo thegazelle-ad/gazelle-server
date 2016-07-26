@@ -56,7 +56,7 @@ export default class EditorArticleController extends FalcorController {
   }
 
   static getFalcorPathSets(params) {
-    return [['articlesBySlug', params.slug, ['title', 'issue', 'category', 'description']], ['articlesBySlug', params.slug, 'authors', {to: 2}, ['slug', 'name']]];
+    return [['articlesBySlug', params.slug, ['title', 'issue', 'category', 'description']], ['articlesBySlug', params.slug, 'authors', {to: 2}, ['slug', 'name']], ['latestIssue']];
   }
 
   handleSaveChanges(event) {
@@ -101,7 +101,8 @@ export default class EditorArticleController extends FalcorController {
       }
 
       const slug = this.props.params.slug;
-      const data = this.state.data.articlesBySlug[slug];
+      const article = this.state.data.articlesBySlug[slug];
+      const latestIssue = this.state.data.latestIssue;
 
       let changedStateMessage;
       const changedStateStyle = {};
@@ -133,22 +134,28 @@ export default class EditorArticleController extends FalcorController {
       return (
         <div>
           <h2 style={changedStateStyle}>{changedStateMessage}</h2>
-          <h3>{data.title}</h3>
+          <h3>{article.title}</h3>
           <p>Change the information for the article and press Save Changes to confirm the changes.</p>
           <form className="pure-form pure-form-stacked" onChange={this.debouncedHandleFormChanges} onSubmit={this.handleSaveChanges} ref={(ref) => {this.formNode = ref}}>
             Change the Category:
-            <select defaultValue={data.category} name="category">
+            <select defaultValue={article.category} name="category">
               {categories.map((category) => {
                 return <option value={category} key={category}>{category}</option>;
               })}
             </select>
             Change Issue Number:
-            <input type="number" defaultValue={data.issue} name="issue" />
+            <select defaultValue={article.issue} name="issue">
+              {
+                _.range(latestIssue, 0, -1).map((issue) => {
+                  return <option value={issue} key={issue}>{issue.toString() + (issue === latestIssue ? " (latest issue)" : "")}</option>;
+                })
+              }
+            </select>
             Change Description:
             {/*TODO: Style this description so initial size is bigger and more approriate (and also responsive)*/}
-            <textarea defaultValue={data.description} name="description" />
+            <textarea defaultValue={article.description} name="description" />
             Edit Authors:
-            <EditAuthorsForm data={data.authors} onChange={this.debouncedHandleFormChanges} ref={(ref) => {this.editAuthorListNode = ref}} />
+            <EditAuthorsForm data={article.authors} onChange={this.debouncedHandleFormChanges} ref={(ref) => {this.editAuthorListNode = ref}} />
           {/*Be aware you might want to change when the button is disabled later*/}
             <input className={"pure-button pure-button-primary" + (this.state.changed === "changed" ? "" : " pure-button-disabled")} type="submit" value="Save Changes" disabled={this.state.changed !== "changed"} />
           </form>
