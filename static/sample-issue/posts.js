@@ -12,6 +12,7 @@ const data = {
                 "1": { $type: "ref", value: ["articlesBySlug", "bullying"] },
                 "2": { $type: "ref", value: ["articlesBySlug", "letter-4"] },
                 "3": { $type: "ref", value: ["articlesBySlug", "james-smoley-on-mental-health"] },
+                "4": { $type: "ref", value: ["articlesBySlug", "bystander-intervention-creating-a-community-that-cares"] },
             },
             "articles": {
                 "off-campus": {
