@@ -33,14 +33,15 @@
     text-align: center;
     font-size: 2rem;
 
-    // Import Gazelle icon in header
-    // &:before{
-    //   background-image: url('../../static/title.png');
-    //   background-size: auto 40px;
-    //   display: inline-block;
-    //   width: auto;
-    //   height: 40px;
-    //   content: "";
-    // }
+    //Import Gazelle icon in header
+    &:before{
+      display: inline-block;
+      width: 60px;
+      height: 60px;
+      margin: 0 10px -15px 0;
+      content: "";
+      background: url('../../static/header-logo.png') no-repeat 0 0;
+      background-size: 100%;
+    }
   }
 }
