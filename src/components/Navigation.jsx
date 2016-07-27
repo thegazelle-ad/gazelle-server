@@ -24,7 +24,6 @@ export default class Navigation extends React.Component {
           <div className="header__search">
             <input
               className="header__search__main"
-              activeClassName="header__search__main--active"
               type="text"
             />
             <div className="header__search__tail" />
