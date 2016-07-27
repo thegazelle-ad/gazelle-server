@@ -11,6 +11,7 @@
       // @include image-container(65%, 40%);
       // margin: 0;
       max-width: 68%;
+      height: 350px;
 
     }
 
@@ -60,6 +61,7 @@
       align-items: flex-start;
       &__featured-image {
         max-width: $column-1;
+        height: 200px;
         //order: 2;
       }
 

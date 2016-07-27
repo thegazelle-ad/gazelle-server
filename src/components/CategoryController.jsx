@@ -9,7 +9,7 @@ export default class CategoryController extends FalcorController {
     // Multilevel request requires Falcor Path for each level of data requested
     // Grab first 10 articles for category requested
     return [
-      ["categories", params.category, {to: 10}, ["title", "teaser", "issueId", "category", "slug"]],
+      ["categories", params.category, {to: 10}, ["title", "teaser", "issueId", "category", "slug", "featuredImage"]],
       ["categories", params.category, {to: 10}, "authors", {to: 10}, ["name", "slug"]],
     ];
   }

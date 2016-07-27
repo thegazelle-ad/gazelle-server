@@ -1,0 +1,14 @@
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  animation-name: spin;
+  animation-duration: 1.00s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

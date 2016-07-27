@@ -16,7 +16,7 @@ export default class ArticlePreview extends React.Component {
         */}
         <img
           className="article-preview__featured-image"
-          src={"http://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg "}
+          src={article.featuredImage}
           alt="featured"
         />
 

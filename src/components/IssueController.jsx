@@ -28,19 +28,19 @@ export default class IssueController extends FalcorController {
       ["issues", 55, ["pubDate"]],
 
       // Request the featured article
-      ["issues", 55, "featured", ["title", "teaser", "issueId", "category", "slug"]],
+      ["issues", 55, "featured", ["title", "teaser", "issueId", "category", "slug", "featuredImage"]],
       ["issues", 55, "featured", "authors", {to: 10}, ["name", "slug"]],
 
       // Request first two Editor's Picks
-      ["issues", 55, "picks", {to: 1}, ["title", "teaser", "issueId", "category", "slug"]],
+      ["issues", 55, "picks", {to: 1}, ["title", "teaser", "issueId", "category", "slug", "featuredImage"]],
       ["issues", 55, "picks", {to: 1}, "authors", {to: 10}, ["name", "slug"]],
 
       // Request first five Trending articles
-      ["issues", 55, "trending", {to: 4}, ["title", "issueId", "category", "slug"]],
+      ["issues", 55, "trending", {to: 4}, ["title", "issueId", "category", "slug", "featuredImage"]],
       ["issues", 55, "trending", {to: 4}, "authors", {to: 10}, ["name", "slug"]],
 
       // Request all remaining articles from issue
-      ["issues", 55, "articles", ["off-campus", "on-campus", "commentary", "creative", "in-focus"], {to: 30}, ["title", "teaser", "issueId", "category", "slug"]],
+      ["issues", 55, "articles", ["off-campus", "on-campus", "commentary", "creative", "in-focus"], {to: 30}, ["title", "teaser", "issueId", "category", "slug", "featuredImage"]],
       ["issues", 55, "articles", ["off-campus", "on-campus", "commentary", "creative", "in-focus"], {to: 30}, "authors", {to: 10}, ["name", "slug"]],
     ];
   }
@@ -98,7 +98,7 @@ export default class IssueController extends FalcorController {
       );
     } else {
       return (
-        <div>
+        <div className="loader">
           <h1>Loading</h1>
         </div>
       );

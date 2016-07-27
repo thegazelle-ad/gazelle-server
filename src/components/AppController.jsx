@@ -30,7 +30,7 @@ export default class AppController extends FalcorController {
           {this.props.children}
         </div>
         <div className="app-container__footer">
-          footer
+          
         </div>
       </div>
     );
