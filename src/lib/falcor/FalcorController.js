@@ -82,7 +82,7 @@ export default class FalcorController extends BaseComponent {
     if (falcorPathSets === undefined) return;
 
     // Then if we are a client, we can try to do a fetch as well
-    this.safeSetState({fetching: true});
+    this.safeSetState({fetching: true, error: null});
     this.props.model.get(...falcorPathSets).then((x) => {
       console.log("FALCOR FETCH COMPLETED")
       if (x) {
