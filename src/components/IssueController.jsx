@@ -19,7 +19,7 @@ export default class IssueController extends FalcorController {
   // TODO: Render categories
     // TODO: Render ArticleList of articles in each category
   //
-  static getFalcorPath(params) {
+  static getFalcorPathSets(params) {
     // URL Format: thegazelle.org/issue/:issueId/:articleCategory/:articleSlug
 
     // Multilevel request requires Falcor Path for each level of data requested

@@ -3,7 +3,7 @@ import Author from 'components/Author';
 import FalcorController from 'lib/falcor/FalcorController';
 
 export default class AuthorController extends FalcorController {
-  static getFalcorPath(params) {
+  static getFalcorPathSets(params) {
     // URL Format: thegazelle.org/author/:authorSlug
 
     // Multilevel request requires Falcor Path for each level of data requested

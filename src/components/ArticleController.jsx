@@ -3,7 +3,7 @@ import Article from 'components/Article';
 import FalcorController from 'lib/falcor/FalcorController';
 
 export default class ArticleController extends FalcorController {
-  static getFalcorPath(params) {
+  static getFalcorPathSets(params) {
     // URL Format: thegazelle.org/issue/:issueId/:articleCategory/:articleSlug
 
     // Multilevel request requires Falcor Path for each level of data requested

@@ -25,7 +25,7 @@ export default class FalcorController extends BaseComponent {
   static getFalcorPathSets(params) {
     throw new TypeError(
       "You must implement the getFalcorPathSets method " +
-      "in children of FalcorControlleNULLr"
+      "in children of FalcorController"
     )
   }
 
@@ -54,7 +54,7 @@ export default class FalcorController extends BaseComponent {
 
     falcorPathSets = this.validateFalcorPathSets(falcorPathSets);
     if (falcorPathSets === undefined) return;
-    
+
     const data = expandCache(this.props.model.getCache(...falcorPathSets));
     if (data) {
       this.safeSetState({

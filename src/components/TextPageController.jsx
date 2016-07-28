@@ -12,7 +12,7 @@ import TextPage from 'components/TextPage';
 import NotFound from 'components/NotFound';
 
 export default class TextPageController extends FalcorController {
-  static getFalcorPath(params) {
+  static getFalcorPathSets(params) {
     return [
       ["infoPages", params.slug, ["title", "html"]],
     ];
