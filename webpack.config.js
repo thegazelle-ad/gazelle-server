@@ -101,7 +101,7 @@ module.exports = [{
     ],
   },
   devtool: 'source-map'
-}, 
+},
 // Editor tools copy
 {
   target: 'node',
