@@ -9,6 +9,7 @@ import FalcorController from 'lib/falcor/FalcorController';
 
 // Components
 import TextPage from 'components/TextPage';
+import NotFound from 'components/NotFound';
 
 export default class TextPageController extends FalcorController {
   static getFalcorPath(params) {
@@ -26,6 +27,8 @@ export default class TextPageController extends FalcorController {
           <TextPage title={data.title} html={data.html} />
         </div>
       );
+    } else if (this.state.error) {
+      return (<NotFound />);
     } else {
       return (
         <div>

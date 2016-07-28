@@ -6,6 +6,7 @@ import AuthorController from 'components/AuthorController';
 import IssueController from 'components/IssueController';
 import CategoryController from 'components/CategoryController';
 import TextPageController from 'components/TextPageController';
+import NotFound from 'components/NotFound';
 // import TeamController from "components/Team";
 // import ArchivesController from "components/Archives";
 
@@ -19,7 +20,6 @@ export default (
     <Route path="author/:authorSlug" component={AuthorController} />
     <Route path="issue/:issueId" component={IssueController} />
     <Route path="category/:category" component={CategoryController} />
-
     <Route path=":slug" component={TextPageController} />
     <IndexRoute component={IssueController} />
   </Route>
