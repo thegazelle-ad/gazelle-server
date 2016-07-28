@@ -1,12 +1,17 @@
+/*
+ * Default link styling
+ */
 a {
   text-decoration: none;
   color: inherit;
   &:hover{
     color: $dark-purple;
-    text-decoration: underline;
   }
 }
 
+/*
+ * Default input box styling
+ */
 input {
   width: 100%;
   border: none;
@@ -19,39 +24,4 @@ input {
   outline-width: 0px;
   align-items: center;
   padding-bottom: 0.45rem;
-}
-
-.section-header {
-  padding: 0;
-  margin: 0 0 0.3rem 0;
-  font-size: $category-large;
-  font-weight: 300;
-  color: $dark-grey;
-
-  @media (max-width: $small) {
-    font-size: $category-small;
-  }
-
-  // Section deliniation lines
-  overflow: hidden;
-  text-align: left;
-  &:before,
-  &:after {
-    background-color: $border-grey;
-    content: "";
-    display: inline-block;
-    height: 1px;
-    position: relative;
-    vertical-align: middle;
-  }
-  &:before {
-    right: 0.2rem;
-    margin-left: 0;
-    width: 30px;
-  }
-  &:after {
-    left: 0.2rem;
-    margin-right: -50%;
-    width: 90%;
-  }
 }

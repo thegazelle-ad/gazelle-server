@@ -25,6 +25,7 @@ export default class Navigation extends React.Component {
             <input
               className="header__search__main"
               type="text"
+              placeholder="Search The Gazelle"
             />
             <div className="header__search__tail" />
           </div>
