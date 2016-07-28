@@ -7,6 +7,10 @@
   color: $light-grey;
   padding: 0;
   border-top: 1px solid $border-grey;
+  text-align: center;
+  @media (max-width: $small) {
+    display: none;
+  }
   &__item {
     @include roboto-light;
     @include uppercase;

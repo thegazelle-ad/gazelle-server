@@ -2,7 +2,7 @@
   min-width: 220px;
   max-width: $column-3-1;
   flex-shrink: 1;
-  padding: 0 0.75rem 0.5rem 0.75rem;
+  padding: 0 0.75rem 1.25rem 0.75rem;
 
   @media (max-width: $medium) {
     max-width: $column-2
