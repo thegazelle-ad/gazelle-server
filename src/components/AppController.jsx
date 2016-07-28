@@ -1,7 +1,10 @@
 import React from "react";
 import FalcorController from "../lib/falcor/FalcorController";
 import { setAppReady } from "lib/falcor/falcorUtils";
+
+// Components
 import Navigation from "components/Navigation";
+import Footer from "components/Footer";
 
 // Importing static articles
 import articles from "../../static/sample-issue/posts.js";
@@ -30,7 +33,7 @@ export default class AppController extends FalcorController {
           {this.props.children}
         </div>
         <div className="app-container__footer">
-          
+          <Footer />
         </div>
       </div>
     );

@@ -13,3 +13,21 @@
   height: $height;
   overflow: hidden;
 }
+
+/*
+ * Typograpy
+ */
+ @mixin roboto-light {
+   font-family: 'Roboto', sans-serif;
+   font-weight: 300;
+ }
+
+ @mixin roboto-normal {
+   font-family: 'Roboto', sans-serif;
+   font-weight: 400;
+ }
+
+ @mixin roboto-bold {
+   font-family: 'Roboto', sans-serif;
+   font-weight: 500;
+ }

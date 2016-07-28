@@ -1,0 +1,14 @@
+.text-page {
+  max-width: 590px;
+  display: block;
+  margin: auto;
+  &__title {
+
+  }
+  &__html {
+    font-family: 'Lora', serif;
+    font-size: $article;
+    line-height: 1.35rem;
+
+  }
+}
