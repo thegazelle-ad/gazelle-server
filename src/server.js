@@ -10,11 +10,12 @@ import routes from 'lib/routes';
 import FalcorController from 'lib/falcor/FalcorController';
 import FalcorRouter from 'lib/falcor/FalcorRouter';
 import { injectModelCreateElement } from 'lib/falcor/falcorUtils';
+import path from "path";
 
 // *********************************************
 // Load in static issue articles for development
 // *********************************************
-import data from '../static/sample-issue/posts.js';
+import testData from '../static/sample-issue/posts.js';
 //import authors from '../static/sample-issue/authors.js';
 
 // Allow node to use sourcemaps
@@ -27,7 +28,7 @@ const buildHtmlString = (body, cache) => {
       <html>
         <head>
           <title>The Gazelle</title>
-          <link rel="stylesheet" type="text/css" href="/build/main.css">
+          <link rel="stylesheet" type="text/css" href="/static/build/main.css">
           <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
           <link rel="icon" type="image/png" href="/static/favicons/favicon-32x32.png" sizes="32x32">
           <link rel="icon" type="image/png" href="/static/favicons/favicon-16x16.png" sizes="16x16">
@@ -45,7 +46,7 @@ const buildHtmlString = (body, cache) => {
             ` + JSON.stringify(cache) + `
             ;
           </script>
-          <script src="/build/client.js"></script>
+          <script src="/static/build/client.js"></script>
         </body>
       </html>`
   );
@@ -54,7 +55,7 @@ const buildHtmlString = (body, cache) => {
 // Shared serverModel
 // You can also hardcode / stub parts of the model here
 const serverModel = new falcor.Model({
-  cache: data,
+  cache: testData,
   source: new FalcorRouter(),
 }).batch();
 
@@ -79,17 +80,17 @@ const renderApp = (renderProps) => {
     }
   }, []);
 
-// Merging pathsets
-var temp = [];
-falcorPaths.forEach((pathSet) => {
-  if (pathSet[0] instanceof Array) {
-    temp = temp.concat(pathSet);
-  }
-  else {
-    temp.push(pathSet);
-  }
-});
-falcorPaths = temp;
+  // Merging pathsets
+  var temp = [];
+  falcorPaths.forEach((pathSet) => {
+    if (pathSet[0] instanceof Array) {
+      temp = temp.concat(pathSet);
+    }
+    else {
+      temp.push(pathSet);
+    }
+  });
+  falcorPaths = temp;
 
   // create a new model for this specific request
   // the reason we do this is so that the serverModel
@@ -101,9 +102,8 @@ falcorPaths = temp;
 
   // If the component doesn't want any data
   if (!falcorPaths || falcorPaths.length === 0 || falcorPaths[0].length === 0 && falcorPaths.length === 1) {
-    console.log("NO PATHS WERE GIVEN");
     return new Promise((resolve) => {
-      resolve (
+      resolve(
         buildHtmlString(
           renderToString(
             <RouterContext
@@ -137,10 +137,15 @@ falcorPaths = temp;
 
 const server = express();
 
-server.use("/model.json", FalcorServer.dataSourceRoute((req, res) => {
+server.use("/model.json", FalcorServer.dataSourceRoute(() => {
   return serverModel.asDataSource()
-}))
-server.use(express.static("static"))
+}));
+
+server.use("/static", express.static("static"));
+
+server.use("/favicon.ico", (req, res) => {
+  res.sendFile(path.join(__dirname, "./static"));
+});
 
 server.get('*', (req, res) => {
   match({ routes, location: req.url },
@@ -154,12 +159,8 @@ server.get('*', (req, res) => {
           res.status(200).send(html);
         }).catch((err) => {
           console.error('Failed to render: ', req.url);
-          if (err.stack) {
-            console.error(err.stack);
-          } else {
-            console.error(err);
-          }
-          res.status(500).send(err.stack);
+          console.error(err.stack || err)
+          res.status(500).send(err.stack || err);
         });
       } else {
         res.status(404).send('Not Found');

@@ -32,7 +32,7 @@ export default class FalcorController extends BaseComponent {
   validateFalcorPathSets(falcorPathSets) {
     // If the component doesn't want any data
     if (!falcorPathSets || !(falcorPathSets instanceof Array) || falcorPathSets.length === 0) {
-      console.log("NO PATHS WERE GIVEN");
+      console.log("NO PATHS WERE GIVEN: " + this.constructor.name);
       this.safeSetState({
         ready: true,
         data: null
