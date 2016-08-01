@@ -7,7 +7,7 @@ const $ref = falcor.Model.ref;
 
 // FLAG TO CHECK IF YOU WANT TO ACCESS GHOST API AND DATABASES
 // THIS IS JUST FOR DEVELOPMENT WHILE WE DON'T HAVE ACTUAL SERVERS SET UP
-const USE_DATABASES = true; 
+const USE_DATABASES = false; 
 
 // Transform ghost API names into our names
 const mapGhostNames = (name) => {
