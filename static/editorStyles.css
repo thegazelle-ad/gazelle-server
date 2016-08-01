@@ -2,3 +2,9 @@
   text-decoration: none;
   color: black;
 }
+
+.reset-button-style {
+  border: 0;
+  padding: 0;
+  background-color: white;
+}

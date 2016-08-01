@@ -13,43 +13,46 @@ const categories = [
 export default class EditorArticleController extends FalcorController {
   constructor(props) {
     super(props);
+    this.checkFormChanges = this.checkFormChanges.bind(this);
+    this.handleAuthorChanges = this.handleAuthorChanges.bind(this);
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
+    this.handleAddAuthor = this.handleAddAuthor.bind(this);
+    this.handleDeleteAuthor = this.handleDeleteAuthor.bind(this);
     this.safeSetState({
-      changed: "none",
-      saving: false
+      changed: false,
+      saving: false,
+      authorsAdded: {},
+      authorsDeleted: {},
+      changesObject: {
+        mainForm: false,
+        authors: false
+      }
     });
     
-    this.debouncedHandleFormChanges = debounce(() => {
-      const authorsAdded = this.editAuthorListNode.state.authorsAdded;
-      const authorsDeleted = this.editAuthorListNode.state.authorsDeleted;
+    this.debouncedHandleMainFormChanges = debounce((event) => {
+      const formNode = event.target.parentNode;
+      const fields = ["category", "issue", "description"];
+      const falcorData = this.state.data.articlesBySlug[this.props.params.slug];
 
-      let changedFlag = Object.keys(authorsAdded).length > 0 || 
-        _.some(authorsDeleted, (val) => {
-          return val;
+      const changedFlag = fields.some((field) => {
+        let formValue = formNode[field].value;
+        if (field === "issue") {
+          formValue = parseInt(formValue);
+        }
+        const falcorValue = falcorData[field];
+
+        if (formValue !== falcorValue) {
+          return true;
+        }
+        return false;
       });
-      if (!changedFlag) {
-        const formNode = this.formNode;
-        const fields = ["category", "issue", "description"];
-        const falcorData = this.state.data.articlesBySlug[this.props.params.slug];
 
-        // As changedFlag is currently false, we can simply use equals here
-        changedFlag = fields.some((field) => {
-          let formValue = formNode[field].value;
-          if (field === "issue") {
-            formValue = parseInt(formValue);
-          }
-          const falcorValue = falcorData[field];
-
-          if (formValue !== falcorValue) {
-            return true;
-          }
-          return false;
-        });
-      }
-      const newChangedState = changedFlag ? "changed" : "none";
-      if (newChangedState !== this.state.changed) {
+      if (changedFlag !== this.state.changesObject.mainForm) {
+        const newChangesObject = Object.assign({}, this.state.changesObject, {mainForm: changedFlag});
+        // this.setState is not a synchronous function, so we check with what will become the new changesObject
+        this.checkFormChanges(newChangesObject);
         this.safeSetState({
-          changed: newChangedState
+          changesObject: newChangesObject
         });
       }
     }, 500);
@@ -62,9 +65,43 @@ export default class EditorArticleController extends FalcorController {
   componentWillReceiveProps(nextProps) {
     super.componentWillReceiveProps(nextProps);
     this.safeSetState({
-      changed: "none",
-      saving: false
+      changed: false,
+      saving: false,
+      authorsAdded: {},
+      authorsDeleted: {}
     });
+  }
+
+  checkFormChanges(changesObject) {
+    const changedFlag = _.some(changesObject, (flag) => {
+      // Check if any of the flags are true
+      return flag;
+    });
+    if (changedFlag !== this.state.changed) {
+      this.safeSetState({
+        changed: changedFlag
+      });
+    }
+  }
+
+  handleAuthorChanges() {
+    const authorsAdded = this.state.authorsAdded;
+    const authorsDeleted = this.state.authorsDeleted;
+
+    // Checks if any authors were added or any authors were deleted
+    let changedFlag = Object.keys(authorsAdded).length > 0 ||
+      _.some(authorsDeleted, (flag) => {
+        return flag;
+    });
+
+    if (changedFlag !== this.state.changesObject.authors) {
+      const newChangesObject = Object.assign({}, this.state.changesObject, {authors: changedFlag});
+      // this.setState is not a synchronous function, so we check with what will become the new changesObject
+      this.checkFormChanges(newChangesObject);
+      this.safeSetState({
+        changesObject: newChangesObject
+      });
+    }
   }
 
   handleSaveChanges(event) {
@@ -78,29 +115,80 @@ export default class EditorArticleController extends FalcorController {
     const issue = formNode.issue.value;
     const description = formNode.description.value;
 
-    const authorsAdded = this.editAuthorListNode.state.authorsAdded;
-    const authorsDeleted = this.editAuthorListNode.state.authorsDeleted;
+    const authorsAdded = this.state.authorsAdded;
+    const authorsDeleted = this.state.authorsDeleted;
     // How to retrieve data done
 
     // Change data asynchronously
     this.safeSetState({
-      changed: "saving"
+      saving: true
     });
     setTimeout(
       () => {
         Promise.resolve("success").then(() => {
           // Just use falcor to change data here instead of window reload
           this.safeSetState({
-            changed: "saved"
+            changed: false
           });
           setTimeout(() => {
             window.location.reload();
+            this.safeSetState({
+              saving: false
+            })
           }, 1000);
       });
     }, 2000);
   }
 
+  // Handle state changes coming from editAuthorsForm
+
+  handleAddAuthor(slug, isOriginalAuthor) {
+    if (isOriginalAuthor) {
+      let newValue = {};
+      newValue[slug] = false;
+      let newAuthorsDeleted = Object.assign({}, this.state.authorsDeleted, newValue);
+      this.safeSetState({
+        authorsDeleted: newAuthorsDeleted
+      });      
+    }
+    else {
+      // TODO: Autocomplete which also includes validating that the authors indeed exist
+
+      // Is this author already added?
+      if (!slug || this.state.authorsAdded.hasOwnProperty(slug) || this.state.authorsDeleted.hasOwnProperty(slug)) {
+        return;
+      }
+      let newValue = {};
+      // Remember to change value of this to slug or however we end up storing
+      newValue[slug] = slug;
+      let newAuthorsAdded = Object.assign({}, this.state.authorsAdded, newValue);
+      this.safeSetState({
+        authorsAdded: newAuthorsAdded
+      });
+    }
+  }
+
+  handleDeleteAuthor(slug, isOriginalAuthor) {
+    if (isOriginalAuthor) {
+      let newValue = {};
+      newValue[slug] = true;
+      let newAuthorsDeleted = Object.assign({}, this.state.authorsDeleted, newValue);
+      this.safeSetState({
+        authorsDeleted: newAuthorsDeleted
+      });
+    }
+    else {
+      let copy = Object.assign({}, this.state.authorsAdded);
+      delete copy[slug];
+      this.safeSetState({
+        authorsAdded: copy
+      });
+    }
+  }
+
   // TODO: Get latest issue from falcor and use that in a dropdown for choosing issue
+
+  // TODO: Disable all fields while saving
 
   render() {
     if (this.state.ready) {
@@ -114,28 +202,24 @@ export default class EditorArticleController extends FalcorController {
 
       let changedStateMessage;
       const changedStateStyle = {};
-      switch (this.state.changed) {
-        case "none":
+      if (!this.state.changed) {
+        if (!this.state.saving) {
           changedStateMessage = "No Changes";
-          break;
-        
-        case "saving":
-          changedStateMessage = "Saving"
-          changedStateStyle.color = "#65e765";
-          break;
-
-        case "changed":
-          changedStateMessage = "Unsaved Changes";
-          changedStateStyle.color = "red";
-          break;
-
-        case "saved":
+        }
+        else {
           changedStateMessage = "Saved";
-          changedStateStyle.color = "green";
-          break;
-
-        default:
-          throw new Error("this.state.changed = " + this.state.changed + " which is not a possible value");
+          changedStateStyle.color = "green";          
+        }
+      }
+      else {
+        if (!this.state.saving) {
+          changedStateMessage = "Unsaved Changes";
+          changedStateStyle.color = "red";          
+        }
+        else {
+          changedStateMessage = "Saving"
+          changedStateStyle.color = "#65e765";         
+        }
       }
 
 // The input type="number" behaves badly in Chrome, TODO: change to <select> with "latest" button
@@ -144,7 +228,7 @@ export default class EditorArticleController extends FalcorController {
           <h2 style={changedStateStyle}>{changedStateMessage}</h2>
           <h3>{article.title}</h3>
           <p>Change the information for the article and press Save Changes to confirm the changes.</p>
-          <form className="pure-form pure-form-stacked" onChange={this.debouncedHandleFormChanges} onSubmit={this.handleSaveChanges} ref={(ref) => {this.formNode = ref}}>
+          <form className="pure-form pure-form-stacked" onChange={(e) => {e.persist(); this.debouncedHandleMainFormChanges(e)}} onSubmit={this.handleSaveChanges} ref={(ref) => {this.formNode = ref}}>
             Change the Category:
             <select defaultValue={article.category} name="category">
               {categories.map((category) => {
@@ -162,10 +246,9 @@ export default class EditorArticleController extends FalcorController {
             Change Description:
             {/*TODO: Style this description so initial size is bigger and more approriate (and also responsive)*/}
             <textarea defaultValue={article.description} name="description" />
-            Edit Authors:
-            <EditAuthorsForm data={article.authors} onChange={this.debouncedHandleFormChanges} ref={(ref) => {this.editAuthorListNode = ref}} />
-          {/*Be aware you might want to change when the button is disabled later*/}
-            <input className={"pure-button pure-button-primary" + (this.state.changed === "changed" ? "" : " pure-button-disabled")} type="submit" value="Save Changes" disabled={this.state.changed !== "changed"} />
+            <EditAuthorsForm authors={article.authors} onChange={this.handleAuthorChanges} handleAddAuthor={this.handleAddAuthor} handleDeleteAuthor={this.handleDeleteAuthor} authorsDeleted={this.state.authorsDeleted} authorsAdded={this.state.authorsAdded} />
+            {/*Be aware you might want to change when the button is disabled later*/}
+            <input className={"pure-button pure-button-primary" + (!this.state.changed || this.state.saving ? " pure-button-disabled" : "")} type="submit" value="Save Changes" disabled={!this.state.changed || this.state.saving} />
           </form>
         </div>
       );
