@@ -4,6 +4,8 @@ var nodeExternals = require('webpack-node-externals');
 var Fs = require('fs')
 var nodeModules = {}
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var autoprefixer = require('autoprefixer');
+var precss = require('precss');
 
 Fs.readdirSync('node_modules').forEach(function (module) {
   if (module !== '.bin') {
@@ -61,15 +63,26 @@ module.exports = [{
           presets: ['es2015', 'react'],
         },
       },
+
+      /*
+       * Parse SCSS to minified CSS, then postprocess with postcss autoprefixer plugin
+       */
       {
         test: /\.scss$/,
-        loader: ExtractTextPlugin.extract(['css','sass']),
+        loader: ExtractTextPlugin.extract('style', ['css?minimize', 'postcss', 'sass']),
       },
+
+      /*
+       * Load in files with CSS alone
+       */
       {
         test: /\.(png|woff|woff2|eot|ttf|svg)$/,
         loader: 'url-loader?limit=10000',
       },
     ],
+  },
+  postcss: function () {
+    return [autoprefixer({browsers: ['last 2 versions']})];
   },
   devtool: 'source-map',
 }, {
