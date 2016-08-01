@@ -3,7 +3,11 @@ import { ghostArticleQuery } from 'lib/ghostAPI'
 import { sqlArticleQuery, sqlAuthorQuery } from 'lib/sql'
 import falcor from 'falcor'
 
-const $ref = falcor.Model.ref;  
+const $ref = falcor.Model.ref; 
+
+// FLAG TO CHECK IF YOU WANT TO ACCESS GHOST API AND DATABASES
+// THIS IS JUST FOR DEVELOPMENT WHILE WE DON'T HAVE ACTUAL SERVERS SET UP
+const USE_DATABASES = true; 
 
 // Transform ghost API names into our names
 const mapGhostNames = (name) => {
@@ -33,8 +37,10 @@ export default class FalcorRouter extends BaseRouter.createClass([
     route: "authorsBySlug[{keys:slugs}]['name', 'photo', 'biography', 'slug']",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        resolve([]);
-        return null;
+        if (!USE_DATABASES) {
+          resolve([]);
+          return null;
+        }
         const query = {slug: {$in: pathSet.slugs}};
         const length = pathSet.slugs.length;
         const projection = {_id: 0};
@@ -95,8 +101,10 @@ export default class FalcorRouter extends BaseRouter.createClass([
     route: "articlesBySlug[{keys:slugs}]['issue', 'category', 'description']",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        resolve([]);
-        return null;
+        if (!USE_DATABASES) {
+          resolve([]);
+          return null;
+        }
         const query = {slug: {$in: pathSet.slugs}};
         const projection = {_id: 0};
         pathSet[2].forEach((field) => {
@@ -123,8 +131,10 @@ export default class FalcorRouter extends BaseRouter.createClass([
     route: "articlesBySlug[{keys:slugs}]['authors'][{integers:indices}]",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        resolve([]);
-        return null;
+        if (!USE_DATABASES) {
+          resolve([]);
+          return null;
+        }
         const query = {slug: {$in: pathSet.slugs}};
         const projection = {_id: 0, slug: 1, authors: 1};
         sqlArticleQuery(query, projection).then((data) => {
