@@ -6,7 +6,6 @@ import React from "react";
 import _ from "lodash";
 import ArticleList from "components/ArticleList";
 import FalcorController from 'lib/falcor/FalcorController';
-import { Link } from 'react-router';
 
 // Import components
 import FeaturedArticle from "components/FeaturedArticle";

@@ -6,11 +6,8 @@ import { setAppReady } from "lib/falcor/falcorUtils";
 import Navigation from "components/Navigation";
 import Footer from "components/Footer";
 
-// Importing static articles
-import articles from "../../static/sample-issue/posts.js";
-
 // Application CSS; applicationStyles alias,
-// CSS, SCSS, and Style loaders in webpack.config.js
+// CSS and SCSS loaders in webpack.config.js
 require('applicationStyles');
 
 export default class AppController extends FalcorController {
