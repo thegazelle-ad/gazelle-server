@@ -1,7 +1,8 @@
 import React from 'react';
 import ArticleList from 'components/ArticleList';
+import BaseComponent from 'lib/BaseComponent';
 
-export default class Trending extends React.Component {
+export default class Trending extends BaseComponent {
   render() {
     return (
       <div className="trending">

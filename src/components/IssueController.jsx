@@ -6,7 +6,6 @@ import React from "react";
 import _ from "lodash";
 import ArticleList from "components/ArticleList";
 import FalcorController from 'lib/falcor/FalcorController';
-import { Link } from 'react-router';
 
 // Import components
 import FeaturedArticle from "components/FeaturedArticle";
@@ -19,7 +18,7 @@ export default class IssueController extends FalcorController {
   // TODO: Render categories
     // TODO: Render ArticleList of articles in each category
   //
-  static getFalcorPathSets(params) {
+  static getFalcorPathSets() {
     // URL Format: thegazelle.org/issue/:issueId/:articleCategory/:articleSlug
 
     // Multilevel request requires Falcor Path for each level of data requested
@@ -46,8 +45,6 @@ export default class IssueController extends FalcorController {
   }
 
   render () {
-    console.log("RENDERING ISSUE CONTROLLER");
-
     if (this.state.ready) {
       // TODO: Remove hardcoded issueId
       let issueId = 55;

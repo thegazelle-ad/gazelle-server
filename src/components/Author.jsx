@@ -1,14 +1,9 @@
 import React from 'react';
 import ArticleList from 'components/ArticleList';
+import BaseComponent from 'lib/BaseComponent';
 
-export default class Author extends React.Component {
-    // TODO: establish static JSON object for authors
-    // structure: {name, photo, biography, articleKeys=[]}
-
-
-    // TODO: establish static JSON object for authors
-    // structure: {name, photo, biography, articleKeys=[]}
-  render() {
+export default class Author extends BaseComponent {
+  render () {
     let author = this.props.author;
     return (
       <div key={author.slug} className="author">

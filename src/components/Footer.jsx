@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router';
-import ArticleList from 'components/ArticleList';
+import BaseComponent from 'lib/BaseComponent';
 
-export default class Footer extends React.Component {
+export default class Footer extends BaseComponent {
   render() {
     return (
       <ul className="footer">

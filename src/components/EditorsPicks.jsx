@@ -1,7 +1,8 @@
 import React from 'react';
 import ArticleList from 'components/ArticleList';
+import BaseComponent from 'lib/BaseComponent';
 
-export default class EditorsPicks extends React.Component {
+export default class EditorsPicks extends BaseComponent {
   render() {
     return (
       <div className="editors-picks">

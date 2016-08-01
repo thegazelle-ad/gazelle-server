@@ -1,11 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router';
+import BaseComponent from 'lib/BaseComponent';
 
 import AuthorList from 'components/AuthorList';
 
-export default class Article extends React.Component {
-  render() {
-
+export default class Article extends BaseComponent {
+  render () {
     return (
       <div className="article">
         <h1 className="article__title">{this.props.title}</h1>

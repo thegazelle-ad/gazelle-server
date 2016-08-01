@@ -1,11 +1,11 @@
 import React from 'react';
-import AuthorList from 'components/AuthorList';
-//import image from '../static/sample-issue/images/articles/palestine-hamilton.jpg';
-
 import { Link } from 'react-router';
+import BaseComponent from 'lib/BaseComponent';
 
-export default class ArticlePreview extends React.Component {
+// Components
+import AuthorList from 'components/AuthorList';
 
+export default class ArticlePreview extends BaseComponent {
   render () {
     let article = this.props.article;
     return (
@@ -14,12 +14,13 @@ export default class ArticlePreview extends React.Component {
           Featured image
           TODO: undo hardcode before release
         */}
-        <img
-          className="article-preview__featured-image"
-          src={article.featuredImage}
-          alt="featured"
-        />
-
+        <Link to={'/issue/' + article.issueId + '/' + article.category + '/' + article.slug}>
+          <img
+            className="article-preview__featured-image"
+            src={article.featuredImage}
+            alt="featured"
+          />
+        </Link>
         {/*
           Article title with link to article
         */}
@@ -27,7 +28,6 @@ export default class ArticlePreview extends React.Component {
           <Link to={'/issue/' + article.issueId + '/' + article.category + '/' + article.slug}>
             <h3 className="article-preview__content__title">{article.title}</h3>
           </Link>
-
           {/* Author(s) */}
           <div className="article-preview__content__authors">
             <AuthorList authors={article.authors} />

@@ -1,6 +1,7 @@
 import React from 'react';
+import BaseComponent from 'lib/BaseComponent';
 
-export default class NotFound extends React.Component {
+export default class NotFound extends BaseComponent {
   render() {
     return (
       <div className="not-found">
