@@ -20,7 +20,6 @@ export default class TextPageController extends FalcorController {
 
   render() {
     if (this.state.ready) {
-      console.log("RENDERING TEXT PAGE CONTROLLER");
       const data = this.state.data.infoPages[this.props.params.slug];
       return (
         <div>

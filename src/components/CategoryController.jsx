@@ -18,7 +18,6 @@ export default class CategoryController extends FalcorController {
 
   render() {
     if (this.state.ready) {
-      console.log("RENDERING CATEGORY CONTROLLER");
       let category = this.props.params.category;
       const categoryData = this.state.data.categories[category];
       //console.log("Data: " + JSON.stringify(categoryData));

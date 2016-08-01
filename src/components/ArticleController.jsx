@@ -14,7 +14,6 @@ export default class ArticleController extends FalcorController {
   }
 
   render() {
-    console.log("RENDERING ARTICLE CONTROLLER");
     if (this.state.ready) {
       let articleSlug = this.props.params.articleSlug;
       // Access data fetched via Falcor

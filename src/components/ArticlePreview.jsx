@@ -1,8 +1,8 @@
 import React from 'react';
-import AuthorList from 'components/AuthorList';
-//import image from '../static/sample-issue/images/articles/palestine-hamilton.jpg';
-
 import { Link } from 'react-router';
+
+// Components
+import AuthorList from 'components/AuthorList';
 
 export default function ArticlePreview(props) {
   let article = props.article;
