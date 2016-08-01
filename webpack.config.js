@@ -41,10 +41,14 @@ module.exports = [{
 
   module: {
     preLoaders: [
+      /*
+       * Linting warnings and errors will be displayed in the console when
+       * Webpack is compiled.
+       */
       {
         test: /\.jsx$/,
         loaders: ['eslint'],
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
     ],
     loaders: [
