@@ -10,13 +10,13 @@
     &__featured-image {
       // @include image-container(65%, 40%);
       // margin: 0;
-      max-width: 68%;
+      max-width: 100%;
       height: 350px;
 
     }
 
     &__content {
-      max-width: column-3;
+      max-width: $column-3-1;
       padding-left: 1.3rem;
       &__title {
         font-size: 2rem;
