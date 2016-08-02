@@ -2,7 +2,7 @@ import http from 'http';
 
 //Update these for relevant website
 const client_id = "ghost-admin";
-const client_secret = "c231979d9497";
+const client_secret = "7a3facc8e9fb";
 const host = "localhost";
 const port = 2368;
 
