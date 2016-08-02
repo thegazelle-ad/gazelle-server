@@ -6,6 +6,15 @@
   }
 }
 
+.top-articles {
+  display: flex;
+  flex-grow: 1;
+  align-items: stretch;
+  @media (max-width: $medium) {
+    display: none;
+  }
+}
+
 /*
  * Home page section header styling
  */

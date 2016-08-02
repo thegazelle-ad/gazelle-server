@@ -1,6 +1,8 @@
 import _ from "lodash";
 import { isAppReady, expandCache, pathSetsInCache, validateFalcorPathSets } from "lib/falcor/falcorUtils";
 import BaseComponent from "lib/BaseComponent";
+import { setLoading, signalLeaving } from "lib/loader"
+import { uuid } from 'lib/utilities'
 
 // Abstract class for fetching falcor objects
 export default class FalcorController extends BaseComponent {
@@ -17,6 +19,11 @@ export default class FalcorController extends BaseComponent {
       ready: false,
       data: null
     })
+
+    // For loader tracking
+    this.uuid = uuid();
+    // Uniquely identifies a data request, so we know to ignore old requests
+    this.lastRequestId = null;
   }
 
   // Return falcor paths as specified by:
@@ -36,11 +43,9 @@ export default class FalcorController extends BaseComponent {
   // and store on state. Used for server side render and first client side render
   // this should always contain all the data the component needs
   loadFalcorCache(falcorPathSets) {
-    console.log("LOADING FROM CACHE")
 
     falcorPathSets = validateFalcorPathSets(falcorPathSets);
     if (falcorPathSets === undefined) {
-      console.log("NO PATHS WERE GIVEN: " + this.constructor.name);
       this.safeSetState({
         ready: true,
         data: null
@@ -69,27 +74,32 @@ export default class FalcorController extends BaseComponent {
 
   // Makes falcor fetch its paths
   falcorFetch(falcorPathSets) {
-    console.log("STARTING FETCH")
-
     falcorPathSets = validateFalcorPathSets(falcorPathSets);
     if (falcorPathSets === undefined) {
-      console.log("NO PATHS WERE GIVEN: " + this.constructor.name);
       this.safeSetState({
         ready: true,
-        data: null
+        data: null,
       });
       return;
     }
 
-    // Then if we are a client, we can try to do a fetch as well
     this.safeSetState({fetching: true, error: null});
+    setLoading(this.uuid, true);
+    const requestId = uuid();
+    this.lastRequestId = requestId;
+
     this.props.model.get(...falcorPathSets).then((x) => {
-      console.log("FALCOR FETCH COMPLETED")
+      if (this.lastRequestId !== requestId) {
+        // stale request, no action to response
+        return;
+      }
+
+      setLoading(this.uuid, false);
       if (x) {
         this.safeSetState({
           ready: true,
           fetching: false,
-          data: x.json
+          data: x.json,
         });
       }
       else {
@@ -99,7 +109,7 @@ export default class FalcorController extends BaseComponent {
           ready: true,
           fetching: false,
           data: null,
-          error: err
+          error: err,
         });
       }
     });
@@ -114,8 +124,7 @@ export default class FalcorController extends BaseComponent {
       this.safeSetState({ready: false});
       if (pathSetsInCache(expandCache(this.props.model.getCache()), newPathSets)) {
         this.loadFalcorCache(newPathSets);
-      }
-      else {
+      } else {
         this.falcorFetch(newPathSets)
       }
     }
@@ -131,5 +140,9 @@ export default class FalcorController extends BaseComponent {
     } else {
       this.falcorFetch(falcorPathSets)
     }
+  }
+  
+  componentWillLeave(cb) {
+    signalLeaving(cb);
   }
 }

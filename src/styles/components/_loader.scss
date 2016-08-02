@@ -1,14 +1,32 @@
-.spinner {
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  animation-name: spin;
-  animation-duration: 1.00s;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
+.loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  visibility: visible;
+  z-index: 9999;
+  height: 0;
+  &.loader--hide {
+    opacity: 0;
+    visibility: hidden;
+    z-index: -10;
+  }
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.loader--percent {
+  height: 2px;
+  background: #29D;
+  box-shadow: 0 0 10px #29D, 0 0 5px #29D;
+  // ease in exponential
+  transition: all 2000ms cubic-bezier(0.19, 1, 0.22, 1);
+  width: 0%;
+  &.loader--percent--loading {
+    width: 40%;
+  }
+  &.loader--percent--finishing {
+    // ease out quadratic
+    transition: all 100ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    width: 100%;
+  }
 }
+

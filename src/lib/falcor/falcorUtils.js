@@ -25,7 +25,6 @@ export function isAppReady() {
 }
 
 export function setAppReady() {
-  console.log("APP SET AS READY")
   appReady = true
 }
 

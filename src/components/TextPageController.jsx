@@ -31,7 +31,7 @@ export default class TextPageController extends FalcorController {
     } else {
       return (
         <div>
-          <h1>Loading</h1>
+          Loading
         </div>
       );
     }

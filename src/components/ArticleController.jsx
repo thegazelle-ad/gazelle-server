@@ -35,7 +35,7 @@ export default class ArticleController extends FalcorController {
     } else {
       return (
         <div>
-          <h1>Loading</h1>
+          Loading
         </div>
       );
     }

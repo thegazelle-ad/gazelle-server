@@ -45,6 +45,7 @@ export default class IssueController extends FalcorController {
   }
 
   render () {
+    console.log("RENDERING ISSUE CONTROLLER");
     if (this.state.ready) {
       // TODO: Remove hardcoded issueId
       let issueId = 55;
@@ -66,37 +67,29 @@ export default class IssueController extends FalcorController {
           )
         });
 
-      // /*
-      //  * Create a dummy DOM element and add the string to it.
-      //  * Then, you can manipulate it like any DOM element.
-      //  */
-      // let parseFeaturedImage = (html) => {
-      //   let el = document.createElement( 'html' );
-      //   el.innerHTML = html;
-      //   //return (el.getElementsByTagName( 'a' ));
-      //   console.log("ANCHOR TAG: " + el.getElementsByTagName( 'a' ))
-      // }
-
+      // Top level elements can't have classes or it will break transitionS
       return (
-        <div className="issue">
-          {/*
-            <div>Controller for issue: {issueId}</div>
-            <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
-            <div>Publication Date: {issueData.pubDate}</div>
-          */}
+        <div>
+          <div className="issue">
+            {/*
+              <div>Controller for issue: {issueId}</div>
+              <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
+              <div>Publication Date: {issueData.pubDate}</div>
+            */}
 
-          <FeaturedArticle article={issueData.featured} />
-          <div className="top-articles">
-            <EditorsPicks articles={issueData.picks} />
-            <Trending articles={issueData.trending} />
+            <FeaturedArticle article={issueData.featured} />
+            <div className="top-articles">
+              <EditorsPicks articles={issueData.picks} />
+              <Trending articles={issueData.trending} />
+            </div>
+            {renderCategories}
           </div>
-          {renderCategories}
         </div>
       );
     } else {
       return (
-        <div className="loader">
-          <h1>Loading</h1>
+        <div>
+          Loading
         </div>
       );
     }

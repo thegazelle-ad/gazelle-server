@@ -32,7 +32,7 @@ export default class AuthorController extends FalcorController {
     } else {
       return (
         <div>
-          <h1>Loading</h1>
+          Loading
         </div>
       );
     }
