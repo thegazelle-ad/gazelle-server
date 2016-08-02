@@ -70,10 +70,29 @@ describe('expandCache', () => {
 
   it('does expand circular refs', () => {
     const cache = {
-      a: {$type: 'ref', value: ['b']},
-      b: {$type: 'ref', value: ['a']}
+      articles: {
+        someSlug: {
+          name: 'someName',
+          pubDate: 'someDate',
+          authors: {
+            '0': {$type: 'ref', value: ['authors', 'someAuthor']}
+          }
+        }
+      },
+      authors: {
+        someAuthor: {
+          name: 'someName',
+          biography: 'this is me',
+          articles: {
+            '0': {$type: 'ref', value: ['articles', 'someSlug']}
+          }
+        }
+      }
     };
     const expandedCache = expandCache(cache);
-    expect(expandedCache.a.hasOwnProperty('b')).toBe(true);
+    // console.log(JSON.stringify(expandedCache, null, 4));
+    // console.log("next");
+    // console.log(JSON.stringify(expandedCache.articles.someSlug.authors[0], null, 4));
+    expect(expandedCache.articles.someSlug.authors[0].articles[0].authors[0].biography).toBe('this is me');
   })
 })
