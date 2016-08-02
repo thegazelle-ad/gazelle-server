@@ -12,11 +12,13 @@ export default function ArticlePreview(props) {
         Featured image
         TODO: undo hardcode before release
       */}
-      <img
-        className="article-preview__featured-image"
-        src={article.featuredImage}
-        alt="featured"
-      />
+      <Link to={'/issue/' + article.issueId + '/' + article.category + '/' + article.slug}>
+        <img
+          className="article-preview__featured-image"
+          src={article.featuredImage}
+          alt="featured"
+        />
+      </Link>
 
       {/*
         Article title with link to article
