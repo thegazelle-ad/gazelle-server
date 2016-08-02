@@ -1,12 +1,15 @@
 import React from 'react';
 import ArticlePreview from 'components/ArticlePreview';
+import BaseComponent from 'lib/BaseComponent';
 
-export default function FeaturedArticle(props) {
-  return (
-    <div className="featured-article">
-      <ArticlePreview article={props.article} />
-    </div>
-  );
+export default class FeaturedArticle extends BaseComponent {
+  render() {
+    return (
+      <div className="featured-article">
+        <ArticlePreview article={this.props.article} />
+      </div>
+    );
+  }
 }
 
 FeaturedArticle.propTypes = {

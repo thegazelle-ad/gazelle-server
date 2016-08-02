@@ -13,7 +13,7 @@ export default function ArticleList(props) {
   // Returns list of <ArticlePreview/> components with their respective posts
   let renderArticlePreviews =
     // Render nothing if this.props.articles is empty
-    _.map((props.articles || []), function(article) {
+    _.map((props.articles || []), (article) => {
       //console.log("Article: " + article.title);
       return(
         <ArticlePreview key={article.slug} article={article} />
