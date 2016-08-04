@@ -13,6 +13,7 @@ export default class Article extends BaseComponent {
       </div>
     );
   }
+}
 
 Article.propTypes = {
   title: React.PropTypes.string.isRequired,

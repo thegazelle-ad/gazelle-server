@@ -36,8 +36,9 @@ export default class ArticlePreview extends BaseComponent {
           {/* Article teaser */}
           <p className="article-preview__content__teaser">{article.teaser}</p>
         </div>
-    </div>
-  );
+      </div>
+    );
+  }
 }
 
 // Validate shape of article JSON object

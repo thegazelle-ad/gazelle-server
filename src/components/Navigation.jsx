@@ -43,15 +43,6 @@ export default class Navigation extends BaseComponent {
           </ul>
           <p className="navigation__weather">35&deg;</p>
         </div>
-        {/* TODO: change link to archives list */}
-        <Link to="/" className="header__issueId">{"Issue 55"}</Link>
-      </div>
-      <div className="navigation">
-        <p className="navigation__publication-date">Aug. 15, 2016</p>
-        <ul className="navigation__categories">
-          {renderCategories}
-        </ul>
-        <p className="navigation__weather">35&deg;</p>
       </div>
     );
   }
