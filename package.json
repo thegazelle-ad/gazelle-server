@@ -23,7 +23,6 @@
   },
   "homepage": "https://github.com/thegazelle-ad/gazelle-front-end#readme",
   "devDependencies": {
-    "autoprefixer": "^6.3.7",
     "babel-cli": "^6.10.1",
     "babel-core": "^6.4.5",
     "babel-jest": "^13.0.0",
@@ -45,6 +44,7 @@
     "jest-cli": "^13.0.0",
     "node-sass": "^3.8.0",
     "null-loader": "^0.1.1",
+    "postcss-cssnext": "^2.7.0",
     "postcss-loader": "^0.9.1",
     "sass-loader": "^4.0.0",
     "source-map-support": "^0.4.0",

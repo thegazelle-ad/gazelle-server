@@ -4,7 +4,7 @@ var nodeExternals = require('webpack-node-externals');
 var Fs = require('fs')
 var nodeModules = {}
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var autoprefixer = require('autoprefixer');
+var cssnext = require('postcss-cssnext');
 
 Fs.readdirSync('node_modules').forEach(function (module) {
   if (module !== '.bin') {
@@ -81,7 +81,7 @@ module.exports = [{
     ],
   },
   postcss: function () {
-    return [autoprefixer({browsers: ['last 2 versions']})];
+    return [cssnext];
   },
   devtool: 'source-map',
 }, {
