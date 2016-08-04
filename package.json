@@ -44,6 +44,8 @@
     "jest-cli": "^13.0.0",
     "node-sass": "^3.8.0",
     "null-loader": "^0.1.1",
+    "postcss-cssnext": "^2.7.0",
+    "postcss-loader": "^0.9.1",
     "sass-loader": "^4.0.0",
     "source-map-support": "^0.4.0",
     "style-loader": "^0.13.1",
