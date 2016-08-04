@@ -29,6 +29,82 @@ export function setAppReady() {
   appReady = true
 }
 
+export function validateFalcorPathSets(falcorPathSets) {
+  // If the component doesn't want any data
+  if (!falcorPathSets || !(falcorPathSets instanceof Array) || falcorPathSets.length === 0) {
+    return undefined;
+  }
+  // If we're only passing a single pathSet we compensate for the spread operator
+  if (!(falcorPathSets[0] instanceof Array)) {
+    return [falcorPathSets];
+  }
+  return falcorPathSets;
+}
+
+function recurseOnCache(curObject, remainingKeySets) {
+  if (remainingKeySets.length === 0) {
+    return true;
+  }
+  const nextRemainingKeySets = remainingKeySets.slice(1);
+  let nextKeySet = remainingKeySets[0];
+  if (!nextKeySet instanceof Array) {
+    nextKeySet = [nextKeySet];
+  }
+  return nextKeySet.every((key) => {
+    if (key !== null && typeof key === "object") {
+      let start = 0;
+      if (key.hasOwnProperty("from")) {
+        start = key.from;
+      }
+      let end;
+      if (key.hasOwnProperty("to")) {
+        if (key.hasOwnProperty("length")) {
+          throw new Error("Falcor Range cannot have both 'to' and 'length' properties at falcor KeySet: " + JSON.stringify(key));
+        }
+        end = key.to;
+      }
+      else if (key.hasOwnProperty("length")) {
+        end = start+key.length-1;
+      }
+      else {
+        throw new Error("Falcor Range must have either 'to' or 'length' properties at falcor KeySet: " + JSON.stringify(key));
+      }
+      for (let i = start; i <= end; i++) {
+        if (curObject.hasOwnProperty(i)) {
+          if (!recurseOnCache(curObject[i], nextRemainingKeySets)) {
+            return false;
+          }
+        }
+        else {
+          return false;
+        }
+      }
+    }
+    else {
+      if (curObject.hasOwnProperty(key)) {
+        if (!recurseOnCache(curObject[key], nextRemainingKeySets)) {
+          return false;
+        }
+      }
+      else {
+        return false;
+      }
+    }
+  });
+}
+
+export function pathSetsInCache(cache, falcorPathSets) {
+  falcorPathSets = validateFalcorPathSets(falcorPathSets);
+  if (falcorPathSets === undefined) {
+    return true;
+  }
+  return falcorPathSets.every((pathSet) => {
+    if (!recurseOnCache(cache, pathSet)) {
+      return false;
+    }
+  });
+}
+
 export function expandCache(cache) {
   function followPath(path) {
     // If using dot notation obj.key.key.key

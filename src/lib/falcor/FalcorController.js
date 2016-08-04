@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { isAppReady, expandCache } from "lib/falcor/falcorUtils";
+import { isAppReady, expandCache, pathSetsInCache, validateFalcorPathSets } from "lib/falcor/falcorUtils";
 import BaseComponent from "lib/BaseComponent";
 
 // Abstract class for fetching falcor objects
@@ -26,24 +26,7 @@ export default class FalcorController extends BaseComponent {
     throw new TypeError(
       "You must implement the getFalcorPathSets method " +
       "in children of FalcorController"
-    )
-  }
-
-  validateFalcorPathSets(falcorPathSets) {
-    // If the component doesn't want any data
-    if (!falcorPathSets || !(falcorPathSets instanceof Array) || falcorPathSets.length === 0) {
-      console.log("NO PATHS WERE GIVEN: " + this.constructor.name);
-      this.safeSetState({
-        ready: true,
-        data: null
-      })
-      return undefined;
-    }
-    // If we're only passing a single pathSet we compensate for the spread operator
-    if (!(falcorPathSets[0] instanceof Array)) {
-      return [falcorPathSets];
-    }
-    return falcorPathSets;
+    ) 
   }
 
   // Retrieves all the data for this component from the Falcor cache
@@ -52,8 +35,15 @@ export default class FalcorController extends BaseComponent {
   loadFalcorCache(falcorPathSets) {
     console.log("LOADING FROM CACHE")
 
-    falcorPathSets = this.validateFalcorPathSets(falcorPathSets);
-    if (falcorPathSets === undefined) return;
+    falcorPathSets = validateFalcorPathSets(falcorPathSets);
+    if (falcorPathSets === undefined) {
+      console.log("NO PATHS WERE GIVEN: " + this.constructor.name);
+      this.safeSetState({
+        ready: true,
+        data: null
+      });
+      return;
+    }
 
     const data = expandCache(this.props.model.getCache(...falcorPathSets));
     if (data) {
@@ -78,8 +68,15 @@ export default class FalcorController extends BaseComponent {
   falcorFetch(falcorPathSets) {
     console.log("STARTING FETCH")
 
-    falcorPathSets = this.validateFalcorPathSets(falcorPathSets);
-    if (falcorPathSets === undefined) return;
+    falcorPathSets = validateFalcorPathSets(falcorPathSets);
+    if (falcorPathSets === undefined) {
+      console.log("NO PATHS WERE GIVEN: " + this.constructor.name);
+      this.safeSetState({
+        ready: true,
+        data: null
+      });
+      return;
+    }
 
     // Then if we are a client, we can try to do a fetch as well
     this.safeSetState({fetching: true, error: null});
@@ -108,11 +105,16 @@ export default class FalcorController extends BaseComponent {
   // If the new props requires a new falcor call
   // this will pick it up and refresh the falcor state
   componentWillReceiveProps(nextProps) {
-    const newPath = this.constructor.getFalcorPathSets(nextProps.params)
-    const oldPath = this.constructor.getFalcorPathSets(this.props.params)
-    if (!_.isEqual(oldPath, newPath)) {
+    const newPathSets = this.constructor.getFalcorPathSets(nextProps.params)
+    const oldPathSets = this.constructor.getFalcorPathSets(this.props.params)
+    if (!_.isEqual(oldPathSets, newPathSets)) {
       this.safeSetState({ready: false});
-      this.falcorFetch(newPath)
+      if (pathSetsInCache(expandCache(this.props.model.getCache()), newPathSets)) {
+        this.loadFalcorCache(newPathSets);
+      }
+      else {
+        this.falcorFetch(newPathSets)
+      }
     }
   }
 
@@ -120,8 +122,8 @@ export default class FalcorController extends BaseComponent {
   // render on client only. This is to avoid an immediate falcorFetch
   // on the first clientside render
   componentWillMount() {
-    const falcorPathSets = this.constructor.getFalcorPathSets(this.props.params)
-    if (!isAppReady()) {
+    const falcorPathSets = this.constructor.getFalcorPathSets(this.props.params);
+    if (!isAppReady() || pathSetsInCache(expandCache(this.props.model.getCache())), falcorPathSets) {
       this.loadFalcorCache(falcorPathSets)
     } else {
       this.falcorFetch(falcorPathSets)
