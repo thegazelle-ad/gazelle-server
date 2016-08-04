@@ -28,6 +28,7 @@ export default class Navigation extends React.Component {
               placeholder="Search The Gazelle"
             />
             <div className="header__search__tail" />
+            <div className="header__search__text">SEARCH</div>
           </div>
           <div className="header__title">
             <Link to="/" className="header__title--content">{this.props.appName}</Link>
