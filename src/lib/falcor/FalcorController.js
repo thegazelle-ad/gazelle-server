@@ -22,6 +22,9 @@ export default class FalcorController extends BaseComponent {
   // Return falcor paths as specified by:
   // http://netflix.github.io/falcor/documentation/paths.html
   // FalcorPath can depend on props only (to get server side rendering working)
+  // Also you cannot as of now make the first keySet in a pathSet an array
+  // as being able to pass an array of pathSets properly depends on that.
+  // And hopefully it shouldn't be necessary either
   static getFalcorPathSets(params) {
     throw new TypeError(
       "You must implement the getFalcorPathSets method " +

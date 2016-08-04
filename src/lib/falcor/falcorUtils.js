@@ -47,7 +47,7 @@ function recurseOnCache(curObject, remainingKeySets) {
   }
   const nextRemainingKeySets = remainingKeySets.slice(1);
   let nextKeySet = remainingKeySets[0];
-  if (!nextKeySet instanceof Array) {
+  if (!(nextKeySet instanceof Array)) {
     nextKeySet = [nextKeySet];
   }
   return nextKeySet.every((key) => {
@@ -90,6 +90,7 @@ function recurseOnCache(curObject, remainingKeySets) {
         return false;
       }
     }
+    return true;
   });
 }
 
@@ -102,6 +103,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
     if (!recurseOnCache(cache, pathSet)) {
       return false;
     }
+    return true;
   });
 }
 
@@ -122,7 +124,7 @@ export function expandCache(cache) {
   }
 
   function isObject(val) {
-    if (val === null || val instanceof Array) return false;
+    if (val === null || (val instanceof Array)) return false;
     return typeof val === "object";
   }
 
