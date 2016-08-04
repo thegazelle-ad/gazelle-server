@@ -1,15 +1,18 @@
 import React from 'react';
+import BaseComponent from 'lib/BaseComponent';
 
 import AuthorList from 'components/AuthorList';
 
-export default function Article(props) {
-  return (
-    <div className="article">
-      <h1 className="article__title">{props.title}</h1>
-      <AuthorList className="article__authors" authors={props.authors} />
-      <div className="article__html" dangerouslySetInnerHTML={{__html: props.html}} />
-    </div>
-  );
+export default class Article extends BaseComponent {
+  render () {
+    return (
+      <div className="article">
+        <h1 className="article__title">{this.props.title}</h1>
+        <AuthorList className="article__authors" authors={this.props.authors} />
+        <div className="article__html" dangerouslySetInnerHTML={{__html: this.props.html}} />
+      </div>
+    );
+  }
 }
 
 Article.propTypes = {
