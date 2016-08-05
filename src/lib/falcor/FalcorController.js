@@ -126,7 +126,7 @@ export default class FalcorController extends BaseComponent {
   // on the first clientside render
   componentWillMount() {
     const falcorPathSets = this.constructor.getFalcorPathSets(this.props.params);
-    if (!isAppReady() || pathSetsInCache(expandCache(this.props.model.getCache())), falcorPathSets) {
+    if (!isAppReady() || pathSetsInCache(expandCache(this.props.model.getCache()), falcorPathSets)) {
       this.loadFalcorCache(falcorPathSets)
     } else {
       this.falcorFetch(falcorPathSets)
