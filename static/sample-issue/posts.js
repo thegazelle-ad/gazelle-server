@@ -721,9 +721,10 @@ const data = {
     authorsBySlug: {
         "ahmed-meshref": {
           name: 'Ahmed Meshref',
-          photo: '/images/authors/author.png',
+          photo: 'http://thegazelle.s3.amazonaws.com/gazelle/2013/09/cole2.jpg',
           slug: "ahmed-meshref",
-          biography: "This is Ahmed Meshref's biography.",
+          title: "Staff Writer",
+          biography: "Morbi rhoncus faucibus lorem, sed imperdiet nunc. Phasellus pharetra lectus eu leo finibus porta dictum a sem. Maecenas in dolor consequat, suscipit ipsum ut, sagittis ligula. Ut in lacus odio. In purus ipsum, bibendum at mi tincidunt, tempor feugiat risus. Vestibulum at quam fringilla, tristique nisl sed, elementum lectus. Integer.",
           articles: [
             { $type: "ref", value: ["articlesBySlug", "classist-health"] },
             { $type: "ref", value: ["articlesBySlug", "spiritual-health"] },
@@ -739,9 +740,10 @@ const data = {
         },
         "rend-beiruti": {
           name: 'Rend Beiruti',
-          photo: '/images/authors/author.png',
+          photo: 'http://thegazelle.s3.amazonaws.com/gazelle/2013/09/cole2.jpg',
           slug: "rend-beiruti",
-          biography: "This is Rend Beiruti's biography.",
+          title: "Head Deputy Copy Chief",
+          biography: "Pellentesque iaculis libero nunc, ac congue ante iaculis vel. Nulla facilisi. Vivamus lacus tellus, laoreet eget convallis eget, molestie et elit. Praesent auctor metus non sollicitudin viverra. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
           articles: [
             { $type: "ref", value: ["articlesBySlug", "athletes-and-the-plant-based-diet"] },
             { $type: "ref", value: ["articlesBySlug", "bystander-intervention-creating-a-community-that-cares"] },
@@ -752,9 +754,10 @@ const data = {
         },
         "daniah-kheetan": {
           name: 'Daniah Kheetan',
-          photo: '/images/authors/author.png',
+          photo: 'http://thegazelle.s3.amazonaws.com/gazelle/2013/09/cole2.jpg',
           slug: "daniah-kheetan",
-          biography: "This is Daniah Kheetan's biography.",
+          title: "Social Media Consultant",
+          biography: "Aliquam malesuada bibendum maximus. Proin rhoncus lacus id metus venenatis, vel porta purus tincidunt. Fusce dapibus arcu in lacus pellentesque varius. Sed pharetra porttitor ipsum, quis vulputate lacus porttitor euismod. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum venenatis tellus eget arcu congue vulputate. Phasellus cursus vulputate luctus. Aliquam vehicula tempus justo, id mollis magna.",
           articles: [
             { $type: "ref", value: ["articlesBySlug", "the-fight-within"] },
             { $type: "ref", value: ["articlesBySlug", "letter-4"] },
@@ -765,9 +768,10 @@ const data = {
         },
         "tala-nassar": {
           name: 'Tala Nassar',
-          photo: '/images/authors/author.png',
+          photo: 'http://thegazelle.s3.amazonaws.com/gazelle/2013/09/cole2.jpg',
           slug: "tala-nassar",
-          biography: "This is Tala Nassar's biography.",
+          title: "Deputy News Editor",
+          biography: "Sed feugiat ac urna nec interdum. Duis aliquet interdum ullamcorper. Praesent congue mollis augue. Integer facilisis ultrices sem, at elementum lacus eleifend eget. Phasellus dapibus tellus in massa varius, a tincidunt neque tristique. Nullam scelerisque blandit vulputate. Sed laoreet condimentum eros sit amet molestie. Phasellus consectetur condimentum interdum. In pulvinar luctus luctus. Nullam venenatis nunc.",
           articles: [
             { $type: "ref", value: ["articlesBySlug", "the-fight-within"] },
             { $type: "ref", value: ["articlesBySlug", "letter-4"] },

@@ -1,3 +1,92 @@
 .author {
-  
+  &__header {
+    display: flex;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid $light-grey;
+    justify-content: center;
+    &__author-image {
+      padding: 0 1.5rem 0 0;
+      object-fit: cover;
+      width: 300px;
+      height: 300px;
+    }
+    &__author-info {
+      max-width: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      &__name {
+        margin: 0;
+        @include uppercase;
+        font-weight: 700;
+      }
+      &__role {
+        margin: 0;
+        font-size: 1.0rem;
+        color: $dark-grey;
+      }
+      &__biography {
+        font-weight: 400;
+        margin: 0.5rem 0 0 0;
+      }
+    }
+  }
+
+  @media (max-width: $medium) {
+    &__header {
+      &__author-image {
+        width: 200px;
+        height: 200px;
+      }
+      &__author-info {
+        &__name {
+          font-size: 1.1rem;
+        }
+        &__role {
+          font-size: 0.9rem;
+        }
+        &__biography {
+          font-size: 0.8rem;
+          font-weight: 300;
+        }
+      }
+    }
+  }
+
+
+  @media (max-width: $small) {
+    &__header {
+      flex-direction: column;
+      text-align: center;
+      align-items: center;
+      &__author-image {
+        padding: 0;
+        width: 200px;
+        height: 200px;
+        padding-top: 0.5rem;
+      }
+      &__author-info {
+        max-width: 100%;
+        &__name {
+          font-size: 1rem;
+        }
+        &__role {
+          font-size: 0.9rem;
+        }
+        &__biography {
+          font-size: 0.8rem;
+          font-weight: 300;
+        }
+      }
+    }
+  }
+
+  @include vertical-article-list;
+
+  .article-preview {
+    &__category-header {
+      display: block;
+    }
+  }
 }

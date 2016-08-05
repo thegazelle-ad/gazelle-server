@@ -22,7 +22,7 @@ export default class CategoryController extends FalcorController {
       const categoryData = this.state.data.categories[category];
       //console.log("Data: " + JSON.stringify(categoryData));
       return (
-        <div>
+        <div className="category">
           {/*
             <div>Controller for category: {category}</div>
             <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
