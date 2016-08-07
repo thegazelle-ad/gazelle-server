@@ -9,9 +9,7 @@ describe('expandCache', () => {
 
   it('does expand errors', () => {
     const cache = {key: {$type: 'error', value: 'there was an error'}};
-    const expandedCache = expandCache(cache);
-    expect(expandedCache.key instanceof Error).toBe(true);
-    expect(expandedCache.key.message).toBe('there was an error');
+    expect(expandCache(cache)).toEqual({key: new Error('there was an error')});
   });
 
   it('does expand refs', () => {
@@ -48,23 +46,6 @@ describe('expandCache', () => {
       }
     };
     let expandedCache = expandCache(cache);
-    // Test it works generally
-    expect(expandedCache).toEqual(expectedCache);
-    expectedCache.a.a.a = 'c';
-    // Make sure equals function is working correctly
-    // and also outputting false when it should
-    expect(expandedCache).not.toEqual(expectedCache);
-    // Make sure they're equal again before next check
-    // just to double check there are no human errors in the testing
-    expectedCache.a.a.a = 'b';
-    expect(expandedCache).toEqual(expectedCache);
-    // Try different ref
-    cache.a = {$type: 'ref', value: ['b', 'a']};
-    expandedCache = expandCache(cache);
-    // Make sure they're not equal anymore
-    expect(expandedCache).not.toEqual(expectedCache);
-    // Check that it behaves as it should when assigning the correct value
-    expectedCache.a = {a: 'b'};
     expect(expandedCache).toEqual(expectedCache);
   });
 
@@ -90,9 +71,51 @@ describe('expandCache', () => {
       }
     };
     const expandedCache = expandCache(cache);
-    // console.log(JSON.stringify(expandedCache, null, 4));
-    // console.log("next");
-    // console.log(JSON.stringify(expandedCache.articles.someSlug.authors[0], null, 4));
     expect(expandedCache.articles.someSlug.authors[0].articles[0].authors[0].biography).toBe('this is me');
-  })
+
+  });
+
+  it('handles chains of refs', () => {
+    let cache = {
+      a: {$type: "ref", value: ['b', 'a']},
+      b: {a: {$type: "ref", value: ['c', 'a']}},
+      c: {a: 1}
+    };
+    let expectedCache = {a: 1, b: {a: 1}, c: {a: 1}};
+    expect(expandCache(cache)).toEqual(expectedCache);
+
+    // Check that it handles a chain to an atom
+    cache = {
+      a: {$type: "ref", value: ['b', 'a']},
+      b: {a: {$type: "ref", value: ['c', 'a']}},
+      c: {a: {$type: "atom", value: ['a', 'b', 'c']}}
+    };
+    expectedCache = {a: ['a', 'b', 'c'], b: {a: ['a', 'b', 'c']}, c: {a: ['a', 'b', 'c']}};
+    expect(expandCache(cache)).toEqual(expectedCache);
+
+    // Now check if it handles a chain to an error
+    cache = {
+      a: {$type: "ref", value: ['b', 'a']},
+      b: {a: {$type: "ref", value: ['c', 'a']}},
+      c: {a: {$type: "error", value: ['there was an error']}}
+    };
+    expectedCache = {a: new Error('there was an error'), b: {a: new Error('there was an error')}, c: {a: new Error('there was an error')}};
+    expect(expandCache(cache)).toEqual(expectedCache);
+
+    // And now to make an empty loop that should throw an error
+    cache = {
+      a: {$type: "ref", value: ['b', 'a']},
+      b: {a: {$type: "ref", value: ['c', 'a']}},
+      c: {a: {$type: "ref", value: ['a']}}
+    };
+    expect(() => {expandCache(cache)}).toThrow();
+
+    // And to check that if the loop is shorter than the whole length it still throws an error
+    cache = {
+      a: {$type: "ref", value: ['b', 'a']},
+      b: {a: {$type: "ref", value: ['c', 'a']}},
+      c: {a: {$type: "ref", value: ['b', 'a']}}
+    };
+    expect(() => {expandCache(cache)}).toThrow();
+  });
 })

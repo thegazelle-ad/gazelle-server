@@ -109,8 +109,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
 export function expandCache(cache) {
   function followPath(path) {
     // If using dot notation obj.key.key.key
-    // It is currently redundant though as we only pass arrays
-    if (typeof path === "string") {
+    if (typeof path === "string") {;
       path = path.split('.');
     }
     return path.reduce((currentObject, nextChild) => {
@@ -122,9 +121,75 @@ export function expandCache(cache) {
     }, cache);
   }
 
+  function assignByPath(path, value) {
+    // If using dot notation obj.key.key.key
+    if (typeof path === "string") {
+      path = path.split('.');
+    }
+    // Parent also works for array length 1, aka initial keys
+    // Parent and Key variables are used for assigning new values later
+    const parent = followPath(path.slice(0, path.length-1));
+    const key = path[path.length-1];
+    // The following key exists as it was pushed on to stack as a valid key
+    parent[key] = value;
+  }
+
   function isObject(val) {
+    // We don't count arrays as objects here. This is to protect ourselves against an expanded atom
+    // This does still leave us vulnerable to an expanded object though, but in by far most cases
+    // it would be very bad form to put an object in an atom, so this is not supported at this time.
     if (val === null || (val instanceof Array)) return false;
     return typeof val === "object";
+  }
+
+  function handleRef(pathToRef, refPath) {
+    const S = new Set();
+    // pathToRef is an array path
+    if (!(pathToRef instanceof Array)) {
+      throw new Error("pathToRef was passed as a non-array. The value passed was: " + JSON.stringify(pathToRef));
+    }
+    // So is refPath
+    if (!(pathToRef instanceof Array)) {
+      throw new Error("refPath was passed as a non-array. The value passed was: " + JSON.stringify(refPath));
+    }
+    S.add(pathToRef.join('.'));
+    let val = followPath(refPath);
+    let path = refPath.join('.');
+    if (val === undefined) {
+      throw new Error("Missing part of JSON graph in expandCache function at path: " + path);
+    }
+    while (isObject(val) && val.$type) {
+      switch (val.$type) {
+        case "atom":
+          assignByPath(path, val.value);
+          val = followPath(path);
+          break;
+        case "error":
+          assignByPath(path, new Error(val.value));
+          val = followPath(path);
+          break;
+        case "ref":
+          if (S.has(path)) {
+            let paths = "[";
+            S.forEach((pathFromSet) => {
+              paths += pathFromSet + ", ";
+            });
+            paths = paths.substring(0, paths.length-2) + ']';
+            throw new Error("Neverending loop from ref to ref with no real values present in expandCache. It is made up of the following paths: " + paths)
+          }
+          else {
+            S.add(path);
+            path = val.value.join('.');
+            val = followPath(val.value);
+          }
+          break;
+        default:
+          throw new Error("expandCache encountered a new type of name: " + val.$type + ". And cannot read it at following path: " + path);
+      }
+    }
+    S.forEach((pathFromSet) => {
+      assignByPath(pathFromSet, val);
+    });
   }
 
   // If empty return itself
@@ -135,15 +200,16 @@ export function expandCache(cache) {
     stack.push([key]);
   })
   while (stack.length > 0) {
+    // pathArray is the path to the current location being checked
+    // and is an array with the keys in order of how they should be accessed
+    // it is always an array as we only push arrays onto the stack
     const pathArray = stack.pop();
-    // Parent also works for array length 1, aka initial keys
-    // Parent and Key variables are used for assigning new values later
-    const parent = followPath(pathArray.slice(0, pathArray.length-1));
-    const key = pathArray[pathArray.length-1];
-    // Since key was pushed on to stack from objects keys, it will exist
-    const val = parent[key];
+    if (!(pathArray instanceof Array)) {
+      throw new Error("non-array popped off stack in expandCache. Item popped off was: " + JSON.stringify(pathArray));
+    }
+    const val = followPath(pathArray);
     if (val === undefined) {
-      throw new Error("Missing part of JSON graph in expand");
+      throw new Error("Missing part of JSON graph in expandCache function at path: " + pathArray.join('.'));
     }
     if (!isObject(val)) {
       continue;
@@ -151,16 +217,16 @@ export function expandCache(cache) {
     else if (val.$type) {
       switch (val.$type) {
         case "atom":
-          parent[key] = val.value;
+          assignByPath(pathArray, val.value);
           break;
         case "error":
-          parent[key] = new Error(val.value);
+          assignByPath(pathArray, new Error(val.value));
           break;
         case "ref":
-          parent[key] = followPath(val.value);
+          handleRef(pathArray, val.value);
           break;
         default:
-          throw new Error("expandCache encountered a new type of name: " + val.$type + ". And cannot read it");
+          throw new Error("expandCache encountered a new type of name: " + val.$type + ". And cannot read it at following path: " + pathArray.join('.'));
       }
     }
     else{
