@@ -38,7 +38,7 @@ export default class AppController extends BaseComponent {
     if (this.state.error) {
       let error = this.state.error;
       if (!(error instanceof Error)) {
-        error = {message: "this.state.error was not an error object, and therefore can't give you an error log. The error looked like this: " + JSON.stringify(error)}
+        error = {toString: () => {return "this.state.error was not an error object, and therefore can't give you an error log. The error looked like this: " + JSON.stringify(error);}}
       }
       if (error.message === "Response code 0") {
         lostInternetFlag = true;
