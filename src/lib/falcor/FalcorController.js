@@ -9,7 +9,7 @@ export default class FalcorController extends BaseComponent {
   constructor(props) {
     super(props)
     if (this.constructor == FalcorController) {
-      throw new TypeError("FalcorController is abstract")
+      setGlobalError(new TypeError("FalcorController is abstract"));
     }
     // It might seem like fetching and ready are redundant
     // But you can be ready = true and fetching = true if
@@ -33,10 +33,10 @@ export default class FalcorController extends BaseComponent {
   // as being able to pass an array of pathSets properly depends on that.
   // And hopefully it shouldn't be necessary either
   static getFalcorPathSets(params) {
-    throw new TypeError(
+    setGlobalError(new TypeError(
       "You must implement the getFalcorPathSets method " +
       "in children of FalcorController"
-    ) 
+    ));
   }
 
   // Retrieves all the data for this component from the Falcor cache
@@ -61,13 +61,11 @@ export default class FalcorController extends BaseComponent {
       })
     } else {
       // Found on the net that console.error was deprecated, watch out for that and maybe restructure
-      const err = new Error("Serverside render of component: " + this.constructor.name +
+      console.error("Serverside render of component: " + this.constructor.name +
         " failed. Data not in cache. Falcor Path attempted fetched was: " + JSON.stringify(falcorPathSets));
-      console.error(err);
       this.safeSetState({
         ready: true,
-        data: null,
-        error: err
+        data: null
       });
     }
   }
@@ -87,9 +85,7 @@ export default class FalcorController extends BaseComponent {
     setLoading(this.uuid, true);
     const requestId = uuid();
     this.lastRequestId = requestId;
-    console.log("FETCHING");
     this.props.model.get(...falcorPathSets).then((x) => {
-      console.log("FETCH COMPLETED");
       if (this.lastRequestId !== requestId) {
         // stale request, no action to response
         return;
@@ -104,8 +100,7 @@ export default class FalcorController extends BaseComponent {
         });
       }
       else {
-        const err = new Error("FalcorPathSets: " + JSON.stringify(falcorPathSets) + " returned no data.")
-        console.error(err);
+        console.error("FalcorPathSets: " + JSON.stringify(falcorPathSets) + " returned no data.");
         this.safeSetState({
           ready: true,
           fetching: false,
@@ -116,11 +111,16 @@ export default class FalcorController extends BaseComponent {
       if (globalError && globalError.message === "Response code 0") {
         resetGlobalError();
       }
-
     }).catch((err) => {
       try {
         if (!(err instanceof Array)) {
-          throw new Error("Unexpected Falcor Error. Caught error looks like this after JSON.stringify: " + JSON.stringify(err));
+          if (!(err instanceof Error)) {
+            throw new Error("Unexpected Falcor Error. Caught error looks like this after JSON.stringify: " + JSON.stringify(err));
+          }
+          else {
+            err.message = "Error comes from falcor fetch: " + err.message;
+            throw err;
+          }
         }
         else {
           let S = new Set();

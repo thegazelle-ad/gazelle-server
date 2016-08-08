@@ -62,7 +62,7 @@ export function setContextForGlobalErrorFunctions() {
     this.safeSetState({error: err});
   }
   boundResetGlobalError = () => {
-    this.this.safeSetState({error: err});
+    this.safeSetState({error: null, displayErrorMessage: false});
   }
   appControllerMounted = true;
 }
@@ -81,6 +81,7 @@ export function resetGlobalError() {
       before you can modify the global error");
   }
   boundResetGlobalError();
+  globalError = null;
 }
 
 export function setGlobalError(err) {
@@ -89,6 +90,7 @@ export function setGlobalError(err) {
       before you can modify the global error");
   }
   boundSetGlobalError(err);
+  globalError = err;
 }
 
 export function getGlobalError() {

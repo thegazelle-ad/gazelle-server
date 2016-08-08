@@ -21,6 +21,19 @@ import testData from '../static/sample-issue/posts.js';
 // Allow node to use sourcemaps
 sourcemap.install();
 
+function buildHtml500Page (err) { 
+  `<!DOCTYPE html>
+    <html>
+      <head>
+        <title>The Gazelle</title>
+      </head>
+      <body>
+        <h2>500 Error</h2>
+        <p>A mistake happened. We apologize! Please contact The Gazelle's web development team with the error
+        so we can fix it as fast as possible. This was the error:<br/>`+err.toString()+`</p>
+      </body>
+    </html>`
+}
 
 const buildHtmlString = (body, cache) => {
   return (
@@ -160,7 +173,7 @@ server.get('*', (req, res) => {
         }).catch((err) => {
           console.error('Failed to render: ', req.url);
           console.error(err.stack || err)
-          res.status(500).send(err.stack || err);
+          res.status(500).send(buildHtml500Page(err));
         });
       } else {
         res.status(404).send('Not Found');

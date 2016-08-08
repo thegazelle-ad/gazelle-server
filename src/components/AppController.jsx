@@ -19,7 +19,10 @@ require('applicationStyles');
 export default class AppController extends BaseComponent {
   constructor(props) {
     super(props);
-    this.safeSetState({error: null});
+    this.safeSetState({
+      error: null,
+      displayErrorMessage: false
+    });
   }
 
   componentDidMount() {
@@ -34,6 +37,7 @@ export default class AppController extends BaseComponent {
   }
 
   render() {
+    console.log("render app controller");
     let lostInternetFlag = false;
     if (this.state.error) {
       let error = this.state.error;
@@ -56,6 +60,13 @@ export default class AppController extends BaseComponent {
             </p>
             <a href={"mailto:gazellewebdevelopmentaddress@gmail.com?subject=Error Report&body="+error.toString()}>Style This</a>
             <button type="button" onClick={() => {window.location.reload()}}>Style This Too</button>
+            <p>For developers</p>
+            <button type="button" onClick={() => {this.safeSetState({displayErrorMessage: !this.state.displayErrorMessage})}}>Display Error</button>
+            {
+              this.state.displayErrorMessage ?
+                <p>{error.toString()}</p>
+                : null
+            }
           </div>
         );
       }
