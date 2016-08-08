@@ -1,9 +1,9 @@
 import React from "react";
-import FalcorController from "lib/falcor/FalcorController";
+import BaseComponent from "lib/BaseComponent";
 import { setAppReady } from "lib/falcor/falcorUtils";
 import ReactTransitionGroup from 'react-addons-transition-group';
 import _ from "lodash";
-import { TransitionManager } from "lib/loader"
+import { TransitionManager } from "lib/loader";
 
 // Components
 import Navigation from "components/Navigation";
@@ -14,10 +14,7 @@ import Loader from "components/Loader"
 // CSS and SCSS loaders in webpack.config.js
 require('applicationStyles');
 
-export default class AppController extends FalcorController {
-  static getFalcorPathSets() {
-  }
-
+export default class AppController extends BaseComponent {
   componentDidMount() {
     super.componentDidMount();
     setAppReady();
