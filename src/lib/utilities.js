@@ -2,6 +2,7 @@ import React from "react";
 import BaseComponent from "lib/BaseComponent"
 
 // TODO: Add Jest Testing
+// Remember to call the function with the correct 'this' value
 export function debounce (func, timeout) {
   let scheduled = false;
   let lastCalled = null;
@@ -44,3 +45,56 @@ export function uuid() {
     s4() + '-' + s4() + s4() + s4();
 }
 
+let globalError = null;
+let appControllerMounted = false;
+
+// These will be the functions with 'this' bound to appController
+// So they can change the state of it globally
+let boundSetGlobalError, boundResetGlobalError, boundGetGlobalError;
+
+// Remember to call this function with the correct 'this' value
+export function setContextForGlobalErrorFunctions() {
+  if (appControllerMounted) {
+    throw new Error("appController already mounted, context is already set");
+  }
+  // Arrow function automatically binds this
+  boundSetGlobalError = (err) => {
+    this.safeSetState({error: err});
+  }
+  boundResetGlobalError = () => {
+    this.this.safeSetState({error: err});
+  }
+  appControllerMounted = true;
+}
+
+// This function doesn't actually reset the context,
+// but will just be called when appController has been unmounted and
+// the context therefore has become invalid.
+export function resetContextForGlobalErrorFunctions() {
+  appControllerMounted = false;
+  globalError = null;
+}
+
+export function resetGlobalError() {
+  if (!appControllerMounted) {
+    throw new Error("You have to set the context for global error functions\
+      before you can modify the global error");
+  }
+  boundResetGlobalError();
+}
+
+export function setGlobalError(err) {
+  if (!appControllerMounted) {
+    throw new Error("You have to set the context for global error functions\
+      before you can modify the global error");
+  }
+  boundSetGlobalError(err);
+}
+
+export function getGlobalError() {
+  if (!appControllerMounted) {
+    throw new Error("You have to set the context for global error functions\
+      before you can fetch the global error");
+  }
+  return globalError;
+}
