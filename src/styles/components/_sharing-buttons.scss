@@ -1,0 +1,48 @@
+.sharing-buttons {
+  .sharing-buttons__item {
+    display: inline-block;
+    margin: 0 1.5rem 0 0;
+    font-size: 19px;
+
+    &__icon {
+      stroke: inherit;
+      fill: inherit;
+      svg {
+        width: 1em;
+        height: 1em;
+        margin-bottom: -0.1em;
+      }
+    }
+
+    stroke: $light-grey;
+    fill: none;
+
+    &--facebook {
+      &:hover, &:active {
+        stroke: #3b5998;
+        fill: #3b5998;
+      }
+    }
+
+    &--twitter {
+      &:hover, &:active {
+        stroke: #55acee;
+        fill: #55acee;
+      }
+    }
+
+    &--linkedin {
+      &:hover, &:active {
+        stroke: #0976b4;
+        fill: #0976b4;
+      }
+    }
+
+    &--email {
+      &:hover, &:active {
+        stroke: $lighter-grey;
+        fill: #1f497d;
+      }
+    }
+  }
+}

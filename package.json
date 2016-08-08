@@ -7,8 +7,12 @@
     "test": "jest --verbose"
   },
   "jest": {
-    "unmockedModulePathPatterns": ["<rootDir>/node_modules/react"],
-    "modulePaths": ["<rootDir>"],
+    "unmockedModulePathPatterns": [
+      "<rootDir>/node_modules/react"
+    ],
+    "modulePaths": [
+      "<rootDir>"
+    ],
     "moduleFileExtensions": [
       "",
       "js",
@@ -75,6 +79,7 @@
     "falcor-router": "^0.4.0",
     "history": "^3.0.0",
     "lodash": "^4.13.1",
+    "moment": "^2.14.1",
     "mongodb": "^2.1.18",
     "react": "^15.3.0",
     "react-addons-transition-group": "^15.3.0",

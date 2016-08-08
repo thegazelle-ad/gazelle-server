@@ -59,7 +59,7 @@ export default class IssueController extends FalcorController {
           //console.log("Category: " + JSON.stringify(category));
           return(
             <div key={category} className="issue__category">
-              <h2 className="section-header">{category}</h2>
+              <h2 className="section-header">{category.replace('-', ' ')}</h2>
               <div className="issue__category__list">
                 <ArticleList articles={articles} />
               </div>

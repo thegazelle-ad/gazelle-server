@@ -3,10 +3,6 @@
   flex: 1 1 auto;
 
   .article-list{
-    //display: flex;
-    // flex: 1 1 auto;
-    //align-items: flex-end;
-    //padding: 0;
 
     .article-preview {
       padding: 0 0 0.5rem 0;
@@ -32,6 +28,9 @@
            * ArticlePreview To make sure the teaser does not appear in Trending,
            * we hide it should it exist for robustness.
            */
+          display: none;
+        }
+        .sharing-buttons{
           display: none;
         }
       }

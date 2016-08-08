@@ -8,7 +8,7 @@ export default class ArticleController extends FalcorController {
 
     // Multilevel request requires Falcor Path for each level of data requested
     return [
-      ["articlesBySlug", params.articleSlug, ["title", "html"]],
+      ["articlesBySlug", params.articleSlug, ["title", "teaser", "html", "published_at", "issueId", "category", "slug"]],
       ["articlesBySlug", params.articleSlug, "authors", {from: 0, to: 5}, ["name", "slug"]],
     ];
   }
@@ -18,17 +18,15 @@ export default class ArticleController extends FalcorController {
       let articleSlug = this.props.params.articleSlug;
       // Access data fetched via Falcor
       const articleData = this.state.data.articlesBySlug[articleSlug];
-      //console.log("Data: " + JSON.stringify(articleData));
       return (
         <div>
-          {/*
-            <div>Controller for article: {articleData.title}</div>
-            <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
-          */}
           <Article
             title={articleData.title}
+            teaser={articleData.teaser}
+            pubDate={articleData.published_at}
             html={articleData.html}
             authors={articleData.authors}
+            url={"thegazelle.org/issue/" + articleData.issueId + '/' + articleData.category + '/' + articleData.slug}
           />
         </div>
       );
