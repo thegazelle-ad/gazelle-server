@@ -45,17 +45,23 @@ export function uuid() {
     s4() + '-' + s4() + s4() + s4();
 }
 
+
+// The following is all for global error handling.
+// We keep the globalError value on top of AppController's 
+// this.state.error because this.setState is asynchronous
+// while this variable will be synchronous and can therefore
+// always be checked
 let globalError = null;
 let appControllerMounted = false;
 
-// These will be the functions with 'this' bound to appController
+// These will be the functions with 'this' bound to AppController
 // So they can change the state of it globally
-let boundSetGlobalError, boundResetGlobalError, boundGetGlobalError;
+let boundSetGlobalError, boundResetGlobalError;
 
 // Remember to call this function with the correct 'this' value
 export function setContextForGlobalErrorFunctions() {
   if (appControllerMounted) {
-    throw new Error("appController already mounted, context is already set");
+    throw new Error("AppController already mounted, context is already set");
   }
   // Arrow function automatically binds this
   boundSetGlobalError = (err) => {
