@@ -1,6 +1,7 @@
 import React from 'react';
 import Article from 'components/Article';
 import FalcorController from 'lib/falcor/FalcorController';
+import NotFound from 'components/NotFound';
 
 export default class ArticleController extends FalcorController {
   static getFalcorPathSets(params) {
@@ -26,26 +27,32 @@ export default class ArticleController extends FalcorController {
 
   render() {
     if (this.state.ready) {
-      let articleSlug = this.props.params.articleSlug;
-      // Access data fetched via Falcor
-      const articleData = this.state.data.articlesBySlug[articleSlug];
-      const trendingData = this.state.data.trending;
-      const relatedArticlesData = articleData.related;
-      return (
-        <div>
-          <Article
-            title={articleData.title}
-            teaser={articleData.teaser}
-            pubDate={articleData.published_at}
-            html={articleData.html}
-            authors={articleData.authors}
-            featuredImage={articleData.featuredImage}
-            url={"beta.thegazelle.org/issue/" + articleData.issueId + '/' + articleData.category + '/' + articleData.slug}
-            trending={trendingData}
-            relatedArticles={relatedArticlesData}
-          />
-        </div>
-      );
+      if (this.state.data == null) {
+        return (
+          <NotFound />
+        );
+      } else {
+        let articleSlug = this.props.params.articleSlug;
+        // Access data fetched via Falcor
+        const articleData = this.state.data.articlesBySlug[articleSlug];
+        const trendingData = this.state.data.trending;
+        const relatedArticlesData = articleData.related;
+        return (
+          <div>
+            <Article
+              title={articleData.title}
+              teaser={articleData.teaser}
+              pubDate={articleData.published_at}
+              html={articleData.html}
+              authors={articleData.authors}
+              featuredImage={articleData.featuredImage}
+              url={"beta.thegazelle.org/issue/" + articleData.issueId + '/' + articleData.category + '/' + articleData.slug}
+              trending={trendingData}
+              relatedArticles={relatedArticlesData}
+            />
+          </div>
+        );
+      }
     } else {
       return (
         <div>

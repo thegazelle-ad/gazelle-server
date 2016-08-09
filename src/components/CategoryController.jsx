@@ -1,6 +1,7 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import ArticleList from 'components/ArticleList';
+import NotFound from 'components/NotFound';
 
 export default class CategoryController extends FalcorController {
   static getFalcorPathSets(params) {
@@ -20,21 +21,27 @@ export default class CategoryController extends FalcorController {
 
   render() {
     if (this.state.ready) {
-      let category = this.props.params.category;
-      const categoryData = this.state.data.categories[category];
-      //console.log("Data: " + JSON.stringify(categoryData));
-      return (
-        <div className="category">
-          <h2 className="category__header">{categoryData.name}</h2>
-          {/*
-            <div>Controller for category: {category}</div>
-            <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
-          */}
+      if (this.state.data == null) {
+        return (
+          <NotFound />
+        );
+      } else {
+        let category = this.props.params.category;
+        const categoryData = this.state.data.categories[category];
+        //console.log("Data: " + JSON.stringify(categoryData));
+        return (
+          <div className="category">
+            <h2 className="category__header">{categoryData.name}</h2>
+            {/*
+              <div>Controller for category: {category}</div>
+              <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
+            */}
 
-          {/* Render all articles fetched through ArticleList */}
-          <ArticleList articles={categoryData.articles} />
-        </div>
-      );
+            {/* Render all articles fetched through ArticleList */}
+            <ArticleList articles={categoryData.articles} />
+          </div>
+        );
+      }
     } else {
       return (
         <div>

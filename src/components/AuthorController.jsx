@@ -1,6 +1,7 @@
 import React from 'react';
 import Author from 'components/Author';
 import FalcorController from 'lib/falcor/FalcorController';
+import NotFound from 'components/NotFound';
 
 export default class AuthorController extends FalcorController {
   static getFalcorPathSets(params) {
@@ -17,14 +18,20 @@ export default class AuthorController extends FalcorController {
   // TODO: list all articles written by author x
   render() {
     if (this.state.ready) {
-      let authorSlug = this.props.params.authorSlug;
-      const authorData = this.state.data.authorsBySlug[authorSlug];
-      //console.log("Data: " + JSON.stringify(authorData));
-      return (
-        <div>
-          <Author author={authorData} />
-        </div>
-      );
+      if (this.state.data == null) {
+        return (
+          <NotFound />
+        );
+      } else {
+        let authorSlug = this.props.params.authorSlug;
+        const authorData = this.state.data.authorsBySlug[authorSlug];
+        //console.log("Data: " + JSON.stringify(authorData));
+        return (
+          <div>
+            <Author author={authorData} />
+          </div>
+        );
+      }
     } else {
       return (
         <div>

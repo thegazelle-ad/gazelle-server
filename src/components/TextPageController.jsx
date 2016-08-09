@@ -20,14 +20,18 @@ export default class TextPageController extends FalcorController {
 
   render() {
     if (this.state.ready) {
-      const data = this.state.data.infoPages[this.props.params.slug];
-      return (
-        <div>
-          <TextPage title={data.title} html={data.html} />
-        </div>
-      );
-    } else if (this.state.error) {
-      return (<NotFound />);
+      if (this.state.data === null) {
+        return (
+          <NotFound />
+        );
+      } else {
+        const data = this.state.data.infoPages[this.props.params.slug];
+        return (
+          <div>
+            <TextPage title={data.title} html={data.html} />
+          </div>
+        );
+      }
     } else {
       return (
         <div>
