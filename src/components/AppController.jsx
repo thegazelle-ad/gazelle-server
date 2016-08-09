@@ -49,7 +49,7 @@ export default class AppController extends BaseComponent {
       }
       else {
         return (
-          // I use a tags here because I want the page to reload. If we really had an exceptional error we want the user to restart the whole client
+          // I use anchor tags here because I want the page to reload. If we really had an exceptional error we want the user to restart the whole client
           // This will also clear the error object, and that's why I don't clear it specifically. If for some reason future developers
           // choose to use react-router Links or something similar that doesn't reload remember to do resetGlobalError();
           <div>
