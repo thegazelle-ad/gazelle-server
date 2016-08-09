@@ -11,7 +11,8 @@
   justify-content: center;
   color: #FFF;
   background-color: #cc0000;
-  @include animation(350 ease);
+  opacity: 1 !important;
+  @include alert(1s, -50px);
 
   &__message {
     align-self: center;
@@ -19,4 +20,16 @@
     margin: 0;
     vertical-align: center;
   }
+}
+
+.dim {
+  @include fadein(2s, 0.3);
+  height:100%;
+  width:100%;
+  position:fixed;
+  left:0;
+  top:0;
+  z-index:1;
+  background-color: black;
+  opacity: 0.3;
 }
