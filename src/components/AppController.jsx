@@ -4,7 +4,7 @@ import { setAppReady } from "lib/falcor/falcorUtils";
 import ReactTransitionGroup from 'react-addons-transition-group';
 import _ from "lodash";
 import { TransitionManager } from "lib/loader"
-import { setContextForGlobalErrorFunctions, resetContextForGlobalErrorFunctions } from 'lib/utilities';
+import { setContextForGlobalErrorFunctions, resetContextForGlobalErrorFunctions, setGlobalError } from 'lib/utilities';
 
 // Components
 import Navigation from "components/Navigation";
@@ -26,9 +26,12 @@ export default class AppController extends BaseComponent {
   }
 
   componentDidMount() {
+    setContextForGlobalErrorFunctions.call(this);
+    window.onerror = (message, url, lineNo, columNo, error) => {
+      setGlobalError(err);
+    }
     super.componentDidMount();
     setAppReady();
-    setContextForGlobalErrorFunctions.call(this);
   }
 
   componentWillUnmount() {
@@ -37,7 +40,6 @@ export default class AppController extends BaseComponent {
   }
 
   render() {
-    console.log("render app controller");
     let lostInternetFlag = false;
     if (this.state.error) {
       let error = this.state.error;

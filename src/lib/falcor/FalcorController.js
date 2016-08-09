@@ -43,7 +43,6 @@ export default class FalcorController extends BaseComponent {
   // and store on state. Used for server side render and first client side render
   // this should always contain all the data the component needs
   loadFalcorCache(falcorPathSets) {
-    console.log("Loading cache");
     falcorPathSets = validateFalcorPathSets(falcorPathSets);
     if (falcorPathSets === undefined) {
       this.safeSetState({
