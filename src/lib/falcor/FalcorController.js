@@ -86,6 +86,8 @@ export default class FalcorController extends BaseComponent {
     const requestId = uuid();
     this.lastRequestId = requestId;
     this.props.model.get(...falcorPathSets).then((x) => {
+      throw new Error("This error is especially for you Zane! Now you should be able to \
+        see the website crashed page!");
       if (this.lastRequestId !== requestId) {
         // stale request, no action to response
         return;
