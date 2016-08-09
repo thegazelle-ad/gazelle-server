@@ -9,8 +9,8 @@ import { setContextForGlobalErrorFunctions, resetContextForGlobalErrorFunctions 
 // Components
 import Navigation from "components/Navigation";
 import Footer from "components/Footer";
-import Loader from "components/Loader"
-import LostInternetConnectionBar from 'components/LostInternetConnectionBar';
+import Loader from "components/Loader";
+import AlertBar from 'components/AlertBar';
 
 // Application CSS; applicationStyles alias,
 // CSS and SCSS loaders in webpack.config.js
@@ -21,7 +21,7 @@ export default class AppController extends BaseComponent {
     super(props);
     this.safeSetState({
       error: null,
-      displayErrorMessage: false
+      displayErrorMessage: false,
     });
   }
 
@@ -78,10 +78,8 @@ export default class AppController extends BaseComponent {
       <div className="app-container">
         <Loader percent={30} />
         {
-          // Zane: Of course feel free to also move where I put the
-          // LostInternetConnectionBar if it fits better somewhere else html wise
           lostInternetFlag ?
-            <LostInternetConnectionBar />
+            <AlertBar message={'Internet connection lost, please try to connect again.'} />
             : null
         }
         <div className="app-container__header">

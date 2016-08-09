@@ -31,3 +31,14 @@
    font-family: 'Roboto', sans-serif;
    font-weight: 500;
  }
+
+/*
+ * Animations
+ */
+  @mixin animation($animation) {
+   animation: initiate 350ms ease;
+  }
+
+  @mixin transition($transition) {
+   transition: ease 350ms;
+  }
