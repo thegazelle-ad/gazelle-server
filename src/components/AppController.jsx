@@ -28,7 +28,7 @@ export default class AppController extends BaseComponent {
   componentDidMount() {
     setContextForGlobalErrorFunctions.call(this);
     window.onerror = (message, url, lineNo, columNo, error) => {
-      setGlobalError(err);
+      setGlobalError(error);
     }
     super.componentDidMount();
     setAppReady();
