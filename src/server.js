@@ -11,6 +11,8 @@ import FalcorController from 'lib/falcor/FalcorController';
 import FalcorRouter from 'lib/falcor/FalcorRouter';
 import { injectModelCreateElement } from 'lib/falcor/falcorUtils';
 import path from "path";
+import crypto from "crypto";
+import fs from "fs"
 
 // *********************************************
 // Load in static issue articles for development
@@ -21,14 +23,26 @@ import testData from '../static/sample-issue/posts.js';
 // Allow node to use sourcemaps
 sourcemap.install();
 
+// Create MD5 hash of static file for better cache performance
+function md5Hash(file) {
+  const hash = crypto.createHash('md5');
+  // readFileSync in the syncronous version of readFile
+  file = fs.readFileSync(file, 'utf8');
+  return (hash.update(file).digest('hex'));
+}
+
 
 const buildHtmlString = (body, cache) => {
+
+  let clientHash = md5Hash('./static/build/client.js');
+  let cssHash = md5Hash('./static/build/main.css');
+
   return (
     `<!DOCTYPE html>
       <html>
         <head>
           <title>The Gazelle</title>
-          <link rel="stylesheet" type="text/css" href="/static/build/main.css">
+          <link rel="stylesheet" type="text/css" href="/static/build/main.css?h=` + cssHash + `">
           <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
           <link rel="icon" type="image/png" href="/favicons/favicon-32x32.png" sizes="32x32">
           <link rel="icon" type="image/png" href="/favicons/favicon-16x16.png" sizes="16x16">
@@ -46,7 +60,7 @@ const buildHtmlString = (body, cache) => {
             ` + JSON.stringify(cache) + `
             ;
           </script>
-          <script src="/static/build/client.js"></script>
+          <script src="/static/build/client.js?h=` + clientHash + `"></script>
         </body>
       </html>`
   );
