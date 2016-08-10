@@ -61,7 +61,7 @@ export default class AppController extends BaseComponent {
               an email you can either try pressing the refresh button, or go back to the homepage by pressing <a href="/">this link {/*style this as well*/}</a>.
             </p>
             <a href={"mailto:gazellewebdevelopmentaddress@gmail.com?subject=Error Report&body="+error.toString()}>Style This</a>
-            <button type="button" onClick={() => {window.location.reload()}}>Style This Too</button>
+            <button type="button" onClick={() => {window.location.reload()}}>Refresh</button>
             <p>For developers</p>
             <button type="button" onClick={() => {this.safeSetState({displayErrorMessage: !this.state.displayErrorMessage})}}>Display Error</button>
             {

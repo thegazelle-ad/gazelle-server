@@ -1,0 +1,64 @@
+.alert-bar {
+  cursor: pointer;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  z-index: 100;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF;
+  background-color: #cc0000;
+  opacity: 1 !important;
+  @include alert(1s, -50px);
+
+  &__message {
+    align-self: center;
+    text-align: center;
+    margin: 0;
+    vertical-align: center;
+    margin-right: 1rem;
+  }
+
+  &:hover:after {
+    background: hsla(0,0%,0%,.8);
+    border-radius: 3px;
+    color: #f6f6f6;
+    content: 'Click to refresh page';
+    font: bold 12px/30px sans-serif;
+    letter-spacing: 0.02rem;
+    height: 30px;
+    left: 50%;
+    margin-left: -60px;
+    position: absolute;
+    text-align: center;
+    top: 60px;
+    width: 150px;
+  }
+  &:hover:before {
+    border-bottom: 10px solid hsla(0,0%,0%,.8);
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    content: '';
+    height: 0;
+    left: 50%;
+    position: absolute;
+    top: 50px;
+    width: 0;
+  }
+}
+
+.dim {
+  @include fadein(2s, 0.3);
+  height:100%;
+  width:100%;
+  position:fixed;
+  left:0;
+  top:0;
+  z-index:1;
+  background-color: black;
+  opacity: 0.3;
+}

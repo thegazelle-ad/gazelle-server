@@ -37,6 +37,7 @@
 
 // 5. Components
 @import
+  'components/alert-bar',
   'components/article-list',
   'components/article-preview',
   'components/article',
@@ -48,7 +49,6 @@
   'components/navigation',
   'components/loader',
   'components/text-page',
-  'components/alert-bar',
   'components/trending';
 
 // 6. Page-specific styles
