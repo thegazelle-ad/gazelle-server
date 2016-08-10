@@ -17,17 +17,36 @@
 /*
  * Typograpy
  */
- @mixin roboto-light {
-   font-family: 'Roboto', sans-serif;
-   font-weight: 300;
- }
+@mixin roboto-light {
+ font-family: 'Roboto', sans-serif;
+ font-weight: 300;
+}
 
- @mixin roboto-normal {
-   font-family: 'Roboto', sans-serif;
-   font-weight: 400;
- }
+@mixin roboto-normal {
+ font-family: 'Roboto', sans-serif;
+ font-weight: 400;
+}
 
- @mixin roboto-bold {
-   font-family: 'Roboto', sans-serif;
-   font-weight: 500;
- }
+@mixin roboto-bold {
+ font-family: 'Roboto', sans-serif;
+ font-weight: 500;
+}
+
+/*
+* Animations
+*/
+@mixin fadein ($duration, $opacity) {
+  animation: fadein $duration;
+  @keyframes fadein {
+    0% { opacity: 0; }
+    100% { opacity: $opacity }
+  }
+}
+
+@mixin alert ($duration, $height) {
+  animation: alert $duration;
+  @keyframes alert {
+      0% { top: $height }
+      100% { top: 0; }
+  }
+}

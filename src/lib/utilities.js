@@ -2,6 +2,7 @@ import React from "react";
 import BaseComponent from "lib/BaseComponent"
 
 // TODO: Add Jest Testing
+// Remember to call the function with the correct 'this' value
 export function debounce (func, timeout) {
   let scheduled = false;
   let lastCalled = null;
@@ -44,3 +45,64 @@ export function uuid() {
     s4() + '-' + s4() + s4() + s4();
 }
 
+
+// The following is all for global error handling.
+// We keep the globalError value on top of AppController's 
+// this.state.error because this.setState is asynchronous
+// while this variable will be synchronous and can therefore
+// always be checked
+let globalError = null;
+let appControllerMounted = false;
+
+// These will be the functions with 'this' bound to AppController
+// So they can change the state of it globally
+let boundSetGlobalError, boundResetGlobalError;
+
+// Remember to call this function with the correct 'this' value
+export function setContextForGlobalErrorFunctions() {
+  if (appControllerMounted) {
+    throw new Error("AppController already mounted, context is already set");
+  }
+  // Arrow function automatically binds this
+  boundSetGlobalError = (err) => {
+    this.safeSetState({error: err});
+  }
+  boundResetGlobalError = () => {
+    this.safeSetState({error: null, displayErrorMessage: false});
+  }
+  appControllerMounted = true;
+}
+
+// This function doesn't actually reset the context,
+// but will just be called when appController has been unmounted and
+// the context therefore has become invalid.
+export function resetContextForGlobalErrorFunctions() {
+  appControllerMounted = false;
+  globalError = null;
+}
+
+export function resetGlobalError() {
+  if (!appControllerMounted) {
+    throw new Error("You have to set the context for global error functions\
+      before you can modify the global error");
+  }
+  boundResetGlobalError();
+  globalError = null;
+}
+
+export function setGlobalError(err) {
+  if (!appControllerMounted) {
+    throw new Error("You have to set the context for global error functions\
+      before you can modify the global error");
+  }
+  boundSetGlobalError(err);
+  globalError = err;
+}
+
+export function getGlobalError() {
+  if (!appControllerMounted) {
+    throw new Error("You have to set the context for global error functions\
+      before you can fetch the global error");
+  }
+  return globalError;
+}
