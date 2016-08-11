@@ -34,7 +34,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
   {
     // Get author information from SQL database
     // TODO: write path for articles written by the author
-    route: "authorsBySlug[{keys:slugs}]['name', 'photo', 'biography', 'slug']",
+    route: "authorsBySlug[{keys:slugs}]['name', 'image', 'biography', 'slug']",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
         if (!USE_DATABASES) {
@@ -62,6 +62,12 @@ export default class FalcorRouter extends BaseRouter.createClass([
       });
     }
   },
+  {
+    route: "authorsBySlug[{keys:slugs}]['teams'][{integers:indices}]"
+    get: (pathSet) => {
+      return null;
+    }
+  }
   {
     // Get article data from Ghost API
     route: "articlesBySlug[{keys:slugs}]['pubDate', 'id', 'image', 'slug', 'title', 'body', 'html']",
@@ -236,7 +242,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
         value: 50
       }];
     }
-  }
+  },
 ])
 // Begin actual class methods below
 {
