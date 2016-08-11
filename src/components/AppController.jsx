@@ -10,7 +10,7 @@ import { setContextForGlobalErrorFunctions, resetContextForGlobalErrorFunctions,
 import Navigation from "components/Navigation";
 import Footer from "components/Footer";
 import Loader from "components/Loader";
-import AlertBar from 'components/AlertBar';
+import Alert from 'components/Alert';
 
 // Application CSS; applicationStyles alias,
 // CSS and SCSS loaders in webpack.config.js
@@ -28,7 +28,7 @@ export default class AppController extends BaseComponent {
   componentDidMount() {
     setContextForGlobalErrorFunctions.call(this);
     window.onerror = (message, url, lineNo, columNo, error) => {
-      setGlobalError(err);
+      setGlobalError(error);
     }
     super.componentDidMount();
     setAppReady();
@@ -55,20 +55,23 @@ export default class AppController extends BaseComponent {
           // This will also clear the error object, and that's why I don't clear it specifically. If for some reason future developers
           // choose to use react-router Links or something similar that doesn't reload remember to do resetGlobalError();
           <div>
-            <p>
-              Sorry, The Gazelle has crashed due to an unexpected error. The web development team would appreciate
-              it if you would send us an email with the error message by pressing the button below. After sending us
-              an email you can either try pressing the refresh button, or go back to the homepage by pressing <a href="/">this link {/*style this as well*/}</a>.
-            </p>
-            <a href={"mailto:gazellewebdevelopmentaddress@gmail.com?subject=Error Report&body="+error.toString()}>Style This</a>
-            <button type="button" onClick={() => {window.location.reload()}}>Refresh</button>
-            <p>For developers</p>
-            <button type="button" onClick={() => {this.safeSetState({displayErrorMessage: !this.state.displayErrorMessage})}}>Display Error</button>
-            {
-              this.state.displayErrorMessage ?
-                <p>{error.toString()}</p>
-                : null
-            }
+            <Alert box message={"Oops! The Gazelle has crashed due to an unexpected error. Please click here to refresh."} />
+            {/*
+              <p>
+                Sorry, The Gazelle has crashed due to an unexpected error. The web development team would appreciate
+                it if you would send us an email with the error message by pressing the button below. After sending us
+                an email you can either try pressing the refresh button, or go back to the homepage by pressing <a href="/">this link</a>.
+              </p>
+              <a href={"mailto:gazellewebdevelopmentaddress@gmail.com?subject=Error Report&body="+error.toString()}>Style This</a>
+              <button type="button" onClick={() => {window.location.reload()}}>Refresh</button>
+              <p>For developers</p>
+              <button type="button" onClick={() => {this.safeSetState({displayErrorMessage: !this.state.displayErrorMessage})}}>Display Error</button>
+              {
+                this.state.displayErrorMessage ?
+                  <p>{error.toString()}</p>
+                  : null
+              }
+            */}
           </div>
         );
       }
@@ -81,7 +84,7 @@ export default class AppController extends BaseComponent {
         <Loader percent={30} />
         {
           lostInternetFlag ?
-            <AlertBar message={'Internet connection lost, please try to connect again.'} />
+            <Alert bar message={'Internet connection lost, please try to connect again.'} />
             : null
         }
         <div className="app-container__header">
