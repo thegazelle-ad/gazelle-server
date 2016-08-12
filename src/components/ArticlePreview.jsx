@@ -1,4 +1,5 @@
 import React from 'react';
+import SharingButtons from 'components/SharingButtons';
 import { Link } from 'react-router';
 import BaseComponent from 'lib/BaseComponent';
 
@@ -8,6 +9,7 @@ import AuthorList from 'components/AuthorList';
 export default class ArticlePreview extends BaseComponent {
   render () {
     let article = this.props.article;
+    let url = '/issue/' + article.issueId + '/' + article.category + '/' + article.slug;
     return (
       <div className="article-preview">
         {/*
@@ -25,7 +27,11 @@ export default class ArticlePreview extends BaseComponent {
           Article title with link to article
         */}
         <div className="article-preview__content">
-          <Link to={'/issue/' + article.issueId + '/' + article.category + '/' + article.slug}>
+          <Link to={'/category/' + article.category}>
+            <p className="article-preview__content__category-header">{article.category.replace('-', ' ')}</p>
+          </Link>
+
+          <Link to={url}>
             <h3 className="article-preview__content__title">{article.title}</h3>
           </Link>
           {/* Author(s) */}
@@ -35,7 +41,13 @@ export default class ArticlePreview extends BaseComponent {
 
           {/* Article teaser */}
           <p className="article-preview__content__teaser">{article.teaser}</p>
+          <SharingButtons
+            title={article.title}
+            url={'thegazelle.org' + url}
+            teaser={article.teaser}
+          />
         </div>
+
       </div>
     );
   }

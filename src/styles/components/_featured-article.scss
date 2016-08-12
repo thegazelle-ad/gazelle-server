@@ -18,6 +18,9 @@
     &__content {
       max-width: $column-3-1;
       padding-left: 1.3rem;
+      &__category-header {
+        display: block;
+      }
       &__title {
         font-size: 2rem;
         line-height: 2.2rem;
@@ -68,14 +71,20 @@
       // order: 1;
         padding-top: 0.5rem;
         max-width: $column-1;
+        &__category-header {
+          display: block;
+          margin: 0 0 0.1rem 0;
+        }
         &__title {
           font-size: $title-small;
           line-height: 1.5rem;
           margin: 0;
+          padding: 0;
         }
         &__authors {
           font-size: $authors-small;
           @include uppercase();
+          padding: 0.1rem 0 0 0;
         }
         &__teaser {
           display: none;

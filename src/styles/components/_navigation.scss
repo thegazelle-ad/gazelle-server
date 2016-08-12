@@ -28,6 +28,37 @@
     }
   }
 
+  &__social {
+    display: flex;
+    stroke: $light-grey;
+    fill: none;
+    svg {
+      width: 1.5em;
+      height: 1.5em;
+      margin-bottom: -0.1em;
+    }
+    &--facebook {
+      cursor: pointer;
+      margin-right: 0.75rem;
+      stroke: $light-grey;
+      fill: $lighter-grey;
+      &:hover, &:active {
+        stroke: #3b5998;
+        fill: #3b5998;
+      }
+    }
+
+    &--twitter {
+      cursor: pointer;
+      stroke: $light-grey;
+      fill: $lighter-grey;
+      &:hover, &:active {
+        stroke: #55acee;
+        fill: #55acee;
+      }
+    }
+  }
+
   @media (max-width: $medium) {
     /*
      * Recenter categories
@@ -39,7 +70,7 @@
      * Remove publication date and weather
      */
     &__publication-date,
-    &__weather {
+    &__social {
       display: none;
     }
   }
