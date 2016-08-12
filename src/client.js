@@ -20,6 +20,7 @@ clientModel.setCache(_initialCache); // eslint-disable-line no-undef
 
 ReactDOM.render(
   <Router
+    onUpdate={() => window.scrollTo(0,0)}
     history={browserHistory}
     routes={routes}
     createElement={injectModelCreateElement(clientModel)}
