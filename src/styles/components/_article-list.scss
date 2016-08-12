@@ -9,14 +9,12 @@
   &:last-child {
     padding: 0;
   }
-}
 
-@media (max-width: $small) {
-  .article-list {
+  @media (max-width: $small) {
     flex-wrap: wrap;
 
     // Show featured image only of first article in section
-    :first-child {
+    & > :first-child {
       .article-preview {
         &__featured-image {
           display: inherit;
@@ -29,6 +27,7 @@
         }
       }
     }
+
     .article-preview {
       &__featured-image {
         display: none;
