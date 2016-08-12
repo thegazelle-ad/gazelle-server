@@ -138,6 +138,7 @@ export class TransitionManager extends BaseComponent {
         this.delayedModeChange("fadingStart", "fadingIn", 10);
         break;
       case "fadingIn":
+        window.scrollTo(0,0);
         this.delayedModeChange("fadingIn", "rest", TRANSITION_IN_TIME);
         break;
     }
