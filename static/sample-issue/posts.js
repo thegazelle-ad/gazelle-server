@@ -3,81 +3,121 @@ const data = {
         "55": {
             "pubDate": "May 1, 2016",
             "featured": { $type: "ref", value: ["articlesBySlug", "sleep"] },
-            "picks": {
-                "0": { $type: "ref", value: ["articlesBySlug", "perfectionism"] },
-                "1": { $type: "ref", value: ["articlesBySlug", "taboos-on-sexual-abuse"] },
-            },
-            "trending": {
-                "0": { $type: "ref", value: ["articlesBySlug", "tampon-tax"] },
-                "1": { $type: "ref", value: ["articlesBySlug", "bullying"] },
-                "2": { $type: "ref", value: ["articlesBySlug", "letter-4"] },
-                "3": { $type: "ref", value: ["articlesBySlug", "james-smoley-on-mental-health"] },
-                "4": { $type: "ref", value: ["articlesBySlug", "bystander-intervention-creating-a-community-that-cares"] },
-            },
-            "articles": {
-                "off-campus": {
-                    "0": { $type: "ref", value: ["articlesBySlug", "the-fight-within"] },
-                    "1": { $type: "ref", value: ["articlesBySlug", "letter-4"] },
-                    "2": { $type: "ref", value: ["articlesBySlug", "take-a-break-destigmatizing-the-leave-of-absence"] },
+            "picks": [
+                { $type: "ref", value: ["articlesBySlug", "perfectionism"] },
+                { $type: "ref", value: ["articlesBySlug", "taboos-on-sexual-abuse"] },
+            ],
+            "categories": [
+                {
+                    name: "off campus",
+                    slug: "off-campus",
+                    articles: [
+                        { $type: "ref", value: ["articlesBySlug", "the-fight-within"] },
+                        { $type: "ref", value: ["articlesBySlug", "letter-4"] },
+                        { $type: "ref", value: ["articlesBySlug", "take-a-break-destigmatizing-the-leave-of-absence"] },
+                    ],
+                },{
+                    name: "on campus",
+                    slug: "on-campus",
+                    articles: [
+                        { $type: "ref", value: ["articlesBySlug", "ralph-katz-towards-a-new-model-for-teaching-bioethics"] },
+                        { $type: "ref", value: ["articlesBySlug", "clare-on-eating-disorders"] },
+                        { $type: "ref", value: ["articlesBySlug", "james-smoley-on-mental-health"] },
+                    ],
+                },{
+                    name: "commentary",
+                    slug: "commentary",
+                    articles: [
+                        { $type: "ref", value: ["articlesBySlug", "dan-brown-on-hiv-testing"] },
+                        { $type: "ref", value: ["articlesBySlug", "smoking-and-youth-in-the-uae"] },
+                        { $type: "ref", value: ["articlesBySlug", "bystander-intervention-creating-a-community-that-cares"] },
+                    ],
+                },{
+                    name: "creative",
+                    slug: "creative",
+                    articles: [
+                        { $type: "ref", value: ["articlesBySlug", "athletes-and-the-plant-based-diet"] },
+                        { $type: "ref", value: ["articlesBySlug", "something-that-isnt"] },
+                        { $type: "ref", value: ["articlesBySlug", "openness-on-mental-health"] },
+                    ],
+                },{
+                    name: "in focus",
+                    slug: "in-focus",
+                    articles: [
+                        { $type: "ref", value: ["articlesBySlug", "nyuads-mandatory-p-e-conspiracy"] },
+                        { $type: "ref", value: ["articlesBySlug", "spiritual-health"] },
+                        { $type: "ref", value: ["articlesBySlug", "classist-health"] },
+                    ],
                 },
-                "on-campus": {
-                    "0": { $type: "ref", value: ["articlesBySlug", "ralph-katz-towards-a-new-model-for-teaching-bioethics"] },
-                    "1": { $type: "ref", value: ["articlesBySlug", "clare-on-eating-disorders"] },
-                    "2": { $type: "ref", value: ["articlesBySlug", "james-smoley-on-mental-health"] },
-                },
-                "commentary": {
-                    "0": { $type: "ref", value: ["articlesBySlug", "dan-brown-on-hiv-testing"] },
-                    "1": { $type: "ref", value: ["articlesBySlug", "smoking-and-youth-in-the-uae"] },
-                    "2": { $type: "ref", value: ["articlesBySlug", "bystander-intervention-creating-a-community-that-cares"] },
-                },
-                "creative": {
-                    "0": { $type: "ref", value: ["articlesBySlug", "athletes-and-the-plant-based-diet"] },
-                    "1": { $type: "ref", value: ["articlesBySlug", "something-that-isnt"] },
-                    "2": { $type: "ref", value: ["articlesBySlug", "openness-on-mental-health"] },
-                },
-                "in-focus": {
-                    "0": { $type: "ref", value: ["articlesBySlug", "nyuads-mandatory-p-e-conspiracy"] },
-                    "1": { $type: "ref", value: ["articlesBySlug", "spiritual-health"] },
-                    "2": { $type: "ref", value: ["articlesBySlug", "classist-health"] },
-                },
-            },
+            ],
         },
     },
+
+
+    trending: [
+        { $type: "ref", value: ["articlesBySlug", "tampon-tax"] },
+        { $type: "ref", value: ["articlesBySlug", "bullying"] },
+        { $type: "ref", value: ["articlesBySlug", "letter-4"] },
+        { $type: "ref", value: ["articlesBySlug", "james-smoley-on-mental-health"] },
+        { $type: "ref", value: ["articlesBySlug", "bystander-intervention-creating-a-community-that-cares"] },
+    ],
 
     categories: {
-        "off-campus": {
-            "0": { $type: "ref", value: ["articlesBySlug", "the-fight-within"] },
-            "1": { $type: "ref", value: ["articlesBySlug", "letter-4"] },
-            "2": { $type: "ref", value: ["articlesBySlug", "take-a-break-destigmatizing-the-leave-of-absence"] },
-        },
-        "on-campus": {
-            "0": { $type: "ref", value: ["articlesBySlug", "ralph-katz-towards-a-new-model-for-teaching-bioethics"] },
-            "1": { $type: "ref", value: ["articlesBySlug", "clare-on-eating-disorders"] },
-            "2": { $type: "ref", value: ["articlesBySlug", "james-smoley-on-mental-health"] },
-        },
-        "commentary": {
-            "0": { $type: "ref", value: ["articlesBySlug", "dan-brown-on-hiv-testing"] },
-            "1": { $type: "ref", value: ["articlesBySlug", "smoking-and-youth-in-the-uae"] },
-            "2": { $type: "ref", value: ["articlesBySlug", "bystander-intervention-creating-a-community-that-cares"] },
-        },
-        "creative": {
-            "0": { $type: "ref", value: ["articlesBySlug", "athletes-and-the-plant-based-diet"] },
-            "1": { $type: "ref", value: ["articlesBySlug", "something-that-isnt"] },
-            "2": { $type: "ref", value: ["articlesBySlug", "openness-on-mental-health"] },
-        },
-        "in-focus": {
-            "0": { $type: "ref", value: ["articlesBySlug", "nyuads-mandatory-p-e-conspiracy"] },
-            "1": { $type: "ref", value: ["articlesBySlug", "spiritual-health"] },
-            "2": { $type: "ref", value: ["articlesBySlug", "classist-health"] },
-        },
+        "off-campus": [
+            { $type: "ref", value: ["articlesBySlug", "the-fight-within"] },
+            { $type: "ref", value: ["articlesBySlug", "letter-4"] },
+            { $type: "ref", value: ["articlesBySlug", "take-a-break-destigmatizing-the-leave-of-absence"] },
+        ],
+        "on-campus": [
+            { $type: "ref", value: ["articlesBySlug", "ralph-katz-towards-a-new-model-for-teaching-bioethics"] },
+            { $type: "ref", value: ["articlesBySlug", "clare-on-eating-disorders"] },
+            { $type: "ref", value: ["articlesBySlug", "james-smoley-on-mental-health"] },
+        ],
+        "commentary": [
+            { $type: "ref", value: ["articlesBySlug", "dan-brown-on-hiv-testing"] },
+            { $type: "ref", value: ["articlesBySlug", "smoking-and-youth-in-the-uae"] },
+            { $type: "ref", value: ["articlesBySlug", "bystander-intervention-creating-a-community-that-cares"] },
+        ],
+        "creative": [
+            { $type: "ref", value: ["articlesBySlug", "athletes-and-the-plant-based-diet"] },
+            { $type: "ref", value: ["articlesBySlug", "something-that-isnt"] },
+            { $type: "ref", value: ["articlesBySlug", "openness-on-mental-health"] },
+        ],
+        "in-focus": [
+            { $type: "ref", value: ["articlesBySlug", "nyuads-mandatory-p-e-conspiracy"] },
+            { $type: "ref", value: ["articlesBySlug", "spiritual-health"] },
+            { $type: "ref", value: ["articlesBySlug", "classist-health"] },
+        ],
     },
 
-    authors: {
-        "0": { $type: "ref", value: ["authorsBySlug", "ahmed-meshref"] },
-        "1": { $type: "ref", value: ["authorsBySlug", "rend-beiruti"] },
-        "2": { $type: "ref", value: ["authorsBySlug", "daniah-kheetan"] },
-        "3": { $type: "ref", value: ["authorsBySlug", "tala-nassar"] },
-    },
+    authors: [
+        { $type: "ref", value: ["authorsBySlug", "ahmed-meshref"] },
+        { $type: "ref", value: ["authorsBySlug", "rend-beiruti"] },
+        { $type: "ref", value: ["authorsBySlug", "daniah-kheetan"] },
+        { $type: "ref", value: ["authorsBySlug", "tala-nassar"] },
+    ],
+
+    teams: [
+        {
+            name: "management",
+            members: [
+                { $type: "ref", value: ["authorsBySlug", "ahmed-meshref"] },
+                { $type: "ref", value: ["authorsBySlug", "rend-beiruti"] },
+            ],
+        },{
+            name: "editorial",
+            members: [
+                { $type: "ref", value: ["authorsBySlug", "rend-beiruti"] },
+                { $type: "ref", value: ["authorsBySlug", "daniah-kheetan"] },
+            ],
+        },{
+            name: "staff",
+            members: [
+                { $type: "ref", value: ["authorsBySlug", "daniah-kheetan"] },
+                { $type: "ref", value: ["authorsBySlug", "tala-nassar"] },
+            ],
+        },
+    ],
 
     infoPages: {
         "about": {
@@ -720,65 +760,65 @@ const data = {
 
     authorsBySlug: {
         "ahmed-meshref": {
-          name: 'Ahmed Meshref',
-          photo: 'http://thegazelle.s3.amazonaws.com/gazelle/2013/09/cole2.jpg',
-          slug: "ahmed-meshref",
-          title: "Staff Writer",
-          biography: "Morbi rhoncus faucibus lorem, sed imperdiet nunc. Phasellus pharetra lectus eu leo finibus porta dictum a sem. Maecenas in dolor consequat, suscipit ipsum ut, sagittis ligula. Ut in lacus odio. In purus ipsum, bibendum at mi tincidunt, tempor feugiat risus. Vestibulum at quam fringilla, tristique nisl sed, elementum lectus. Integer.",
-          articles: [
-            { $type: "ref", value: ["articlesBySlug", "classist-health"] },
-            { $type: "ref", value: ["articlesBySlug", "spiritual-health"] },
-            { $type: "ref", value: ["articlesBySlug", "nyuads-mandatory-p-e-conspiracy"] },
-            { $type: "ref", value: ["articlesBySlug", "openness-on-mental-health"] },
-            { $type: "ref", value: ["articlesBySlug", "something-that-isnt"] },
-            { $type: "ref", value: ["articlesBySlug", "taboos-on-sexual-abuse"] },
-            { $type: "ref", value: ["articlesBySlug", "sleep"] },
-            { $type: "ref", value: ["articlesBySlug", "tampon-tax"] },
-            { $type: "ref", value: ["articlesBySlug", "bullying"] },
-            { $type: "ref", value: ["articlesBySlug", "perfectionism"] },
+            name: 'Ahmed Meshref',
+            photo: 'http://thegazelle.s3.amazonaws.com/gazelle/2013/09/cole2.jpg',
+            slug: "ahmed-meshref",
+            title: "Staff Writer",
+            biography: "Morbi rhoncus faucibus lorem, sed imperdiet nunc. Phasellus pharetra lectus eu leo finibus porta dictum a sem. Maecenas in dolor consequat, suscipit ipsum ut, sagittis ligula. Ut in lacus odio. In purus ipsum, bibendum at mi tincidunt, tempor feugiat risus. Vestibulum at quam fringilla, tristique nisl sed, elementum lectus. Integer.",
+            articles: [
+                { $type: "ref", value: ["articlesBySlug", "classist-health"] },
+                { $type: "ref", value: ["articlesBySlug", "spiritual-health"] },
+                { $type: "ref", value: ["articlesBySlug", "nyuads-mandatory-p-e-conspiracy"] },
+                { $type: "ref", value: ["articlesBySlug", "openness-on-mental-health"] },
+                { $type: "ref", value: ["articlesBySlug", "something-that-isnt"] },
+                { $type: "ref", value: ["articlesBySlug", "taboos-on-sexual-abuse"] },
+                { $type: "ref", value: ["articlesBySlug", "sleep"] },
+                { $type: "ref", value: ["articlesBySlug", "tampon-tax"] },
+                { $type: "ref", value: ["articlesBySlug", "bullying"] },
+                { $type: "ref", value: ["articlesBySlug", "perfectionism"] },
           ],
         },
         "rend-beiruti": {
-          name: 'Rend Beiruti',
-          photo: 'http://thegazelle.s3.amazonaws.com/gazelle/2013/09/cole2.jpg',
-          slug: "rend-beiruti",
-          title: "Head Deputy Copy Chief",
-          biography: "Pellentesque iaculis libero nunc, ac congue ante iaculis vel. Nulla facilisi. Vivamus lacus tellus, laoreet eget convallis eget, molestie et elit. Praesent auctor metus non sollicitudin viverra. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
-          articles: [
-            { $type: "ref", value: ["articlesBySlug", "athletes-and-the-plant-based-diet"] },
-            { $type: "ref", value: ["articlesBySlug", "bystander-intervention-creating-a-community-that-cares"] },
-            { $type: "ref", value: ["articlesBySlug", "smoking-and-youth-in-the-uae"] },
-            { $type: "ref", value: ["articlesBySlug", "dan-brown-on-hiv-testing"] },
-            { $type: "ref", value: ["articlesBySlug", "james-smoley-on-mental-health"] },
-          ],
+            name: 'Rend Beiruti',
+            photo: 'http://thegazelle.s3.amazonaws.com/gazelle/2013/09/cole2.jpg',
+            slug: "rend-beiruti",
+            title: "Head Deputy Copy Chief",
+            biography: "Pellentesque iaculis libero nunc, ac congue ante iaculis vel. Nulla facilisi. Vivamus lacus tellus, laoreet eget convallis eget, molestie et elit. Praesent auctor metus non sollicitudin viverra. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+            articles: [
+                { $type: "ref", value: ["articlesBySlug", "athletes-and-the-plant-based-diet"] },
+                { $type: "ref", value: ["articlesBySlug", "bystander-intervention-creating-a-community-that-cares"] },
+                { $type: "ref", value: ["articlesBySlug", "smoking-and-youth-in-the-uae"] },
+                { $type: "ref", value: ["articlesBySlug", "dan-brown-on-hiv-testing"] },
+                { $type: "ref", value: ["articlesBySlug", "james-smoley-on-mental-health"] },
+            ],
         },
         "daniah-kheetan": {
-          name: 'Daniah Kheetan',
-          photo: 'http://thegazelle.s3.amazonaws.com/gazelle/2013/09/cole2.jpg',
-          slug: "daniah-kheetan",
-          title: "Social Media Consultant",
-          biography: "Aliquam malesuada bibendum maximus. Proin rhoncus lacus id metus venenatis, vel porta purus tincidunt. Fusce dapibus arcu in lacus pellentesque varius. Sed pharetra porttitor ipsum, quis vulputate lacus porttitor euismod. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum venenatis tellus eget arcu congue vulputate. Phasellus cursus vulputate luctus. Aliquam vehicula tempus justo, id mollis magna.",
-          articles: [
-            { $type: "ref", value: ["articlesBySlug", "the-fight-within"] },
-            { $type: "ref", value: ["articlesBySlug", "letter-4"] },
-            { $type: "ref", value: ["articlesBySlug", "take-a-break-destigmatizing-the-leave-of-absence"] },
-            { $type: "ref", value: ["articlesBySlug", "ralph-katz-towards-a-new-model-for-teaching-bioethics"] },
-            { $type: "ref", value: ["articlesBySlug", "clare-on-eating-disorders"] },
-          ],
+            name: 'Daniah Kheetan',
+            photo: 'http://thegazelle.s3.amazonaws.com/gazelle/2013/09/cole2.jpg',
+            slug: "daniah-kheetan",
+            title: "Social Media Consultant",
+            biography: "Aliquam malesuada bibendum maximus. Proin rhoncus lacus id metus venenatis, vel porta purus tincidunt. Fusce dapibus arcu in lacus pellentesque varius. Sed pharetra porttitor ipsum, quis vulputate lacus porttitor euismod. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum venenatis tellus eget arcu congue vulputate. Phasellus cursus vulputate luctus. Aliquam vehicula tempus justo, id mollis magna.",
+            articles: [
+                { $type: "ref", value: ["articlesBySlug", "the-fight-within"] },
+                { $type: "ref", value: ["articlesBySlug", "letter-4"] },
+                { $type: "ref", value: ["articlesBySlug", "take-a-break-destigmatizing-the-leave-of-absence"] },
+                { $type: "ref", value: ["articlesBySlug", "ralph-katz-towards-a-new-model-for-teaching-bioethics"] },
+                { $type: "ref", value: ["articlesBySlug", "clare-on-eating-disorders"] },
+            ],
         },
         "tala-nassar": {
-          name: 'Tala Nassar',
-          photo: 'http://thegazelle.s3.amazonaws.com/gazelle/2013/09/cole2.jpg',
-          slug: "tala-nassar",
-          title: "Deputy News Editor",
-          biography: "Sed feugiat ac urna nec interdum. Duis aliquet interdum ullamcorper. Praesent congue mollis augue. Integer facilisis ultrices sem, at elementum lacus eleifend eget. Phasellus dapibus tellus in massa varius, a tincidunt neque tristique. Nullam scelerisque blandit vulputate. Sed laoreet condimentum eros sit amet molestie. Phasellus consectetur condimentum interdum. In pulvinar luctus luctus. Nullam venenatis nunc.",
-          articles: [
-            { $type: "ref", value: ["articlesBySlug", "the-fight-within"] },
-            { $type: "ref", value: ["articlesBySlug", "letter-4"] },
-            { $type: "ref", value: ["articlesBySlug", "take-a-break-destigmatizing-the-leave-of-absence"] },
-            { $type: "ref", value: ["articlesBySlug", "ralph-katz-towards-a-new-model-for-teaching-bioethics"] },
-            { $type: "ref", value: ["articlesBySlug", "clare-on-eating-disorders"] },
-          ],
+            name: 'Tala Nassar',
+            photo: 'http://thegazelle.s3.amazonaws.com/gazelle/2013/09/cole2.jpg',
+            slug: "tala-nassar",
+            title: "Deputy News Editor",
+            biography: "Sed feugiat ac urna nec interdum. Duis aliquet interdum ullamcorper. Praesent congue mollis augue. Integer facilisis ultrices sem, at elementum lacus eleifend eget. Phasellus dapibus tellus in massa varius, a tincidunt neque tristique. Nullam scelerisque blandit vulputate. Sed laoreet condimentum eros sit amet molestie. Phasellus consectetur condimentum interdum. In pulvinar luctus luctus. Nullam venenatis nunc.",
+            articles: [
+                { $type: "ref", value: ["articlesBySlug", "the-fight-within"] },
+                { $type: "ref", value: ["articlesBySlug", "letter-4"] },
+                { $type: "ref", value: ["articlesBySlug", "take-a-break-destigmatizing-the-leave-of-absence"] },
+                { $type: "ref", value: ["articlesBySlug", "ralph-katz-towards-a-new-model-for-teaching-bioethics"] },
+                { $type: "ref", value: ["articlesBySlug", "clare-on-eating-disorders"] },
+            ],
         },
     },
 };

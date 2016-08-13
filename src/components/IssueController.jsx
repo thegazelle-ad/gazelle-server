@@ -4,20 +4,15 @@
 
 import React from "react";
 import _ from "lodash";
-import ArticleList from "components/ArticleList";
 import FalcorController from 'lib/falcor/FalcorController';
 
 // Import components
 import FeaturedArticle from "components/FeaturedArticle";
 import EditorsPicks from "components/EditorsPicks";
 import Trending from "components/Trending";
+import ArticleList from "components/ArticleList";
 
 export default class IssueController extends FalcorController {
-  // TODO: Render top article
-  // TODO: Render Editor's Picks and trending sections
-  // TODO: Render categories
-    // TODO: Render ArticleList of articles in each category
-  //
   static getFalcorPathSets() {
     // URL Format: thegazelle.org/issue/:issueId/:articleCategory/:articleSlug
 
@@ -28,59 +23,68 @@ export default class IssueController extends FalcorController {
 
       // Request the featured article
       ["issues", 55, "featured", ["title", "teaser", "issueId", "category", "slug", "featuredImage"]],
-      ["issues", 55, "featured", "authors", {to: 10}, ["name", "slug"]],
+      ["issues", 55, "featured", "authors", {length: 10}, ["name", "slug"]],
 
       // Request first two Editor's Picks
-      ["issues", 55, "picks", {to: 1}, ["title", "teaser", "issueId", "category", "slug", "featuredImage"]],
-      ["issues", 55, "picks", {to: 1}, "authors", {to: 10}, ["name", "slug"]],
+      ["issues", 55, "picks", {length: 2}, ["title", "teaser", "issueId", "category", "slug", "featuredImage"]],
+      ["issues", 55, "picks", {length: 2}, "authors", {length: 10}, ["name", "slug"]],
 
       // Request first five Trending articles
-      ["issues", 55, "trending", {to: 4}, ["title", "issueId", "category", "slug", "featuredImage"]],
-      ["issues", 55, "trending", {to: 4}, "authors", {to: 10}, ["name", "slug"]],
+      ["trending", {length: 5}, ["title", "issueId", "category", "slug", "featuredImage"]],
+      ["trending", {length: 5}, "authors", {length: 10}, ["name", "slug"]],
 
-      // Request all remaining articles from issue
-      ["issues", 55, "articles", ["off-campus", "on-campus", "commentary", "creative", "in-focus"], {to: 30}, ["title", "teaser", "issueId", "category", "slug", "featuredImage"]],
-      ["issues", 55, "articles", ["off-campus", "on-campus", "commentary", "creative", "in-focus"], {to: 30}, "authors", {to: 10}, ["name", "slug"]],
+      // Request all category names and slugs (max 10 categories)
+      ["issues", 55, "categories", {length: 10}, ["name", "slug"]],
+
+      // Request necessary data from all articles from each category (max 30 articles)
+      ["issues", 55, "categories", {length: 10}, "articles", {length: 30}, ["title", "teaser", "issueId", "category", "slug", "featuredImage"]],
+
+      // Request author name and slug for each article (max 10 authors)
+      ["issues", 55, "categories", {length: 10}, "articles", {length: 30}, "authors", {length: 10}, ["name", "slug"]],
     ];
   }
 
   render () {
-    console.log("RENDERING ISSUE CONTROLLER");
+    //console.log("RENDERING ISSUE CONTROLLER");
     if (this.state.ready) {
       // TODO: Remove hardcoded issueId
       let issueId = 55;
       const issueData = this.state.data.issues[issueId];
-      //console.log("Data: " + JSON.stringify(issueData.trending));
+      const trendingData = this.state.data.trending;
+
+      /*
+       * Category object structure:
+       * {
+       *   name: "category name",
+       *   slug: "category-slug",
+       *   articles: {
+       *     ...
+       *   }
+       * }
+       */
 
       let renderCategories =
         // Render nothing if this.props.articles is empty
-        // articles = value; category = key
-        _.map((issueData.articles || []), function(articles, category) {
-          //console.log("Category: " + JSON.stringify(category));
-          return(
-            <div key={category} className="issue__category">
-              <h2 className="section-header">{category.replace('-', ' ')}</h2>
+        _.map((issueData.categories || []), (category) => {
+          return (
+            <div key={category.name} className="issue__category">
+              <h2 className="section-header">{category.name}</h2>
               <div className="issue__category__list">
-                <ArticleList articles={articles} />
+                <ArticleList articles={category.articles} />
               </div>
             </div>
-          )
+          );
         });
 
-      // Top level elements can't have classes or it will break transitionS
+
+      // Top level elements can't have classes or it will break transitions
       return (
         <div>
           <div className="issue">
-            {/*
-              <div>Controller for issue: {issueId}</div>
-              <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
-              <div>Publication Date: {issueData.pubDate}</div>
-            */}
-
             <FeaturedArticle article={issueData.featured} />
             <div className="top-articles">
               <EditorsPicks articles={issueData.picks} />
-              <Trending articles={issueData.trending} />
+              <Trending articles={trendingData} />
             </div>
             {renderCategories}
           </div>
