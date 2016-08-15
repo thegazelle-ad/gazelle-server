@@ -1,6 +1,4 @@
 .article{
-  //max-width: 800px;
-  //margin: auto;
   &__header {
     max-width: 750px;
     margin: auto;
@@ -62,30 +60,87 @@
     img, iframe{
       position: relative;
       object-fit: cover;
+      margin-right: -0.5rem; // Override #main right margin
       width: 100vw;
       left: calc(-50vw + 50%);
       height: auto;
       padding-bottom: auto;
     }
-
-    &:after {
-      background: url('../../static/header-logo.png');
-      display: block;
-      width: 50px;
-      height: 50px;
-      margin: 0.75rem auto;
-      content: "";
-      background-size: 100%;
+    iframe {
+      min-height: 500px;
+    }
+    &__end-mark {
+      display: flex;
+      justify-content: center;
+      margin: 1rem 0;
+      img {
+        display: block;
+        width: 50px;
+        height: 50px;
+      }
     }
   }
 
   &__footer {
+    display: flex;
+    //width: $medium;
+    flex-grow: 1;
+    align-items: stretch;
+    justify-content:center;
+    @media (max-width: $medium) {
+      display: none;
+    }
+    &__related-articles {
+      &__header {
+        @include section-header;
+      }
+      @include vertical-article-list;
+      padding-right: 1rem;
+      margin-right: 1rem;
+      border-right: 1px solid $border-grey;
+      .article-preview {
+        width: 100%;
+        &__featured-image {
+          width: 240px;
+          height: 150px;
+        }
+        &__content {
+          max-width: 50%;
+          .sharing-buttons {
+            display: none;
+          }
+        }
+      }
+    }
 
+    &__trending {
+      max-width: 30%;
+      .trending {
+        max-width: 100% !important;
+      }
+    }
   }
 
   @media (max-width: $small) {
     &__header {
-      padding-top: 0.7rem;
+      padding-top: 0.5rem;
+      &__title {
+        font-size: 1.5rem;
+        line-height: 1.7rem;
+        padding-bottom: 0.2rem;
+      }
+      &__teaser {
+        font-size: 0.9rem;
+      }
+      &__subtitle {
+        font-size: 0.8rem;
+        &__publication-date {
+          border-right: none;
+        }
+        .sharing-buttons {
+          display: none;
+        }
+      }
     }
     &__body {
       font-size: 1.05rem;

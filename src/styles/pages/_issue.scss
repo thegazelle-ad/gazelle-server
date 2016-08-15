@@ -1,7 +1,39 @@
 .issue {
-  &__category {
-    &__list{
-      // display: flex;
+  .article-list {
+    //flex-flow: row wrap;
+    .article-preview {
+      flex: 1;
+      -webkit-flex: 1 1 15em;
+    }
+
+    @media (max-width: $medium) {
+      @include vertical-article-list;
+      .article-preview {
+        margin-bottom: 0.2rem;
+      }
+      & > :first-child {
+        .article-preview {
+          &__featured-image {
+            display: inherit;
+          }
+          &__content {
+            padding-top: 0.7rem;
+            &__teaser {
+              display: none;
+            }
+          }
+        }
+      }
+
+      .article-preview {
+        &__featured-image {
+          display: none;
+        }
+        &__cotent {
+          padding: 0;
+          margin: 0;
+        }
+      }
     }
   }
 }
@@ -19,36 +51,5 @@
  * Home page section header styling
  */
 .section-header {
-  padding: 0;
-  margin: 0 0 0.3rem 0;
-  font-size: $category-large;
-  font-weight: 300;
-  color: $dark-grey;
-
-  @media (max-width: $small) {
-    font-size: $category-small;
-  }
-
-  // Section deliniation lines
-  overflow: hidden;
-  text-align: left;
-  &:before,
-  &:after {
-    background-color: $border-grey;
-    content: "";
-    display: inline-block;
-    height: 1px;
-    position: relative;
-    vertical-align: middle;
-  }
-  &:before {
-    right: 0.2rem;
-    margin-left: 0;
-    width: 30px;
-  }
-  &:after {
-    left: 0.2rem;
-    margin-right: -50%;
-    width: 90%;
-  }
+  @include section-header;
 }

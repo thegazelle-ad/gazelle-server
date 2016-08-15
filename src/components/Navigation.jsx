@@ -11,7 +11,7 @@ export default class Navigation extends BaseComponent {
       _.map((categories || []), function(category) {
         return(
           <li key={category} className="navigation__categories__item">
-            <Link to={"/category/"+category} activeClassName="navigation__categories__item--active">
+            <Link to={"/category/"+category}>
               {category}
             </Link>
           </li>
@@ -20,24 +20,27 @@ export default class Navigation extends BaseComponent {
 
     return (
       <div>
-        <div>
-          <div className="header">
-            <div className="header__search">
-              <input
-                className="header__search__main"
-                type="text"
-                placeholder="Search The Gazelle"
-              />
-              <div className="header__search__tail" />
-              <div className="header__search__text">SEARCH</div>
-            </div>
-            <div className="header__title">
-              <Link to="/" className="header__title--content">{this.props.appName}</Link>
-            </div>
-            {/* TODO: change link to archives list */}
-            <Link to="/" className="header__issueId">{"Issue 55"}</Link>
+        <div className="header">
+          <div className="header__search">
+            <input
+              className="header__search__main"
+              type="text"
+              placeholder="Search The Gazelle"
+            />
+            <div className="header__search__tail"></div>
+            <div className="header__search__text">SEARCH</div>
           </div>
+          <div className="header__title">
+            {/* TODO: change link to proper Gazelle icon uploaded to server*/}
+            <Link to="/" className="header__title__content">
+              <img src="http://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png" alt="logo" />
+              <h1 className="header__title__content__site-name">{this.props.appName}</h1>
+            </Link>
+          </div>
+          {/* TODO: change link to archives list */}
+          <Link to="/" className="header__issueId">{"Issue 55"}</Link>
         </div>
+
         <div className="navigation">
           <p className="navigation__publication-date">Aug. 15, 2016</p>
           <ul className="navigation__categories">

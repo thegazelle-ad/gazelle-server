@@ -6,32 +6,26 @@
 }
 
 /*
- * Crop image to desired width and height without distortion
- */
-@mixin image-container ($width, $height) {
-  width: $width;
-  height: $height;
-  overflow: hidden;
-}
-
-/*
  * Typograpy
  */
  @mixin roboto-light {
-   font-family: 'Roboto', sans-serif;
+   font-family: "Roboto", sans-serif;
    font-weight: 300;
  }
 
  @mixin roboto-normal {
-   font-family: 'Roboto', sans-serif;
+   font-family: "Roboto", sans-serif;
    font-weight: 400;
  }
 
  @mixin roboto-bold {
-   font-family: 'Roboto', sans-serif;
+   font-family: "Roboto", sans-serif;
    font-weight: 500;
  }
 
+/*
+ * Vertical article preview layout
+ */
  @mixin vertical-article-list {
   display: block;
   margin: 0 auto;
@@ -41,7 +35,7 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 1.5rem;
-    border-bottom: 1px solid $light-grey;
+    border-bottom: 1px solid #E8E8E8;
 
     &:last-child {
       margin-bottom: 0;
@@ -51,7 +45,7 @@
 
     &__featured-image {
       object-fit: cover;
-      width: 500px;
+      width: 450px;
       height: 250px;
     }
 
@@ -113,4 +107,50 @@
   font-size: $article;
   line-height: 1.8rem;
   word-wrap: break-word;
+}
+
+/*
+ * Header with text in between lines
+ */
+@mixin section-header {
+  padding: 0;
+  margin: 0 0 0.3rem 0;
+  font-size: $category-large;
+  font-weight: 300;
+  color: $dark-grey;
+
+  @media (max-width: $small) {
+    font-size: $category-small;
+  }
+
+  // Section deliniation lines
+  overflow: hidden;
+  text-align: left;
+  &:before,
+  &:after {
+    z-index: -1;
+    background-color: $border-grey;
+    content: "";
+    display: inline-block;
+    height: 1px;
+    position: relative;
+    vertical-align: middle;
+  }
+  &:before {
+    right: 0.2rem;
+    margin-left: 0;
+    width: 30px;
+  }
+  &:after {
+    left: 0.2rem;
+    margin-right: -50%;
+    width: 90%;
+  }
+}
+
+/*
+ * Simple grey bottom border
+ */
+@mixin grey-bottom-border {
+  border-bottom: 1px solid $border-grey;
 }

@@ -63,19 +63,21 @@ export default class IssueController extends FalcorController {
        * }
        */
 
+      //  {/* <div key={category.name} className="issue__category">
+      //  <h2 className="section-header">{category.name}</h2>
+      //  </div> */}
+
       let renderCategories =
         // Render nothing if this.props.articles is empty
         _.map((issueData.categories || []), (category) => {
+          //console.log(category);
           return (
             <div key={category.name} className="issue__category">
               <h2 className="section-header">{category.name}</h2>
-              <div className="issue__category__list">
-                <ArticleList articles={category.articles} />
-              </div>
+              <ArticleList articles={category.articles} />
             </div>
           );
         });
-
 
       // Top level elements can't have classes or it will break transitions
       return (

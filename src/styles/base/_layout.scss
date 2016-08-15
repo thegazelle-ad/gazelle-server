@@ -2,6 +2,10 @@
   margin: 0 0.5rem 0 0.5rem;
 }
 
+body {
+  overflow-x: hidden;
+}
+
 .app-container {
   max-width: 1000px;
   min-width: 240px;
@@ -9,15 +13,14 @@
   padding-top: 0.5rem;
   margin: 0 auto 0 auto;
   display: flex;
-  min-height: 98vh;
   flex-direction: column;
+  min-height: 98vh;
 
   @media (max-width: $small) {
     margin: 0.2rem auto 0 auto;
   }
 
   &__header {
-    flex: 0 0 100%;
     margin-top: 0.5rem;
   }
 

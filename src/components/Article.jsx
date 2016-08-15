@@ -1,9 +1,13 @@
 import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
 import moment from 'moment';
+import { Link } from 'react-router';
 
+// Components
 import AuthorList from 'components/AuthorList';
+import ArticleList from 'components/ArticleList';
 import SharingButtons from 'components/SharingButtons';
+import Trending from 'components/Trending';
 
 export default class Article extends BaseComponent {
   render () {
@@ -23,8 +27,21 @@ export default class Article extends BaseComponent {
           </div>
         </div>
         <div className="article__body" dangerouslySetInnerHTML={{__html: this.props.html}} />
+        <div className="article__body__end-mark">
+          <Link to="/">
+            <img src="http://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png" alt="Gazelle Logo" />
+          </Link>
+        </div>
         <div className="article__footer">
-
+          <div className="article__footer__related-articles">
+            <div className="article__footer__related-articles__header">
+              related
+            </div>
+            <ArticleList articles={this.props.relatedArticles} />
+          </div>
+          <div className="article__footer__trending">
+            <Trending articles={this.props.trending} />
+          </div>
         </div>
       </div>
 
@@ -40,4 +57,6 @@ Article.propTypes = {
   authors: React.PropTypes.object.isRequired,
   url: React.PropTypes.string,
   pubDate: React.PropTypes.string,
+  trending: React.PropTypes.object,
+  relatedArticles: React.PropTypes.object,
 }

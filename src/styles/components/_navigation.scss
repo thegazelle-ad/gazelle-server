@@ -1,84 +1,6 @@
-.navigation {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 300;
-  font-size: 0.8rem;
-  @include uppercase();
-  padding: 0 1rem;
-
-  &__categories {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    margin: 1rem 0 1rem 0;
-    padding: 0;
-    @media (max-width: $small) {
-      display: none;
-    }
-    &__item {
-      padding: 0 0.5rem 0 0.8rem;
-      display: block;
-      text-align: center;
-
-      &--active{
-        // Make active navigation category bold for UX
-        font-weight: 800;
-      }
-    }
-  }
-
-  &__social {
-    display: flex;
-    stroke: $light-grey;
-    fill: none;
-    svg {
-      width: 1.5em;
-      height: 1.5em;
-      margin-bottom: -0.1em;
-    }
-    &--facebook {
-      cursor: pointer;
-      margin-right: 0.75rem;
-      stroke: $light-grey;
-      fill: $lighter-grey;
-      &:hover, &:active {
-        stroke: #3b5998;
-        fill: #3b5998;
-      }
-    }
-
-    &--twitter {
-      cursor: pointer;
-      stroke: $light-grey;
-      fill: $lighter-grey;
-      &:hover, &:active {
-        stroke: #55acee;
-        fill: #55acee;
-      }
-    }
-  }
-
-  @media (max-width: $medium) {
-    /*
-     * Recenter categories
-     */
-    display: block;
-    margin: 0 auto;
-
-    /*
-     * Remove publication date and weather
-     */
-    &__publication-date,
-    &__social {
-      display: none;
-    }
-  }
-}
-
 .header {
-  font-family: 'Roboto-Condensed', Arial, sans-serif;
-  border-bottom: 1px solid $border-grey;
+  font-family: "Roboto", Helvetica, Arial, sans-serif;
+  @include grey-bottom-border;
   display: flex;
   justify-content: space-between;
   align-items: stretch;
@@ -135,35 +57,27 @@
       color: $dark-grey;
 
     }
-
-    @media (max-width: $small) {
-      display: none;
-    }
   }
 
   &__title {
-    &--content {
-      @include uppercase();
-      text-align: center;
-      font-size: 2rem;
-    }
-
-    //Import Gazelle icon in header
-    :before{
-      display: inline-block;
-      width: 60px;
-      height: 60px;
-      margin: 0 10px -20px 0;
-      content: "";
-      background: url('../../static/header-logo.png') no-repeat 0 0;
-      background-size: 100%;
-      @media (max-width: $medium) {
+    &__content {
+      &__site-name {
+        display: inline-block;
+        @include uppercase();
+        text-align: center;
+        font-size: 2.2rem;
+        font-weight: 400;
+        margin: 0;
+      }
+      img {
+        display: inline-block;
         width: 50px;
         height: 50px;
-        margin: 0 7px -15px 0;
+        margin: 0 10px -15px 0;
       }
     }
   }
+
   &__issueId {
     @include uppercase;
     font-size: $authors-small;
@@ -175,21 +89,150 @@
   }
 
   @media (max-width: $medium) {
-    /*
-     * Remove search bar and issue number
-     */
-    &__search,
-    &__issueId {
+    // Remove search bar text
+    &__search__text{
       display: none;
     }
+  }
 
-    /*
-     * Remove flex and recenter as block
-     */
-    &__title {
-      display: block;
-      margin: 0 auto;
-      padding: 0 1rem;
+  @media only screen and (max-width: $small) {
+    background-color: #FFF;
+    align-items: center;
+    position: fixed;
+    z-index: 5;
+    overflow-x: hidden;
+    height: 45px;
+    left: 0;
+    top: 0 !important;
+    right: 0;
+    padding: 0 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    // Add space after fixed header
+    & > * {
+      padding-bottom: 0rem;
     }
+    &__search {
+      margin: 0.25rem;
+    }
+    &__title {
+      &__content {
+        margin: 0;
+        &__site-name {
+          display: none;
+        }
+        img {
+          margin: 0.15rem 0 0.05rem 0;
+          width: 35px;
+          height: 35px;
+        }
+      }
+    }
+    &__issueId {
+      padding-right: 0.2rem;
+    }
+  }
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 300;
+  font-size: 0.8rem;
+  @include uppercase();
+  padding: 0 1rem;
+
+  &__categories {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 1rem;
+    &__item {
+      white-space: nowrap;
+      padding: 0 0.7rem 0 0.7rem;
+      display: block;
+      text-align: center;
+    }
+  }
+
+  &__social {
+    display: flex;
+    stroke: $light-grey;
+    fill: none;
+    svg {
+      width: 1.5em;
+      height: 1.5em;
+      margin-bottom: -0.1em;
+    }
+    &--facebook {
+      cursor: pointer;
+      margin-right: 0.75rem;
+      stroke: $light-grey;
+      fill: $lighter-grey;
+      &:hover, &:active {
+        stroke: #3b5998;
+        fill: #3b5998;
+      }
+    }
+
+    &--twitter {
+      cursor: pointer;
+      stroke: $light-grey;
+      fill: $lighter-grey;
+      &:hover, &:active {
+        stroke: #55acee;
+        fill: #55acee;
+      }
+    }
+  }
+
+  @media (max-width: $medium) {
+    // Recenter categories
+    display: block;
+    margin: 0 auto;
+    padding: 0;
+
+    // Remove publication date and social media buttons (extraneous information)
+    &__publication-date,
+    &__social {
+      display: none;
+    }
+  }
+
+  @media (max-width: $small) {
+    // Padding equal to height of fixed header bar
+    padding-top: 30px;
+    // Make categories scrollable on x axis
+    &__categories {
+      height: 100%;
+      width: 100%;
+      padding: 0;
+      margin: 0.6rem 0 0.3rem 0;
+      overflow-x: scroll;
+
+      ul {
+        display: flex;
+        justify-content: flex-start;
+        flex: 1;
+        overflow: auto;
+      }
+
+      li.navigation__categories__item {
+        left: 0 !important;
+        flex: none;
+        white-space: nowrap;
+        margin: auto;
+        width: 100px;
+      }
+    }
+  }
+
+  // Remove scrollbar on small screens with overflow-x: scroll
+  ::-webkit-scrollbar {
+      display: none;
+      background-color: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    display: none;
+    background-color: transparent;
   }
 }

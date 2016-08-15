@@ -25,3 +25,14 @@ input {
   align-items: center;
   padding-bottom: 0.45rem;
 }
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}

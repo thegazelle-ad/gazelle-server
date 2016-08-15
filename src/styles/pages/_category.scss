@@ -1,3 +1,14 @@
 .category {
   @include vertical-article-list;
+  &__header {
+    display: block;
+    margin: 0 auto 1rem;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 400;
+    color: #3e3e3e;
+    @media (max-width: $small) {
+      margin: 0.1rem auto 0.5rem;
+    }
+  }
 }
