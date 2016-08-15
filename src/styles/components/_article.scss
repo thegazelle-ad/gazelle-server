@@ -57,12 +57,8 @@
   &__body {
     max-width: 700px;
     display: block;
-    font-family: 'Lora', serif;
-    font-size: $article;
-    line-height: 1.8rem;
-    display: block;
     margin: 0 auto;
-    word-wrap: break-word;
+    @include body-text;
     img, iframe{
       position: relative;
       object-fit: cover;

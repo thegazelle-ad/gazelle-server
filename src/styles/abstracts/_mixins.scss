@@ -107,3 +107,10 @@
     }
   }
 }
+
+@mixin body-text {
+  font-family: 'Lora', serif;
+  font-size: $article;
+  line-height: 1.8rem;
+  word-wrap: break-word;
+}

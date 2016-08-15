@@ -14,8 +14,6 @@
     }
   }
   &__html {
-    font-family: 'Lora', serif;
-    font-size: $article;
-    line-height: 1.35rem;
+    @include body-text;
   }
 }
