@@ -122,7 +122,7 @@ export default class FalcorController extends BaseComponent {
     const oldPathSets = this.constructor.getFalcorPathSets(this.props.params)
     if (!_.isEqual(oldPathSets, newPathSets)) {
       this.safeSetState({ready: false});
-      if (pathSetsInCache(expandCache(this.props.model.getCache()), newPathSets)) {
+      if (pathSetsInCache(this.props.model.getCache(), newPathSets)) {
         this.loadFalcorCache(newPathSets);
       } else {
         this.falcorFetch(newPathSets)
@@ -135,7 +135,7 @@ export default class FalcorController extends BaseComponent {
   // on the first clientside render
   componentWillMount() {
     const falcorPathSets = this.constructor.getFalcorPathSets(this.props.params);
-    if (!isAppReady() || pathSetsInCache(expandCache(this.props.model.getCache()), falcorPathSets)) {
+    if (!isAppReady() || pathSetsInCache(this.props.model.getCache(), falcorPathSets)) {
       this.loadFalcorCache(falcorPathSets)
     } else {
       this.falcorFetch(falcorPathSets)

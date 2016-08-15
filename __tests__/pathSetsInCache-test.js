@@ -53,6 +53,12 @@ describe('pathSetsInCache', () => {
 
 		pathSets = ['a', {from: 2, to: 4}];
 		expect(pathSetsInCache(cache, pathSets)).toBe(true);
+
+		pathSets = ['a', {from: 2, to: 4, length: 3}];
+		expect(() => {pathSetsInCache(cache, pathSets)}).toThrow();
+
+		pathSets = ['a', {from: 2}];
+		expect(() => {pathSetsInCache(cache, pathSets)}).toThrow();
 	});
 
 	it('handles complex expressions', () => {
@@ -75,5 +81,34 @@ describe('pathSetsInCache', () => {
 		// I'm actually not certain this is valid falcor syntax, but it is supported by the function anyway
 		pathSets = ['a', [{length: 6}, 'key', 'key2', 'key3'], 'b', ['c', 'd'], 'a'];
 		expect(pathSetsInCache(cache, pathSets)).toBe(true);
+	});
+
+	it('follows refs', () => {
+    const cache = {
+      articles: {
+        someSlug: {
+          name: 'someName',
+          pubDate: 'someDate',
+          authors: {
+            '0': {$type: 'ref', value: ['authors', 'someAuthor']}
+          }
+        }
+      },
+      authors: {
+        someAuthor: {
+          name: 'someName',
+          biography: 'this is me',
+          articles: {
+            '0': {$type: 'ref', value: ['articles', 'someSlug']}
+          }
+        }
+      }
+    };
+
+    let pathSet = ['articles', 'someSlug', 'authors', 0, 'articles', 0, 'authors', 0, 'biography'];
+    expect(pathSetsInCache(cache, pathSet)).toBe(true);
+
+    pathSet = ['articles', 'someSlug', 'authors', 0, 'articles', 0, 'authors', 0, 'pubDate'];
+    expect(pathSetsInCache(cache, pathSet)).toBe(false);
 	});
 })
