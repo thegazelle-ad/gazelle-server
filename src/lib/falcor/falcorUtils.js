@@ -109,6 +109,9 @@ export function pathSetsInCache(cache, falcorPathSets) {
     the object one has reached, and the remaining keySets in the
     current falcor pathSet.
     */
+
+    // Base case, means we are done as there are no
+    // remaining keySets.
     if (remainingKeySets.length === 0) {
       return true;
     }
@@ -124,6 +127,20 @@ export function pathSetsInCache(cache, falcorPathSets) {
     return nextKeySet.every((keyOrRange) => {
       if (keyOrRange !== null && typeof keyOrRange === "object") {
         // keyOrRange is a range
+
+        // Every time we call a range, there should also be a length property.
+        // This is so we know when overfetching whether data is missing
+        // in the cache or it's simply because there is no data to fetch.
+        // It is also needed in the software development to know how many
+        // items you are receiving.
+        if (!curObject.hasOwnProperty("length")) {
+          console.warning("No length property on object in cache. This might be a developer mistake.\
+ If in doubt add more console logs to debug");
+          // If it's not a developer mistake the length property could simply be missing
+          // because this data is not in cache.
+          return false;
+        }
+        let lengthOfFalcorArray = curObject.length;
         let start = 0;
         if (keyOrRange.hasOwnProperty("from")) {
           start = keyOrRange.from;
@@ -141,6 +158,8 @@ export function pathSetsInCache(cache, falcorPathSets) {
         else {
           throw new Error("Falcor Range must have either 'to' or 'length' properties at falcor KeySet: " + JSON.stringify(keyOrRange));
         }
+        // Don't check any keys beyond the end of the theoretical falcor array.
+        end = Math.min(lengthOfFalcorArray-1, end);
         for (let i = start; i <= end; i++) {
           if (!handleCheckingSingleKey(curObject, nextRemainingKeySets, i)) {
             return false;
