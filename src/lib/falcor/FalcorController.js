@@ -36,7 +36,7 @@ export default class FalcorController extends BaseComponent {
     throw new TypeError(
       "You must implement the getFalcorPathSets method " +
       "in children of FalcorController"
-    ) 
+    )
   }
 
   // Retrieves all the data for this component from the Falcor cache
@@ -141,7 +141,7 @@ export default class FalcorController extends BaseComponent {
       this.falcorFetch(falcorPathSets)
     }
   }
-  
+
   componentWillLeave(cb) {
     signalLeaving(cb);
   }

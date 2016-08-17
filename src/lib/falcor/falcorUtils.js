@@ -117,6 +117,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
     }
     const nextRemainingKeySets = remainingKeySets.slice(1);
     let nextKeySet = remainingKeySets[0];
+
     // This is to avoid code duplication for when
     // it is just a single key instead of an
     // array of keys. We don't want to handle that
@@ -132,10 +133,18 @@ export function pathSetsInCache(cache, falcorPathSets) {
         // This is so we know when overfetching whether data is missing
         // in the cache or it's simply because there is no data to fetch.
         // It is also needed in the software development to know how many
-        // items you are receiving.
+        // items you will actually receive when overfetching.
         if (!curObject.hasOwnProperty("length")) {
-          console.warning("No length property on object in cache. This might be a developer mistake.\
- If in doubt add more console logs to debug");
+          console.warn("No length property on object in cache. This might be a developer mistake.\
+ If error checking flag is true current object will be printed below.");
+          // As this will be printing a lot we don't want to always print full objects
+          // change the flag to true if you want to debug
+          if (false) {
+            console.log("Current object in pathSetsInCache:");
+            console.log(curObject);
+            console.log("remainingKeySets in pathSetsInCache");
+            console.log(remainingKeySets);
+          }
           // If it's not a developer mistake the length property could simply be missing
           // because this data is not in cache.
           return false;

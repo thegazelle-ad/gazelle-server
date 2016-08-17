@@ -3,11 +3,11 @@ import { ghostArticleQuery } from 'lib/ghostAPI'
 import { sqlArticleQuery, sqlAuthorQuery } from 'lib/sql'
 import falcor from 'falcor'
 
-const $ref = falcor.Model.ref; 
+const $ref = falcor.Model.ref;
 
 // FLAG TO CHECK IF YOU WANT TO ACCESS GHOST API AND DATABASES
 // THIS IS JUST FOR DEVELOPMENT WHILE WE DON'T HAVE ACTUAL SERVERS SET UP
-const USE_DATABASES = false; 
+const USE_DATABASES = false;
 
 // Transform ghost API names into our names
 const mapGhostNames = (name) => {
@@ -57,7 +57,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
               });
             });
           });
-          resolve(results);          
+          resolve(results);
         });
       });
     }
@@ -157,7 +157,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
   },
   {
     /* TODO: Figure out error handling.
-    Get articles by page (they are also in chronological order, articlesByPage[pageLength][1][0] 
+    Get articles by page (they are also in chronological order, articlesByPage[pageLength][1][0]
     is the latest published article to the Ghost database). Only use positive integer page lengths
     and page numbers, and non-negative page indices. [{integers:indicesOnPage}] is logically redundant
     but needed for working properly with falcor. Normal falcorPath syntax would be:
