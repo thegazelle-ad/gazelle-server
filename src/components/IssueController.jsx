@@ -5,6 +5,7 @@
 import React from "react";
 import _ from "lodash";
 import FalcorController from 'lib/falcor/FalcorController';
+import { Link } from "react-router";
 
 // Import components
 import FeaturedArticle from "components/FeaturedArticle";
@@ -62,18 +63,15 @@ export default class IssueController extends FalcorController {
        *   }
        * }
        */
-
-      //  {/* <div key={category.name} className="issue__category">
-      //  <h2 className="section-header">{category.name}</h2>
-      //  </div> */}
-
       let renderCategories =
         // Render nothing if this.props.articles is empty
         _.map((issueData.categories || []), (category) => {
           //console.log(category);
           return (
             <div key={category.name} className="issue__category">
-              <h2 className="section-header">{category.name}</h2>
+              <Link to={"/category/" + category.slug}>
+                <h2 className="section-header">{category.name}</h2>
+              </Link>
               <ArticleList articles={category.articles} />
             </div>
           );

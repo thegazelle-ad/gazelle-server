@@ -6,13 +6,34 @@ import { Link } from 'react-router';
 export default class Navigation extends BaseComponent {
   render() {
     // Render all categories in nav bar
-    let categories = ["off-campus", "on-campus", "commentary", "creative", "in-focus"];
+    let categories = [
+      {
+        name: "off campus",
+        slug: "off-campus",
+      },
+      {
+        name: "on campus",
+        slug: "on-campus",
+      },
+      {
+        name: "commentary",
+        slug: "commentary",
+      },
+      {
+        name: "creative",
+        slug: "creative",
+      },
+      {
+        name: "in focus",
+        slug: "in-focus",
+      },
+    ];
     let renderCategories =
       _.map((categories || []), function(category) {
         return(
-          <li key={category} className="navigation__categories__item">
-            <Link to={"/category/"+category}>
-              {category}
+          <li key={category.slug} className="navigation__categories__item">
+            <Link to={"/category/"+category.slug}>
+              {category.name}
             </Link>
           </li>
         )
