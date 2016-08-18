@@ -1,5 +1,6 @@
 import FalcorServer from 'falcor-express';
 import express from 'express';
+import compression from 'compression';
 import React from 'react';
 import falcor from 'falcor';
 import _ from 'lodash';
@@ -160,6 +161,8 @@ server.use("/static", express.static("static"));
 server.use("/favicon.ico", (req, res) => {
   res.sendFile(path.join(__dirname, "./static"));
 });
+
+server.use(compression());
 
 server.get('*', (req, res) => {
   match({ routes, location: req.url },

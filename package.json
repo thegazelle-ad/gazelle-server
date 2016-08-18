@@ -73,6 +73,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
+    "compression": "^1.6.2",
     "express": "^4.13.4",
     "falcor": "^0.1.17",
     "falcor-express": "^0.1.2",
