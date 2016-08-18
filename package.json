@@ -4,6 +4,7 @@
   "description": "Minimal starter kit for React, Falcor, and Universal rendering with ES6",
   "main": "server.js",
   "scripts": {
+    "start": "node ./build/server.js",
     "test": "jest --verbose"
   },
   "jest": {

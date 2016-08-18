@@ -182,12 +182,14 @@ server.get('*', (req, res) => {
     });
 });
 
-
-server.listen(3000, err => {
+// To start server with PORT=3000 default: run `npm start`
+// NOTE: On Linux systems, any port below 1024 requires root access (`sudo` command)
+// To run on port 80: `sudo PORT=80 npm start`
+server.listen(process.env.PORT ? process.env.PORT : 3000, err => {
   if (err) {
     console.error(err);
     return;
   }
 
-  console.log('Server started on port 3000');
+  console.log('Server started on port ' + (process.env.PORT ? process.env.PORT : 3000));
 });
