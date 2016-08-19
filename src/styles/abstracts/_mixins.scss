@@ -24,6 +24,39 @@
  }
 
 /*
+ * Home page special box size
+ */
+  @mixin bigger-box {
+    display: flex;
+    flex-direction: row;
+    max-width: 100%;
+    //align-self: stretch;
+    flex-shrink: 1;
+    align-items: flex-start;
+    justify-content: flex-start;
+    .article-preview {
+      &__featured-image {
+        flex: 1 1 auto;
+        height: 250px;
+        width: 350px;
+        margin-right: 1rem;
+        padding-bottom: 0;
+      }
+      &__content {
+        margin-top: 0.5rem;
+        //align-self: center;
+        &__title {
+          font-size: 1.5rem;
+          line-height: 2rem;
+        }
+        flex-grow: 1;
+        max-width: 50%;
+      }
+    }
+  }
+
+
+/*
  * Vertical article preview layout
  */
  @mixin vertical-article-list {
@@ -36,7 +69,8 @@
     justify-content: center;
     margin-bottom: 1.5rem;
     border-bottom: 1px solid #E8E8E8;
-
+    flex-grow: 1;
+    max-width: 100%; // Keeps articles with short titles/teasers centered 
     &:last-child {
       margin-bottom: 0;
       border-bottom: none;

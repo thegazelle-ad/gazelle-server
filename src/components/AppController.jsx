@@ -6,6 +6,7 @@ import _ from "lodash";
 import { TransitionManager } from "lib/loader";
 
 // Components
+import Header from "components/Header";
 import Navigation from "components/Navigation";
 import Footer from "components/Footer";
 import Loader from "components/Loader"
@@ -28,7 +29,8 @@ export default class AppController extends BaseComponent {
       <div className="app-container">
         <Loader percent={30} />
         <div className="app-container__header">
-          <Navigation appName={"The Gazelle"} />
+          <Header />
+          <Navigation />
         </div>
         <div className="app-container__body">
           <ReactTransitionGroup
@@ -37,6 +39,7 @@ export default class AppController extends BaseComponent {
             transitionLeaveTimeout={3000}
             component={TransitionManager}
           >
+            {<Navigation />}
             {React.cloneElement(this.props.children, {key: transitionKey})}
           </ReactTransitionGroup>
         </div>

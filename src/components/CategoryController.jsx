@@ -9,8 +9,10 @@ export default class CategoryController extends FalcorController {
     // Multilevel request requires Falcor Path for each level of data requested
     // Grab first 10 articles for category requested
     return [
-      ["categories", params.category, {length: 10}, ["title", "teaser", "issueId", "category", "slug", "featuredImage"]],
-      ["categories", params.category, {length: 10}, "authors", {length: 10}, ["name", "slug"]],
+      ["categories", params.category, "name"],
+
+      ["categories", params.category, "articles", {length: 10}, ["title", "teaser", "issueId", "category", "slug", "featuredImage"]],
+      ["categories", params.category, "articles", {length: 10}, "authors", {length: 10}, ["name", "slug"]],
     ];
   }
 
@@ -23,14 +25,14 @@ export default class CategoryController extends FalcorController {
       //console.log("Data: " + JSON.stringify(categoryData));
       return (
         <div className="category">
-          <h2 className="category__header">{category}</h2>
+          <h2 className="category__header">{categoryData.name}</h2>
           {/*
             <div>Controller for category: {category}</div>
             <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
           */}
 
           {/* Render all articles fetched through ArticleList */}
-          <ArticleList articles={categoryData} />
+          <ArticleList articles={categoryData.articles} />
         </div>
       );
     } else {

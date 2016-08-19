@@ -16,11 +16,10 @@
     object-fit: cover;
     width: 100%;
     height: 170px;
+    padding-bottom: 0.5rem;
   }
 
   &__content {
-    padding-top: 0.3rem;
-
     &__category-header {
       display: none;
       margin: 0 0 0.3rem 0;
@@ -57,10 +56,17 @@
   }
 }
 
+@media (max-width: $medium) {
+  &__content {
+    &__category-header {
+      margin: 0;
+    }
+  }
+}
 @media (max-width: $small) {
   .article-preview {
     max-width: $column-1;
-    padding: 0.6rem 0.3rem 0.6rem 0.3rem;
+    padding: 0 0.3rem 0.6rem 0.3rem;
     border-bottom: 1px solid $lighter-grey;
     &:first-child {
       .article-preview__content__title {
@@ -83,16 +89,15 @@
         font-size: $authors-small;
         margin: 0 0 0.1rem 0;
         @include uppercase();
-        padding-top: 0.3rem ;
+        padding-top: 0.2rem ;
       }
 
       &__teaser {
         font-size: $teaser-small;
         padding-top: 0.1rem;
+        margin-bottom: 0;
         &:after {
           border-bottom: 1px solid $border-grey;
-          // margin-left: -10px;
-          // margin-right: -10px;
         }
       }
       .sharing-buttons {

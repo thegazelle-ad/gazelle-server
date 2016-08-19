@@ -10,7 +10,7 @@ export default class AuthorController extends FalcorController {
     return [
       ["authorsBySlug", params.authorSlug, ["name", "biography", "slug", "title", "photo"]],
       ["authorsBySlug", params.authorSlug, "articles", {"to": 10}, ["title", "image", "teaser", "issueId", "category", "slug", "featuredImage"]],
-      //["authorsBySlug", params.authorSlug, "articles", {"to": 10}, "authors", {to: 10}, ["name", "slug"]],
+      ["authorsBySlug", params.authorSlug, "articles", {"to": 10}, "authors", {to: 10}, ["name", "slug"]],
     ];
   }
 
@@ -22,10 +22,6 @@ export default class AuthorController extends FalcorController {
       //console.log("Data: " + JSON.stringify(authorData));
       return (
         <div>
-          {/*
-            <div>Controller for author: {authorData.name}</div>
-            <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
-          */}
           <Author author={authorData} />
         </div>
       );

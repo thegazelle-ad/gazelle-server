@@ -16,4 +16,20 @@
       max-width: $column-2;
     }
   }
+
+  @media (max-width: $medium) {
+    max-width: 100%;
+    margin: 0 0 0.5rem 0;
+    .section-header {
+      margin-right: 0;
+    }
+    .article-list {
+      &:last-child {
+        border-right: none;
+      }
+      .article-preview {
+        max-width: $column-1;
+      }
+    }
+  }
 }

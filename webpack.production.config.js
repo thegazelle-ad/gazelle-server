@@ -1,5 +1,5 @@
 /*********************************************
- * Development build for active development
+ * Production build for deployment
  *********************************************/
 
 // For excluding /node_modules/
@@ -42,6 +42,20 @@ module.exports = [{
     new ExtractTextPlugin('./static/build/main.css', {
       allChunks: true,
     }),
+    new webpack.DefinePlugin({
+      'process.env':{
+        'NODE_ENV': '"production"', // compiles React as production build
+        'PORT': 80, // Set port=80 requires sudo command
+      },
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: true,
+      },
+    }),
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.AggressiveMergingPlugin(),
+    new webpack.optimize.OccurrenceOrderPlugin(true),
   ],
 
   module: {
@@ -127,7 +141,7 @@ module.exports = [{
       },
     ],
   },
-  devtool: 'source-map'
+  devtool: 'source-map',
 },
 // Editor tools copy
 {
@@ -135,7 +149,7 @@ module.exports = [{
   entry: './src/editor-server.js',
   output: {
     path: __dirname,
-    filename: "./build/editor-server.js"
+    filename: "./build/editor-server.js",
   },
   externals: [nodeExternals()],
   resolve: {
@@ -146,7 +160,7 @@ module.exports = [{
     ],
     alias: {
     },
-    extensions: ['', '.js', '.jsx']
+    extensions: ['', '.js', '.jsx'],
   },
 
   plugins: [
@@ -170,7 +184,7 @@ module.exports = [{
   target: 'web',
   entry: './src/editor-client.js',
   output: {
-    filename: "./static/build/editor-client.js"
+    filename: "./static/build/editor-client.js",
   },
   resolve: {
     root: __dirname,
@@ -180,7 +194,7 @@ module.exports = [{
     ],
     alias: {
     },
-    extensions: ['', '.js', '.jsx']
+    extensions: ['', '.js', '.jsx'],
   },
 
   plugins: [
@@ -199,5 +213,5 @@ module.exports = [{
       },
     ],
   },
-  devtool: 'source-map'
+  devtool: 'source-map',
 }]

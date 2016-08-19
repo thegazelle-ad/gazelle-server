@@ -1,0 +1,157 @@
+.header {
+  font-family: "Roboto", Helvetica, Arial, sans-serif;
+  @include grey-bottom-border;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  padding: 0 1rem;
+
+  &__search {
+    opacity: 0; // hide until search feature is ready
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+
+    &:active,
+    &:hover {
+  		.header__search__main{
+        width: 200px;
+        height: 35px;
+      }
+
+  		.header__search__tail,
+      .header__search__text {
+        visibility: hidden;
+  		}
+    }
+    &__main {
+      display: inline-block;
+      position: relative;
+      height: 20px;
+      width: 20px;
+      box-sizing: border-box;
+      margin-right: 7px;
+      padding: 0 8px;
+      border: 2px solid $dark-grey;
+      border-radius: 25px;
+      transition: all 250ms ease;
+      cursor: text;
+
+    }
+
+    &__tail{
+        display: inline-block;
+        width: 2px;
+        height: 10px;
+        margin-left: -7px;
+        margin-top: 18px;
+        margin-right: 10px;
+        background: $dark-grey;
+        border-radius: 3px;
+        transform: rotate(-45deg);
+        transition: all 200ms ease;
+    }
+
+    &__text{
+      display: inline-block;
+      font-size: $authors-small;
+      color: $dark-grey;
+
+    }
+  }
+
+  &__title {
+    &__content {
+      &__site-name {
+        display: inline-block;
+        @include uppercase();
+        text-align: center;
+        font-size: 2.2rem;
+        font-weight: 400;
+        margin: 0;
+      }
+      img {
+        display: inline-block;
+        width: 50px;
+        height: 50px;
+        margin: 0 10px -10px 0;
+      }
+    }
+  }
+
+  &__social {
+    display: flex;
+    stroke: $light-grey;
+    fill: none;
+    align-items: center;
+    svg {
+      width: 1.4em;
+      height: 1.4em;
+      margin-bottom: -0.1em;
+    }
+    &--facebook {
+      cursor: pointer;
+      margin-right: 0.5rem;
+      stroke: $light-grey;
+      fill: $lighter-grey;
+      &:hover, &:active {
+        stroke: #3b5998;
+        fill: #3b5998;
+      }
+    }
+
+    &--twitter {
+      cursor: pointer;
+      stroke: $light-grey;
+      fill: $lighter-grey;
+      &:hover, &:active {
+        stroke: #55acee;
+        fill: #55acee;
+      }
+    }
+  }
+
+  @media (max-width: $medium) {
+    // Remove search bar text
+    &__search__text{
+      display: none;
+    }
+  }
+
+  @media only screen and (max-width: $small) {
+    background-color: #FFF;
+    align-items: center;
+    position: fixed;
+    z-index: 5;
+    overflow-x: hidden;
+    height: 45px;
+    left: 0;
+    top: 0 !important;
+    right: 0;
+    padding: 0 0.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    // Add space after fixed header
+    & > * {
+      padding-bottom: 0rem;
+    }
+    &__search {
+      margin: 0.25rem;
+    }
+    &__title {
+      &__content {
+        margin: 0;
+        &__site-name {
+          display: none;
+        }
+        img {
+          margin: 0.2rem 0 0rem 0;
+          width: 35px;
+          height: 35px;
+        }
+      }
+    }
+    &__social {
+      padding-right: 0.2rem;
+    }
+  }
+}

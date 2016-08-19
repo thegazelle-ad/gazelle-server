@@ -1,15 +1,80 @@
 .issue {
   .article-list {
     //flex-flow: row wrap;
+    justify-content: flex-start;
+    flex-grow: 1;
+
     .article-preview {
+      min-width: 0;
+      max-width: none;
+      flex-grow: 1;
       flex: 1;
-      -webkit-flex: 1 1 15em;
+      -webkit-flex: 1 1 15em; // Fixes Safari flex-wrap bug
     }
+  }
+
+  // Styling only for categories (exlcludes featured and top articles)
+  &__category {
+    // .article-list {
+    //   justify-content: flex-start;
+    //   .article-preview {
+    //     max-width: 30%;
+    //   }
+    // }
+
+    .article-list {
+      justify-content: none;
+
+      .article-preview {
+        padding-left: 1%;
+        padding-right: 1%;
+        max-width: 31.5%;
+        margin-bottom: 0.5rem;
+      }
+
+      // @media (min-width: $medium) {
+      //   & > :nth-child(2) {
+      //     &:last-child { // Item is 2nd child AND last child
+      //       @include bigger-box;
+      //       .article-preview {
+      //         display: none;
+      //         margin-left: 1rem;
+      //         border-left: 1px #000 solid;
+      //       }
+      //     }
+      //   }
+      //
+      //   & > :nth-child(3n+4) { // Items that are odd
+      //     &:last-child { // Item is only remaining in final row
+      //       @include bigger-box;
+      //     }
+      //     &:last-child { // Item is odd, after 3rd item and is last child
+      //       .article-preview {
+      //         &__featured-image {
+      //           width: 500px;
+      //         }
+      //         &__content {
+      //           align-self: center;
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
+    }
+  }
 
     @media (max-width: $medium) {
+    .article-list {
       @include vertical-article-list;
       .article-preview {
-        margin-bottom: 0.2rem;
+        padding-bottom: 0.7rem;
+        margin-bottom: 0.7rem;
+        &__featured-image {
+          padding-bottom: 0;
+        }
+        &__content__title {
+          padding-top: 0;
+        }
       }
       & > :first-child {
         .article-preview {
@@ -42,8 +107,11 @@
   display: flex;
   flex-grow: 1;
   align-items: stretch;
+  min-width: 0;
   @media (max-width: $medium) {
-    display: none;
+    .trending {
+      display: none;
+    }
   }
 }
 

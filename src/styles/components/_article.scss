@@ -57,7 +57,7 @@
     display: block;
     margin: 0 auto;
     @include body-text;
-    img, iframe{
+    img, iframe, video{
       position: relative;
       object-fit: cover;
       margin-right: -0.5rem; // Override #main right margin
@@ -88,26 +88,30 @@
     align-items: stretch;
     justify-content:center;
     @media (max-width: $medium) {
-      display: none;
+      &__trending {
+        display: none;
+      }
     }
     &__related-articles {
       &__header {
         @include section-header;
       }
       @include vertical-article-list;
-      padding-right: 1rem;
-      margin-right: 1rem;
-      border-right: 1px solid $border-grey;
-      .article-preview {
-        width: 100%;
-        &__featured-image {
-          width: 240px;
-          height: 150px;
-        }
-        &__content {
-          max-width: 50%;
-          .sharing-buttons {
-            display: none;
+      @media (min-width: $medium) {
+        padding-right: 1rem;
+        margin-right: 1rem;
+        border-right: 1px solid $border-grey;
+        .article-preview {
+          width: 100%;
+          &__featured-image {
+            width: 240px;
+            height: 150px;
+          }
+          &__content {
+            min-width: 50%;
+            .sharing-buttons {
+              display: none;
+            }
           }
         }
       }

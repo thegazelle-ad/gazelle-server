@@ -2,6 +2,7 @@ import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
 import moment from 'moment';
 import { Link } from 'react-router';
+import DocMeta from 'react-doc-meta'; // Add Open Graph tags without Ghost
 
 // Components
 import AuthorList from 'components/AuthorList';
@@ -11,8 +12,17 @@ import Trending from 'components/Trending';
 
 export default class Article extends BaseComponent {
   render () {
+    const meta = [
+      {property: "og:title", content: this.props.title},
+      {property: "og:type", content: "article"},
+      {property: "og:url", content: this.props.url},
+      {property: "og:image", content: this.props.featuredImage},
+      {property: "og:description", content: this.props.teaser},
+      {property: "og:site_name", content: "The Gazelle"},
+    ];
     return (
       <div className="article">
+        <DocMeta tags={meta} />
         <div className="article__header">
           <h1 className="article__header__title">{this.props.title}</h1>
           <div className="article__header__teaser">{this.props.teaser}</div>
@@ -29,7 +39,7 @@ export default class Article extends BaseComponent {
         <div className="article__body" dangerouslySetInnerHTML={{__html: this.props.html}} />
         <div className="article__body__end-mark">
           <Link to="/">
-            <img src="http://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png" alt="Gazelle Logo" />
+            <img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/header-logo.png" alt="Gazelle Logo" />
           </Link>
         </div>
         <div className="article__footer">

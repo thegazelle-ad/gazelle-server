@@ -4,7 +4,7 @@
 
   .article-list{
     .article-preview {
-      padding: 0 0 0.5rem 0;
+      padding: 0 0 0.7rem 0;
       max-width: $column-1;
       flex: 0 1 auto;
       &__featured-image {
@@ -15,6 +15,7 @@
           margin: 0;
           font-size: 1rem;
           line-height: normal;
+          padding-bottom: 0.1rem;
         }
         &__authors {
           @include uppercase();
