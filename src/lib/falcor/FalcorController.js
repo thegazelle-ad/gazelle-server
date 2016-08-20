@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { isAppReady, expandCache, pathSetsInCache, validateFalcorPathSets } from "lib/falcor/falcorUtils";
+import { isAppReady, expandCache, pathSetsInCache, validateFalcorPathSets, getCache, resetCacheMemoization } from "lib/falcor/falcorUtils";
 import BaseComponent from "lib/BaseComponent";
 import { setLoading, signalLeaving } from "lib/loader"
 import { uuid } from 'lib/utilities'
@@ -36,14 +36,13 @@ export default class FalcorController extends BaseComponent {
     throw new TypeError(
       "You must implement the getFalcorPathSets method " +
       "in children of FalcorController"
-    ) 
+    )
   }
 
   // Retrieves all the data for this component from the Falcor cache
   // and store on state. Used for server side render and first client side render
   // this should always contain all the data the component needs
   loadFalcorCache(falcorPathSets) {
-
     falcorPathSets = validateFalcorPathSets(falcorPathSets);
     if (falcorPathSets === undefined) {
       this.safeSetState({
@@ -53,7 +52,8 @@ export default class FalcorController extends BaseComponent {
       return;
     }
 
-    const data = expandCache(this.props.model.getCache(...falcorPathSets));
+    // The true flag is the expandCache flag so the refs are expanded
+    const data = getCache(this.props.model, falcorPathSets, true);
     if (data) {
       this.safeSetState({
         ready: true,
@@ -89,6 +89,7 @@ export default class FalcorController extends BaseComponent {
     this.lastRequestId = requestId;
 
     this.props.model.get(...falcorPathSets).then((x) => {
+      resetCacheMemoization();
       if (this.lastRequestId !== requestId) {
         // stale request, no action to response
         return;
@@ -122,7 +123,7 @@ export default class FalcorController extends BaseComponent {
     const oldPathSets = this.constructor.getFalcorPathSets(this.props.params)
     if (!_.isEqual(oldPathSets, newPathSets)) {
       this.safeSetState({ready: false});
-      if (pathSetsInCache(this.props.model.getCache(), newPathSets)) {
+      if (pathSetsInCache(this.props.model, newPathSets)) {
         this.loadFalcorCache(newPathSets);
       } else {
         this.falcorFetch(newPathSets)
@@ -135,13 +136,13 @@ export default class FalcorController extends BaseComponent {
   // on the first clientside render
   componentWillMount() {
     const falcorPathSets = this.constructor.getFalcorPathSets(this.props.params);
-    if (!isAppReady() || pathSetsInCache(this.props.model.getCache(), falcorPathSets)) {
+    if (!isAppReady() || pathSetsInCache(this.props.model, falcorPathSets)) {
       this.loadFalcorCache(falcorPathSets)
     } else {
       this.falcorFetch(falcorPathSets)
     }
   }
-  
+
   componentWillLeave(cb) {
     signalLeaving(cb);
   }
