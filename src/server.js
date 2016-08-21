@@ -44,10 +44,10 @@ const buildHtmlString = (body, cache) => {
         <head>
           <title>The Gazelle</title>
           <link rel="stylesheet" type="text/css" href="/static/build/main.css?h=` + cssHash + `">
-          <link rel="icon" type="image/x-icon" href="//thegazelle.s3.amazonaws.com/gazelle/2016/02/favicon.ico">
-          <link rel="apple-touch-icon" sizes="180x180" href="//thegazelle.s3.amazonaws.com/gazelle/2016/02/apple-touch-icon.png">
-          <link rel="icon" type="image/png" href="//thegazelle.s3.amazonaws.com/gazelle/2016/02/favicon-32x32.png" sizes="32x32">
-          <link rel="icon" type="image/png" href="//thegazelle.s3.amazonaws.com/gazelle/2016/02/favicon-16x16.png" sizes="16x16">
+          <link rel="icon" type="image/x-icon" href="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/favicon.ico">
+          <link rel="apple-touch-icon" sizes="180x180" href="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/apple-touch-icon.png">
+          <link rel="icon" type="image/png" href="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/favicon-32x32.png" sizes="32x32">
+          <link rel="icon" type="image/png" href="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/favicon-16x16.png" sizes="16x16">
           <link rel="manifest" href="/favicons/manifest.json">
           <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#5bbad5">
           <meta name="theme-color" content="#ffffff">

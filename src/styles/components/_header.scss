@@ -6,6 +6,12 @@
   align-items: stretch;
   padding: 0 1rem;
 
+  &__beta { // TODO: remove when search feature works
+    align-self: center;
+    font-size: $authors-small;
+    color: $dark-grey;
+  }
+
   &__search {
     opacity: 0; // hide until search feature is ready
     display: flex;

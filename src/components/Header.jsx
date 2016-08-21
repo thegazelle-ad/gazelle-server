@@ -7,8 +7,8 @@ export default class Header extends BaseComponent {
     return (
       <div>
         <div className="header">
+          {/* // Removd for beta
           <div className="header__search">
-            {/* // Removd for beta
               <input
                 className="header__search__main"
                 type="text"
@@ -16,7 +16,9 @@ export default class Header extends BaseComponent {
               />
               <div className="header__search__tail"></div>
               <div className="header__search__text">SEARCH</div>
-            */}
+          </div>
+          */}
+          <div className="header__beta">
             BETA
           </div>
           <div className="header__title">
