@@ -39,7 +39,7 @@ export default class Article extends BaseComponent {
         <div className="article__body" dangerouslySetInnerHTML={{__html: this.props.html}} />
         <div className="article__body__end-mark">
           <Link to="/">
-            <img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/header-logo.png" alt="Gazelle Logo" />
+            <img src="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/header-logo.png" alt="Gazelle Logo" />
           </Link>
         </div>
         <div className="article__footer">
