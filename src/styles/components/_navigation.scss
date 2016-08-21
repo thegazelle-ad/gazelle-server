@@ -52,20 +52,15 @@
       padding: 0;
       margin: 0.6rem 0 0.6rem 0;
       overflow-x: scroll;
-
-      ul {
-        display: flex;
-        justify-content: flex-start;
-        flex: 1;
-        overflow: auto;
-      }
-
-      li.navigation__categories__item {
+      display: flex;
+      justify-content: flex-start;
+      flex: 1;
+      &__item {
         left: 0 !important;
         flex: none;
         white-space: nowrap;
-        margin: auto;
-        width: 100px;
+        margin: 0 0.6rem;
+        //width: 100px;
         &--active { // Active class
           font-weight: 700;
         }

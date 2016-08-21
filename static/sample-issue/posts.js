@@ -30,7 +30,6 @@ const data = {
                     slug: "commentary",
                     articles: [
                         { $type: "ref", value: ["articlesBySlug", "returning-to-nyuad"]},
-                        { $type: "ref", value: ["articlesBySlug", "advice-to-incoming-first-years"]},
                         { $type: "ref", value: ["articlesBySlug", "whitewashing-hollywood"]},
                         { $type: "ref", value: ["articlesBySlug", "nyuad-survival-guide"]},
                     ],
@@ -82,7 +81,6 @@ const data = {
             slug: "commentary",
             articles: [
                 { $type: "ref", value: ["articlesBySlug", "returning-to-nyuad"]},
-                { $type: "ref", value: ["articlesBySlug", "advice-to-incoming-first-years"]},
                 { $type: "ref", value: ["articlesBySlug", "post-grad"]},
                 { $type: "ref", value: ["articlesBySlug", "whitewashing-hollywood"]},
                 { $type: "ref", value: ["articlesBySlug", "nyuad-survival-guide"]},
@@ -192,7 +190,7 @@ const data = {
             "teaser": "We were in automotive mutiny, and I was in southeast Detroit. This was a flat tire. This was adulthood.",
             "related": [
                 { $type: "ref", value: ["articlesBySlug", "50-things"] },
-                { $type: "ref", value: ["articlesBySlug", "advice-to-incoming-first-years"] },
+                { $type: "ref", value: ["articlesBySlug", "visas"] },
             ],
         },
         "dear-freshmen": {
@@ -249,24 +247,24 @@ const data = {
                 { $type: "ref", value: ["articlesBySlug", "playlist"] },
             ],
         },
-        "advice-to-incoming-first-years": {
-            "authors": [
-                { $type: "ref", value: ["authorsBySlug", "lina-elmulsa"] },
-            ],
-            "featuredImage": "//thegazelle.s3.amazonaws.com/gazelle/2016/02/@advice-for-freshmen.jpg",
-            "html": "",
-            "image": null,
-            "published_at": "2016-08-21T05:58:09.000Z",
-            "slug": "advice-to-incoming-first-years",
-            "title": "Personal Essay: Advice to Incoming First Years",
-            "issueId": "76",
-            "category": "commentary",
-            "teaser": "How to be a tea and coffee person.",
-            "related": [
-                { $type: "ref", value: ["articlesBySlug", "post-grad"]},
-                { $type: "ref", value: ["articlesBySlug", "whitewashing-hollywood"]},
-            ],
-        },
+        // "advice-to-incoming-first-years": {
+        //     "authors": [
+        //         { $type: "ref", value: ["authorsBySlug", "lina-elmulsa"] },
+        //     ],
+        //     "featuredImage": "//thegazelle.s3.amazonaws.com/gazelle/2016/02/@advice-for-freshmen.jpg",
+        //     "html": "",
+        //     "image": null,
+        //     "published_at": "2016-08-21T05:58:09.000Z",
+        //     "slug": "advice-to-incoming-first-years",
+        //     "title": "Personal Essay: Advice to Incoming First Years",
+        //     "issueId": "76",
+        //     "category": "commentary",
+        //     "teaser": "How to be a tea and coffee person.",
+        //     "related": [
+        //         { $type: "ref", value: ["articlesBySlug", "post-grad"]},
+        //         { $type: "ref", value: ["articlesBySlug", "whitewashing-hollywood"]},
+        //     ],
+        // },
         "returning-to-nyuad": {
             "authors": [
                 { $type: "ref", value: ["authorsBySlug", "annie-bauer"] },
@@ -427,7 +425,7 @@ const data = {
             "teaser": "If you really love your academic plan, let it go.",
             "related": [
                 { $type: "ref", value: ["articlesBySlug", "returning-to-nyuad"]},
-                { $type: "ref", value: ["articlesBySlug", "advice-to-incoming-first-years"]},
+                { $type: "ref", value: ["articlesBySlug", "letter"]},
             ],
         },
         "nyuad-survival-guide": {
@@ -532,16 +530,16 @@ const data = {
                 { $type: "ref", value: ["articlesBySlug", "the-ad-secrets-challenge"] },
             ],
         },
-        "lina-elmulsa": {
-            name: "Lina Elmulsa", 
-            photo: "//0.gravatar.com/avatar/aa8fd14652d66e2a2059736cb3fb9b60?s=200",
-            slug: "lina-elmulsa",
-            title: "Contributor",
-            biography: "",
-            articles: [
-                { $type: "ref", value: ["articlesBySlug", "advice-to-incoming-first-years"] },
-            ],
-        },
+        // "lina-elmulsa": {
+        //     name: "Lina Elmulsa",
+        //     photo: "//0.gravatar.com/avatar/aa8fd14652d66e2a2059736cb3fb9b60?s=200",
+        //     slug: "lina-elmulsa",
+        //     title: "Contributor",
+        //     biography: "",
+        //     articles: [
+        //         { $type: "ref", value: ["articlesBySlug", "advice-to-incoming-first-years"] },
+        //     ],
+        // },
         "annie-bauer": {
             name: "Annie Bauer",
             photo: "//thegazelle.s3.amazonaws.com/gazelle/2015/04/Annie.jpg",
