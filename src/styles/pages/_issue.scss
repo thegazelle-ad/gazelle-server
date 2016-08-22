@@ -1,15 +1,19 @@
 .issue {
-  .article-list {
-    //flex-flow: row wrap;
-    justify-content: flex-start;
-    flex-grow: 1;
 
-    .article-preview {
-      min-width: 0;
-      max-width: none;
+  .editors-picks,
+  &__category {
+    .article-list {
+      //flex-flow: row wrap;
+      justify-content: flex-start;
       flex-grow: 1;
-      flex: 1;
-      -webkit-flex: 1 1 15em; // Fixes Safari flex-wrap bug
+
+      .article-preview {
+        min-width: 0;
+        max-width: none;
+        flex-grow: 1;
+        flex: 1;
+        -webkit-flex: 1 1 15em; // Fixes Safari flex-wrap bug
+      }
     }
   }
 

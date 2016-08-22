@@ -6,6 +6,7 @@ import React from "react";
 import _ from "lodash";
 import FalcorController from 'lib/falcor/FalcorController';
 import { Link } from "react-router";
+import DocMeta from "react-doc-meta"; // Add meta tags for pre-Ghost relese
 
 // Import components
 import FeaturedArticle from "components/FeaturedArticle";
@@ -76,9 +77,17 @@ export default class IssueController extends FalcorController {
           );
         });
 
+      const meta = [
+        {property: "og:title", content: "The Gazelle"},
+        {property: "og:type", content: "website"},
+        {property: "og:url", content: "beta.thegazelle.org"},
+        {property: "og:image", content: "https://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png"},
+        {property: "og:description", content: "The Gazelle is a weekly student publication serving the NYU Abu Dhabi community."},
+      ];
       // Top level elements can't have classes or it will break transitions
       return (
         <div>
+          <DocMeta tags={meta} />
           <div className="issue">
             <FeaturedArticle article={issueData.featured} />
             <div className="top-articles">

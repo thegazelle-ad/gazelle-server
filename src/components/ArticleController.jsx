@@ -40,7 +40,7 @@ export default class ArticleController extends FalcorController {
             html={articleData.html}
             authors={articleData.authors}
             featuredImage={articleData.featuredImage}
-            url={"thegazelle.org/issue/" + articleData.issueId + '/' + articleData.category + '/' + articleData.slug}
+            url={"beta.thegazelle.org/issue/" + articleData.issueId + '/' + articleData.category + '/' + articleData.slug}
             trending={trendingData}
             relatedArticles={relatedArticlesData}
           />

@@ -16,7 +16,7 @@ export default class Article extends BaseComponent {
       {property: "og:title", content: this.props.title},
       {property: "og:type", content: "article"},
       {property: "og:url", content: this.props.url},
-      {property: "og:image", content: this.props.featuredImage},
+      {property: "og:image", content: "https:" + this.props.featuredImage},
       {property: "og:description", content: this.props.teaser},
       {property: "og:site_name", content: "The Gazelle"},
     ];
