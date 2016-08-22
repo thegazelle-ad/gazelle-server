@@ -6,7 +6,7 @@ import React from "react";
 import _ from "lodash";
 import FalcorController from 'lib/falcor/FalcorController';
 import { Link } from "react-router";
-import DocMeta from "react-doc-meta"; // Add meta tags for pre-Ghost relese
+import Helmet from "react-helmet"; // Add meta tags for pre-Ghost relese
 
 // Import components
 import FeaturedArticle from "components/FeaturedArticle";
@@ -87,7 +87,7 @@ export default class IssueController extends FalcorController {
       // Top level elements can't have classes or it will break transitions
       return (
         <div>
-          <DocMeta tags={meta} />
+          <Helmet meta={meta} />
           <div className="issue">
             <FeaturedArticle article={issueData.featured} />
             <div className="top-articles">

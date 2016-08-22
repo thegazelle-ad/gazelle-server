@@ -2,7 +2,7 @@ import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
 import moment from 'moment';
 import { Link } from 'react-router';
-import DocMeta from 'react-doc-meta'; // Add Open Graph tags without Ghost
+import Helmet from 'react-helmet'; // Add Open Graph tags without Ghost
 
 // Components
 import AuthorList from 'components/AuthorList';
@@ -13,7 +13,7 @@ import Trending from 'components/Trending';
 export default class Article extends BaseComponent {
   render () {
     const meta = [
-      {property: "og:title", content: this.props.title},
+      {property: "og:title", content: this.props.title + " | The Gazelle"},
       {property: "og:type", content: "article"},
       {property: "og:url", content: this.props.url},
       {property: "og:image", content: "https:" + this.props.featuredImage},
@@ -22,7 +22,7 @@ export default class Article extends BaseComponent {
     ];
     return (
       <div className="article">
-        <DocMeta tags={meta} />
+        <Helmet meta={meta} />
         <div className="article__header">
           <h1 className="article__header__title">{this.props.title}</h1>
           <div className="article__header__teaser">{this.props.teaser}</div>

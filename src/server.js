@@ -14,6 +14,7 @@ import { injectModelCreateElement } from 'lib/falcor/falcorUtils';
 import path from "path";
 import crypto from "crypto";
 import fs from "fs"
+import Helmet from "react-helmet";
 
 // *********************************************
 // Load in static issue articles for development
@@ -38,6 +39,8 @@ const buildHtmlString = (body, cache) => {
   let clientHash = md5Hash('./static/build/client.js');
   let cssHash = md5Hash('./static/build/main.css');
 
+  let head = Helmet.rewind();
+
   return (
     `<!DOCTYPE html>
       <html>
@@ -51,7 +54,9 @@ const buildHtmlString = (body, cache) => {
           <link rel="manifest" href="/favicons/manifest.json">
           <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#5bbad5">
           <meta name="theme-color" content="#ffffff">
-          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <meta name="viewport" content="width=device-width, initial-scale=1">`
+            + head.meta +
+          `
         </head>
         <body>
           <div id="main">`
