@@ -6,7 +6,7 @@
   font-size: 0.8rem;
   color: $light-grey;
   padding: 0;
-  margin-bottom: 1rem;
+  //margin-bottom: 1rem;
   border-top: 1px solid $border-grey;
   text-align: center;
   @media (max-width: $small) {
@@ -15,7 +15,7 @@
   &__item {
     @include roboto-light;
     @include uppercase;
-    padding: 1rem 2rem 0 2rem;
+    padding: 1rem 2rem 1rem 2rem;
     @media (max-width: $medium) {
       padding: 1rem 1rem 0 1rem;
     }

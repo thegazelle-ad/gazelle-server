@@ -70,7 +70,7 @@
     margin-bottom: 1.5rem;
     border-bottom: 1px solid #E8E8E8;
     flex-grow: 1;
-    max-width: 100%; // Keeps articles with short titles/teasers centered 
+    max-width: 100%; // Keeps articles with short titles/teasers centered
     &:last-child {
       margin-bottom: 0;
       border-bottom: none;
@@ -187,4 +187,12 @@
  */
 @mixin grey-bottom-border {
   border-bottom: 1px solid $border-grey;
+}
+
+@mixin full-width {
+  position: relative;
+  object-fit: cover;
+  margin-right: -0.5rem; // Override #main right margin
+  width: 100vw;
+  left: calc(-50vw + 50%);
 }

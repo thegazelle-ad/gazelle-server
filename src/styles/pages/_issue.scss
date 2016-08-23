@@ -17,15 +17,19 @@
     }
   }
 
+  .trending {
+    .article-list {
+      justify-content: flex-start;
+      flex: 1;
+      -webkit-flex: 1 1 15em; // Fixes Safari flex-wrap bug
+      .article-preview {
+        max-width: 100%;
+      }
+    }
+  }
+
   // Styling only for categories (exlcludes featured and top articles)
   &__category {
-    // .article-list {
-    //   justify-content: flex-start;
-    //   .article-preview {
-    //     max-width: 30%;
-    //   }
-    // }
-
     .article-list {
       justify-content: none;
 
@@ -67,7 +71,7 @@
     }
   }
 
-    @media (max-width: $medium) {
+  @media (max-width: $medium) {
     .article-list {
       @include vertical-article-list;
       .article-preview {
@@ -76,8 +80,14 @@
         &__featured-image {
           padding-bottom: 0;
         }
-        &__content__title {
-          padding-top: 0;
+        &__content {
+          &__title {
+            padding-top: 0;
+            margin-top: 0;
+          }
+          &__category-header {
+            margin-bottom: 0.2rem;
+          }
         }
       }
       & > :first-child {
@@ -90,6 +100,9 @@
             &__teaser {
               display: none;
             }
+            &__title {
+              padding-top: 0;
+            }
           }
         }
       }
@@ -98,13 +111,27 @@
         &__featured-image {
           display: none;
         }
-        &__cotent {
+        &__content {
           padding: 0;
           margin: 0;
         }
       }
     }
+    .featured-article {
+      .article-preview {
+        align-items: flex-start;
+      }
+      .article-preview__content__title {
+        padding-top: 0;
+      }
+    }
   }
+  // @media (max-width: $small) {
+  //   .article-preview__featured-image, .featured-article .article-preview__featured-image {
+  //     @include full-width;
+  //     width: 100vw !important;
+  //   }
+  // }
 }
 
 .top-articles {

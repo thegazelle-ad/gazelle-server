@@ -68,11 +68,7 @@
       margin: 2rem 0;
     }
     img, iframe, video{
-      position: relative;
-      object-fit: cover;
-      margin-right: -0.5rem; // Override #main right margin
-      width: 100vw;
-      left: calc(-50vw + 50%);
+      @include full-width;
       height: auto;
       padding-bottom: auto;
     }
