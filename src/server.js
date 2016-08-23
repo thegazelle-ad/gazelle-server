@@ -138,8 +138,9 @@ const renderApp = (renderProps) => {
     });
   }
 
-  console.log('FETCHING Falcor Paths:');
-  console.log(falcorPaths);
+  // Silenced Falcor path logs
+  // console.log('FETCHING Falcor Paths:');
+  // console.log(falcorPaths);
 
   return localModel.preload(...falcorPaths).then(() => {
     return (
@@ -193,7 +194,9 @@ server.get('*', (req, res) => {
 
 // To start server with PORT=3000 default: run `npm start`
 // NOTE: On Linux systems, any port below 1024 requires root access (`sudo` command)
-// To run on port 80: `sudo PORT=80 npm start`
+// To run on port 80:
+//    Development build: run `sudo PORT=80 npm start`
+//    Production build: run `sudo npm start`
 server.listen(process.env.PORT ? process.env.PORT : 3000, err => {
   if (err) {
     console.error(err);
