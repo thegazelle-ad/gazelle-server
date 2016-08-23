@@ -45,7 +45,7 @@ module.exports = [{
     new webpack.DefinePlugin({
       'process.env':{
         'NODE_ENV': '"production"', // compiles React as production build
-        'PORT': 80, // Set port=80 requires sudo command
+        'PORT': 80, // Setting port=80 requires sudo command
       },
     }),
     new webpack.optimize.UglifyJsPlugin({
@@ -59,17 +59,6 @@ module.exports = [{
   ],
 
   module: {
-    preLoaders: [
-      /*
-       * Linting warnings and errors will be displayed in the console when
-       * Webpack is compiled.
-       */
-      {
-        test: /\.jsx$/,
-        loaders: ['eslint'],
-        exclude: /node_modules/,
-      },
-    ],
     loaders: [
       {
         loader: 'babel-loader',
@@ -101,7 +90,6 @@ module.exports = [{
   postcss: function () {
     return [cssnext];
   },
-  devtool: 'source-map',
 }, {
   target: 'web',
   entry: './src/client.js',
@@ -141,7 +129,6 @@ module.exports = [{
       },
     ],
   },
-  devtool: 'source-map',
 },
 // Editor tools copy
 {
@@ -179,7 +166,6 @@ module.exports = [{
       },
     ],
   },
-  devtool: 'source-map',
 }, {
   target: 'web',
   entry: './src/editor-client.js',
@@ -213,5 +199,4 @@ module.exports = [{
       },
     ],
   },
-  devtool: 'source-map',
 }]
