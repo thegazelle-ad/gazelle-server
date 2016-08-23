@@ -6,7 +6,7 @@ import React from "react";
 import _ from "lodash";
 import FalcorController from 'lib/falcor/FalcorController';
 import { Link } from "react-router";
-import Helmet from "react-helmet"; // Add meta tags for pre-Ghost relese
+import Helmet from "react-helmet"; // Add meta tags for pre-Ghost release
 
 // Import components
 import FeaturedArticle from "components/FeaturedArticle";
@@ -84,6 +84,10 @@ export default class IssueController extends FalcorController {
           });
 
         const meta = [
+          // Search results
+          {name: "description", content: "The Gazelle is a weekly student publication, serving the NYU Abu Dhabi community and the greater Global Network University at NYU."},
+
+          // Social media
           {property: "og:title", content: "The Gazelle"},
           {property: "og:type", content: "website"},
           {property: "og:url", content: "beta.thegazelle.org"},
@@ -93,7 +97,10 @@ export default class IssueController extends FalcorController {
         // Top level elements can't have classes or it will break transitions
         return (
           <div>
-            <Helmet meta={meta} />
+            <Helmet
+              meta={meta}
+              title={"The Gazelle | NYU Abu Dhabi News"}
+            />
             <div className="issue">
               <FeaturedArticle article={issueData.featured} />
               <div className="top-articles">

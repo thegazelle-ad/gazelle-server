@@ -45,7 +45,7 @@ const buildHtmlString = (body, cache) => {
     `<!DOCTYPE html>
       <html>
         <head>
-          <title>The Gazelle</title>
+          ` + head.title + `
           <link rel="stylesheet" type="text/css" href="/static/build/main.css?h=` + cssHash + `">
           <link rel="icon" type="image/x-icon" href="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/favicon.ico">
           <link rel="apple-touch-icon" sizes="180x180" href="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/apple-touch-icon.png">

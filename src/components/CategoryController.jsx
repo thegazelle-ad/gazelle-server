@@ -1,5 +1,6 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
+import Helmet from 'react-helmet';
 import ArticleList from 'components/ArticleList';
 import NotFound from 'components/NotFound';
 
@@ -17,7 +18,7 @@ export default class CategoryController extends FalcorController {
     ];
   }
 
-      // TODO: establish featured article, editor's picks, and trending sections
+
 
   render() {
     if (this.state.ready) {
@@ -28,9 +29,31 @@ export default class CategoryController extends FalcorController {
       } else {
         let category = this.props.params.category;
         const categoryData = this.state.data.categories[category];
-        //console.log("Data: " + JSON.stringify(categoryData));
+        let uppercase = (str) => {
+            let array = str.split(' ');
+            let newArray = [];
+
+            for(var x = 0; x < array.length; x++){
+                newArray.push(array[x].charAt(0).toUpperCase()+array[x].slice(1));
+            }
+            return newArray.join(' ');
+        }
+        const meta = [
+          // Search results
+          {name: "description", content: "The Gazelle is a weekly student publication, serving the NYU Abu Dhabi community and the greater Global Network University at NYU."},
+
+          // Social media
+          {property: "og:title", content: "The Gazelle"},
+          {property: "og:type", content: "website"},
+          {property: "og:url", content: "beta.thegazelle.org/category/" + categoryData.slug},
+          {property: "og:description", content: "The Gazelle is a weekly student publication serving the NYU Abu Dhabi community."},
+        ];
         return (
           <div className="category">
+            <Helmet
+              meta={meta}
+              title={uppercase(categoryData.name) + " | The Gazelle"}
+            />
             <h2 className="category__header">{categoryData.name}</h2>
             {/*
               <div>Controller for category: {category}</div>

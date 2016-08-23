@@ -1,6 +1,9 @@
 import React from 'react';
-import Author from 'components/Author';
+import Helmet from 'react-helmet'; // Add <head> data=
 import FalcorController from 'lib/falcor/FalcorController';
+
+// Components
+import Author from 'components/Author';
 import NotFound from 'components/NotFound';
 
 export default class AuthorController extends FalcorController {
@@ -25,9 +28,22 @@ export default class AuthorController extends FalcorController {
       } else {
         let authorSlug = this.props.params.authorSlug;
         const authorData = this.state.data.authorsBySlug[authorSlug];
-        //console.log("Data: " + JSON.stringify(authorData));
+        const meta = [
+          // Search results
+          {name: "description", content: authorData.biography},
+
+          // Social media
+          {property: "og:title", content: authorData.name + " | The Gazelle"},
+          {property: "og:type", content: "website"},
+          {property: "og:url", content: "beta.thegazelle.org/author/" + authorData.slug},
+          {property: "og:description", content: authorData.biography},
+        ];
         return (
           <div>
+            <Helmet
+              meta={meta}
+              title={authorData.name + " | The Gazelle"}
+            />
             <Author author={authorData} />
           </div>
         );

@@ -1,4 +1,7 @@
 import React from 'react';
+import Helmet from 'react-helmet'; // Add <head> data
+
+// Components
 import Article from 'components/Article';
 import FalcorController from 'lib/falcor/FalcorController';
 import NotFound from 'components/NotFound';
@@ -37,8 +40,24 @@ export default class ArticleController extends FalcorController {
         const articleData = this.state.data.articlesBySlug[articleSlug];
         const trendingData = this.state.data.trending;
         const relatedArticlesData = articleData.related;
+        const meta = [
+          // Search results
+          {name: "description", content: this.props.teaser},
+
+          // Social media sharing
+          {property: "og:title", content: articleData.title + " | The Gazelle"},
+          {property: "og:type", content: "article"},
+          {property: "og:url", content: "beta.thegazelle.org/issue/" + articleData.issueId + '/' + articleData.category + '/' + articleData.slug},
+          {property: "og:image", content: "https:" + articleData.featuredImage},
+          {property: "og:description", content: articleData.teaser},
+          {property: "og:site_name", content: "The Gazelle"},
+        ];
         return (
           <div>
+            <Helmet
+              meta={meta}
+              title={articleData.title + " | The Gazelle"}
+            />
             <Article
               title={articleData.title}
               teaser={articleData.teaser}

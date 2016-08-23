@@ -6,6 +6,7 @@
 
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
+import Helmet from "react-helmet"; // Add meta tags for pre-Ghost release
 
 // Components
 import TextPage from 'components/TextPage';
@@ -14,7 +15,7 @@ import NotFound from 'components/NotFound';
 export default class TextPageController extends FalcorController {
   static getFalcorPathSets(params) {
     return [
-      ["infoPages", params.slug, ["title", "html"]],
+      ["infoPages", params.slug, ["title", "html", "slug"]],
     ];
   }
 
@@ -26,8 +27,32 @@ export default class TextPageController extends FalcorController {
         );
       } else {
         const data = this.state.data.infoPages[this.props.params.slug];
+        let uppercase = (str) => {
+            let array = str.split(' ');
+            let newArray = [];
+
+            for(var x = 0; x < array.length; x++){
+                newArray.push(array[x].charAt(0).toUpperCase()+array[x].slice(1));
+            }
+            return newArray.join(' ');
+        }
+        const meta = [
+          // Search results
+          {name: "description", content: "The Gazelle is a weekly student publication, serving the NYU Abu Dhabi community and the greater Global Network University at NYU."},
+
+          // Social media
+          {property: "og:title", content: uppercase(data.title) + " | The Gazelle"},
+          {property: "og:type", content: "website"},
+          {property: "og:url", content: "beta.thegazelle.org/" + data.slug},
+          {property: "og:image", content: "https://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png"},
+          {property: "og:description", content: "The Gazelle is a weekly student publication serving the NYU Abu Dhabi community."},
+        ];
         return (
           <div>
+            <Helmet
+              meta={meta}
+              title={uppercase(data.title) + " | The Gazelle"}
+            />
             <TextPage title={data.title} html={data.html} />
           </div>
         );
