@@ -1,13 +1,9 @@
 import BaseRouter from "falcor-router"
 import { ghostArticleQuery } from 'lib/ghostAPI'
-import { sqlArticleQuery, sqlAuthorQuery } from 'lib/sql'
+import { dbAuthorQuery, dbArticleQuery } from 'lib/mariaDB'
 import falcor from 'falcor'
 
 const $ref = falcor.Model.ref;
-
-// FLAG TO CHECK IF YOU WANT TO ACCESS GHOST API AND DATABASES
-// THIS IS JUST FOR DEVELOPMENT WHILE WE DON'T HAVE ACTUAL SERVERS SET UP
-const USE_DATABASES = false;
 
 // Transform ghost API names into our names
 const mapGhostNames = (name) => {
@@ -34,20 +30,10 @@ export default class FalcorRouter extends BaseRouter.createClass([
   {
     // Get author information from SQL database
     // TODO: write path for articles written by the author
-    route: "authorsBySlug[{keys:slugs}]['name', 'image', 'biography', 'slug']",
+    route: "authorsBySlug[{keys:slugs}]['name', 'image', 'biography', 'slug', 'job_title']",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        if (!USE_DATABASES) {
-          resolve([]);
-          return null;
-        }
-        const query = {slug: {$in: pathSet.slugs}};
-        const length = pathSet.slugs.length;
-        const projection = {_id: 0};
-        pathSet[2].forEach((field) => {
-          projection[field] = 1;
-        });
-        sqlAuthorQuery(query, projection).then((data) => {
+        dbAuthorQuery(pathSet.slugs, pathSet[2]).then((data) => {
           const results = [];
           data.forEach((author) => {
             pathSet[2].forEach((field) => {
