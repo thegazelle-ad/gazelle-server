@@ -31,9 +31,6 @@ module.exports = [{
       'node_modules',
       './src/',
     ],
-    alias: {
-      applicationStyles: '../styles/main.scss',
-    },
     extensions: ['', '.js', '.jsx'],
   },
 
@@ -100,9 +97,6 @@ module.exports = [{
       'node_modules',
       './src/',
     ],
-    alias: {
-      applicationStyles: '../styles/main.scss',
-    },
     extensions: ['', '.js', '.jsx'],
   },
 
@@ -144,8 +138,6 @@ module.exports = [{
       'node_modules',
       './src/',
     ],
-    alias: {
-    },
     extensions: ['', '.js', '.jsx']
   },
 
@@ -178,8 +170,6 @@ module.exports = [{
       'node_modules',
       './src/',
     ],
-    alias: {
-    },
     extensions: ['', '.js', '.jsx']
   },
 

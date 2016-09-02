@@ -23,7 +23,10 @@ import testData from '../static/sample-issue/posts.js';
 //import authors from '../static/sample-issue/authors.js';
 
 // Allow node to use sourcemaps
-sourcemap.install();
+
+if (process.env.NODE_ENV !== "production") {
+  sourcemap.install();
+}
 
 // Create MD5 hash of static file for better cache performance
 function md5Hash(file) {

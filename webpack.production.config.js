@@ -31,21 +31,17 @@ module.exports = [{
       'node_modules',
       './src/',
     ],
-    alias: {
-      applicationStyles: '../styles/main.scss',
-    },
     extensions: ['', '.js', '.jsx'],
   },
 
   plugins: [
-    new webpack.OldWatchingPlugin(),
     new ExtractTextPlugin('./static/build/main.css', {
       allChunks: true,
     }),
     new webpack.DefinePlugin({
       'process.env':{
         'NODE_ENV': '"production"', // compiles React as production build
-        'PORT': 80, // Setting port=80 requires sudo command
+	'PORT': 8001, // we use a reverse proxy to forward this to port 80
       },
     }),
     new webpack.optimize.UglifyJsPlugin({
@@ -102,9 +98,6 @@ module.exports = [{
       'node_modules',
       './src/',
     ],
-    alias: {
-      applicationStyles: '../styles/main.scss',
-    },
     extensions: ['', '.js', '.jsx'],
   },
 
@@ -145,8 +138,6 @@ module.exports = [{
       'node_modules',
       './src/',
     ],
-    alias: {
-    },
     extensions: ['', '.js', '.jsx'],
   },
 
@@ -178,15 +169,8 @@ module.exports = [{
       'node_modules',
       './src/',
     ],
-    alias: {
-    },
     extensions: ['', '.js', '.jsx'],
   },
-
-  plugins: [
-    new webpack.OldWatchingPlugin(),
-  ],
-
   module: {
     loaders: [
       {

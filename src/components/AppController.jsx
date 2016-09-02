@@ -9,11 +9,9 @@ import { TransitionManager } from "lib/loader";
 import Header from "components/Header";
 import Navigation from "components/Navigation";
 import Footer from "components/Footer";
-import Loader from "components/Loader"
+import Loader from "components/Loader";
 
-// Application CSS; applicationStyles alias,
-// CSS and SCSS loaders in webpack.config.js
-require('applicationStyles');
+import "styles/main.scss";
 
 export default class AppController extends BaseComponent {
   componentDidMount() {
