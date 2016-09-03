@@ -2,42 +2,39 @@ const data = {
     issues: {
         "76": {
             "pubDate": "2016-08-21T05:58:09.000Z",
-            "featured": { $type: "ref", value: ["articlesBySlug", "letter"] },
+            "featured": { $type: "ref", value: ["articlesBySlug", "sunday-sketches-xvi"] },
             "picks": [
-                { $type: "ref", value: ["articlesBySlug", "post-grad"] },
-                { $type: "ref", value: ["articlesBySlug", "picking-courses"] },
+                { $type: "ref", value: ["articlesBySlug", "reclaiming-identity"] },
+                { $type: "ref", value: ["articlesBySlug", "the-long-uncertain-wait-for-asylum-seekers-in-athens"] },
             ],
             "categories": [
                 {
                     name: "on campus",
                     slug: "on-campus",
                     articles: [
-                        { $type: "ref", value: ["articlesBySlug", "changes-with-marhaba"] },
-                        { $type: "ref", value: ["articlesBySlug", "visas"] },
-                        { $type: "ref", value: ["articlesBySlug", "dear-freshmen"] },
+                        { $type: "ref", value: ["articlesBySlug", "new-j-term-course-selection-process"] },
                     ],
                 },{
                     name: "off campus",
                     slug: "off-campus",
                     articles: [
-                        { $type: "ref", value: ["articlesBySlug", "art-in-ad"] },
-                        { $type: "ref", value: ["articlesBySlug", "the-ad-secrets-challenge"] },
+                        { $type: "ref", value: ["articlesBySlug", "ride-hailing-applications-in-trouble"] },
                     ],
                 },{
                     name: "commentary",
                     slug: "commentary",
                     articles: [
-                        { $type: "ref", value: ["articlesBySlug", "returning-to-nyuad"]},
-                        { $type: "ref", value: ["articlesBySlug", "whitewashing-hollywood"]},
-                        { $type: "ref", value: ["articlesBySlug", "nyuad-survival-guide"]},
+                        { $type: "ref", value: ["articlesBySlug", "freshman-year-in-review-what-i-learned-2"] },
+                        { $type: "ref", value: ["articlesBySlug", "a-very-subjective-guide-to-eid-break"] },
+                        { $type: "ref", value: ["articlesBySlug", "reclaiming-identity"] },
+                        { $type: "ref", value: ["articlesBySlug", "on-adjusting-back"] },
+                        { $type: "ref", value: ["articlesBySlug", "the-long-uncertain-wait-for-asylum-seekers-in-athens"] },
                     ],
                 },{
                     name: "in focus",
                     slug: "in-focus",
                     articles: [
-                        { $type: "ref", value: ["articlesBySlug", "50-things"] },
-                        { $type: "ref", value: ["articlesBySlug", "fixing-a-tire"] },
-                        { $type: "ref", value: ["articlesBySlug", "post-marhaba-feels"] },
+                        { $type: "ref", value: ["articlesBySlug", "the-weekly-graze-2"] },
                     ],
                 },
             ],
@@ -46,13 +43,13 @@ const data = {
 
 
     trending: [
-        { $type: "ref", value: ["articlesBySlug", "50-things"] },
-        { $type: "ref", value: ["articlesBySlug", "dear-freshmen"] },
-        { $type: "ref", value: ["articlesBySlug", "the-ad-secrets-challenge"] },
-        { $type: "ref", value: ["articlesBySlug", "fixing-a-tire"] },
-        { $type: "ref", value: ["articlesBySlug", "returning-to-nyuad"] },
-        { $type: "ref", value: ["articlesBySlug", "whitewashing-hollywood"]},
-        { $type: "ref", value: ["articlesBySlug", "visas"] },
+        { $type: "ref", value: ["articlesBySlug", "freshman-year-in-review-what-i-learned-2"] },
+        { $type: "ref", value: ["articlesBySlug", "the-weekly-graze-2"] },
+        { $type: "ref", value: ["articlesBySlug", "reclaiming-identity"] },
+        { $type: "ref", value: ["articlesBySlug", "a-very-subjective-guide-to-eid-break"] },
+        { $type: "ref", value: ["articlesBySlug", "new-j-term-course-selection-process"] },
+        { $type: "ref", value: ["articlesBySlug", "on-adjusting-back"]},
+        { $type: "ref", value: ["articlesBySlug", "the-long-uncertain-wait-for-asylum-seekers-in-athens"] },
     ],
 
     categories: {
@@ -63,6 +60,7 @@ const data = {
                 { $type: "ref", value: ["articlesBySlug", "dear-freshmen"] },
                 { $type: "ref", value: ["articlesBySlug", "changes-with-marhaba"] },
                 { $type: "ref", value: ["articlesBySlug", "visas"] },
+                { $type: "ref", value: ["articlesBySlug", "new-j-term-course-selection-process"] },
             ],
         },
         "off-campus": {
@@ -71,6 +69,7 @@ const data = {
             articles: [
                 { $type: "ref", value: ["articlesBySlug", "the-ad-secrets-challenge"] },
                 { $type: "ref", value: ["articlesBySlug", "art-in-ad"] },
+                { $type: "ref", value: ["articlesBySlug", "ride-hailing-applications-in-trouble"] },
             ],
         },
         "commentary": {
@@ -83,6 +82,11 @@ const data = {
                 { $type: "ref", value: ["articlesBySlug", "nyuad-survival-guide"]},
                 { $type: "ref", value: ["articlesBySlug", "letter"]},
                 { $type: "ref", value: ["articlesBySlug", "picking-courses"]},
+                { $type: "ref", value: ["articlesBySlug", "freshman-year-in-review-what-i-learned-2"] },
+                { $type: "ref", value: ["articlesBySlug", "a-very-subjective-guide-to-eid-break"] },
+                { $type: "ref", value: ["articlesBySlug", "reclaiming-identity"] },
+                { $type: "ref", value: ["articlesBySlug", "on-adjusting-back"] },
+                { $type: "ref", value: ["articlesBySlug", "the-long-uncertain-wait-for-asylum-seekers-in-athens"] },
             ],
         },
         "in-focus": {
@@ -92,6 +96,7 @@ const data = {
                 { $type: "ref", value: ["articlesBySlug", "50-things"] },
                 { $type: "ref", value: ["articlesBySlug", "fixing-a-tire"] },
                 { $type: "ref", value: ["articlesBySlug", "post-marhaba-feels"] },
+                { $type: "ref", value: ["articlesBySlug", "the-weekly-graze-2"] },
             ],
         },
         "letters": {
@@ -436,7 +441,177 @@ const data = {
                 { $type: "ref", value: ["articlesBySlug", "picking-courses"]},
             ],
         },
-    },
+        "freshman-year-in-review-what-i-learned-2": {
+            "authors": [
+                { $type: "ref", value: ["authorsBySlug", "lina-elmusa"] },
+            ],
+            "featuredImage": "//thegazelle.s3.amazonaws.com/gazelle/2016/02/firstyearinreview.jpg",
+            "html": `<p><img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/firstyearinreview.jpg" alt="Year in Review" />
+<em>Illustration by Devaki Banerjee</em></p>
+
+<p>Freshman year was the year that I learned how to be myself. During Marhaba I was sure I knew myself, and I went around presenting one aspect of myself: the extrovert Lina whoâ€™ll talk to anyone and everyone and who has no shame whatsoever. I liked that Lina. I still like that Lina. However, it took time for me to realize that this was not all there was to me.</p>
+
+<p>Three weeks into university, Tea with Lina became a thing. Or so I was told. I was the tea enthusiast. I loved it. It helped facilitate my transition into college, and making new friends became so much easier. But, you know what? Tea with Lina didnâ€™t stop me from drinking coffee. I still enjoyed my solitary cup of coffee. People found my love for coffee unbelievable, since they were convinced that I was a tea person. </p>
+
+<p>Thatâ€™s when I realized that binaries were not for me. I can be both a tea and a coffee person.</p>
+
+<p>Freshman year was the year I questioned what it means to be me. â€œIâ€™m Lina,â€ I would smile. â€œIâ€™m from Jordan but Iâ€™m Palestinian.â€ I would smile again. It was the year I had multiple identity crises and emotional traumas. I learned what it means to be an extroverted introvert.</p>
+
+<p>As sure as I was that I was an extrovert, I was sure that I couldnâ€™t wait to leave home. After 17 years of living in the same place and falling into an uncomfortable routine, I was ready to go. </p>
+
+<p>I love my parents, yet I didnâ€™t miss them much while I was away. I loved being independent far too much. That is, if living at NYU Abu Dhabi â€” with its dining hall and free washing machines â€” is considered living independently.</p>
+
+<p>It hit me midway that I am not really independent. Other communities are not as kind as NYUAD, and I only realized that when I went away for spring break and experienced real independence for the first time. I realized that on a budget, I had to make some tough choices: tea or coffee? </p>
+
+<p>I came in with no idea what to expect. Was the entire year going to be like Candidate Weekend or Marhaba? During Marhaba I thought that if college was going to be like that, I was dropping out. And during that same week, I spent more than 500 AED on unnecessary clothes and more than 400 on items from IKEA â€” things no one in the world should ever do. </p>
+
+<p>I came in aiming for that 4.0 GPA, and to complete as many concentrations as possible â€” Literature and Creative Writing was my calling but I wanted to do other things too. Things did change, and I learned so much. Too much to put into one essay. </p>
+
+<p>I came in with the idea that I had to travel around the world as much as I could. I already knew that a semester in Paris was a must. I didnâ€™t really think about discovering Abu Dhabi and the UAE until I got here and the campus became far too small, far too quickly. I needed to get out, and I came to realize that this is one beautiful city. </p>
+
+<p>Itâ€™s visually odd and sometimes uncomfortably humid. Yet, I knew there were things for me to do. If I had nothing planned, I would take the shuttle to the city with some friends, walk around aimlessly and find someplace new. And when I needed personal space, Iâ€™d take my laptop and find a new place to try different coffees or teas.</p>
+
+<p>A spontaneous trip to Al Ain came up, and getting lost in an oasis there with a friend was definitely one of the highlights of my freshman year. I visited Dubai every once in a while to meet up with family and family friends â€“ and for a reality check. A break from this beautiful campus is definitely necessary every now and then. </p>
+
+<p>I learned that small talk and insincere conversations were not for me. I learned that Iâ€™m not that great in person, and that my personality and academics need polishing. I had to get over my stubbornness and pride. I accepted failure, and at some point actually kind of embraced it. I realized that, as clichÃ©d as it sounds, you really do learn from your mistakes. And you know what? Sometimes you donâ€™t, and you need to make that same mistake four times before you get your act straight. </p>
+
+<p>I learned to open up and trust. I told some people things about myself that I could never say before. While making sure I never dump too much on one person, I found that counseling is a wonderful resource if you need someone to talk to. I learned that a small conversation could make my day. </p>
+
+<p>The hardest part for me was losing my uncle while being in Abu Dhabi. I could have gone home, but there were two weeks left in the semester and everyone around me helped me push through. Grief and loss support sessions were wonderful â€” they helped me figure out how to deal with my feelings and talk things out. In dealing with difficulty, I found people whom I can now call family.</p>
+
+<p>I decided that I was not going to make university about grades. Thereâ€™s far too much out there for me to only fixate my energy on academics. They are certainly important, but they are not everything. I learned that the arts make me truly happy â€“ everything from visual arts and film to literature and theater. I hung around the Imagine Science film festival for all three days of the weekend, and pulled all-nighters just because I had to attend those concerts on Saturday evenings. I fell in love with the NYUAD Arts Center. </p>
+
+<p>This love of the arts was sparked when I took a course called Jazz in my second semester. I never knew that I could possibly love a course so much. I never knew that I could get so emotionally attached to a class and group of people, both my classmates and the guests that I met for a couple of hours, the guests that I will probably never see again. I know, you hear it over and again, but you really never know where youâ€™ll find your favorite course. </p>
+
+<p>My first year was great. I was able to embrace my ability and need to be alone. I also figured out that I was brave on two occasions: when my uncle, one the people closest to my heart, passed away, and when I asked a guy out. </p>
+
+<p>After a really long time, I became comfortable in my own skin. I started taking pride in the brown Arab woman that I am, and I have to say that so much of it is due to NYUAD and the people here. </p>
+
+<p>The one thing I think would definitely make your life here easier is to be yourself â€” no, not the person you think people want to meet, but yourself. That way youâ€™ll make genuine friends who share your vibe. Also, be open. Be open-minded, and be open to new experiences and people. This city and campus have so much to offer â€” take advantage of it. Time passes by far too quickly. </p>
+
+<p><em>Lina El Musa is a Staff Writer. Email her at feedback@thegazelle.org.</em></p>`,
+            "image": null,
+            "published_at": "2016-09-04T05:58:09.000Z",
+            "slug": "freshman-year-in-review-what-i-learned-2",
+            "title": "Freshman Year in Review: What I Learned",
+            "issueId": "76",
+            "category": "commentary",
+            "teaser": "How to be a tea and coffee person.",
+            "related": [
+                { $type: "ref", value: ["articlesBySlug", "the-long-uncertain-wait-for-asylum-seekers-in-athens"]},
+                { $type: "ref", value: ["articlesBySlug", "ride-hailing-applications-in-trouble"]},
+            ],
+        },
+        "the-weekly-graze-2": {
+            "authors": [
+                { $type: "ref", value: ["authorsBySlug", "the-gazelle-staff"] },
+            ],
+            "featuredImage": "//thegazelle.s3.amazonaws.com/gazelle/2016/04/gazelle-graze-new.jpg",
+            "html": `<p><img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/04/gazelle-graze-new.jpg" alt="The Weekly Graze" />
+<em>Graphic by JoaquÃ­n Kunkel Edited by Koh Terai/The Gazelle</em></p>
+
+<p>Here at The Gazelle, we work hard to bring you interesting, informative content that you can enjoy and engage with. But what do we read when we arenâ€™t in production every Saturday, working late into the night? The Weekly Graze is a series in which The Gazelleâ€™s staff members pick their favorite written reads from the past week, in the hope that you might discover some interesting reads too.</p>
+
+<p>Connor Pearce <br />
+Co-Editor in Chief</p>
+
+<p><a href="http://www.goodreads.com/book/show/2497026.The_Watch_Tower"><em>The Watch Tower,</em></a> Elizabeth Harrower</p>
+
+<p>Set on the glistening shores of Sydney Harbour in the 1940s, Elizabeth Harrower writes of two sisters, Laura and Clare, who are abandoned by their mother after their father's death and who come to live with Felix Shaw, Laura's employer and husband. Shaw is a cruel husband who takes away anything the two women have, and psychologically and physically abuses Laura until she becomes a shell. Clare, the younger sister, is luckier and is able to escape Shaw's clutches, but she is unable to save her sister. The Watch Tower is an outstanding work of Australian feminist literature that expertly captures the way in which a patriarchal society hides the constant threat of violence and female subjugation beneath a glittering veneer.</p>
+
+<p>Jocilyn Estes <br />
+Opinion Editor</p>
+
+<p><a href="https://www.goodreads.com/book/show/13425592-devil-in-the-grove"><em>Devil in the Grove: Thurgood Marshall, the Groveland Boys, and the Dawn of a New America</em>,</a> Gilbert King</p>
+
+<p>In this Pulitzer Prize-winning piece of nonfiction, Gilbert King delivers an incredible account of one of the most important civil rights cases in U.S. American history. The book follows Thurgood Marshall through the humid swamps of Florida during his career with the National Association for the Advancement of Colored People, years before his days working on the Supreme Court. King, assisted by newly released FBI case files, follows Marshall as he enters the Jim Crow South to take on the Klu Klux Klan. This powerful narrative is a gripping description of what former U.S. Supreme Court Justice Robert Jackson called "one of the best examples of one of the worst menaces to American justice." If youâ€™re excited by law, U.S. American history or social justice movements generally, this one's for you.</p>
+
+<p>Pranav Mehta <br />
+Research Editor</p>
+
+<p><a href="https://www.goodreads.com/book/show/1358844.Remember_Me_"><em>Remember Me?</em>,</a> Sophie Kinsella</p>
+
+<p>When a friend caught me giggling at a physics problem because of its intricate story arc, said friend recommended this novel so that I could regain some semblance of so-called normal fiction. And that's exactly what happened â€” I have never been more invested in a fictional character's life than I was in Lexi's. Waking up brooding in a hospital and remembering you don't conform to society's ideals of beauty and also have a subpar love life can be tough, but hey, she realizes she's aged three years, has an enviable figure, straight teeth and a millionaire husband. The complex plot that follows â€” marriage problems, retrograde amnesia and attractive men â€” renders this literary gem a page-turner. What happens next? Will Lexi unravel the truth? I, as I'm sure you too, asked these questions, perched on the periphery of my seat.</p>
+
+<p>Hannah Taylor <br />
+Managing Editor</p>
+
+<p><a href="https://www.goodreads.com/book/show/16115612-and-the-mountains-echoed"><em>And the Mountains Echoed</em>,</a> Khaled Hosseini</p>
+
+<p>I bought this book during a layover in Amsterdam that was unexpectedly lengthened by a flight delay. I went for the safe bet, choosing Hosseini because of his incredible popularity and my love for The Kite Runner. The book was the only thing that kept me awake long enough to catch my flight. As always, Hosseini conveys incredible honesty and insight that makes the reader feel as though theyâ€™re sitting with the dysfunctional families and friends portrayed in their living rooms, sipping tea and eating biscuits. The running themes were bonds and love with a focus on family dynamics, and unlike in his earlier works, Hosseini focuses on multiple characters and stories. Most of the story threads intertwine only at brief moments, but throughout the book there is a humane truth that everyone can relate to and learn from. I was actually nicer to my mother after reading this book.</p>`,
+            "image": null,
+            "published_at": "2016-09-04T05:58:09.000Z",
+            "slug": "the-weekly-graze-2",
+            "title": "The Weekly Graze",
+            "issueId": "76",
+            "category": "in-focus",
+            "teaser": "Here at The Gazelle, we work hard to bring you interesting, informative content. But what do we read when we aren’t working late into the night?",
+            "related": [
+                { $type: "ref", value: ["articlesBySlug", "the-long-uncertain-wait-for-asylum-seekers-in-athens"]},
+                { $type: "ref", value: ["articlesBySlug", "ride-hailing-applications-in-trouble"]},
+            ],
+        },
+        "freshman-year-in-review-what-i-learned-2": {
+            "authors": [
+                { $type: "ref", value: ["authorsBySlug", "lina-elmusa"] },
+            ],
+            "featuredImage": "//thegazelle.s3.amazonaws.com/gazelle/2016/02/firstyearinreview.jpg",
+            "html": `<p><img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/firstyearinreview.jpg" alt="Year in Review" />
+<em>Illustration by Devaki Banerjee</em></p>
+
+<p>Freshman year was the year that I learned how to be myself. During Marhaba I was sure I knew myself, and I went around presenting one aspect of myself: the extrovert Lina whoâ€™ll talk to anyone and everyone and who has no shame whatsoever. I liked that Lina. I still like that Lina. However, it took time for me to realize that this was not all there was to me.</p>
+
+<p>Three weeks into university, Tea with Lina became a thing. Or so I was told. I was the tea enthusiast. I loved it. It helped facilitate my transition into college, and making new friends became so much easier. But, you know what? Tea with Lina didnâ€™t stop me from drinking coffee. I still enjoyed my solitary cup of coffee. People found my love for coffee unbelievable, since they were convinced that I was a tea person. </p>
+
+<p>Thatâ€™s when I realized that binaries were not for me. I can be both a tea and a coffee person.</p>
+
+<p>Freshman year was the year I questioned what it means to be me. â€œIâ€™m Lina,â€ I would smile. â€œIâ€™m from Jordan but Iâ€™m Palestinian.â€ I would smile again. It was the year I had multiple identity crises and emotional traumas. I learned what it means to be an extroverted introvert.</p>
+
+<p>As sure as I was that I was an extrovert, I was sure that I couldnâ€™t wait to leave home. After 17 years of living in the same place and falling into an uncomfortable routine, I was ready to go. </p>
+
+<p>I love my parents, yet I didnâ€™t miss them much while I was away. I loved being independent far too much. That is, if living at NYU Abu Dhabi â€” with its dining hall and free washing machines â€” is considered living independently.</p>
+
+<p>It hit me midway that I am not really independent. Other communities are not as kind as NYUAD, and I only realized that when I went away for spring break and experienced real independence for the first time. I realized that on a budget, I had to make some tough choices: tea or coffee? </p>
+
+<p>I came in with no idea what to expect. Was the entire year going to be like Candidate Weekend or Marhaba? During Marhaba I thought that if college was going to be like that, I was dropping out. And during that same week, I spent more than 500 AED on unnecessary clothes and more than 400 on items from IKEA â€” things no one in the world should ever do. </p>
+
+<p>I came in aiming for that 4.0 GPA, and to complete as many concentrations as possible â€” Literature and Creative Writing was my calling but I wanted to do other things too. Things did change, and I learned so much. Too much to put into one essay. </p>
+
+<p>I came in with the idea that I had to travel around the world as much as I could. I already knew that a semester in Paris was a must. I didnâ€™t really think about discovering Abu Dhabi and the UAE until I got here and the campus became far too small, far too quickly. I needed to get out, and I came to realize that this is one beautiful city. </p>
+
+<p>Itâ€™s visually odd and sometimes uncomfortably humid. Yet, I knew there were things for me to do. If I had nothing planned, I would take the shuttle to the city with some friends, walk around aimlessly and find someplace new. And when I needed personal space, Iâ€™d take my laptop and find a new place to try different coffees or teas.</p>
+
+<p>A spontaneous trip to Al Ain came up, and getting lost in an oasis there with a friend was definitely one of the highlights of my freshman year. I visited Dubai every once in a while to meet up with family and family friends â€“ and for a reality check. A break from this beautiful campus is definitely necessary every now and then. </p>
+
+<p>I learned that small talk and insincere conversations were not for me. I learned that Iâ€™m not that great in person, and that my personality and academics need polishing. I had to get over my stubbornness and pride. I accepted failure, and at some point actually kind of embraced it. I realized that, as clichÃ©d as it sounds, you really do learn from your mistakes. And you know what? Sometimes you donâ€™t, and you need to make that same mistake four times before you get your act straight. </p>
+
+<p>I learned to open up and trust. I told some people things about myself that I could never say before. While making sure I never dump too much on one person, I found that counseling is a wonderful resource if you need someone to talk to. I learned that a small conversation could make my day. </p>
+
+<p>The hardest part for me was losing my uncle while being in Abu Dhabi. I could have gone home, but there were two weeks left in the semester and everyone around me helped me push through. Grief and loss support sessions were wonderful â€” they helped me figure out how to deal with my feelings and talk things out. In dealing with difficulty, I found people whom I can now call family.</p>
+
+<p>I decided that I was not going to make university about grades. Thereâ€™s far too much out there for me to only fixate my energy on academics. They are certainly important, but they are not everything. I learned that the arts make me truly happy â€“ everything from visual arts and film to literature and theater. I hung around the Imagine Science film festival for all three days of the weekend, and pulled all-nighters just because I had to attend those concerts on Saturday evenings. I fell in love with the NYUAD Arts Center. </p>
+
+<p>This love of the arts was sparked when I took a course called Jazz in my second semester. I never knew that I could possibly love a course so much. I never knew that I could get so emotionally attached to a class and group of people, both my classmates and the guests that I met for a couple of hours, the guests that I will probably never see again. I know, you hear it over and again, but you really never know where youâ€™ll find your favorite course. </p>
+
+<p>My first year was great. I was able to embrace my ability and need to be alone. I also figured out that I was brave on two occasions: when my uncle, one the people closest to my heart, passed away, and when I asked a guy out. </p>
+
+<p>After a really long time, I became comfortable in my own skin. I started taking pride in the brown Arab woman that I am, and I have to say that so much of it is due to NYUAD and the people here. </p>
+
+<p>The one thing I think would definitely make your life here easier is to be yourself â€” no, not the person you think people want to meet, but yourself. That way youâ€™ll make genuine friends who share your vibe. Also, be open. Be open-minded, and be open to new experiences and people. This city and campus have so much to offer â€” take advantage of it. Time passes by far too quickly. </p>
+
+<p><em>Lina El Musa is a Staff Writer. Email her at feedback@thegazelle.org.</em></p>`,
+            "image": null,
+            "published_at": "2016-09-04T05:58:09.000Z",
+            "slug": "freshman-year-in-review-what-i-learned-2",
+            "title": "Freshman Year in Review: What I Learned",
+            "issueId": "76",
+            "category": "commentary",
+            "teaser": "How to be a tea and coffee person.",
+            "related": [
+                { $type: "ref", value: ["articlesBySlug", "the-long-uncertain-wait-for-asylum-seekers-in-athens"]},
+                { $type: "ref", value: ["articlesBySlug", "ride-hailing-applications-in-trouble"]},
+            ],
+        },
 
     // "sample": {
     //     name: "",
@@ -519,18 +694,19 @@ const data = {
             biography: "",
             articles: [
                 { $type: "ref", value: ["articlesBySlug", "the-ad-secrets-challenge"] },
+                { $type: "ref", value: ["articlesBySlug", "the-weekly-graze-2"]}
             ],
         },
-        // "lina-elmulsa": {
-        //     name: "Lina Elmulsa",
-        //     photo: "//0.gravatar.com/avatar/aa8fd14652d66e2a2059736cb3fb9b60?s=200",
-        //     slug: "lina-elmulsa",
-        //     title: "Contributor",
-        //     biography: "",
-        //     articles: [
-        //         { $type: "ref", value: ["articlesBySlug", "advice-to-incoming-first-years"] },
-        //     ],
-        // },
+        "lina-elmusa": {
+            name: "Lina Elmusa",
+            photo: "//0.gravatar.com/avatar/aa8fd14652d66e2a2059736cb3fb9b60?s=200",
+            slug: "lina-elmulsa",
+            title: "Contributor",
+            biography: "",
+            articles: [
+                { $type: "ref", value: ["articlesBySlug", "freshman-year-in-review-what-i-learned-2"] },
+            ],
+        },
         "annie-bauer": {
             name: "Annie Bauer",
             photo: "//thegazelle.s3.amazonaws.com/gazelle/2015/04/Annie.jpg",
