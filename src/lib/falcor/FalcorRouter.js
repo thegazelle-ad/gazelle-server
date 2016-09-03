@@ -1,39 +1,54 @@
 import BaseRouter from "falcor-router"
 import { ghostArticleQuery } from 'lib/ghostAPI'
-import { dbAuthorQuery, dbArticleQuery } from 'lib/mariaDB'
+import { dbAuthorQuery, dbArticleQuery, dbAuthorArticleQuery, dbInfoPagesQuery, dbArticleIssueQuery,
+dbArticleAuthorQuery, dbLatestIssueQuery, dbCategoryNameQuery } from 'lib/mariaDB'
 import falcor from 'falcor'
+import _ from 'lodash';
 
 const $ref = falcor.Model.ref;
 
-// Transform ghost API names into our names
-const mapGhostNames = (name) => {
-  switch(name) {
-    case 'pubDate':
-      return 'published_at';
-    case 'body':
-      return 'markdown';
+let mapGhostNames = (falcorName) => {
+  switch (falcorName) {
+    case "teaser":
+      return "meta_description";
     default:
-      return name;
+      return falcorName;
   }
-};
+}
 
 export default class FalcorRouter extends BaseRouter.createClass([
   {
-    route: "appName",
-    get: () => {
-      return [{
-        path: ["appName"],
-        value: "The Gazelle",
-      }]
-    },
+    route: "infoPages[{keys:slugs}]['title', 'html', 'slug']",
+    get: (pathSet) => {
+      return new Promise((resolve, reject) => {
+        dbInfoPagesQuery(pathSet.slugs, pathSet[2]).then((data) => {
+          // data function parameter is an array of objects with keys equal to the columns requested.
+          // Always returns the slug so we know which one we got
+          const results = [];
+          data.forEach((row) => {
+            pathSet[2].forEach((key) => {
+              if (!row.hasOwnProperty(key)) {
+                throw new Error("missing data in infoPages, it is not even null, simply doesn't return");
+              }
+              else {
+                results.push({
+                  path: ['infoPages', row.slug, key],
+                  value: row[key]
+                });
+              }
+            });
+          });
+          resolve(results);
+        });
+      });
+    }
   },
   {
-    // Get author information from SQL database
-    // TODO: write path for articles written by the author
     route: "authorsBySlug[{keys:slugs}]['name', 'image', 'biography', 'slug', 'job_title']",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
         dbAuthorQuery(pathSet.slugs, pathSet[2]).then((data) => {
+          // always returns slug in the object no matter what.
           const results = [];
           data.forEach((author) => {
             pathSet[2].forEach((field) => {
@@ -49,14 +64,40 @@ export default class FalcorRouter extends BaseRouter.createClass([
     }
   },
   {
-    route: "authorsBySlug[{keys:slugs}]['teams'][{integers:indices}]"
+    // TODO: FINISH THIS
+    route: "authorsBySlug[{keys:slugs}]['teams'][{integers:indices}]",
     get: (pathSet) => {
       return null;
     }
-  }
+  },
+  {
+    route: "authorsBySlug[{keys:slugs}]['articles'][{integers:indices}]",
+    // This could be a bit vulnerable as it fetches all articles written by an author
+    // no matter what indices are called, but I think in reality it shouldn't be a problem
+    get: (pathSet) => {
+      return new Promise((resolve, reject) => {
+        dbAuthorArticleQuery(pathSet.slugs).then((data) => {
+          // We receive the data as an object with keys equalling author slugs
+          // and values being an array of article slugs where the most recent is first
+          const results = [];
+          _.forEach(data, (postSlugArray, authorSlug) => {
+            pathSet.indices.forEach((index) => {
+              if (index < postSlugArray.length) {
+                results.push({
+                  path: ['authorsBySlug', authorSlug, 'articles', index],
+                  value: $ref(['articlesBySlug', postSlugArray[index]])
+                });
+              }
+            });
+          });
+          resolve(results);
+        })
+      });
+    }
+  },
   {
     // Get article data from Ghost API
-    route: "articlesBySlug[{keys:slugs}]['pubDate', 'id', 'image', 'slug', 'title', 'body', 'html']",
+    route: "articlesBySlug[{keys:slugs}]['id', 'image', 'slug', 'title', 'markdown', 'html', 'teaser']",
     get: (pathSet) => {
       return new Promise((resolve, reject ) => {
         let query = "filter=";
@@ -89,21 +130,11 @@ export default class FalcorRouter extends BaseRouter.createClass([
     }
   },
   {
-    //Get custom article data from SQL database
-    route: "articlesBySlug[{keys:slugs}]['issue', 'category', 'description']",
+    // Get custom article data from MariaDB
+    route: "articlesBySlug[{keys:slugs}]['category', 'published_at', views]",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        if (!USE_DATABASES) {
-          resolve([]);
-          return null;
-        }
-        const query = {slug: {$in: pathSet.slugs}};
-        const projection = {_id: 0};
-        pathSet[2].forEach((field) => {
-          projection[field] = 1;
-        });
-        projection['slug'] = 1;
-        sqlArticleQuery(query, projection).then((data) => {
+        dbArticleQuery(pathSet.slugs, pathSet[2]).then((data) => {
           const results = [];
           data.forEach((article) => {
             pathSet[2].forEach((field) => {
@@ -119,36 +150,49 @@ export default class FalcorRouter extends BaseRouter.createClass([
     }
   },
   {
+    // Get issueNumber from database
+    route: "articlesBySlug[{keys:slugs}]['issueNumber']",
+    get: (pathSet) => {
+      return new Promise((resolve, reject) => {
+        dbArticleIssueQuery(pathSet.slugs).then((data) => {
+          const results = [];
+          data.forEach((row) => {
+            results.push({
+              path: ["articlesBySlug", row.slug, 'issueNumber'],
+              value: row.issueNumber;
+            });
+          });
+          resolve(results);
+        })
+      })
+    }
+  },
+  {
     // Get author information from article
     route: "articlesBySlug[{keys:slugs}]['authors'][{integers:indices}]",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        if (!USE_DATABASES) {
-          resolve([]);
-          return null;
-        }
-        const query = {slug: {$in: pathSet.slugs}};
-        const projection = {_id: 0, slug: 1, authors: 1};
-        sqlArticleQuery(query, projection).then((data) => {
+        dbArticleAuthorQuery(pathSet.slugs).then((data) => {
+          // We receive the data as an object with keys equalling article slugs
+          // and values being an array of author slugs in no particular order
           const results = [];
-          data.forEach((article) => {
-            const authors = article.authors;
+          _.forEach(data, (authorSlugArray, postSlug) => {
             pathSet.indices.forEach((index) => {
-              if (index < authors.length) {
+              if (index < authorSlugArray.length) {
                 results.push({
-                  path: ['articlesBySlug', article.slug, 'authors', index],
-                  value: $ref(['authorsBySlug', authors[index]])
+                  path: ['articlesBySlug', postSlug, 'authors', index],
+                  value: $ref(['authorsBySlug', authorSlugArray[index]])
                 });
               }
             });
           });
           resolve(results);
-        });
+        })
       });
     }
   },
   {
-    /* TODO: Figure out error handling.
+    /*
     Get articles by page (they are also in chronological order, articlesByPage[pageLength][1][0]
     is the latest published article to the Ghost database). Only use positive integer page lengths
     and page numbers, and non-negative page indices. [{integers:indicesOnPage}] is logically redundant
@@ -203,6 +247,33 @@ export default class FalcorRouter extends BaseRouter.createClass([
     }
   },
   {
+    // get categories name
+    route: "categories[{keys:slugs}]['name']",
+    get: (pathSet) => {
+      return new Promise((resolve, reject) => {
+        dbCategoryNameQuery(slugs).then((data) => {
+          const results = [];
+          data.forEach((category) => {
+            results.push({
+              path: ['categories', category.slug, 'name'],
+              value: category.name
+            });
+          });
+          resolve(results);
+        });
+      });
+    }
+  },
+  {
+    // get articles in a category
+    route: "categories[{keys:slugs}]['articles']",
+    get: (pathSet) => {
+      return new Promise((resolve, reject) => {
+        dbCategoriesArticlesQuery()
+      });
+    }
+  },
+  {
     // Get total amount of articles
     route: "totalAmountOfArticles",
     get: (pathSet) => {
@@ -220,13 +291,12 @@ export default class FalcorRouter extends BaseRouter.createClass([
     // Get latest issue
     route: "latestIssue",
     get: (pathSet) => {
-      // TODO: Change it to fetch proper data when we can
-      // TODO: Also in general implement falcor routes for everything about issues
-      // Make issue a complete object with creation date, refs to articles etc.
-      return [{
-        path: ['latestIssue'],
-        value: 50
-      }];
+      dbLatestIssueQuery().then((row) => {
+        return [{
+          path: ['latestIssue'],
+          value: $ref(['issues', row[0].issue_order])
+        }]
+      })
     }
   },
 ])
