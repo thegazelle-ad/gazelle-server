@@ -1,6 +1,7 @@
 import React from "react";
 import BaseComponent from "lib/BaseComponent"
-import fs from 'fs';
+import ghostConfig from '../../ghost.config';
+import databaseConfig from '../../database.config';
 
 // TODO: Add Jest Testing
 export function debounce (func, timeout) {
@@ -46,7 +47,7 @@ export function uuid() {
 }
 
 export function getDatabaseConfig() {
-  const raw = fs.readFileSync('../../database.config.json', 'utf8');
+  const raw = databaseConfig;
   // remove comments for JSON parsing
   let stringArray = raw.split('\n');
   stringArray = stringArray.map((string) => {
@@ -63,6 +64,6 @@ export function getGhostConfig() {
   // This will fail if there are comments in
   // ghost.config.json which should've been removed by
   // getGhostConfig though
-  const json = JSON.parse(fs.readFileSync('../../ghost.config.json', 'utf8'));
+  const json = JSON.parse(ghostConfig);
   return json;
 }

@@ -1,7 +1,7 @@
 build/
 static/build/
-database.config.json
-ghost.config.json
+database.config.js
+ghost.config.js
 
 ## Below this is automatically generated
 

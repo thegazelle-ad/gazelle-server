@@ -5,6 +5,10 @@ const config = getDatabaseConfig();
 const knexConnectionObject = {
   client: 'mysql',
   connection: config,
+  pool: {
+    min: 0,
+    max: 100
+  }
 };
 
 export function dbAuthorQuery(slugs, columns) {
@@ -258,19 +262,23 @@ export function dbCategoryArticleQuery(slugs) {
 
 export function dbFeaturedArticleQuery(issueNumbers) {
   // Get the featured articles from all the issueNumbers
+  console.log("featured called");
   return new Promise((resolve, reject) => {
     const database = knex(knexConnectionObject);
+    console.log("query database");
     database.select('posts.slug', 'issue_order')
     .from('posts')
     .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
     .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issue_id')
     .whereIn('issues.issue_order', issueNumbers).andWhere('type', '=', 1)
     .then((rows) => {
+      console.log("resolving from within");
       database.destroy();
       resolve(rows);
     })
     .catch((e) => {
       database.destroy();
+      console.error(e);
       reject(e);
     })
   })
@@ -330,4 +338,22 @@ export function dbIssueCategoryQuery(issueNumbers) {
       reject(e);
     });
   });
+}
+
+export function dbIssueQuery(issueNumbers, columns) {
+  return new Promise((resolve, reject) => {
+    const database = knex(knexConnectionObject);
+    columns.push('issue_order');
+    database.select(...columns)
+    .from('issues')
+    .whereIn('issues.issue_order', issueNumbers)
+    .then((rows) => {
+      database.destroy();
+      resolve(rows);
+    })
+    .catch((e) => {
+      database.destroy();
+      reject(e);
+    })
+  })
 }

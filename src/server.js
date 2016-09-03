@@ -19,7 +19,7 @@ import Helmet from "react-helmet";
 // *********************************************
 // Load in static issue articles for development
 // *********************************************
-import testData from '../static/sample-issue/posts.js';
+//import testData from '../static/sample-issue/posts.js';
 //import authors from '../static/sample-issue/authors.js';
 
 // Allow node to use sourcemaps
@@ -79,7 +79,6 @@ const buildHtmlString = (body, cache) => {
 // Shared serverModel
 // You can also hardcode / stub parts of the model here
 const serverModel = new falcor.Model({
-  cache: testData,
   source: new FalcorRouter(),
 }).batch();
 
@@ -142,8 +141,8 @@ const renderApp = (renderProps) => {
   }
 
   // Silenced Falcor path logs
-  // console.log('FETCHING Falcor Paths:');
-  // console.log(falcorPaths);
+  console.log('FETCHING Falcor Paths:');
+  console.log(falcorPaths);
 
   return localModel.preload(...falcorPaths).then(() => {
     return (
@@ -175,6 +174,7 @@ server.use("/favicon.ico", (req, res) => {
 server.use(compression());
 
 server.get('*', (req, res) => {
+  console.log("GOT REQUEST");
   match({ routes, location: req.url },
     (error, redirectLocation, renderProps) => {
       if (error) {

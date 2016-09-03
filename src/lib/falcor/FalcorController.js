@@ -74,6 +74,7 @@ export default class FalcorController extends BaseComponent {
 
   // Makes falcor fetch its paths
   falcorFetch(falcorPathSets) {
+    console.log("FATCHANG");
     falcorPathSets = validateFalcorPathSets(falcorPathSets);
     if (falcorPathSets === undefined) {
       this.safeSetState({
@@ -82,6 +83,7 @@ export default class FalcorController extends BaseComponent {
       });
       return;
     }
+    console.log("FETCHING");
 
     this.safeSetState({fetching: true, error: null});
     setLoading(this.uuid, true);
@@ -89,6 +91,7 @@ export default class FalcorController extends BaseComponent {
     this.lastRequestId = requestId;
 
     this.props.model.get(...falcorPathSets).then((x) => {
+      console.log("SUCCESSFUL");
       if (this.lastRequestId !== requestId) {
         // stale request, no action to response
         return;

@@ -2,7 +2,7 @@ import BaseRouter from "falcor-router"
 import { ghostArticleQuery } from 'lib/ghostAPI'
 import { dbAuthorQuery, dbArticleQuery, dbAuthorArticleQuery, dbInfoPagesQuery, dbArticleIssueQuery,
 dbArticleAuthorQuery, dbLatestIssueQuery, dbCategoryNameQuery, dbCategoriesArticleQuery,
-dbFeaturedArticleQuery, dbEditorPickQuery, dbIssueCategoryQuery } from 'lib/mariaDB'
+dbFeaturedArticleQuery, dbEditorPickQuery, dbIssueCategoryQuery, dbIssueQuery } from 'lib/mariaDB'
 import falcor from 'falcor'
 import _ from 'lodash';
 
@@ -132,7 +132,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
   },
   {
     // Get custom article data from MariaDB
-    route: "articlesBySlug[{keys:slugs}]['category', 'published_at', views]",
+    route: "articlesBySlug[{keys:slugs}]['category', 'published_at', 'views']",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
         dbArticleQuery(pathSet.slugs, pathSet[2]).then((data) => {
@@ -160,7 +160,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
           data.forEach((row) => {
             results.push({
               path: ["articlesBySlug", row.slug, 'issueNumber'],
-              value: row.issueNumber;
+              value: row.issueNumber
             });
           });
           resolve(results);
@@ -199,11 +199,11 @@ export default class FalcorRouter extends BaseRouter.createClass([
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
         ghostArticleQuery("limit=30&fields=slug").then((data) => {
+          const results = [];
           data = data.posts;
           data = data.filter((post) => {
             return post.slug !== 'welcome-to-ghost';
           });
-          const results = [];
           pathSet.slugs.forEach((slug) => {
             pathSet.indices.forEach((index) => {
               results.push({
@@ -212,6 +212,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
               });
             });
           });
+          resolve(results);
         });
       });
     }
@@ -309,7 +310,6 @@ export default class FalcorRouter extends BaseRouter.createClass([
             });
           });
           resolve(results);
-          });
         });
       });
     }
@@ -327,6 +327,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
               value: $ref(['articlesBySlug', row.slug])
             });
           });
+          resolve(results);
         });
       });
     }
@@ -337,6 +338,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
         dbEditorPickQuery(pathSet.issueNumbers).then((data) => {
+          const results = [];
           _.forEach(data, (postSlugArray, issueNumber) => {
             pathSet.indices.forEach((index) => {
               if (index < postSlugArray.length) {
@@ -347,16 +349,19 @@ export default class FalcorRouter extends BaseRouter.createClass([
               }
             });
           });
+          resolve(results);
         });
       });
     }
   },
   {
     // Get articles within issue categories
-    route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers: indices}]",
+    route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers:indices}]",
     get: (pathSet) => {
+      console.log("issue categories");
       return new Promise((resolve, reject) => {
         dbIssueCategoryQuery(pathSet.issueNumbers).then((data) => {
+          const results = [];
           _.forEach(data, (categorySlugArray, issueNumber) => {
             pathSet.indices.forEach((index) => {
               if (index < categorySlugArray.length) {
@@ -367,7 +372,31 @@ export default class FalcorRouter extends BaseRouter.createClass([
               }
             });
           });
+          console.log("resolving issue categories");
+          resolve(results);
         })
+      });
+    }
+  },
+  {
+    // Get issue data
+    route: "issuesByNumber[{integers:issueNumbers}]['published_at', 'name']",
+    get: (pathSet) => {
+      console.log('data called');
+      return new Promise((resolve, reject) => {
+        dbIssueQuery(pathSet.issueNumbers, pathSet[2]).then((data) => {
+          const results = [];
+          data.forEach((issue) => {
+            pathSet[2].forEach((field) => {
+              results.push({
+                path: ['issuesByNumber', issues.issue_order, field],
+                value: issue[field]
+              });
+            });
+          });
+          console.log('data resolved');
+          resolve(results);
+        });
       });
     }
   },
@@ -378,17 +407,18 @@ export default class FalcorRouter extends BaseRouter.createClass([
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
         ghostArticleQuery("limit=30&fields=slug").then((data) => {
+          const results = [];
           data = data.posts;
           data = data.filter((post) => {
             return post.slug !== 'welcome-to-ghost';
           });
-          const results = [];
           pathSet.indices.forEach((index) => {
             results.push({
               path: ['trending', index],
               value: $ref(['articlesBySlug', data[index].slug])
             });
           });
+          resolve(results);
         });
       });
     }
@@ -413,6 +443,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
         dbLatestIssueQuery().then((row) => {
+          console.log(row[0].issue_order)
           resolve([{
             path: ['latestIssue'],
             value: $ref(['issuesByNumber', row[0].issue_order])
