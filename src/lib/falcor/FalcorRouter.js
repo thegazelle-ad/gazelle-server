@@ -1,7 +1,8 @@
 import BaseRouter from "falcor-router"
 import { ghostArticleQuery } from 'lib/ghostAPI'
 import { dbAuthorQuery, dbArticleQuery, dbAuthorArticleQuery, dbInfoPagesQuery, dbArticleIssueQuery,
-dbArticleAuthorQuery, dbLatestIssueQuery, dbCategoryNameQuery } from 'lib/mariaDB'
+dbArticleAuthorQuery, dbLatestIssueQuery, dbCategoryNameQuery, dbCategoriesArticleQuery,
+dbFeaturedArticleQuery, dbEditorPickQuery, dbIssueCategoryQuery } from 'lib/mariaDB'
 import falcor from 'falcor'
 import _ from 'lodash';
 
@@ -192,6 +193,30 @@ export default class FalcorRouter extends BaseRouter.createClass([
     }
   },
   {
+    // Get related articles
+    // THIS IS TEMPORARY
+    route: "articlesBySlug[{keys:slugs}]['related'][{integers:indices}]",
+    get: (pathSet) => {
+      return new Promise((resolve, reject) => {
+        ghostArticleQuery("limit=30&fields=slug").then((data) => {
+          data = data.posts;
+          data = data.filter((post) => {
+            return post.slug !== 'welcome-to-ghost';
+          });
+          const results = [];
+          pathSet.slugs.forEach((slug) => {
+            pathSet.indices.forEach((index) => {
+              results.push({
+                path: ['articlesBySlug', slug, 'related', index],
+                value: $ref(['articlesBySlug', data[index].slug])
+              });
+            });
+          });
+        });
+      });
+    }
+  },
+  {
     /*
     Get articles by page (they are also in chronological order, articlesByPage[pageLength][1][0]
     is the latest published article to the Ghost database). Only use positive integer page lengths
@@ -248,14 +273,14 @@ export default class FalcorRouter extends BaseRouter.createClass([
   },
   {
     // get categories name
-    route: "categories[{keys:slugs}]['name']",
+    route: "categoriesBySlug[{keys:slugs}]['name']",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        dbCategoryNameQuery(slugs).then((data) => {
+        dbCategoryNameQuery(pathSet.slugs).then((data) => {
           const results = [];
           data.forEach((category) => {
             results.push({
-              path: ['categories', category.slug, 'name'],
+              path: ['categoriesBySlug', category.slug, 'name'],
               value: category.name
             });
           });
@@ -266,10 +291,105 @@ export default class FalcorRouter extends BaseRouter.createClass([
   },
   {
     // get articles in a category
-    route: "categories[{keys:slugs}]['articles']",
+    route: "categoriesBySlug[{keys:slugs}]['articles'][{integers:indices}]",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        dbCategoriesArticlesQuery()
+        dbCategoriesArticleQuery(pathSet.slugs).then((data) => {
+          // We receive the data as an object with keys equalling category slugs
+          // and values being an array of article slugs where the most recent is first
+          const results = [];
+          _.forEach(data, (postSlugArray, categorySlug) => {
+            pathSet.indices.forEach((index) => {
+              if (index < postSlugArray.length) {
+                results.push({
+                  path: ['categoriesBySlug', categorySlug, 'articles', index],
+                  value: $ref(['articlesBySlug', postSlugArray[index]])
+                });
+              }
+            });
+          });
+          resolve(results);
+          });
+        });
+      });
+    }
+  },
+  {
+    // get featured article
+    route: "issuesByNumber[{integers:issueNumbers}]['featured']",
+    get: (pathSet) => {
+      return new Promise((resolve, reject) => {
+        dbFeaturedArticleQuery(pathSet.issueNumbers).then((data) => {
+          const results = [];
+          data.forEach((row) => {
+            results.push({
+              path: ['issuesByNumber', row.issue_order, 'featured'],
+              value: $ref(['articlesBySlug', row.slug])
+            });
+          });
+        });
+      });
+    }
+  },
+  {
+    // get editor's picks
+    route: "issuesByNumber[{integers:issueNumbers}]['picks'][{integers:indices}]",
+    get: (pathSet) => {
+      return new Promise((resolve, reject) => {
+        dbEditorPickQuery(pathSet.issueNumbers).then((data) => {
+          _.forEach(data, (postSlugArray, issueNumber) => {
+            pathSet.indices.forEach((index) => {
+              if (index < postSlugArray.length) {
+                results.push({
+                  path: ['issuesByNumber', issueNumber, 'picks', index],
+                  value: $ref(['articlesBySlug', postSlugArray[index]])
+                });
+              }
+            });
+          });
+        });
+      });
+    }
+  },
+  {
+    // Get articles within issue categories
+    route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers: indices}]",
+    get: (pathSet) => {
+      return new Promise((resolve, reject) => {
+        dbIssueCategoryQuery(pathSet.issueNumbers).then((data) => {
+          _.forEach(data, (categorySlugArray, issueNumber) => {
+            pathSet.indices.forEach((index) => {
+              if (index < categorySlugArray.length) {
+                results.push({
+                  path: ['issuesByNumber', issueNumber, 'categories', index],
+                  value: $ref(['categoriesBySlug', categorySlugArray[index]])
+                });
+              }
+            });
+          });
+        })
+      });
+    }
+  },
+  {
+    // Get trending articles
+    // THIS IS TEMPORARY
+    route: "trending[{integers:indices}]",
+    get: (pathSet) => {
+      return new Promise((resolve, reject) => {
+        ghostArticleQuery("limit=30&fields=slug").then((data) => {
+          data = data.posts;
+          data = data.filter((post) => {
+            return post.slug !== 'welcome-to-ghost';
+          });
+          const results = [];
+          pathSet.indices.forEach((index) => {
+            results.push({
+              path: ['trending', index],
+              value: $ref(['articlesBySlug', data[index].slug])
+            });
+          });
+        });
       });
     }
   },
@@ -291,11 +411,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
     // Get latest issue
     route: "latestIssue",
     get: (pathSet) => {
-      dbLatestIssueQuery().then((row) => {
-        return [{
-          path: ['latestIssue'],
-          value: $ref(['issues', row[0].issue_order])
-        }]
+      return new Promise((resolve, reject) => {
+        dbLatestIssueQuery().then((row) => {
+          resolve([{
+            path: ['latestIssue'],
+            value: $ref(['issuesByNumber', row[0].issue_order])
+          }]);
+        })
       })
     }
   },

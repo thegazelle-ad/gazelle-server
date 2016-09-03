@@ -224,4 +224,110 @@ export function dbCategoryNameQuery(slugs) {
 export function dbCategoryArticleQuery(slugs) {
   // slugs parameter is an array of category slugs
   // of which to fetch the articles from
+  // Will return object where keys are category slugs
+  // and values are arrays of articles from newest to oldest
+  return new Promise((resolve, reject) => {
+    const database = knex(knexConnectionObject);
+    database.select('posts.slug as post_slug', 'categories.slug as cat_slug')
+    .from('posts')
+    .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
+    .innerJoin('categories', 'categories.id', '=', 'posts_meta.category_id')
+    .whereIn('categories.slug', slugs).orderBy('gazelle_published_at', 'desc')
+    .then((rows) => {
+      // rows is an array of objects with keys post_slug and cat_slug
+      const data = {};
+      rows.forEach((row) => {
+        // This will input them in chronological order as
+        // the query was structured as so.
+        if (!data.hasOwnProperty(row.cat_slug)) {
+          data[row.cat_slug] = [row.post_slug];
+        }
+        else {
+          data[row.cat_slug].push(row.post_slug);
+        }
+      });
+      database.destroy();
+      resolve(data);
+    })
+    .catch((e) => {
+      database.destroy();
+      reject(e);
+    })
+  })
+}
+
+export function dbFeaturedArticleQuery(issueNumbers) {
+  // Get the featured articles from all the issueNumbers
+  return new Promise((resolve, reject) => {
+    const database = knex(knexConnectionObject);
+    database.select('posts.slug', 'issue_order')
+    .from('posts')
+    .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
+    .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issue_id')
+    .whereIn('issues.issue_order', issueNumbers).andWhere('type', '=', 1)
+    .then((rows) => {
+      database.destroy();
+      resolve(rows);
+    })
+    .catch((e) => {
+      database.destroy();
+      reject(e);
+    })
+  })
+}
+
+export function dbEditorPickQuery(issueNumbers) {
+  // Get the editor's picks from all the issueNumbers
+  return new Promise((resolve, reject) => {
+    const database = knex(knexConnectionObject);
+    database.select('posts.slug', 'issue_order')
+    .from('posts')
+    .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
+    .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issue_id')
+    .whereIn('issues.issue_order', issueNumbers).andWhere('type', '=', 2)
+    .then((rows) => {
+      const results = {};
+      rows.forEach((row) => {
+        if (!row.hasOwnProperty(row.issue_order)) {
+          results[row.issue_order] = [row.slug];
+        }
+        else {
+          results[row.issue_order].push(row.slug);
+        }
+      });
+      resolve(rows);
+    })
+    .catch((e) => {
+      database.destroy();
+      reject(e);
+    })
+  })
+}
+
+export function dbIssueCategoryQuery(issueNumbers) {
+  // get the categories from each issueNumber
+  return new Promise((resolve, reject) => {
+    const database = knex(knexConnectionObject);
+    database.select('categories.slug', 'issue_order')
+    .from('issues')
+    .innerJoin('issues_categories_order', 'issues_categories_order.issue_id', '=', 'issues.id')
+    .innerJoin('categories', 'issues_categories_order.category_id', '=', 'categories.id')
+    .whereIn('issues.issue_order', issueNumbers).orderBy('categories_order', 'asc')
+    .then((rows) => {
+      const results = {};
+      rows.forEach((row) => {
+        if (!row.hasOwnProperty(row.issue_order)) {
+          results[row.issue_order] = [row.slug];
+        }
+        else {
+          results[row.issue_order].push(row.slug);
+        }
+      });
+      resolve(rows);
+    })
+    .catch((e) => {
+      database.destroy();
+      reject(e);
+    });
+  });
 }

@@ -25,25 +25,25 @@ export default class IssueController extends FalcorController {
       ["latestIssue", "published_at"],
 
       // Request the featured article
-      ["latestIssue", "featured", ["title", "teaser", "issueId", "category", "slug", "featuredImage"]],
-      ["latestIssue" "featured", "authors", {length: 10}, ["name", "slug"]],
+      ["latestIssue", "featured", ["title", "teaser", "issueNumber", "category", "slug", "featuredImage"]],
+      ["latestIssue", "featured", "authors", {length: 10}, ["name", "slug"]],
 
       // Request first two Editor's Picks
-      ["latestIssue" "picks", {length: 2}, ["title", "teaser", "issueId", "category", "slug", "featuredImage"]],
-      ["latestIssue" "picks", {length: 2}, "authors", {length: 10}, ["name", "slug"]],
+      ["latestIssue", "picks", {length: 2}, ["title", "teaser", "issueNumber", "category", "slug", "featuredImage"]],
+      ["latestIssue", "picks", {length: 2}, "authors", {length: 10}, ["name", "slug"]],
 
       // Request first five Trending articles
-      ["trending", {length: 6}, ["title", "issueId", "category", "slug", "featuredImage"]],
+      ["trending", {length: 6}, ["title", "issueNumber", "category", "slug", "featuredImage"]],
       ["trending", {length: 6}, "authors", {length: 10}, ["name", "slug"]],
 
       // Request all category names and slugs (max 10 categories)
-      ["latestIssue" "categories", {length: 10}, ["name", "slug"]],
+      ["latestIssue", "categories", {length: 10}, ["name", "slug"]],
 
       // Request necessary data from all articles from each category (max 30 articles)
-      ["latestIssue" "categories", {length: 10}, "articles", {length: 30}, ["title", "teaser", "issueId", "category", "slug", "featuredImage"]],
+      ["latestIssue", "categories", {length: 10}, "articles", {length: 30}, ["title", "teaser", "issueNumber", "category", "slug", "featuredImage"]],
 
       // Request author name and slug for each article (max 10 authors)
-      ["latestIssue" "categories", {length: 10}, "articles", {length: 30}, "authors", {length: 10}, ["name", "slug"]],
+      ["latestIssue", "categories", {length: 10}, "articles", {length: 30}, "authors", {length: 10}, ["name", "slug"]],
     ];
   }
 
@@ -55,8 +55,6 @@ export default class IssueController extends FalcorController {
           <NotFound />
         );
       } else {
-        // TODO: Remove hardcoded issueId
-        let issueId = 76;
         const issueData = this.state.data.latestIssue;
         const trendingData = this.state.data.trending;
         /*
@@ -127,5 +125,5 @@ IssueController.propTypes = {
       published_at: React.PropTypes.string,
       articles: React.PropTypes.object,
     }),
-    issueId: React.PropTypes.string,
+    issueNumber: React.PropTypes.string,
 }
