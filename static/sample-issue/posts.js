@@ -9,6 +9,14 @@ const data = {
             ],
             "categories": [
                 {
+                    name: "commentary",
+                    slug: "commentary",
+                    articles: [
+                        { $type: "ref", value: ["articlesBySlug", "freshman-year-in-review-what-i-learned-2"] },
+                        { $type: "ref", value: ["articlesBySlug", "a-very-subjective-guide-to-eid-break"] },
+                        { $type: "ref", value: ["articlesBySlug", "on-adjusting-back"] },
+                    ],
+                },{
                     name: "on campus",
                     slug: "on-campus",
                     articles: [
@@ -19,16 +27,6 @@ const data = {
                     slug: "off-campus",
                     articles: [
                         { $type: "ref", value: ["articlesBySlug", "ride-hailing-applications-in-trouble"] },
-                    ],
-                },{
-                    name: "commentary",
-                    slug: "commentary",
-                    articles: [
-                        { $type: "ref", value: ["articlesBySlug", "freshman-year-in-review-what-i-learned-2"] },
-                        { $type: "ref", value: ["articlesBySlug", "a-very-subjective-guide-to-eid-break"] },
-                        { $type: "ref", value: ["articlesBySlug", "reclaiming-identity"] },
-                        { $type: "ref", value: ["articlesBySlug", "on-adjusting-back"] },
-                        { $type: "ref", value: ["articlesBySlug", "the-long-uncertain-wait-for-asylum-seekers-in-athens"] },
                     ],
                 },{
                     name: "in focus",
@@ -449,47 +447,47 @@ const data = {
             "html": `<p><img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/firstyearinreview.jpg" alt="Year in Review" />
 <em>Illustration by Devaki Banerjee</em></p>
 
-<p>Freshman year was the year that I learned how to be myself. During Marhaba I was sure I knew myself, and I went around presenting one aspect of myself: the extrovert Lina whoâ€™ll talk to anyone and everyone and who has no shame whatsoever. I liked that Lina. I still like that Lina. However, it took time for me to realize that this was not all there was to me.</p>
+<p>Freshman year was the year that I learned how to be myself. During Marhaba I was sure I knew myself, and I went around presenting one aspect of myself: the extrovert Lina who’ll talk to anyone and everyone and who has no shame whatsoever. I liked that Lina. I still like that Lina. However, it took time for me to realize that this was not all there was to me.</p>
 
-<p>Three weeks into university, Tea with Lina became a thing. Or so I was told. I was the tea enthusiast. I loved it. It helped facilitate my transition into college, and making new friends became so much easier. But, you know what? Tea with Lina didnâ€™t stop me from drinking coffee. I still enjoyed my solitary cup of coffee. People found my love for coffee unbelievable, since they were convinced that I was a tea person. </p>
+<p>Three weeks into university, Tea with Lina became a thing. Or so I was told. I was the tea enthusiast. I loved it. It helped facilitate my transition into college, and making new friends became so much easier. But, you know what? Tea with Lina didn’t stop me from drinking coffee. I still enjoyed my solitary cup of coffee. People found my love for coffee unbelievable, since they were convinced that I was a tea person. </p>
 
-<p>Thatâ€™s when I realized that binaries were not for me. I can be both a tea and a coffee person.</p>
+<p>That’s when I realized that binaries were not for me. I can be both a tea and a coffee person.</p>
 
-<p>Freshman year was the year I questioned what it means to be me. â€œIâ€™m Lina,â€ I would smile. â€œIâ€™m from Jordan but Iâ€™m Palestinian.â€ I would smile again. It was the year I had multiple identity crises and emotional traumas. I learned what it means to be an extroverted introvert.</p>
+<p>Freshman year was the year I questioned what it means to be me. “I’m Lina,” I would smile. “I’m from Jordan but I’m Palestinian.” I would smile again. It was the year I had multiple identity crises and emotional traumas. I learned what it means to be an extroverted introvert.</p>
 
-<p>As sure as I was that I was an extrovert, I was sure that I couldnâ€™t wait to leave home. After 17 years of living in the same place and falling into an uncomfortable routine, I was ready to go. </p>
+<p>As sure as I was that I was an extrovert, I was sure that I couldn’t wait to leave home. After 17 years of living in the same place and falling into an uncomfortable routine, I was ready to go. </p>
 
-<p>I love my parents, yet I didnâ€™t miss them much while I was away. I loved being independent far too much. That is, if living at NYU Abu Dhabi â€” with its dining hall and free washing machines â€” is considered living independently.</p>
+<p>I love my parents, yet I didn’t miss them much while I was away. I loved being independent far too much. That is, if living at NYU Abu Dhabi — with its dining hall and free washing machines — is considered living independently.</p>
 
 <p>It hit me midway that I am not really independent. Other communities are not as kind as NYUAD, and I only realized that when I went away for spring break and experienced real independence for the first time. I realized that on a budget, I had to make some tough choices: tea or coffee? </p>
 
-<p>I came in with no idea what to expect. Was the entire year going to be like Candidate Weekend or Marhaba? During Marhaba I thought that if college was going to be like that, I was dropping out. And during that same week, I spent more than 500 AED on unnecessary clothes and more than 400 on items from IKEA â€” things no one in the world should ever do. </p>
+<p>I came in with no idea what to expect. Was the entire year going to be like Candidate Weekend or Marhaba? During Marhaba I thought that if college was going to be like that, I was dropping out. And during that same week, I spent more than 500 AED on unnecessary clothes and more than 400 on items from IKEA — things no one in the world should ever do. </p>
 
-<p>I came in aiming for that 4.0 GPA, and to complete as many concentrations as possible â€” Literature and Creative Writing was my calling but I wanted to do other things too. Things did change, and I learned so much. Too much to put into one essay. </p>
+<p>I came in aiming for that 4.0 GPA, and to complete as many concentrations as possible — Literature and Creative Writing was my calling but I wanted to do other things too. Things did change, and I learned so much. Too much to put into one essay. </p>
 
-<p>I came in with the idea that I had to travel around the world as much as I could. I already knew that a semester in Paris was a must. I didnâ€™t really think about discovering Abu Dhabi and the UAE until I got here and the campus became far too small, far too quickly. I needed to get out, and I came to realize that this is one beautiful city. </p>
+<p>I came in with the idea that I had to travel around the world as much as I could. I already knew that a semester in Paris was a must. I didn’t really think about discovering Abu Dhabi and the UAE until I got here and the campus became far too small, far too quickly. I needed to get out, and I came to realize that this is one beautiful city. </p>
 
-<p>Itâ€™s visually odd and sometimes uncomfortably humid. Yet, I knew there were things for me to do. If I had nothing planned, I would take the shuttle to the city with some friends, walk around aimlessly and find someplace new. And when I needed personal space, Iâ€™d take my laptop and find a new place to try different coffees or teas.</p>
+<p>It’s visually odd and sometimes uncomfortably humid. Yet, I knew there were things for me to do. If I had nothing planned, I would take the shuttle to the city with some friends, walk around aimlessly and find someplace new. And when I needed personal space, I’d take my laptop and find a new place to try different coffees or teas.</p>
 
-<p>A spontaneous trip to Al Ain came up, and getting lost in an oasis there with a friend was definitely one of the highlights of my freshman year. I visited Dubai every once in a while to meet up with family and family friends â€“ and for a reality check. A break from this beautiful campus is definitely necessary every now and then. </p>
+<p>A spontaneous trip to Al Ain came up, and getting lost in an oasis there with a friend was definitely one of the highlights of my freshman year. I visited Dubai every once in a while to meet up with family and family friends – and for a reality check. A break from this beautiful campus is definitely necessary every now and then. </p>
 
-<p>I learned that small talk and insincere conversations were not for me. I learned that Iâ€™m not that great in person, and that my personality and academics need polishing. I had to get over my stubbornness and pride. I accepted failure, and at some point actually kind of embraced it. I realized that, as clichÃ©d as it sounds, you really do learn from your mistakes. And you know what? Sometimes you donâ€™t, and you need to make that same mistake four times before you get your act straight. </p>
+<p>I learned that small talk and insincere conversations were not for me. I learned that I’m not that great in person, and that my personality and academics need polishing. I had to get over my stubbornness and pride. I accepted failure, and at some point actually kind of embraced it. I realized that, as clichéd as it sounds, you really do learn from your mistakes. And you know what? Sometimes you don’t, and you need to make that same mistake four times before you get your act straight. </p>
 
 <p>I learned to open up and trust. I told some people things about myself that I could never say before. While making sure I never dump too much on one person, I found that counseling is a wonderful resource if you need someone to talk to. I learned that a small conversation could make my day. </p>
 
-<p>The hardest part for me was losing my uncle while being in Abu Dhabi. I could have gone home, but there were two weeks left in the semester and everyone around me helped me push through. Grief and loss support sessions were wonderful â€” they helped me figure out how to deal with my feelings and talk things out. In dealing with difficulty, I found people whom I can now call family.</p>
+<p>The hardest part for me was losing my uncle while being in Abu Dhabi. I could have gone home, but there were two weeks left in the semester and everyone around me helped me push through. Grief and loss support sessions were wonderful — they helped me figure out how to deal with my feelings and talk things out. In dealing with difficulty, I found people whom I can now call family.</p>
 
-<p>I decided that I was not going to make university about grades. Thereâ€™s far too much out there for me to only fixate my energy on academics. They are certainly important, but they are not everything. I learned that the arts make me truly happy â€“ everything from visual arts and film to literature and theater. I hung around the Imagine Science film festival for all three days of the weekend, and pulled all-nighters just because I had to attend those concerts on Saturday evenings. I fell in love with the NYUAD Arts Center. </p>
+<p>I decided that I was not going to make university about grades. There’s far too much out there for me to only fixate my energy on academics. They are certainly important, but they are not everything. I learned that the arts make me truly happy – everything from visual arts and film to literature and theater. I hung around the Imagine Science film festival for all three days of the weekend, and pulled all-nighters just because I had to attend those concerts on Saturday evenings. I fell in love with the NYUAD Arts Center. </p>
 
-<p>This love of the arts was sparked when I took a course called Jazz in my second semester. I never knew that I could possibly love a course so much. I never knew that I could get so emotionally attached to a class and group of people, both my classmates and the guests that I met for a couple of hours, the guests that I will probably never see again. I know, you hear it over and again, but you really never know where youâ€™ll find your favorite course. </p>
+<p>This love of the arts was sparked when I took a course called Jazz in my second semester. I never knew that I could possibly love a course so much. I never knew that I could get so emotionally attached to a class and group of people, both my classmates and the guests that I met for a couple of hours, the guests that I will probably never see again. I know, you hear it over and again, but you really never know where you’ll find your favorite course. </p>
 
 <p>My first year was great. I was able to embrace my ability and need to be alone. I also figured out that I was brave on two occasions: when my uncle, one the people closest to my heart, passed away, and when I asked a guy out. </p>
 
 <p>After a really long time, I became comfortable in my own skin. I started taking pride in the brown Arab woman that I am, and I have to say that so much of it is due to NYUAD and the people here. </p>
 
-<p>The one thing I think would definitely make your life here easier is to be yourself â€” no, not the person you think people want to meet, but yourself. That way youâ€™ll make genuine friends who share your vibe. Also, be open. Be open-minded, and be open to new experiences and people. This city and campus have so much to offer â€” take advantage of it. Time passes by far too quickly. </p>
+<p>The one thing I think would definitely make your life here easier is to be yourself — no, not the person you think people want to meet, but yourself. That way you’ll make genuine friends who share your vibe. Also, be open. Be open-minded, and be open to new experiences and people. This city and campus have so much to offer — take advantage of it. Time passes by far too quickly. </p>
 
-<p><em>Lina El Musa is a Staff Writer. Email her at feedback@thegazelle.org.</em></p>`,
+<p><em>Lina El Musa is a Staff Writer. Email her at feedback@thegazelle.org</em></p>`,
             "image": null,
             "published_at": "2016-09-04T05:58:09.000Z",
             "slug": "freshman-year-in-review-what-i-learned-2",
@@ -508,9 +506,9 @@ const data = {
             ],
             "featuredImage": "//thegazelle.s3.amazonaws.com/gazelle/2016/04/gazelle-graze-new.jpg",
             "html": `<p><img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/04/gazelle-graze-new.jpg" alt="The Weekly Graze" />
-<em>Graphic by JoaquÃ­n Kunkel Edited by Koh Terai/The Gazelle</em></p>
+<em>Graphic by Joaquín Kunkel Edited by Koh Terai/The Gazelle</em></p>
 
-<p>Here at The Gazelle, we work hard to bring you interesting, informative content that you can enjoy and engage with. But what do we read when we arenâ€™t in production every Saturday, working late into the night? The Weekly Graze is a series in which The Gazelleâ€™s staff members pick their favorite written reads from the past week, in the hope that you might discover some interesting reads too.</p>
+<p>Here at The Gazelle, we work hard to bring you interesting, informative content that you can enjoy and engage with. But what do we read when we aren’t in production every Saturday, working late into the night? The Weekly Graze is a series in which The Gazelle’s staff members pick their favorite written reads from the past week, in the hope that you might discover some interesting reads too.</p>
 
 <p>Connor Pearce <br />
 Co-Editor in Chief</p>
@@ -524,21 +522,21 @@ Opinion Editor</p>
 
 <p><a href="https://www.goodreads.com/book/show/13425592-devil-in-the-grove"><em>Devil in the Grove: Thurgood Marshall, the Groveland Boys, and the Dawn of a New America</em>,</a> Gilbert King</p>
 
-<p>In this Pulitzer Prize-winning piece of nonfiction, Gilbert King delivers an incredible account of one of the most important civil rights cases in U.S. American history. The book follows Thurgood Marshall through the humid swamps of Florida during his career with the National Association for the Advancement of Colored People, years before his days working on the Supreme Court. King, assisted by newly released FBI case files, follows Marshall as he enters the Jim Crow South to take on the Klu Klux Klan. This powerful narrative is a gripping description of what former U.S. Supreme Court Justice Robert Jackson called "one of the best examples of one of the worst menaces to American justice." If youâ€™re excited by law, U.S. American history or social justice movements generally, this one's for you.</p>
+<p>In this Pulitzer Prize-winning piece of nonfiction, Gilbert King delivers an incredible account of one of the most important civil rights cases in U.S. American history. The book follows Thurgood Marshall through the humid swamps of Florida during his career with the National Association for the Advancement of Colored People, years before his days working on the Supreme Court. King, assisted by newly released FBI case files, follows Marshall as he enters the Jim Crow South to take on the Klu Klux Klan. This powerful narrative is a gripping description of what former U.S. Supreme Court Justice Robert Jackson called "one of the best examples of one of the worst menaces to American justice." If you’re excited by law, U.S. American history or social justice movements generally, this one's for you.</p>
 
 <p>Pranav Mehta <br />
 Research Editor</p>
 
 <p><a href="https://www.goodreads.com/book/show/1358844.Remember_Me_"><em>Remember Me?</em>,</a> Sophie Kinsella</p>
 
-<p>When a friend caught me giggling at a physics problem because of its intricate story arc, said friend recommended this novel so that I could regain some semblance of so-called normal fiction. And that's exactly what happened â€” I have never been more invested in a fictional character's life than I was in Lexi's. Waking up brooding in a hospital and remembering you don't conform to society's ideals of beauty and also have a subpar love life can be tough, but hey, she realizes she's aged three years, has an enviable figure, straight teeth and a millionaire husband. The complex plot that follows â€” marriage problems, retrograde amnesia and attractive men â€” renders this literary gem a page-turner. What happens next? Will Lexi unravel the truth? I, as I'm sure you too, asked these questions, perched on the periphery of my seat.</p>
+<p>When a friend caught me giggling at a physics problem because of its intricate story arc, said friend recommended this novel so that I could regain some semblance of so-called normal fiction. And that's exactly what happened — I have never been more invested in a fictional character's life than I was in Lexi's. Waking up brooding in a hospital and remembering you don't conform to society's ideals of beauty and also have a subpar love life can be tough, but hey, she realizes she's aged three years, has an enviable figure, straight teeth and a millionaire husband. The complex plot that follows — marriage problems, retrograde amnesia and attractive men — renders this literary gem a page-turner. What happens next? Will Lexi unravel the truth? I, as I'm sure you too, asked these questions, perched on the periphery of my seat.</p>
 
 <p>Hannah Taylor <br />
 Managing Editor</p>
 
 <p><a href="https://www.goodreads.com/book/show/16115612-and-the-mountains-echoed"><em>And the Mountains Echoed</em>,</a> Khaled Hosseini</p>
 
-<p>I bought this book during a layover in Amsterdam that was unexpectedly lengthened by a flight delay. I went for the safe bet, choosing Hosseini because of his incredible popularity and my love for The Kite Runner. The book was the only thing that kept me awake long enough to catch my flight. As always, Hosseini conveys incredible honesty and insight that makes the reader feel as though theyâ€™re sitting with the dysfunctional families and friends portrayed in their living rooms, sipping tea and eating biscuits. The running themes were bonds and love with a focus on family dynamics, and unlike in his earlier works, Hosseini focuses on multiple characters and stories. Most of the story threads intertwine only at brief moments, but throughout the book there is a humane truth that everyone can relate to and learn from. I was actually nicer to my mother after reading this book.</p>`,
+<p>I bought this book during a layover in Amsterdam that was unexpectedly lengthened by a flight delay. I went for the safe bet, choosing Hosseini because of his incredible popularity and my love for The Kite Runner. The book was the only thing that kept me awake long enough to catch my flight. As always, Hosseini conveys incredible honesty and insight that makes the reader feel as though they’re sitting with the dysfunctional families and friends portrayed in their living rooms, sipping tea and eating biscuits. The running themes were bonds and love with a focus on family dynamics, and unlike in his earlier works, Hosseini focuses on multiple characters and stories. Most of the story threads intertwine only at brief moments, but throughout the book there is a humane truth that everyone can relate to and learn from. I was actually nicer to my mother after reading this book.</p>`,
             "image": null,
             "published_at": "2016-09-04T05:58:09.000Z",
             "slug": "the-weekly-graze-2",
@@ -551,67 +549,265 @@ Managing Editor</p>
                 { $type: "ref", value: ["articlesBySlug", "ride-hailing-applications-in-trouble"]},
             ],
         },
-        "freshman-year-in-review-what-i-learned-2": {
+        "a-very-subjective-guide-to-eid-break": {
             "authors": [
-                { $type: "ref", value: ["authorsBySlug", "lina-elmusa"] },
+                { $type: "ref", value: ["authorsBySlug", "karolina-wilczynska"] },
             ],
-            "featuredImage": "//thegazelle.s3.amazonaws.com/gazelle/2016/02/firstyearinreview.jpg",
-            "html": `<p><img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/firstyearinreview.jpg" alt="Year in Review" />
-<em>Illustration by Devaki Banerjee</em></p>
+            "featuredImage": "//thegazelle.s3.amazonaws.com/gazelle/2016/02/Ras-al-Khaimah-beach.jpg",
+            "html": `<p><img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/Ras-al-Khaimah-beach.jpg" alt="Eid Travels" /></p>
 
-<p>Freshman year was the year that I learned how to be myself. During Marhaba I was sure I knew myself, and I went around presenting one aspect of myself: the extrovert Lina whoâ€™ll talk to anyone and everyone and who has no shame whatsoever. I liked that Lina. I still like that Lina. However, it took time for me to realize that this was not all there was to me.</p>
+<p><em>Photograph by Karolina Wilczyńska</em></p>
 
-<p>Three weeks into university, Tea with Lina became a thing. Or so I was told. I was the tea enthusiast. I loved it. It helped facilitate my transition into college, and making new friends became so much easier. But, you know what? Tea with Lina didnâ€™t stop me from drinking coffee. I still enjoyed my solitary cup of coffee. People found my love for coffee unbelievable, since they were convinced that I was a tea person. </p>
+<p>Chances are that many of us will not receive our passports back before Eid break. NYU Abu Dhabi students, with their penchant for traveling everywhere from Mozambique to Nepal over short breaks, will likely have to wait until the next break, in October. While many upperclassmen may be frustrated about not being able to explore new continents, visiting long-unseen pen-friends or simply going home, this is a chance for freshmen to start their college travels in presumably the logical order: small steps first.</p>
 
-<p>Thatâ€™s when I realized that binaries were not for me. I can be both a tea and a coffee person.</p>
+<p>NYUAD is likely to eventually take you to a camel race, Yas Waterworld or yet another James Bond premiere, but the UAE also has gems you will need to discover yourself. Today, predicted temperatures range between 38 and 41 degrees Celsius. It might be too early for camping, but there are alternatives.</p>
 
-<p>Freshman year was the year I questioned what it means to be me. â€œIâ€™m Lina,â€ I would smile. â€œIâ€™m from Jordan but Iâ€™m Palestinian.â€ I would smile again. It was the year I had multiple identity crises and emotional traumas. I learned what it means to be an extroverted introvert.</p>
+<p>First of all, souqs. Tight schedules tend to favor quick trips to the mall, but shopping has many faces. There is the enormous Blue Souq and the Old Souq in Sharjah, just a couple of hours from Abu Dhabi. Dubai too offers plenty: the Gold Souq, the Spice Souq and the Perfume Souq, to name a few. Souqs are everywhere around the Emirates, and the Carpet Souq and the Fruit and Vegetable Market are just off Saadiyat Island. It is only a matter of finding them and spending a few hours picking a carpet most suitable for your new room.</p>
 
-<p>As sure as I was that I was an extrovert, I was sure that I couldnâ€™t wait to leave home. After 17 years of living in the same place and falling into an uncomfortable routine, I was ready to go. </p>
+<p>Additionally, there is always modern culture to explore. Until mid-September, Yas Island is hosting an event called The District, emulating a micro-city with a set of activities, workshops and events. The platform describes itself as “a one-of-a-kind space where you can socialize, play, create, explore, find inspiration, make connections or even disconnect if that’s what you’re in the mood for.” Another contemporary art site worth visiting is a set of galleries and venues in Al Quoz, an industrial district of Dubai. Some of the warehouses contain cafes that match the trends set by the art around them.</p>
 
-<p>I love my parents, yet I didnâ€™t miss them much while I was away. I loved being independent far too much. That is, if living at NYU Abu Dhabi â€” with its dining hall and free washing machines â€” is considered living independently.</p>
+<p>The break can also be an opportunity to escape the city and get lost between the desert and the sea. If renting a car is not an option, there are long-distance buses connecting the emirates. A few hours after leaving the Welcome Center, you can be at Al Badiyah in Fujairah, setting foot in the oldest mosque in the country and then climbing the rocks above it to enjoy the view of the Gulf of Oman and the palm trees at the foot of rocky mountains. Islands of greenery can also be found closer to the city, like in Madhab Park where you can walk through a forest of date palms. </p>
 
-<p>It hit me midway that I am not really independent. Other communities are not as kind as NYUAD, and I only realized that when I went away for spring break and experienced real independence for the first time. I realized that on a budget, I had to make some tough choices: tea or coffee? </p>
+<p>On the other hand, Ras al-Khaimah and Umm al-Quwain have austere coastlines to offer. The beach in Ras al-Khaimah feels worlds apart from Saadiyat Public Beach or the Corniche. Umm al-Quwain’s beach has an enormously long breakwater made of stones, creating a tiny beach at the very tip of the city. The pier is the perfect spot to watch every shade of blue the Gulf has to offer. And of course, there are mountains. Climbing Jebel Hafeet, just outside of Al Ain, is also an effective way of making the temporary passport loss less painful; part of the mountain lies in the territory of Oman, but the summit belongs to the UAE.</p>
 
-<p>I came in with no idea what to expect. Was the entire year going to be like Candidate Weekend or Marhaba? During Marhaba I thought that if college was going to be like that, I was dropping out. And during that same week, I spent more than 500 AED on unnecessary clothes and more than 400 on items from IKEA â€” things no one in the world should ever do. </p>
+<p>Lively ports, so historically and culturally important, can be found in every emirate — even in the smallest, Ajman. In Umm al-Quwain, the port is located at the tip of the city, not far from the pier beach. If you happen to be lucky, an Iranian family currently residing in the UAE might take you there in their own car, seeing how desperately you need a taxi in the scorching heat. There are forts like Abu Dhabi’s Qasr al-Hosn in Fujairah, Dubai and Al Ain. There are museums, for which Sharjah is most famous. Only in Sharjah will you find the Museum of Islamic Civilization, the Art Museum and the Heritage Area. Al Ain and the villages of Liwa, both in Abu Dhabi, are also worth visiting if history is what you’re looking for.</p>
 
-<p>I came in aiming for that 4.0 GPA, and to complete as many concentrations as possible â€” Literature and Creative Writing was my calling but I wanted to do other things too. Things did change, and I learned so much. Too much to put into one essay. </p>
+<p>To do justice to the holiday, Eid Break may also be a chance to learn a few phrases in Arabic, visit a mosque or attend a celebratory event on campus, organized by the Muslim Student Association.</p>
 
-<p>I came in with the idea that I had to travel around the world as much as I could. I already knew that a semester in Paris was a must. I didnâ€™t really think about discovering Abu Dhabi and the UAE until I got here and the campus became far too small, far too quickly. I needed to get out, and I came to realize that this is one beautiful city. </p>
+<p>Now let’s hope the visas won’t be ready by Eid.</p>
 
-<p>Itâ€™s visually odd and sometimes uncomfortably humid. Yet, I knew there were things for me to do. If I had nothing planned, I would take the shuttle to the city with some friends, walk around aimlessly and find someplace new. And when I needed personal space, Iâ€™d take my laptop and find a new place to try different coffees or teas.</p>
-
-<p>A spontaneous trip to Al Ain came up, and getting lost in an oasis there with a friend was definitely one of the highlights of my freshman year. I visited Dubai every once in a while to meet up with family and family friends â€“ and for a reality check. A break from this beautiful campus is definitely necessary every now and then. </p>
-
-<p>I learned that small talk and insincere conversations were not for me. I learned that Iâ€™m not that great in person, and that my personality and academics need polishing. I had to get over my stubbornness and pride. I accepted failure, and at some point actually kind of embraced it. I realized that, as clichÃ©d as it sounds, you really do learn from your mistakes. And you know what? Sometimes you donâ€™t, and you need to make that same mistake four times before you get your act straight. </p>
-
-<p>I learned to open up and trust. I told some people things about myself that I could never say before. While making sure I never dump too much on one person, I found that counseling is a wonderful resource if you need someone to talk to. I learned that a small conversation could make my day. </p>
-
-<p>The hardest part for me was losing my uncle while being in Abu Dhabi. I could have gone home, but there were two weeks left in the semester and everyone around me helped me push through. Grief and loss support sessions were wonderful â€” they helped me figure out how to deal with my feelings and talk things out. In dealing with difficulty, I found people whom I can now call family.</p>
-
-<p>I decided that I was not going to make university about grades. Thereâ€™s far too much out there for me to only fixate my energy on academics. They are certainly important, but they are not everything. I learned that the arts make me truly happy â€“ everything from visual arts and film to literature and theater. I hung around the Imagine Science film festival for all three days of the weekend, and pulled all-nighters just because I had to attend those concerts on Saturday evenings. I fell in love with the NYUAD Arts Center. </p>
-
-<p>This love of the arts was sparked when I took a course called Jazz in my second semester. I never knew that I could possibly love a course so much. I never knew that I could get so emotionally attached to a class and group of people, both my classmates and the guests that I met for a couple of hours, the guests that I will probably never see again. I know, you hear it over and again, but you really never know where youâ€™ll find your favorite course. </p>
-
-<p>My first year was great. I was able to embrace my ability and need to be alone. I also figured out that I was brave on two occasions: when my uncle, one the people closest to my heart, passed away, and when I asked a guy out. </p>
-
-<p>After a really long time, I became comfortable in my own skin. I started taking pride in the brown Arab woman that I am, and I have to say that so much of it is due to NYUAD and the people here. </p>
-
-<p>The one thing I think would definitely make your life here easier is to be yourself â€” no, not the person you think people want to meet, but yourself. That way youâ€™ll make genuine friends who share your vibe. Also, be open. Be open-minded, and be open to new experiences and people. This city and campus have so much to offer â€” take advantage of it. Time passes by far too quickly. </p>
-
-<p><em>Lina El Musa is a Staff Writer. Email her at feedback@thegazelle.org.</em></p>`,
+<p><em>Karolina Wilczynska is Research Editor. Email her at feedback@thegazelle.org</em></p>`,
             "image": null,
             "published_at": "2016-09-04T05:58:09.000Z",
-            "slug": "freshman-year-in-review-what-i-learned-2",
-            "title": "Freshman Year in Review: What I Learned",
+            "slug": "a-very-subjective-guide-to-eid-break",
+            "title": "A Very Subjective Guide to Eid Break",
             "issueId": "76",
             "category": "commentary",
-            "teaser": "How to be a tea and coffee person.",
+            "teaser": "The UAE has plenty to offer when it comes to exploration during the holidays. Whether it be adventure, history or a good view. Make sure to take advantage of that during the Eid Break.",
             "related": [
                 { $type: "ref", value: ["articlesBySlug", "the-long-uncertain-wait-for-asylum-seekers-in-athens"]},
                 { $type: "ref", value: ["articlesBySlug", "ride-hailing-applications-in-trouble"]},
             ],
         },
+        "new-j-term-course-selection-process": {
+            "authors": [
+                { $type: "ref", value: ["authorsBySlug", "kristina-stankovic"] },
+            ],
+            "featuredImage": "//thegazelle.s3.amazonaws.com/gazelle/2016/02/7.jpg",
+            "html": `<p><img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/7.jpg" alt="Update to J-Term Policy" />
+<em>Illustration by Joaquin Kunkel</em></p>
+
+<p>Starting in fall 2016, students are supposed to complete a January Term application on a new point-based system. This system, wherein classes and students are allocated a certain number of points, is designed to accomplish the same results as the previous J-Term allocation process and will still respect the student’s wish list. Students are supposed to apply by listing their seven preferences instead of six, as was the case in previous years. </p>
+
+<p>Each course is given a point value based on the popularity of its location and whether the course fulfills a Core curriculum requirement. Classes have point values between one and seven. Abu Dhabi-based J-Term classes are worth two points whereas those with international trips are worth four points. Paris, Buenos Aires and Sydney are worth the highest number of points — six. The specific class in Paris scheduled for January 2017, Fascism, Antifascism and Culture, is worth seven points because it is also part of the Core curriculum. Apart from New York and Shanghai, which are worth four points each, other global locations are worth five points each.</p>
+
+<p>Students have different point budgets depending on a variety of factors, including the number of J-Terms previously completed abroad as well as their class year. According to the J-Term <a href="https://students.nyuad.nyu.edu/academics/global-education/january-term/j-term-faqs/">Frequently Asked Questions</a>, students who have had two classes in Abu Dhabi that do not count for a Core curriculum class have the most points number of points — 35. Students who have already had two J-Terms in global locations, three J-Terms in total and at least one J-Term class that counts as a Core curriculum class have the fewest points — 16. Everybody else’s points are between 16 and 35.</p>
+
+<p>The new system has sparked conversations among students, both on social media and on campus. Junior Maria Vogel said that the application process was simple to follow, but felt restrictive:</p>
+
+<p>“From the perspective of the university, the changes make sense. But our choice is more limited now. I was shocked that a course featuring an international trip will be considered a J-Term abroad for us upperclassmen.”</p>
+
+<p>Previously, classes based in Abu Dhabi with international trips did not count as J-Terms abroad apart from a few exceptions.</p>
+
+<p>Senior Sarah Hassan agrees with Vogel, voicing that the new system might force students to take classes out of their areas of interest.</p>
+
+<p>“Watching from the sidelines I think that the students are constricted by the rules not previously communicated, especially rules regarding Core classes,” said Hassan, who is not taking a J-Term herself. “These changes make students settle for classes they are not particularly interested in,” says Hassan.</p>
+
+<p>On the other hand, freshman Melinda Demirović says that the J-Term system is fair to freshmen:</p>
+
+<p>“We were always aware that we will have one J-Term in Abu Dhabi, one in Abu Dhabi which includes a trip and one J-Term abroad. I think that it is a fair system — many upperclassmen were promised a possibility of two J-Terms abroad, but ended up with one only. At least we know for sure what our options are,” said Demirović.</p>
+
+<p><em>Kristina Stankovic is News Editor. Email her at feedback@thegazelle.org</em></p>`,
+            "image": null,
+            "published_at": "2016-09-04T05:58:09.000Z",
+            "slug": "new-j-term-course-selection-process",
+            "title": "New J-Term Course Selection Process",
+            "issueId": "76",
+            "category": "on-campus",
+            "teaser": "New J-term process yields mixed responses.",
+            "related": [
+                { $type: "ref", value: ["articlesBySlug", "the-long-uncertain-wait-for-asylum-seekers-in-athens"]},
+                { $type: "ref", value: ["articlesBySlug", "ride-hailing-applications-in-trouble"]},
+            ],
+        },
+        "ride-hailing-applications-in-trouble": {
+            "authors": [
+                { $type: "ref", value: ["authorsBySlug", "connor-pearce"] },
+            ],
+            "featuredImage": "//thegazelle.s3.amazonaws.com/gazelle/2016/02/ubercareem.jpg",
+            "html": `<p><img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/ubercareem.jpg" alt="Uber" />
+<em>Illustration by Joaquin Kunkel</em></p>
+
+<p>On Aug. 27, up to 70 drivers using ride-hailing applications Uber and Careem in Abu Dhabi were arrested and taken into custody, <a href="http://www.thenational.ae/business/technology/uber-and-careem-drivers-detained">according</a> to The National. Both apps subsequently suspended their services to drivers and customers. Uber remains offline, whereas Careem resumed its service earlier this week.</p>
+
+<p>Senior Jose Varias, who has used both apps previously, noted that when trying to use Careem on the evening of Aug. 31 — soon after its service was resumed — the cost was 20 AED more than the regular price of traveling from near Sama Tower to the Saadiyat campus. Varias used the Abu Dhabi Taxi App to hail a taxi instead, and one arrived within 20 minutes of placing the request.</p>
+
+<p>With the low-cost version of Uber, Uber X, which was recently introduced in Abu Dhabi, prices of Uber and Abu Dhabi TransAD taxis were roughly comparable. With promotions often offered by Uber to new customers, taking an Uber X is sometimes cheaper than taking a TransAD taxi. <a href="http://www.thenational.ae/business/technology/why-uber-and-careem-have-suspended-operations-in-abu-dhabi--video">Reports</a> in The National suggest that the undercutting of taxi prices was what prompted the crackdown.</p>
+
+<p>Senior Arame Dieng noted that Careem was also more useful as their cars could accommodate more passengers than Uber, and larger vehicles were more readily available from Careem than from TransAD taxis.</p>
+
+<p>For Varias, the benefits of these apps are simple: "The reason I use Uber or Careem is because I don't carry cash."</p>
+
+<p>"It would cost me [eight AED] to get cash and it's only a five AED difference with a cab, so I'm not paying as much and [Uber] is more comfortable."</p>
+
+<p>Both students said that they were likely to switch to using TransAD taxis if prices for Uber or Careem were permanently increased.</p>
+
+<p><em>Connor Pierce is Editor-in-Chief. Email him at feedback@thegazelle.org</em></p>`,
+            "image": null,
+            "published_at": "2016-09-04T05:58:09.000Z",
+            "slug": "ride-hailing-applications-in-trouble",
+            "title": "Ride-Hailing Applications in Trouble",
+            "issueId": "76",
+            "category": "off-campus",
+            "teaser": "Uber and Careem apps suspended their services to drivers and customers. Uber remains offline",
+            "related": [
+                { $type: "ref", value: ["articlesBySlug", "the-long-uncertain-wait-for-asylum-seekers-in-athens"]},
+                { $type: "ref", value: ["articlesBySlug", "new-j-term-course-selection-process"]},
+            ],
+        },
+        "the-long-uncertain-wait-for-asylum-seekers-in-athens": {
+            "authors": [
+                { $type: "ref", value: ["authorsBySlug", "annalisa-galgano"] },
+            ],
+            "featuredImage": "//thegazelle.s3.amazonaws.com/gazelle/2016/02/annalisa.jpg",
+            "html": `<p><img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/annalisa.jpg" alt="asylum seekers" />
+<em>Illustration by Joaquin Kunkel</em></p>
+
+<p>This summer, everyone’s eyes were on the 10 refugees who competed in the Rio Olympics. Spectators around the world learned the story of Syrian swimmer Yusra Mardini, who swam three hours in the Mediterranean pushing a boat full of other refugees. U.S. President Barack Obama even <a href="https://twitter.com/POTUS/status/761703867402686464?ref_src=twsrc%5Etfw">tweeted</a> that #TeamRefugees “prove that you can succeed no matter where you are from.” While I wish this idealism were true, I cannot help but think of the thousands of other refugees and asylum seekers I saw this summer, living over 9000 kilometers away from Rio in abandoned Olympic stadiums in Athens, without an audience and certainly without applause. </p>
+
+<p><img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/Barack-Obama-Tweet.png" alt="obama tweet" /></p>
+
+<p>This past weekend also marked a year since the death of Aylan Kurdi, a three-year-old found washed up on a Turkish beach after a boat, meant to carry his family to safety, capsized. Although the photo of Aylan’s body sparked global sympathy and outrage, the circumstances that led to his death have not changed. Yusra Mardini’s three-hour swim was necessary because one year later, there is still no safe route for people fleeing war to apply for asylum in Europe. In order to gain refugee status in the EU, people embark on a deadly journey across the Mediterranean, a route that has already cost over 3,000 people their lives this year. </p>
+
+<p>However, arriving on Greece’s shores is only the beginning of their journey toward asylum. I spent this summer with professor Sophia Kalantzakos in Athens, Greece, researching the refugee situation. We interviewed volunteers, policymakers, service providers and asylum seekers. With this research, I hoped to gain a better understanding of the journeys and conditions for asylum seekers in Athens. In these interviews, asylum seekers in Greece expressed confusion and frustration, and felt that they had been forgotten. </p>
+
+<p>Though the media often conflates refugees with asylum seekers, there is an important distinction. Anyone fleeing their home country to seek protection elsewhere is considered an asylum seeker until the government of the receiving country officially approves their application for refugee status. Formal refugee status grants the refugee the right to healthcare, education, work and reunification with family members.</p>
+
+<p>Since Greece’s northern borders closed in March, an estimated 57,000 asylum seekers are currently stuck in Greece, awaiting information about whether they will be deported or granted refugee status, whether they will be permitted to reunify with family members in other European countries or to relocate at all. Shortly before we arrived in Greece, the government <a href="http://www.aljazeera.com/news/2016/05/greece-begins-idomeni-refugee-camp-evacuation-160524051404401.html">bulldozed</a> the unofficial Idomeni camp at the northern border, where several thousand asylum seekers had settled in the hopes that the borders would re-open again and they could continue their journey to other European countries. Many of the people who had been living at Idomeni returned to Athens after the camp’s destruction to wait for more information.</p>
+
+<p>During our time in Greece, the pre-registration of asylum applicants had begun. All Syrians and Arabic speakers not living in formal camps had to pre-register by calling a single Skype account during a weekly three-hour window. With thousands of people attempting to make contact during this weekly window, it took many people weeks or even months to finally connect their calls. Once they successfully got through on Skype, callers would be given a code that would allow them to pre-register in person at the asylum office in Athens. Several days or weeks after pre-registering, applicants are texted the date and time of their asylum interview appointment, which takes place five to seven months after they pre-registered. In the meantime, all they can do is hope that the wait will be worthwhile.</p>
+
+<p>Syrians who arrived in Greece before the EU-Turkey deal was enacted on March 20 are the most likely to be granted refugee status. Those who arrived on Greece’s shores after March 20 are nervous to even apply for asylum, lest they be deported back to Turkey, where they would likely live in substandard conditions without the right to work. Similarly, Afghans are not eligible for relocation out of Greece, so many choose not to risk applying for asylum at all.</p>
+
+<p>Housing conditions for asylum seekers in Athens vary widely. Some families may apply to be housed in vacant apartments through an organization called Praksis. This option perhaps offers the most independence and comfort, but one family we spoke to also felt more isolated from other asylum seekers — they were worried that they could not stay as informed about the services available to them and the next steps in the asylum process. Other asylum seekers around the city can stay in formal camps, the best of which is run by the municipality of Athens and provides personal containers, beds, running water and educational programming for children. <br />
+<img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/Eleonas-Camp.jpg" alt="Eleonas Camp" title="" /><em>Photograph by Annalisa Galgano</em></p>
+
+<p>Asylum seekers staying in the abandoned Olympic hockey and baseball stadiums-turned-UNHCR camps live in standard-issue white UNHCR tents. While the rest of the world cheered on the ten refugee athletes competing at the Rio Olympics, thousands of forgotten asylum seekers passed another week in these old Olympic stadiums, hoping and waiting. </p>
+
+<p>Just outside the stadium is the abandoned Elliniko airport, which has also become an unofficial camp for over a thousand Afghans. Again, the location of the camp stings with irony. The board in the Departures area of the old airport still lists the flight times and gates for forgotten planes departing to Germany, the UK and many other places where Afghans are not eligible for asylum. A similar informal camp was established at Piraeus Port, where many asylum seekers had pitched tents after arriving from the islands. However, this camp was evacuated in July, and residents were asked to move into an alternate camp. Most people express resistance to moving into formal camps, particularly the military-run camps outside of the city, for fear that once their presence is no longer visible in Athens they will be forgotten altogether.</p>
+
+<p>In all the camps, people told us they found it difficult to find ways to pass the time. The food rations, the lack of productive activities, the heat of the summer and the unsettling uncertainty about the future contributed to the high tensions in the camps. However, each of the camps is maintained by the passion and energy of Greek government workers, NGOs and volunteers, both local and foreign. Volunteers largely use social media to keep track of independent individuals and organizations who are helping with the crisis, to channel new volunteers to where they are most needed and to dispel rumors with correct information. Despite the ongoing economic crisis in Greece, everyday citizens have expressed their solidarity with asylum seekers by giving their time, resources and talents to improve the living conditions and maintain the dignity of asylum seekers in Greece. <br />
+<img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/Refugees-Welcome.jpg" alt="Refugees Welcome" title="" /><em>Photograph by Annalisa Galgano</em></p>
+
+<p>For example, the residents of Exarcheia — a neighborhood in Greece known for anarchists — have helped convert several abandoned buildings, including an old school and a vacant hotel, into new self-organized accommodations for asylum seekers. Residents in these squats actually seem to thrive more than other asylum seekers we met in camps, partially because the residents themselves are responsible for the squats’ operations. Because most of the squats do not accept assistance from NGOs or the government, residents and local Greek volunteers — who refer to themselves as solidarians — self-organize cooking, cleaning, and childcare rotations. </p>
+
+<p>I had the opportunity to meet several Syrian adults and children who had learned near-fluent English during their stay in Hotel City Plaza, the previously abandoned hotel in Exarcheia. By giving asylum seekers control and choice in small ways, such as allowing them to cook for themselves and pursue educational opportunities, solidarians in Greece restored some measure of dignity to people who have been engulfed by uncontrollable circumstances. </p>
+
+<p>I was constantly struck by the resilience and solidarity of the communities that I met in Athens. Shortly before I left Athens, I was invited to celebrate the end of Ramadan at Hotel City Plaza. That night, Syrians, Afghans and Greeks celebrated Eid together by dancing, sharing desserts, and Skyping loved ones back at home or scattered elsewhere around the world. That evening, it seemed that people felt at one with their new community and with Muslims around the world. That evening, I don’t think anyone felt forgotten.</p>
+
+<p>In recent months, solidarians and asylum seekers have organized several protests in Athens and Thessaloniki to pressure governments and international organizations to act more quickly in establishing safe, legal paths to asylum and family reunification. Families, children, and local volunteers occupy the square in front of the Parliament building and insisting upon their own visibility. Despite the international spotlight moving away from the Olympics and the ‘usual’ recurring images of the refugee crisis, asylum seekers alongside their Greek supporters are asking that the world does not forget them. They need more than two weeks’ applause in a stadium far away. </p>
+
+<p><em>Annalisa Galgano is a contributing writer. Email her at feedback@thegazelle.org</em></p>`,
+            "image": null,
+            "published_at": "2016-09-04T05:58:09.000Z",
+            "slug": "the-long-uncertain-wait-for-asylum-seekers-in-athens",
+            "title": "The Long, Uncertain Wait for Asylum Seekers in Athens",
+            "issueId": "76",
+            "category": "commentary",
+            "teaser": "While the world cheered on the refugee athletes at the Rio Olympics, thousands of forgotten asylum seekers passed another week in old stadiums, hoping and waiting.",
+            "related": [
+                { $type: "ref", value: ["articlesBySlug", "a-very-subjective-guide-to-eid-break"]},
+                { $type: "ref", value: ["articlesBySlug", "new-j-term-course-selection-process"]},
+            ],
+        },
+        "on-adjusting-back": {
+            "authors": [
+                { $type: "ref", value: ["authorsBySlug", "liza-tait-bailey"] },
+            ],
+            "featuredImage": "//thegazelle.s3.amazonaws.com/gazelle/2016/02/liza.jpg",
+            "html": `<p><img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/liza.jpg" alt="On Adjusting Back" />
+<em>Illustration by Devaki Banerjee</em></p>
+
+<p>There are many aspects of returning to NYU Abu Dhabi that upperclassmen know all too well: the joyful reunions after months — possibly years — of separation, the endless replies to questions about summers, internships and previous semesters, the staggering back from the bookstore with a fresh set of textbooks and fresh optimism for the coming months. Underlying these familiar experiences for me, though, is the small ripple of a foreign feeling. </p>
+
+<p>Tonight I will be co-facilitating a workshop on Adjusting to NYUAD for freshmen, offering my experience and advice on how to acclimatise to college life. To them, we upperclassmen must seem like we are intimately acquainted with the context in which we find ourselves, and in many ways we are. Yet I find myself going through a period of adjustment too — one that can be easily overlooked in the bustle of a busy new year. </p>
+
+<p>While the buildings fundamentally remain the same — the appearance of brightly coloured walls aside — its inhabitants change. As last year’s seniors progress into the real world and this year’s freshmen burst in with awe-inspiring enthusiasm, those in the middle must accept that this fall is not like the spring before it nor like the fall before that. It sounds trivial to write all of this down — of course, the student body keeps changing, that is the nature of any university — but I cannot be the only one struggling to adjust. Just last week I found myself eating at a table that we referred to as an island of seniors because of the relief we found in familiar faces among a sea of strangers. Moving around the campus is akin to biting into one of my favourite Camel Cookies and finding a different filling: it is still sweet, but not what I was expecting. </p>
+
+<p>Should I have anticipated this feeling of having to readjust? Yes, perhaps. As a senior it’s not my first time coming back, but for some reason the feelings are the strongest they’ve been since I came to NYUAD. The ghosts of friends gone by linger around the spaces that remind me of my memories with them. While I relish my final year as a chance to make new memories and new friends, I find myself going through a period of sadness as I remember that certain people are no longer here. </p>
+
+<p>I know I’m not the only one readjusting, nor is mine the only problem. I spoke to a friend today who told me about the trouble she has with moving between such vastly different contexts. At home, friends and family hold views that are utterly out of place here, and in the first few days, she struggles to fit back into college. The sudden change in pace, too, takes some getting used to. After a peaceful summer in the countryside, the oversubscribed life of NYUAD comes as something of a shock. </p>
+
+<p>Thankfully the sensation never lasts long. As with each year before this, I will soon be swept up by this slightly altered life at NYUAD. Already, new faces are becoming old, and my choice of who to sit with at dinner is beginning to grow rapidly. But as I offer advice to freshmen struggling to settle in, I will take the time to tell them that we too go through an adjustment period. It is subtler and perhaps quicker, but it is there nonetheless, and no one should be ashamed of saying so. Seniors might seem like they know everything, but freshmen aren’t the only ones who can feel lost.</p>
+
+<p><em>Liza Tait-Bailey is Social Media Editor. Email her at feedback@thegazelle.org</em></p>`,
+            "image": null,
+            "published_at": "2016-09-04T05:58:09.000Z",
+            "slug": "on-adjusting-back",
+            "title": "On Adjusting Back",
+            "issueId": "76",
+            "category": "commentary",
+            "teaser": "Freshmen aren’t the only ones feeling new or lost: a senior’s tale of readjusting back to Abu Dhabi and NYUAD after study abroad.",
+            "related": [
+                { $type: "ref", value: ["articlesBySlug", "the-long-uncertain-wait-for-asylum-seekers-in-athens"]},
+                { $type: "ref", value: ["articlesBySlug", "new-j-term-course-selection-process"]},
+            ],
+        },
+        "reclaiming-identity": {
+            "authors": [
+                { $type: "ref", value: ["authorsBySlug", "tom-klein"] },
+            ],
+            "featuredImage": "http://thegazelle.s3.amazonaws.com/gazelle/2016/02/13.jpg",
+            "html": `<p><em>Editor’s Note: At the author’s request we will use the term American to refer to citizens of the United States, as opposed to US American.</em></p>
+
+<p><img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/13.jpg" alt="Reclaiming Identity" /></p>
+
+<p>Since 1999, the Birthright Israel Foundation has paid for young Jews from all over the world to visit Israel. In a free ten-day trip, predominantly high school graduates along with freshman and sophomores in college are marched around Israel in a bid to unite those of Jewish heritage. As I queued for Lufthansa flight 403 to Frankfurt, I observed the latest batch of American Jews bound on such a journey. </p>
+
+<p>While I was not among the group of -bergs and -steins embarking on a Birthright trip, the flight set the tone for the remainder of the summer. Like many of those that accompanied me across the Atlantic, I was an American several generations removed from the boat. Being of Polish and Ashkenazi heritage — ignoring the fact that I had spent less time wearing a yarmulke and more time eating wafers on Sunday — I fit in remarkably well.</p>
+
+<p>As I touched down successively in Krakow and then, a week later, Tel Aviv, I hoped I would feel this greater sense of home I had heard others in line describe in exploring their roots. I wanted that sense of lost kinship that programs like Birthright Israel claimed to restore. Nevertheless, as I departed both Chopin and Ben Gurion airport, my home remained in New Jersey.</p>
+
+<p>After the summer across the Atlantic, I became, if anything, more ardently American. The reasoning behind this was less than simple. In fact, it took me quite a while to realize it myself, but at its core it was a rejection of a common narrative offered by those who reconnect with their heritage. It was a rejection of the idea that a part of one’s culture was lost when their family migrated, and that only by going to this place of origin could they hope to be whole. The concept began to suggest my creole traditions were some bastardization of a truer culture, incapable of being venerated in their own right. After years of challah French toast and kielbasa sandwiches, there was no way that could be the case. </p>
+
+<p>At times, the narrative of cultural bridging stood firm. As I sat in a beer garden in Krakow, these noses distinctive of south Polish heritage stood out to me like I was at another family function back home, bludgeoned by a fury of hugs and kisses from relatives whose names I had forgotten. It came again on the banks of Warsaw’s Vistula river as I heard teenagers belching out a drunken rendition of Sto Lat, a song I’d never heard outside of family birthday parties before. However, these moments of cultural union gave way to larger divisions. Indeed, crappy Israeli bagels, deprived of proper cream cheese and any reasonable sense of sponginess, were indicative of a general Israeli ignorance of all things Yiddish, reducing elements of my family’s lexicon to mere tchotchke’s of Jewish history. Childhood stories of the Polka dancehalls, where my grandparents met, were further replaced in Poland with tales from older generations of the oppression under Stalin. The more I mingled with these Old World cultures, the more I realized, after years in the New World, that we had diverged.</p>
+
+<p>I ultimately understand the attractiveness of looking abroad for a sense of self. Many feel alienated by the country their family migrated to and going abroad is their means to regaining a sense of belonging. But for others, this narrative of getting on a plane to find your roots denies the significance and uniqueness of being a member of an immigrant community. Immigrant identities are unique in their own right and, in my own experience, where I find my lost tribe. </p>
+
+<p><em>Thomas Klein is Opinion Editor. Email him at feedback@thegazelle.org</em></p>`,
+            "image": null,
+            "published_at": "2016-09-04T05:58:09.000Z",
+            "slug": "reclaiming-identity",
+            "title": "Reclaiming Identity",
+            "issueId": "76",
+            "category": "commentary",
+            "teaser": "The more I mingled with these Old World cultures, the more I realized, after years in the New World, that we had diverged.",
+            "related": [
+                { $type: "ref", value: ["articlesBySlug", "the-long-uncertain-wait-for-asylum-seekers-in-athens"]},
+                { $type: "ref", value: ["articlesBySlug", "new-j-term-course-selection-process"]},
+            ],
+        },
+        "sunday-sketches-xvi": {
+            "authors": [
+                { $type: "ref", value: ["authorsBySlug", "sebastian-rojas-cabal"] },
+            ],
+            "featuredImage": "//thegazelle.s3.amazonaws.com/gazelle/2016/02/Sunday-Sketches-XVI.jpg",
+            "html": `<p><img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/Sunday-Sketches-XVI.jpg" alt="Sunday Sketch" /></p>
+
+<p><em>Sebastián Rojas Cabal is a contributing writer. Email him at feedback@thegazelle.org</em></p>`,
+            "image": null,
+            "published_at": "2016-09-04T05:58:09.000Z",
+            "slug": "sunday-sketches-xvi",
+            "title": "Sunday Sketches, XVI",
+            "issueId": "76",
+            "category": "commentary",
+            "teaser": "",
+            "related": [
+                { $type: "ref", value: ["articlesBySlug", "the-long-uncertain-wait-for-asylum-seekers-in-athens"]},
+                { $type: "ref", value: ["articlesBySlug", "new-j-term-course-selection-process"]},
+            ],
+        },
+    },
 
     // "sample": {
     //     name: "",
@@ -684,6 +880,7 @@ Managing Editor</p>
             biography: "Karolina is a sophomore passionate about social sciences and where the world is going. When she is not busy drinking her coffee, Karolina likes to tests her luck playing capoeira and the guitar. She was drawn to journalism by the conviction that what we know influences our views and actions; she thinks it coincides nicely with her preference to talk about the world around her rather than herself.",
             articles: [
                 { $type: "ref", value: ["articlesBySlug", "post-marhaba-feels"] },
+                { $type: "ref", value: ["articlesBySlug", "a-very-subjective-guide-to-eid-break"]},
             ],
         },
         "the-gazelle-staff": {
@@ -746,6 +943,7 @@ Managing Editor</p>
             articles: [
                 { $type: "ref", value: ["articlesBySlug", "visas"] },
                 { $type: "ref", value: ["articlesBySlug", "letter"] },
+                { $type: "ref", value: ["articlesBySlug", "ride-hailing-applications-in-trouble"]},
             ],
         },
         "supriya-kamath": {
@@ -786,6 +984,56 @@ Managing Editor</p>
             biography: "",
             articles: [
                 { $type: "ref", value: ["articlesBySlug", "changes-with-marhaba"] },
+            ],
+        },
+        "kristina-stankovic": {
+            name: "Kristina Stanković",
+            photo: null,
+            slug: "kristina-stankovic",
+            title: "Contributor",
+            biography: "",
+            articles: [
+                { $type: "ref", value: ["articlesBySlug", "new-j-term-course-selection-process"] },
+            ],
+        },
+        "annalisa-galgano": {
+            name: "Annalisa Galgano",
+            photo: null,
+            slug: "annalisa-galgano",
+            title: "Contributor",
+            biography: "",
+            articles: [
+                { $type: "ref", value: ["articlesBySlug", "the-long-uncertain-wait-for-asylum-seekers-in-athens"] },
+            ],
+        },
+        "liza-tait-bailey": {
+            name: "Liza Tait-Bailey",
+            photo: "//thegazelle.s3.amazonaws.com/gazelle/2015/10/liza.jpg",
+            slug: "liza-tait-bailey",
+            title: "Social Media Consultant",
+            biography: "Liza comes from rainy England, and realized that she spent so much time on social media that she might as well do something useful with it. When she is not tweeting or Instagramming she can be found running around campus with a Vanilla Latte in hand, thinking of new ideas for her advice and travel blog. She is currently in Ghana, trying to eat as many mangoes as humanly possible.",
+            articles: [
+                { $type: "ref", value: ["articlesBySlug", "on-adjusting-back"] },
+            ],
+        },
+        "tom-klein": {
+            name: "Tom Klein",
+            photo: null,
+            slug: "tom-klein",
+            title: "Contributor",
+            biography: "",
+            articles: [
+                { $type: "ref", value: ["articlesBySlug", "reclaiming-identity"] },
+            ],
+        },
+        "sebastian-rojas-cabal": {
+            name: "Sebastián Rojas Cabal",
+            photo: null,
+            slug: "sebastian-rojas-cabal",
+            title: "Contributor",
+            biography: "",
+            articles: [
+                { $type: "ref", value: ["articlesBySlug", "sunday-sketches-xvi"] },
             ],
         },
     },
