@@ -1,7 +1,7 @@
 const data = {
     issues: {
         "76": {
-            "pubDate": "2016-08-21T05:58:09.000Z",
+            "pubDate": "2016-09-04T05:58:09.000Z",
             "featured": { $type: "ref", value: ["articlesBySlug", "sunday-sketches-xvi"] },
             "picks": [
                 { $type: "ref", value: ["articlesBySlug", "reclaiming-identity"] },
