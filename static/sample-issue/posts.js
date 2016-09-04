@@ -659,7 +659,7 @@ Managing Editor</p>
             "title": "Ride-Hailing Applications in Trouble",
             "issueId": "76",
             "category": "off-campus",
-            "teaser": "Uber and Careem apps suspended their services to drivers and customers. Uber remains offline",
+            "teaser": "Uber and Careem apps suspended their services to drivers and customers. Uber remains offline.",
             "related": [
                 { $type: "ref", value: ["articlesBySlug", "the-long-uncertain-wait-for-asylum-seekers-in-athens"]},
                 { $type: "ref", value: ["articlesBySlug", "new-j-term-course-selection-process"]},
@@ -690,7 +690,7 @@ Managing Editor</p>
 <p>Syrians who arrived in Greece before the EU-Turkey deal was enacted on March 20 are the most likely to be granted refugee status. Those who arrived on Greece’s shores after March 20 are nervous to even apply for asylum, lest they be deported back to Turkey, where they would likely live in substandard conditions without the right to work. Similarly, Afghans are not eligible for relocation out of Greece, so many choose not to risk applying for asylum at all.</p>
 
 <p>Housing conditions for asylum seekers in Athens vary widely. Some families may apply to be housed in vacant apartments through an organization called Praksis. This option perhaps offers the most independence and comfort, but one family we spoke to also felt more isolated from other asylum seekers — they were worried that they could not stay as informed about the services available to them and the next steps in the asylum process. Other asylum seekers around the city can stay in formal camps, the best of which is run by the municipality of Athens and provides personal containers, beds, running water and educational programming for children. <br />
-<img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/Eleonas-Camp.jpg" alt="Eleonas Camp" title="" /><em>Photograph by Annalisa Galgano</em></p>
+<img src="http://thegazelle.s3.amazonaws.com/gazelle/2016/02/Eleonas-Camp.jpg" alt="Eleonas Camp" title="" /><em>Photograph by Liza Tait-Bailey</em></p>
 
 <p>Asylum seekers staying in the abandoned Olympic hockey and baseball stadiums-turned-UNHCR camps live in standard-issue white UNHCR tents. While the rest of the world cheered on the ten refugee athletes competing at the Rio Olympics, thousands of forgotten asylum seekers passed another week in these old Olympic stadiums, hoping and waiting. </p>
 
