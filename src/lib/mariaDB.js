@@ -18,8 +18,11 @@ export function dbAuthorQuery(slugs, columns) {
   return new Promise((resolve, reject) => {
     const database = knex(knexConnectionObject);
     // So the Falcor Router knows which author we're talking about
-    if (columns.find('slug') === undefined) {
-      columns.push('slug');
+    if (columns.find((col) => {return col === "slug"}) === undefined) {
+      // Use concat to make a copy, if you just push
+      // it will change pathSet in the falcorPath
+      // as objects are passed by reference
+      columns = columns.concat(['slug']);
     }
     database.select(...columns)
     .from('authors')
@@ -29,8 +32,9 @@ export function dbAuthorQuery(slugs, columns) {
       resolve(rows);
     })
     .catch((e) => {
+      console.log("error");
       database.destroy();
-      reject(e);
+      throw new Error(e);
     })
   })
 }
@@ -43,7 +47,7 @@ export function dbAuthorArticleQuery(slugs) {
   // sorted by most recent article first.
   return new Promise((resolve, reject) => {
     const database = knex(knexConnectionObject);
-    database.select('posts.slug as post_slug', 'authors.slug author_slug')
+    database.select('posts.slug as post_slug', 'authors.slug as author_slug')
     .from('authors')
     .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
     .innerJoin('posts', 'posts.id', '=', 'post_id')
@@ -67,7 +71,7 @@ export function dbAuthorArticleQuery(slugs) {
     })
     .catch((e) => {
       database.destroy();
-      reject(e);
+      throw new Error(e);
     })
   })
 }
@@ -79,18 +83,22 @@ export function dbInfoPagesQuery(slugs, columns) {
   return new Promise((resolve, reject) => {
     const database = knex(knexConnectionObject);
     // So the Falcor Router knows which author we're talking about
-    if (columns.find('slug') === undefined) {
-      columns.push('slug');
+    if (columns.find((col) => {return col === "slug"}) === undefined) {
+      // Use concat to make a copy, if you just push
+      // it will change pathSet in the falcorPath
+      // as objects are passed by reference
+      columns = columns.concat(['slug']);
     }
     database.select(...columns)
     .from('info_pages')
+    .whereIn('slug', slugs)
     .then((rows) => {
       database.destroy();
       resolve(rows);
     })
     .catch((e) => {
       database.destroy();
-      reject(e);
+      throw new Error(e);
     })
   })
 }
@@ -102,7 +110,7 @@ export function dbArticleQuery(slugs, columns) {
   return new Promise((resolve, reject) => {
     const database = knex(knexConnectionObject);
     // we join with posts table to find slug, and always return slug
-    columns.map((col) => {
+    columns = columns.map((col) => {
       // make it compatible for the sql query
       if (col === "category") {
         return "categories.slug as category";
@@ -115,19 +123,22 @@ export function dbArticleQuery(slugs, columns) {
       }
     })
     // Put slug there so we know what we fetched
-    columns.push("posts.slug as slug");
+    // Use concat to make a copy, if you just push
+    // it will change pathSet in the falcorPath
+    // as objects are passed by reference
+    columns = columns.concat(['posts.slug as slug']);
     database.select(...columns)
     .from('posts')
     .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
     .innerJoin('categories', 'posts_meta.category_id', '=', 'categories.id')
-    .whereIn('posts.slug', 'slugs')
+    .whereIn('posts.slug', slugs)
     .then((rows) => {
       database.destroy();
       resolve(rows);
     })
     .catch((e) => {
       database.destroy();
-      reject(e);
+      throw new Error(e);
     })
   })
 }
@@ -147,7 +158,7 @@ export function dbArticleIssueQuery(slugs) {
     })
     .catch((e) => {
       database.destroy();
-      reject(e);
+      throw new Error(e);
     })
   });
 }
@@ -159,7 +170,7 @@ export function dbArticleAuthorQuery(slugs) {
   // as keys and values being arrays of author slugs.
   return new Promise((resolve, reject) => {
     const database = knex(knexConnectionObject);
-    database.select('posts.slug as post_slug', 'authors.slug author_slug')
+    database.select('posts.slug as post_slug', 'authors.slug as author_slug')
     .from('authors')
     .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
     .innerJoin('posts', 'posts.id', '=', 'post_id')
@@ -183,7 +194,7 @@ export function dbArticleAuthorQuery(slugs) {
     })
     .catch((e) => {
       database.destroy();
-      reject(e);
+      throw new Error(e);
     })
   })
 }
@@ -201,17 +212,21 @@ export function dbLatestIssueQuery() {
     })
     .catch((e) => {
       database.destroy();
-      reject(e);
+      throw new Error(e);
     })
   })
 }
 
-export function dbCategoryNameQuery(slugs) {
+export function dbCategoryQuery(slugs, columns) {
   // slugs parameter is an array of category slugs
   // to fetch the name of
   return new Promise((resolve, reject) => {
     const database = knex(knexConnectionObject);
-    database.select('slug', 'name')
+    if (columns.find((col) => {return col==="slug"}) === undefined) {
+      // Copy so as to not change pathSet
+      columns = columns.concat(['slug']);
+    }
+    database.select(...columns)
     .from('categories')
     .whereIn('slug', slugs)
     .then((rows) => {
@@ -220,7 +235,7 @@ export function dbCategoryNameQuery(slugs) {
     })
     .catch((e) => {
       database.destroy();
-      reject(e);
+      throw new Error(e);
     });
   });
 }
@@ -255,31 +270,28 @@ export function dbCategoryArticleQuery(slugs) {
     })
     .catch((e) => {
       database.destroy();
-      reject(e);
+      throw new Error(e);
     })
   })
 }
 
 export function dbFeaturedArticleQuery(issueNumbers) {
   // Get the featured articles from all the issueNumbers
-  console.log("featured called");
   return new Promise((resolve, reject) => {
     const database = knex(knexConnectionObject);
-    console.log("query database");
     database.select('posts.slug', 'issue_order')
     .from('posts')
     .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
     .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issue_id')
     .whereIn('issues.issue_order', issueNumbers).andWhere('type', '=', 1)
     .then((rows) => {
-      console.log("resolving from within");
       database.destroy();
       resolve(rows);
     })
     .catch((e) => {
       database.destroy();
       console.error(e);
-      reject(e);
+      throw new Error(e);
     })
   })
 }
@@ -296,18 +308,18 @@ export function dbEditorPickQuery(issueNumbers) {
     .then((rows) => {
       const results = {};
       rows.forEach((row) => {
-        if (!row.hasOwnProperty(row.issue_order)) {
+        if (!results.hasOwnProperty(row.issue_order)) {
           results[row.issue_order] = [row.slug];
         }
         else {
           results[row.issue_order].push(row.slug);
         }
       });
-      resolve(rows);
+      resolve(results);
     })
     .catch((e) => {
       database.destroy();
-      reject(e);
+      throw new Error(e);
     })
   })
 }
@@ -324,18 +336,18 @@ export function dbIssueCategoryQuery(issueNumbers) {
     .then((rows) => {
       const results = {};
       rows.forEach((row) => {
-        if (!row.hasOwnProperty(row.issue_order)) {
+        if (!results.hasOwnProperty(row.issue_order)) {
           results[row.issue_order] = [row.slug];
         }
         else {
           results[row.issue_order].push(row.slug);
         }
       });
-      resolve(rows);
+      resolve(results);
     })
     .catch((e) => {
       database.destroy();
-      reject(e);
+      throw new Error(e);
     });
   });
 }
@@ -343,7 +355,10 @@ export function dbIssueCategoryQuery(issueNumbers) {
 export function dbIssueQuery(issueNumbers, columns) {
   return new Promise((resolve, reject) => {
     const database = knex(knexConnectionObject);
-    columns.push('issue_order');
+    // Use concat to make a copy, if you just push
+    // it will change pathSet in the falcorPath
+    // as objects are passed by reference
+    columns = columns.concat(['issue_order']);
     database.select(...columns)
     .from('issues')
     .whereIn('issues.issue_order', issueNumbers)
@@ -353,7 +368,7 @@ export function dbIssueQuery(issueNumbers, columns) {
     })
     .catch((e) => {
       database.destroy();
-      reject(e);
+      throw new Error(e);
     })
   })
 }

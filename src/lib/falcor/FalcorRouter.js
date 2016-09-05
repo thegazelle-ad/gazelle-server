@@ -1,7 +1,7 @@
 import BaseRouter from "falcor-router"
 import { ghostArticleQuery } from 'lib/ghostAPI'
 import { dbAuthorQuery, dbArticleQuery, dbAuthorArticleQuery, dbInfoPagesQuery, dbArticleIssueQuery,
-dbArticleAuthorQuery, dbLatestIssueQuery, dbCategoryNameQuery, dbCategoriesArticleQuery,
+dbArticleAuthorQuery, dbLatestIssueQuery, dbCategoryQuery, dbCategoryArticleQuery,
 dbFeaturedArticleQuery, dbEditorPickQuery, dbIssueCategoryQuery, dbIssueQuery } from 'lib/mariaDB'
 import falcor from 'falcor'
 import _ from 'lodash';
@@ -138,6 +138,9 @@ export default class FalcorRouter extends BaseRouter.createClass([
         dbArticleQuery(pathSet.slugs, pathSet[2]).then((data) => {
           const results = [];
           data.forEach((article) => {
+            if (article.hasOwnProperty('published_at')) {
+              article.published_at = article.published_at.getTime();
+            }
             pathSet[2].forEach((field) => {
               results.push({
                 path: ["articlesBySlug", article.slug, field],
@@ -274,16 +277,18 @@ export default class FalcorRouter extends BaseRouter.createClass([
   },
   {
     // get categories name
-    route: "categoriesBySlug[{keys:slugs}]['name']",
+    route: "categoriesBySlug[{keys:slugs}]['name', 'slug']",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        dbCategoryNameQuery(pathSet.slugs).then((data) => {
+        dbCategoryQuery(pathSet.slugs, pathSet[2]).then((data) => {
           const results = [];
           data.forEach((category) => {
-            results.push({
-              path: ['categoriesBySlug', category.slug, 'name'],
-              value: category.name
-            });
+            pathSet[2].forEach((field) => {
+              results.push({
+                path: ['categoriesBySlug', category.slug, field],
+                value: category[field]
+              });
+            })
           });
           resolve(results);
         });
@@ -295,7 +300,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
     route: "categoriesBySlug[{keys:slugs}]['articles'][{integers:indices}]",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        dbCategoriesArticleQuery(pathSet.slugs).then((data) => {
+        dbCategoryArticleQuery(pathSet.slugs).then((data) => {
           // We receive the data as an object with keys equalling category slugs
           // and values being an array of article slugs where the most recent is first
           const results = [];
@@ -372,7 +377,6 @@ export default class FalcorRouter extends BaseRouter.createClass([
               }
             });
           });
-          console.log("resolving issue categories");
           resolve(results);
         })
       });
@@ -382,19 +386,20 @@ export default class FalcorRouter extends BaseRouter.createClass([
     // Get issue data
     route: "issuesByNumber[{integers:issueNumbers}]['published_at', 'name']",
     get: (pathSet) => {
-      console.log('data called');
       return new Promise((resolve, reject) => {
         dbIssueQuery(pathSet.issueNumbers, pathSet[2]).then((data) => {
           const results = [];
           data.forEach((issue) => {
+            if (issue.hasOwnProperty('published_at')) {
+              issue.published_at = issue.published_at.getTime();
+            }
             pathSet[2].forEach((field) => {
               results.push({
-                path: ['issuesByNumber', issues.issue_order, field],
+                path: ['issuesByNumber', issue.issue_order, field],
                 value: issue[field]
               });
             });
           });
-          console.log('data resolved');
           resolve(results);
         });
       });
@@ -443,7 +448,6 @@ export default class FalcorRouter extends BaseRouter.createClass([
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
         dbLatestIssueQuery().then((row) => {
-          console.log(row[0].issue_order)
           resolve([{
             path: ['latestIssue'],
             value: $ref(['issuesByNumber', row[0].issue_order])

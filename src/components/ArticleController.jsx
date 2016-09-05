@@ -35,6 +35,7 @@ export default class ArticleController extends FalcorController {
           <NotFound />
         );
       } else {
+        console.log(this.state.data);
         let articleSlug = this.props.params.articleSlug;
         // Access data fetched via Falcor
         const articleData = this.state.data.articlesBySlug[articleSlug];
@@ -47,7 +48,7 @@ export default class ArticleController extends FalcorController {
           // Social media sharing
           {property: "og:title", content: articleData.title + " | The Gazelle"},
           {property: "og:type", content: "article"},
-          {property: "og:url", content: "beta.thegazelle.org/issue/" + articleData.issueNumber + '/' + articleData.category + '/' + articleData.slug},
+          {property: "og:url", content: "beta.thegazelle.org/issue/" + articleData.issueNumber.toString() + '/' + articleData.category + '/' + articleData.slug},
           {property: "og:image", content: "https:" + articleData.image},
           {property: "og:description", content: articleData.teaser},
           {property: "og:site_name", content: "The Gazelle"},
@@ -61,11 +62,11 @@ export default class ArticleController extends FalcorController {
             <Article
               title={articleData.title}
               teaser={articleData.teaser}
-              pubDate={articleData.published_at}
+              published_at={articleData.published_at}
               html={articleData.html}
               authors={articleData.authors}
               featuredImage={articleData.image}
-              url={"beta.thegazelle.org/issue/" + articleData.issueNumber + '/' + articleData.category + '/' + articleData.slug}
+              url={"beta.thegazelle.org/issue/" + articleData.issueNumber.toString() + '/' + articleData.category + '/' + articleData.slug}
               trending={trendingData}
               relatedArticles={relatedArticlesData}
             />

@@ -17,30 +17,29 @@ import NotFound from "components/NotFound";
 
 export default class IssueController extends FalcorController {
   static getFalcorPathSets() {
-    // URL Format: thegazelle.org/issue/:issueId/:articleCategory/:articleSlug
+    // URL Format: thegazelle.org/issue/:issueNumber/:articleCategory/:articleSlug
 
     // Multilevel request requires Falcor Path for each level of data requested
-    // TODO: change hardcoded issueId
     return [
       ["latestIssue", "published_at"],
 
       // Request the featured article
-      ["latestIssue", "featured", ["title", "teaser", "issueNumber", "category", "slug", "featuredImage"]],
+      ["latestIssue", "featured", ["title", "teaser", "issueNumber", "category", "slug", "image"]],
       ["latestIssue", "featured", "authors", {length: 10}, ["name", "slug"]],
 
       // Request first two Editor's Picks
-      ["latestIssue", "picks", {length: 2}, ["title", "teaser", "issueNumber", "category", "slug", "featuredImage"]],
+      ["latestIssue", "picks", {length: 2}, ["title", "teaser", "issueNumber", "category", "slug", "image"]],
       ["latestIssue", "picks", {length: 2}, "authors", {length: 10}, ["name", "slug"]],
 
       // Request first five Trending articles
-      ["trending", {length: 6}, ["title", "issueNumber", "category", "slug", "featuredImage"]],
+      ["trending", {length: 6}, ["title", "issueNumber", "category", "slug", "image"]],
       ["trending", {length: 6}, "authors", {length: 10}, ["name", "slug"]],
 
       // Request all category names and slugs (max 10 categories)
       ["latestIssue", "categories", {length: 10}, ["name", "slug"]],
 
       // Request necessary data from all articles from each category (max 30 articles)
-      ["latestIssue", "categories", {length: 10}, "articles", {length: 30}, ["title", "teaser", "issueNumber", "category", "slug", "featuredImage"]],
+      ["latestIssue", "categories", {length: 10}, "articles", {length: 30}, ["title", "teaser", "issueNumber", "category", "slug", "image"]],
 
       // Request author name and slug for each article (max 10 authors)
       ["latestIssue", "categories", {length: 10}, "articles", {length: 30}, "authors", {length: 10}, ["name", "slug"]],
@@ -50,7 +49,7 @@ export default class IssueController extends FalcorController {
   render () {
     //console.log("RENDERING ISSUE CONTROLLER");
     if (this.state.ready) {
-      if (this.state.data == null) {
+      if (this.state.data === null) {
         return (
           <NotFound />
         );

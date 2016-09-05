@@ -19,7 +19,7 @@ export function ghostArticleQuery(params) {
 				resolve(body);
 			});
 		}).on('error', (e) => {
-			reject(e);
+			throw e;
 		});
 	});
 }

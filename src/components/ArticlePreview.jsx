@@ -9,17 +9,17 @@ import AuthorList from 'components/AuthorList';
 export default class ArticlePreview extends BaseComponent {
   render () {
     let article = this.props.article;
-    let url = '/issue/' + article.issueId + '/' + article.category + '/' + article.slug;
+    let url = '/issue/' + article.issueNumber.toString() + '/' + article.category + '/' + article.slug;
     return (
       <div className="article-preview">
         {/*
           Featured image
           TODO: undo hardcode before release
         */}
-        <Link to={'/issue/' + article.issueId + '/' + article.category + '/' + article.slug}>
+        <Link to={'/issue/' + article.issueNumber.toString() + '/' + article.category + '/' + article.slug}>
           <img
             className="article-preview__featured-image"
-            src={article.featuredImage}
+            src={article.image}
             alt="featured"
           />
         </Link>
@@ -59,7 +59,7 @@ ArticlePreview.propTypes = {
     title: React.PropTypes.string.isRequired,
     // Teaser not used for Trending component
     teaser: React.PropTypes.string,
-    issueId: React.PropTypes.string.isRequired,
+    issueNumber: React.PropTypes.number.isRequired,
     category: React.PropTypes.string.isRequired,
     slug: React.PropTypes.string.isRequired,
     authors: React.PropTypes.object,

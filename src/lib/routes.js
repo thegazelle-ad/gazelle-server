@@ -10,9 +10,9 @@ import NotFoundController from 'components/NotFoundController';
 
 export default (
   <Route path="/" component={AppController}>
-    <Route path="issue/:issueId/:articleCategory/:articleSlug" component={ArticleController} />
+    <Route path="issue/:issueNumber/:articleCategory/:articleSlug" component={ArticleController} />
     <Route path="author/:authorSlug" component={AuthorController} />
-    <Route path="issue/:issueId" component={IssueController} />
+    <Route path="issue/:issueNumber" component={IssueController} />
     <Route path="category/:category" component={CategoryController} />
     <Route path=":slug" component={TextPageController} />
     <Route path="*" component={NotFoundController} />

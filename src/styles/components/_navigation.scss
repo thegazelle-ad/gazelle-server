@@ -19,7 +19,7 @@
     }
   }
 
-  &__issueId {
+  &__issueNumber {
     @include uppercase;
     font-size: $authors-small;
     text-align: right;
@@ -37,7 +37,7 @@
 
     // Remove publication date and social media buttons (extraneous information)
     &__publication-date,
-    &__issueId {
+    &__issueNumber {
       display: none;
     }
   }
