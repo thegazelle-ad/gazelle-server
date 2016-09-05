@@ -65,7 +65,46 @@ function followPath(path, object) {
   }, object);
 }
 
-export function pathSetsInCache(cache, falcorPathSets) {
+let getCacheMemo = {};
+
+export function getCache(model, falcorPathSets, expandCacheFlag) {
+  // Get the cache but with memoization included
+  let pathSetString = JSON.stringify(falcorPathSets);
+  // if pathSets argument is left out we fetch full cache
+  if (falcorPathSets === undefined) {
+    pathSetString = 'fullCache';
+  }
+  if (getCacheMemo.hasOwnProperty(pathSetString)) {
+    return getCacheMemo[pathSetString];
+  }
+  else {
+    if (falcorPathSets !== undefined){
+      if (!expandCacheFlag) {
+        return getCacheMemo[pathSetString] = model.getCache(...falcorPathSets);
+      }
+      else {
+        return getCacheMemo[pathSetString] = expandCache(model.getCache(...falcorPathSets));
+      }
+    }
+    else {
+      if (!expandCacheFlag) {
+        return getCacheMemo[pathSetString] = model.getCache();
+      }
+      else {
+        return getCacheMemo[pathSetString] = expandCache(model.getCache());
+      }
+    }
+  }
+}
+
+export function resetCacheMemoization() {
+  pathSetsInCacheMemo = {};
+  getCacheMemo = {};
+}
+
+let pathSetsInCacheMemo = {};
+
+export function pathSetsInCache(model, falcorPathSets) {
   /*
   Checks if falcorPathSets in given cache
   */
@@ -161,9 +200,18 @@ export function pathSetsInCache(cache, falcorPathSets) {
     // If no data is being requested return true
     return true;
   }
+  // Check that we don't have the result memoized
+  let pathSetString = JSON.stringify(falcorPathSets);
+  if (pathSetsInCacheMemo.hasOwnProperty(pathSetString)) {
+    return pathSetsInCacheMemo[pathSetString]
+  }
+
+  // If we don't have it memoized then get the cache
+  let cache = getCache(model);
+
   // Return if every pathSet in the array of pathSets
-  // is located in the cache.
-  return falcorPathSets.every((pathSet) => {
+  // is located in the cache and memoize result.
+  return pathSetsInCacheMemo[pathSetString] = falcorPathSets.every((pathSet) => {
     return checkSinglePathSetInCache(cache, pathSet);
   });
 }
