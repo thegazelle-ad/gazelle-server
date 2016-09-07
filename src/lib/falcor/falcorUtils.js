@@ -138,8 +138,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
           console.warn("No length property on object in cache. This might be a developer mistake.\
  If error checking flag is true current object will be printed below.");
           // As this will be printing a lot we don't want to always print full objects
-          // change the flag to true if you want to debug
-          if (false) {
+          if (process.env.NODE_ENV !== "production") {
             console.log("Current object in pathSetsInCache:");
             console.log(curObject);
             console.log("remainingKeySets in pathSetsInCache");
