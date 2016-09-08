@@ -18,7 +18,6 @@ export default class AuthorController extends FalcorController {
     ];
   }
 
-  // TODO: list all articles written by author x
   render() {
     if (this.state.ready) {
       if (this.state.data == null) {

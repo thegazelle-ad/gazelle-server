@@ -7,7 +7,7 @@ import { TransitionManager } from "lib/loader";
 
 // Components
 import Header from "components/Header";
-import Navigation from "components/Navigation";
+import NavigationController from "components/Navigation";
 import Footer from "components/Footer";
 import Loader from "components/Loader";
 
@@ -28,7 +28,7 @@ export default class AppController extends BaseComponent {
         <Loader percent={30} />
         <div className="app-container__header">
           <Header />
-          <Navigation />
+          <NavigationController />
         </div>
         <div className="app-container__body">
           <ReactTransitionGroup
@@ -37,7 +37,7 @@ export default class AppController extends BaseComponent {
             transitionLeaveTimeout={3000}
             component={TransitionManager}
           >
-            {<Navigation />}
+            {/*<Navigation />*/}
             {React.cloneElement(this.props.children, {key: transitionKey})}
           </ReactTransitionGroup>
         </div>
