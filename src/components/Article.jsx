@@ -52,7 +52,7 @@ export default class Article extends BaseComponent {
 Article.propTypes = {
   title: React.PropTypes.string.isRequired,
   // Teaser is passed to <SharingButtons/> for use in link urls
-  teaser: React.PropTypes.string.isRequired,
+  teaser: React.PropTypes.string,
   html: React.PropTypes.string.isRequired,
   authors: React.PropTypes.object.isRequired,
   url: React.PropTypes.string,

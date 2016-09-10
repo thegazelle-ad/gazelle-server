@@ -46,14 +46,14 @@ export default class Navigation extends BaseComponent {
     return (
       <div>
         <div className="navigation">
-          <p className="navigation__publication-date">{moment("2016-09-04T05:58:09.000Z").format('MMM DD, YYYY').toString()}</p>
+          <p className="navigation__publication-date">{moment("2016-09-10T05:58:09.000Z").format('MMM DD, YYYY').toString()}</p>
           <nav role="navigation">
             <ul className="navigation__categories">
               {renderCategories}
             </ul>
           </nav>
           {/* TODO: change link to archives list */}
-          <Link to="/" className="navigation__issueNumber">{"Issue 90"}</Link>
+          <Link to="/" className="navigation__issueNumber">{"Issue 91"}</Link>
         </div>
       </div>
 		);

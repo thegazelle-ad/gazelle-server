@@ -28,6 +28,12 @@ export default class AuthorController extends FalcorController {
       } else {
         let authorSlug = this.props.params.authorSlug;
         const authorData = this.state.data.authorsBySlug[authorSlug];
+        if (!authorData.image) { // Default image for authors without one
+          authorData.image = "http://0.gravatar.com/avatar/c63ec0271e2c8a10b2e343bbd1dec547?s=200&d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D200&r=G";
+        }
+        if (!authorData.job_title) { // Default job title for authors without one
+          authorData.job_title = "Contributor";
+        }
         const meta = [
           // Search results
           {name: "description", content: authorData.biography},

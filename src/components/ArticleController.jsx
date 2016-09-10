@@ -27,7 +27,6 @@ export default class ArticleController extends FalcorController {
 
     ];
   }
-
   render() {
     if (this.state.ready) {
       if (this.state.data == null) {
@@ -40,6 +39,9 @@ export default class ArticleController extends FalcorController {
         const articleData = this.state.data.articlesBySlug[articleSlug];
         const trendingData = this.state.data.trending;
         const relatedArticlesData = articleData.related;
+        // if (!articleData.image) {
+        //   articleData.image = "http://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg";// Default featured image for articles
+        // }
         const meta = [
           // Search results
           {name: "description", content: this.props.teaser},

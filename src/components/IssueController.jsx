@@ -7,6 +7,7 @@ import _ from "lodash";
 import FalcorController from 'lib/falcor/FalcorController';
 import { Link } from "react-router";
 import Helmet from "react-helmet"; // Add meta tags for pre-Ghost release
+import { mapLegacyIssueSlugsToIssueNumber } from 'lib/utilities'
 
 // Import components
 import FeaturedArticle from "components/FeaturedArticle";
@@ -16,45 +17,80 @@ import ArticleList from "components/ArticleList";
 import NotFound from "components/NotFound";
 
 export default class IssueController extends FalcorController {
-  static getFalcorPathSets() {
+  static getFalcorPathSets(params) {
     // URL Format: thegazelle.org/issue/:issueNumber/:articleCategory/:articleSlug
 
-    // Multilevel request requires Falcor Path for each level of data requested
-    return [
-      ["latestIssue", "published_at"],
+    // Conditional return allows The Gazelle to return the correct issue
+    // User is either requesting the 'latestIssue' on the home page or an
+    // old issue.
+    if (params.issueNumber) { // If not on home page grab specificed issue
+      const issueNumber = mapLegacyIssueSlugsToIssueNumber(params.issueNumber);
+      return [
+        ["issuesByNumber", issueNumber, "published_at"],
 
-      // Request the featured article
-      ["latestIssue", "featured", ["title", "teaser", "issueNumber", "category", "slug", "image"]],
-      ["latestIssue", "featured", "authors", {length: 10}, ["name", "slug"]],
+        // Request the featured article
+        ["issuesByNumber", issueNumber, "featured", ["title", "teaser", "issueNumber", "category", "slug", "image"]],
+        ["issuesByNumber", issueNumber, "featured", "authors", {length: 10}, ["name", "slug"]],
 
-      // Request first two Editor's Picks
-      ["latestIssue", "picks", {length: 2}, ["title", "teaser", "issueNumber", "category", "slug", "image"]],
-      ["latestIssue", "picks", {length: 2}, "authors", {length: 10}, ["name", "slug"]],
+        // Request first two Editor's Picks
+        ["issuesByNumber", issueNumber, "picks", {length: 2}, ["title", "teaser", "issueNumber", "category", "slug", "image"]],
+        ["issuesByNumber", issueNumber, "picks", {length: 2}, "authors", {length: 10}, ["name", "slug"]],
 
-      // Request first five Trending articles
-      ["trending", {length: 6}, ["title", "issueNumber", "category", "slug", "image"]],
-      ["trending", {length: 6}, "authors", {length: 10}, ["name", "slug"]],
+        // Request first five Trending articles
+        ["trending", {length: 6}, ["title", "issueNumber", "category", "slug", "image"]],
+        ["trending", {length: 6}, "authors", {length: 10}, ["name", "slug"]],
 
-      // Request all category names and slugs (max 10 categories)
-      ["latestIssue", "categories", {length: 10}, ["name", "slug"]],
+        // Request all category names and slugs (max 10 categories)
+        ["issuesByNumber", issueNumber, "categories", {length: 10}, ["name", "slug"]],
 
-      // Request necessary data from all articles from each category (max 30 articles)
-      ["latestIssue", "categories", {length: 10}, "articles", {length: 30}, ["title", "teaser", "issueNumber", "category", "slug", "image"]],
+        // Request necessary data from all articles from each category (max 30 articles)
+        ["issuesByNumber", issueNumber, "categories", {length: 10}, "articles", {length: 30}, ["title", "teaser", "issueNumber", "category", "slug", "image"]],
 
-      // Request author name and slug for each article (max 10 authors)
-      ["latestIssue", "categories", {length: 10}, "articles", {length: 30}, "authors", {length: 10}, ["name", "slug"]],
-    ];
+        // Request author name and slug for each article (max 10 authors)
+        ["issuesByNumber", issueNumber, "categories", {length: 10}, "articles", {length: 30}, "authors", {length: 10}, ["name", "slug"]],
+      ];
+    }
+    else { // User is on home page
+      return [
+        ["latestIssue", "published_at"],
+
+        // Request the featured article
+        ["latestIssue", "featured", ["title", "teaser", "issueNumber", "category", "slug", "image"]],
+        ["latestIssue", "featured", "authors", {length: 10}, ["name", "slug"]],
+
+        // Request first two Editor's Picks
+        ["latestIssue", "picks", {length: 2}, ["title", "teaser", "issueNumber", "category", "slug", "image"]],
+        ["latestIssue", "picks", {length: 2}, "authors", {length: 10}, ["name", "slug"]],
+
+        // Request first five Trending articles
+        ["trending", {length: 6}, ["title", "issueNumber", "category", "slug", "image"]],
+        ["trending", {length: 6}, "authors", {length: 10}, ["name", "slug"]],
+
+        // Request all category names and slugs (max 10 categories)
+        ["latestIssue", "categories", {length: 10}, ["name", "slug"]],
+
+        // Request necessary data from all articles from each category (max 30 articles)
+        ["latestIssue", "categories", {length: 10}, "articles", {length: 30}, ["title", "teaser", "issueNumber", "category", "slug", "image"]],
+
+        // Request author name and slug for each article (max 10 authors)
+        ["latestIssue", "categories", {length: 10}, "articles", {length: 30}, "authors", {length: 10}, ["name", "slug"]],
+      ];
+    }
   }
 
   render () {
-    //console.log("RENDERING ISSUE CONTROLLER");
     if (this.state.ready) {
       if (this.state.data === null) {
         return (
           <NotFound />
         );
       } else {
-        const issueData = this.state.data.latestIssue;
+        let issueData;
+        if (!this.props.params.issueNumber) {
+          issueData = this.state.data.latestIssue;
+        } else {
+          issueData = this.state.data.issuesByNumber[mapLegacyIssueSlugsToIssueNumber(this.props.params.issueNumber)];
+        }
         const trendingData = this.state.data.trending;
         /*
          * Category object structure:
@@ -69,7 +105,6 @@ export default class IssueController extends FalcorController {
         let renderCategories =
           // Render nothing if this.props.articles is empty
           _.map((issueData.categories || []), (category) => {
-            //console.log(category);
             return (
               <div key={category.name} className="issue__category">
                 <Link to={"/category/" + category.slug}>
@@ -124,5 +159,4 @@ IssueController.propTypes = {
       published_at: React.PropTypes.string,
       articles: React.PropTypes.object,
     }),
-    issueNumber: React.PropTypes.string,
 }

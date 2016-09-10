@@ -10,6 +10,9 @@ export default class ArticlePreview extends BaseComponent {
   render () {
     let article = this.props.article;
     let url = '/issue/' + article.issueNumber.toString() + '/' + article.category + '/' + article.slug;
+    if (!article.image) { // Article image default
+      article.image = "http://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg";// Default featured image for articles
+    }
     return (
       <div className="article-preview">
         {/*
