@@ -2,7 +2,7 @@ import BaseRouter from "falcor-router"
 import { ghostArticleQuery } from 'lib/ghostAPI'
 import { dbAuthorQuery, dbArticleQuery, dbAuthorArticleQuery, dbInfoPagesQuery, dbArticleIssueQuery,
 dbArticleAuthorQuery, dbLatestIssueQuery, dbCategoryQuery, dbCategoryArticleQuery,
-dbFeaturedArticleQuery, dbEditorPickQuery, dbIssueCategoryQuery, dbIssueQuery } from 'lib/mariaDB'
+dbFeaturedArticleQuery, dbEditorPickQuery, dbIssueCategoryQuery, dbIssueCategoryArticleQuery, dbIssueQuery } from 'lib/mariaDB'
 import falcor from 'falcor'
 import _ from 'lodash';
 
@@ -360,19 +360,61 @@ export default class FalcorRouter extends BaseRouter.createClass([
     }
   },
   {
-    // Get articles within issue categories
-    route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers:indices}]",
+    // Get articles category information from articles.
+    /* This is a special case as it actually makes us store a bit of information twice
+      But we can't just give a ref here since because the articles of a category is different
+      depending on whether it is fetched directly from categories which is ordered chronologically
+      and all articles from that category are fetched or from an issue where it is ordered by editor tools */
+    route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers:indices}]['name', 'slug']",
     get: (pathSet) => {
-      console.log("issue categories");
       return new Promise((resolve, reject) => {
-        dbIssueCategoryQuery(pathSet.issueNumbers).then((data) => {
+        const fields = pathSet[4];
+        dbIssueCategoryQuery(pathSet.issueNumbers, fields).then((data) => {
+          // data is an object with keys of issue numbers and values
+          // arrays of category objects in correct order as given in editor tools
           const results = [];
           _.forEach(data, (categorySlugArray, issueNumber) => {
             pathSet.indices.forEach((index) => {
               if (index < categorySlugArray.length) {
-                results.push({
-                  path: ['issuesByNumber', issueNumber, 'categories', index],
-                  value: $ref(['categoriesBySlug', categorySlugArray[index]])
+                fields.forEach((field) => {
+                  results.push({
+                    path: ['issuesByNumber', issueNumber, 'categories', index, field],
+                    value: categorySlugArray[index][field]
+                  });
+                })
+              }
+            });
+          });
+          resolve(results);
+        })
+      });
+    }
+  },
+  {
+    // Get articles within issue categories
+    route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers:categoryIndices}]['articles'][{integers:articleIndices}]",
+    get: (pathSet) => {
+      // This will currently fetch every single article from the issue
+      // every time, and then just only return the ones asked for
+      // which shouldn't at all be a problem at current capacity of
+      // 10-20 articles an issue.
+      return new Promise((resolve, reject) => {
+        dbIssueCategoryArticleQuery(pathSet.issueNumbers).then((data) => {
+          // data is an object with keys equal to issueNumbers and values
+          // being an array of arrays, the upper array being the categories
+          // in their given order, and the lower level array within each category
+          // is article slugs also in their given order.
+          const results = [];
+          _.forEach(data, (categoryArray, issueNumber) => {
+            pathSet.categoryIndices.forEach((categoryIndex) => {
+              if (categoryIndex < categoryArray.length) {
+                pathSet.articleIndices.forEach((articleIndex) => {
+                  if (articleIndex < categoryArray[categoryIndex].length) {
+                    results.push({
+                      path: ['issuesByNumber', issueNumber, 'categories', categoryIndex, 'articles', articleIndex],
+                      value: $ref(['articlesBySlug', categoryArray[categoryIndex][articleIndex]])
+                    });
+                  }
                 });
               }
             });
@@ -384,19 +426,30 @@ export default class FalcorRouter extends BaseRouter.createClass([
   },
   {
     // Get issue data
-    route: "issuesByNumber[{integers:issueNumbers}]['published_at', 'name']",
+    route: "issuesByNumber[{integers:issueNumbers}]['published_at', 'name', 'issueNumber']",
     get: (pathSet) => {
+      const mapFields = (field) => {
+        switch (field) {
+          case "issueNumber":
+            return "issue_order";
+          default:
+            return field;
+        }
+      }
       return new Promise((resolve, reject) => {
-        dbIssueQuery(pathSet.issueNumbers, pathSet[2]).then((data) => {
+        const dataFields = pathSet[2];
+        const dbColumns = dataFields.map(mapFields);
+        dbIssueQuery(pathSet.issueNumbers, dbColumns).then((data) => {
           const results = [];
           data.forEach((issue) => {
+            // Convert Date object to time integer
             if (issue.hasOwnProperty('published_at')) {
               issue.published_at = issue.published_at.getTime();
             }
-            pathSet[2].forEach((field) => {
+            dataFields.forEach((field) => {
               results.push({
                 path: ['issuesByNumber', issue.issue_order, field],
-                value: issue[field]
+                value: issue[mapFields(field)]
               });
             });
           });

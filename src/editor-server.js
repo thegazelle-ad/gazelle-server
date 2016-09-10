@@ -45,7 +45,7 @@ const buildHtmlString = (body, cache) => {
 const serverModel = new falcor.Model({
   /*cache: {
     articlesBySlug:articles,
-    authorsBySlug:authors, 
+    authorsBySlug:authors,
   },*/
   source: new FalcorRouter()
 }).batch();
@@ -81,7 +81,7 @@ const renderApp = (renderProps) => {
 
   // If the component doesn't want any data
   if (!falcorPaths || falcorPaths.length === 0 || falcorPaths[0].length === 0 && falcorPaths.length === 1) {
-    console.log("NO PATHS WERE GIVEN");
+    // console.log("NO PATHS WERE GIVEN");
     return new Promise((resolve) => {
       resolve (
         buildHtmlString(
@@ -97,8 +97,8 @@ const renderApp = (renderProps) => {
     });
   }
 
-  console.log('FETCHING Falcor Paths:');
-  console.log(falcorPaths);
+  // console.log('FETCHING Falcor Paths:');
+  // console.log(falcorPaths);
 
   return localModel.preload(...falcorPaths).then(() => {
     return (

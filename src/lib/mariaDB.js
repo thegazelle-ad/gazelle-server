@@ -1,5 +1,6 @@
 import knex from 'knex';
 import { getDatabaseConfig } from 'lib/utilities';
+import _ from 'lodash';
 
 const config = getDatabaseConfig();
 const knexConnectionObject = {
@@ -32,7 +33,6 @@ export function dbAuthorQuery(slugs, columns) {
       resolve(rows);
     })
     .catch((e) => {
-      console.log("error");
       database.destroy();
       throw new Error(e);
     })
@@ -315,6 +315,7 @@ export function dbEditorPickQuery(issueNumbers) {
           results[row.issue_order].push(row.slug);
         }
       });
+      database.destroy();
       resolve(results);
     })
     .catch((e) => {
@@ -324,11 +325,24 @@ export function dbEditorPickQuery(issueNumbers) {
   })
 }
 
-export function dbIssueCategoryQuery(issueNumbers) {
+export function dbIssueCategoryQuery(issueNumbers, fields) {
   // get the categories from each issueNumber
   return new Promise((resolve, reject) => {
     const database = knex(knexConnectionObject);
-    database.select('categories.slug', 'issue_order')
+    // rewrite the columns to proper format
+    let columns = fields.map((col) => {
+      switch(col) {
+        case "slug":
+          return "categories.slug";
+        case "name":
+          return "categories.name";
+        default:
+          throw new Error("Unexpected field passed to dbIssueCategoryQuery");
+      }
+    });
+    // Add issue_order as we need to know which issue the data belongs to
+    columns.push('issue_order', 'categories_order');
+    database.select(...columns)
     .from('issues')
     .innerJoin('issues_categories_order', 'issues_categories_order.issue_id', '=', 'issues.id')
     .innerJoin('categories', 'issues_categories_order.category_id', '=', 'categories.id')
@@ -336,14 +350,102 @@ export function dbIssueCategoryQuery(issueNumbers) {
     .then((rows) => {
       const results = {};
       rows.forEach((row) => {
-        if (!results.hasOwnProperty(row.issue_order)) {
-          results[row.issue_order] = [row.slug];
+        const issueNumber = row.issue_order;
+        const categoryIndex = row.categories_order;
+        const categoryObject = {};
+        fields.forEach((field) => {
+          categoryObject[field] = row[field];
+        })
+        if (!results.hasOwnProperty(issueNumber)) {
+          results[issueNumber] = [];
         }
-        else {
-          results[row.issue_order].push(row.slug);
+        if (results[issueNumber].length !== categoryIndex) {
+          throw new Error("Incorrect data returned from database regarding getting category order. Either missing category or not ordered correctly in dbIssueCategoryQuery");
         }
+        results[issueNumber].push(categoryObject);
       });
+      database.destroy();
       resolve(results);
+    })
+    .catch((e) => {
+      database.destroy();
+      throw new Error(e);
+    });
+  });
+}
+
+export function dbIssueCategoryArticleQuery(issueNumbers) {
+  // get the categories from each issueNumber
+  return new Promise((resolve, reject) => {
+    const database = knex(knexConnectionObject);
+    database.select('issue_order', 'posts.slug', 'posts_order', 'posts_meta.category_id')
+    .from('issues')
+    .innerJoin('issues_posts_order', 'issues_posts_order.issue_id', '=', 'issues.id')
+    .innerJoin('posts', 'posts.id', '=', 'issues_posts_order.post_id')
+    .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
+    .whereIn('issues.issue_order', issueNumbers).andWhere('type', '=', 0).orderBy('posts_order', 'ASC')
+    .then((postRows) => {
+      database.select('issue_order', 'categories_order', 'issues_categories_order.category_id')
+      .from('issues')
+      .innerJoin('issues_categories_order', 'issues.id', '=', 'issues_categories_order.issue_id')
+      .whereIn('issues.issue_order', issueNumbers).orderBy('categories_order', 'ASC')
+      .then((categoryRows) => {
+        const results = {};
+        const categoriesHashMap = {};
+        postRows.forEach((postRow) => {
+          // I make a lot of assumptions about correctness of data returned here
+          const issueNumber = postRow.issue_order;
+          // Here I handle finding the corresponding category row and thereby the order
+          // this category should be in, and also use hashing as we will be looking this up often.
+          let categoryIndex;
+          if (categoriesHashMap.hasOwnProperty(issueNumber) && categoriesHashMap[issueNumber].hasOwnProperty(postRow.category_id)) {
+            categoryIndex = categoriesHashMap[issueNumber][postRow.category_id];
+          }
+          else {
+            const correspondingCategoryRow = categoryRows.find((categoryRow) => {
+              return categoryRow.issue_order === issueNumber && categoryRow.category_id === postRow.category_id;
+            });
+            if (correspondingCategoryRow === undefined) {
+              throw new Error("can't find order of the category of a post");
+            }
+            if (!categoriesHashMap.hasOwnProperty[issueNumber]) {
+              categoriesHashMap[issueNumber] = {};
+            }
+            // Since we did the previous check it must not also have the posts key
+            if (categoriesHashMap[issueNumber].hasOwnProperty(postRow.category_id)) {
+              throw new Error("Problem with if else statement in dbIssueCategoryArticleQuery");
+            }
+            categoryIndex = categoriesHashMap[issueNumber][postRow.category_id] = correspondingCategoryRow.categories_order;
+          }
+          // Continue with rest of constants
+          const postIndex = postRow.posts_order;
+          const postSlug = postRow.slug;
+          if (!results.hasOwnProperty(issueNumber)) {
+            results[issueNumber] = [];
+          }
+          if (!results[issueNumber].hasOwnProperty(categoryIndex)) {
+            results[issueNumber][categoryIndex] = [];
+          }
+          if (results[issueNumber][categoryIndex].length !== postIndex) {
+            throw new Error("Incorrect data returned from database regarding getting articles in an issue. Articles either not existing or not ordered correctly");
+          }
+          results[issueNumber][categoryIndex].push(postSlug);
+        });
+        // Check all categories are there and ordering is correct
+        _.forEach(results, (categoryArray, issueNumber) => {
+          for (let i = 0; i < categoryArray.length; i++) {
+            if (!categoryArray.hasOwnProperty(i)) {
+              throw new Error("Problem with category ordering data. Either wrong ordering or missing category at issue number " + issueNumber.toString() + " index " + i.toString());
+            }
+          }
+        })
+        database.destroy();
+        resolve(results);
+      })
+      .catch((e) => {
+        database.destroy();
+        throw new Error(e);
+      });
     })
     .catch((e) => {
       database.destroy();
@@ -355,10 +457,12 @@ export function dbIssueCategoryQuery(issueNumbers) {
 export function dbIssueQuery(issueNumbers, columns) {
   return new Promise((resolve, reject) => {
     const database = knex(knexConnectionObject);
-    // Use concat to make a copy, if you just push
-    // it will change pathSet in the falcorPath
-    // as objects are passed by reference
-    columns = columns.concat(['issue_order']);
+    const hasIssueNumber = columns.find((col) => {col === "issue_order"}) !== undefined;
+    if (!hasIssueNumber) {
+      // use concat to do a copy instead of changing original pathSet
+      // we push this so that we know which issue we are fetching data for
+      columns = columns.concat(["issue_order"]);
+    }
     database.select(...columns)
     .from('issues')
     .whereIn('issues.issue_order', issueNumbers)

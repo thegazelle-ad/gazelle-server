@@ -35,7 +35,6 @@ export default class ArticleController extends FalcorController {
           <NotFound />
         );
       } else {
-        console.log(this.state.data);
         let articleSlug = this.props.params.articleSlug;
         // Access data fetched via Falcor
         const articleData = this.state.data.articlesBySlug[articleSlug];

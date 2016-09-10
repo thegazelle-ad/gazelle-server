@@ -141,8 +141,8 @@ const renderApp = (renderProps) => {
   }
 
   // Silenced Falcor path logs
-  console.log('FETCHING Falcor Paths:');
-  console.log(falcorPaths);
+  // console.log('FETCHING Falcor Paths:');
+  // console.log(falcorPaths);
 
   return localModel.preload(...falcorPaths).then(() => {
     return (
