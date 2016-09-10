@@ -43,3 +43,22 @@ export function uuid() {
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
     s4() + '-' + s4() + s4() + s4();
 }
+
+export function mapLegacyIssueSlugsToIssueNumber(slug) {
+  const match = slug.match(/issue-(\d\d)/);
+  if (match) {
+    return match[1];
+  }
+  else {
+    switch (slug) {
+      case "the-identity-issue":
+        return "76";
+      case "the-love-issue":
+        return "78";
+      case "the-food-issue":
+        return "82";
+      default:
+        return slug;
+    }
+  }
+}
