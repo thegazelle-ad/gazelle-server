@@ -1,11 +1,10 @@
 import knex from 'knex';
-import { getDatabaseConfig } from 'lib/utilities';
+import databaseConfig from 'lib/../../database.config';
 import _ from 'lodash';
 
-const config = getDatabaseConfig();
 const knexConnectionObject = {
   client: 'mysql',
-  connection: config,
+  connection: databaseConfig,
   pool: {
     min: 0,
     max: 100

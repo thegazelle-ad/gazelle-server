@@ -43,7 +43,6 @@ export default class FalcorController extends BaseComponent {
   // and store on state. Used for server side render and first client side render
   // this should always contain all the data the component needs
   loadFalcorCache(falcorPathSets) {
-
     falcorPathSets = validateFalcorPathSets(falcorPathSets);
     if (falcorPathSets === undefined) {
       this.safeSetState({
@@ -89,7 +88,6 @@ export default class FalcorController extends BaseComponent {
     this.lastRequestId = requestId;
 
     this.props.model.get(...falcorPathSets).then((x) => {
-      console.log("SUCCESSFUL");
       if (this.lastRequestId !== requestId) {
         // stale request, no action to response
         return;

@@ -6,7 +6,7 @@ let databaseConfig;
 try {
   databaseConfig = fs.readFileSync('database.config.js', 'utf8');
     // removes the export default and last 2 characters '`;'
-    databaseConfig = databaseConfig.substring(16, databaseConfig.length-3);
+    databaseConfig = databaseConfig.substring(15, databaseConfig.length-2);
 } catch(err) {
   if (err.code === "ENOENT") {
     console.error("ERROR: You have to copy and fill out the database.config.example.js file to database.config.js first. Currently no file database.config.js exists");
@@ -38,7 +38,7 @@ fs.stat('ghost.config.js', (err, stats) => {
     // File exists
     let ghostConfig = fs.readFileSync('ghost.config.js', 'utf8');
     // removes the export default and last 2 characters '`;'
-    ghostConfig = ghostConfig.substring(16, ghostConfig.length-3);
+    ghostConfig = ghostConfig.substring(15, ghostConfig.length-2);
     // Remove comments for easy parsing
     let stringArray = ghostConfig.split('\n');
     stringArray = stringArray.map((string) => {
@@ -57,7 +57,7 @@ fs.stat('ghost.config.js', (err, stats) => {
       }
       ghostConfig.client_id = rows[0].slug;
       ghostConfig.client_secret = rows[0].secret;
-      fs.writeFileSync("ghost.config.js", "export default `" + JSON.stringify(ghostConfig, null, 2) + '`;\n');
+      fs.writeFileSync("ghost.config.js", "export default " + JSON.stringify(ghostConfig, null, 2) + ';\n');
       database.destroy();
     });
   }

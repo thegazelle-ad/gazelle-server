@@ -2,7 +2,7 @@ import BaseRouter from "falcor-router"
 import { ghostArticleQuery } from 'lib/ghostAPI'
 import { dbAuthorQuery, dbArticleQuery, dbAuthorArticleQuery, dbInfoPagesQuery, dbArticleIssueQuery,
 dbArticleAuthorQuery, dbLatestIssueQuery, dbCategoryQuery, dbCategoryArticleQuery,
-dbFeaturedArticleQuery, dbEditorPickQuery, dbIssueCategoryQuery, dbIssueCategoryArticleQuery, dbIssueQuery } from 'lib/mariaDB'
+dbFeaturedArticleQuery, dbEditorPickQuery, dbIssueCategoryQuery, dbIssueCategoryArticleQuery, dbIssueQuery } from 'lib/db'
 import falcor from 'falcor'
 import _ from 'lodash';
 
@@ -22,12 +22,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
     route: "infoPages[{keys:slugs}]['title', 'html', 'slug']",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        dbInfoPagesQuery(pathSet.slugs, pathSet[2]).then((data) => {
+        const requestedFields = pathSet[2];
+        dbInfoPagesQuery(pathSet.slugs, requestedFields).then((data) => {
           // data function parameter is an array of objects with keys equal to the columns requested.
           // Always returns the slug so we know which one we got
           const results = [];
           data.forEach((row) => {
-            pathSet[2].forEach((key) => {
+            requestedFields.forEach((key) => {
               if (!row.hasOwnProperty(key)) {
                 throw new Error("missing data in infoPages, it is not even null, simply doesn't return");
               }
@@ -48,11 +49,12 @@ export default class FalcorRouter extends BaseRouter.createClass([
     route: "authorsBySlug[{keys:slugs}]['name', 'image', 'biography', 'slug', 'job_title']",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        dbAuthorQuery(pathSet.slugs, pathSet[2]).then((data) => {
+        const requestedFields = pathSet[2];
+        dbAuthorQuery(pathSet.slugs, requestedFields).then((data) => {
           // always returns slug in the object no matter what.
           const results = [];
           data.forEach((author) => {
-            pathSet[2].forEach((field) => {
+            requestedFields.forEach((field) => {
               results.push({
                 path: ["authorsBySlug", author.slug, field],
                 value: author[field]
@@ -101,13 +103,14 @@ export default class FalcorRouter extends BaseRouter.createClass([
     route: "articlesBySlug[{keys:slugs}]['id', 'image', 'slug', 'title', 'markdown', 'html', 'teaser']",
     get: (pathSet) => {
       return new Promise((resolve, reject ) => {
+        const requestedFields = pathSet[2];
         let query = "filter=";
         pathSet.slugs.forEach((slug, index) => {
           query += (index > 0 ? "," : "") + "slug:" + "'" + slug + "'"; // Extra quotation marks are needed to avoid bug when slug starts with number
           // Remember to remove the extra quotation marks when the Ghost patch goes live.
         });
         query += "&fields=slug"
-        pathSet[2].forEach((field, index) => {
+        requestedFields.forEach((field, index) => {
           if (field !== 'slug') {
             query += "," + mapGhostNames(field);
           }
@@ -117,7 +120,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
           data = data.posts;
           const results = [];
           data.forEach((article, index) => {
-            pathSet[2].forEach((field) => {
+            requestedFields.forEach((field) => {
               let ghostField = mapGhostNames(field);
               results.push({
                 path: ["articlesBySlug", article.slug, field],
@@ -135,13 +138,14 @@ export default class FalcorRouter extends BaseRouter.createClass([
     route: "articlesBySlug[{keys:slugs}]['category', 'published_at', 'views']",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        dbArticleQuery(pathSet.slugs, pathSet[2]).then((data) => {
+        const requestedFields = pathSet[2];
+        dbArticleQuery(pathSet.slugs, requestedFields).then((data) => {
           const results = [];
           data.forEach((article) => {
             if (article.hasOwnProperty('published_at')) {
               article.published_at = article.published_at.getTime();
             }
-            pathSet[2].forEach((field) => {
+            requestedFields.forEach((field) => {
               results.push({
                 path: ["articlesBySlug", article.slug, field],
                 value: article[field]
@@ -209,10 +213,18 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           pathSet.slugs.forEach((slug) => {
             pathSet.indices.forEach((index) => {
-              results.push({
-                path: ['articlesBySlug', slug, 'related', index],
-                value: $ref(['articlesBySlug', data[index].slug])
-              });
+              if (index == 0) {
+                results.push({
+                  path: ['articlesBySlug', slug, 'related', index],
+                  value: $ref(['articlesBySlug', "cartoon-rain-in-abu-dhabi"])
+                });
+              }
+              else {
+                results.push({
+                  path: ['articlesBySlug', slug, 'related', index],
+                  value: $ref(['articlesBySlug', data[index].slug])
+                });
+              }
             });
           });
           resolve(results);
@@ -280,10 +292,11 @@ export default class FalcorRouter extends BaseRouter.createClass([
     route: "categoriesBySlug[{keys:slugs}]['name', 'slug']",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        dbCategoryQuery(pathSet.slugs, pathSet[2]).then((data) => {
+        const requestedFields = pathSet[2];
+        dbCategoryQuery(pathSet.slugs, requestedFields).then((data) => {
           const results = [];
           data.forEach((category) => {
-            pathSet[2].forEach((field) => {
+            requestedFields.forEach((field) => {
               results.push({
                 path: ['categoriesBySlug', category.slug, field],
                 value: category[field]
@@ -368,15 +381,15 @@ export default class FalcorRouter extends BaseRouter.createClass([
     route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers:indices}]['name', 'slug']",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        const fields = pathSet[4];
-        dbIssueCategoryQuery(pathSet.issueNumbers, fields).then((data) => {
+        const requestedFields = pathSet[4];
+        dbIssueCategoryQuery(pathSet.issueNumbers, requestedFields).then((data) => {
           // data is an object with keys of issue numbers and values
           // arrays of category objects in correct order as given in editor tools
           const results = [];
           _.forEach(data, (categorySlugArray, issueNumber) => {
             pathSet.indices.forEach((index) => {
               if (index < categorySlugArray.length) {
-                fields.forEach((field) => {
+                requestedFields.forEach((field) => {
                   results.push({
                     path: ['issuesByNumber', issueNumber, 'categories', index, field],
                     value: categorySlugArray[index][field]
@@ -437,8 +450,8 @@ export default class FalcorRouter extends BaseRouter.createClass([
         }
       }
       return new Promise((resolve, reject) => {
-        const dataFields = pathSet[2];
-        const dbColumns = dataFields.map(mapFields);
+        const requestedFields = pathSet[2];
+        const dbColumns = requestedFields.map(mapFields);
         dbIssueQuery(pathSet.issueNumbers, dbColumns).then((data) => {
           const results = [];
           data.forEach((issue) => {
@@ -446,7 +459,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
             if (issue.hasOwnProperty('published_at')) {
               issue.published_at = issue.published_at.getTime();
             }
-            dataFields.forEach((field) => {
+            requestedFields.forEach((field) => {
               results.push({
                 path: ['issuesByNumber', issue.issue_order, field],
                 value: issue[mapFields(field)]
