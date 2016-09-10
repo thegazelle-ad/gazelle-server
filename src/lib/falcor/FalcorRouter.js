@@ -2,7 +2,7 @@ import BaseRouter from "falcor-router"
 import { ghostArticleQuery } from 'lib/ghostAPI'
 import { dbAuthorQuery, dbArticleQuery, dbAuthorArticleQuery, dbInfoPagesQuery, dbArticleIssueQuery,
 dbArticleAuthorQuery, dbLatestIssueQuery, dbCategoryQuery, dbCategoryArticleQuery,
-dbFeaturedArticleQuery, dbEditorPickQuery, dbIssueCategoryQuery, dbIssueCategoryArticleQuery, dbIssueQuery } from 'lib/db'
+dbFeaturedArticleQuery, dbEditorPickQuery, dbIssueCategoryQuery, dbIssueCategoryArticleQuery, dbIssueQuery, dbRelatedArticleQuery, dbTrendingQuery } from 'lib/db'
 import falcor from 'falcor'
 import _ from 'lodash';
 
@@ -205,24 +205,16 @@ export default class FalcorRouter extends BaseRouter.createClass([
     route: "articlesBySlug[{keys:slugs}]['related'][{integers:indices}]",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        ghostArticleQuery("limit=30&fields=slug").then((data) => {
+        // The dbRelatedArticleQuery function will only return 3 related articles
+        // per article queried right now, so you cannot request an index higher than 2
+        dbRelatedArticleQuery(pathSet.slugs).then((data) => {
           const results = [];
-          data = data.posts;
-          data = data.filter((post) => {
-            return post.slug !== 'welcome-to-ghost';
-          });
           pathSet.slugs.forEach((slug) => {
             pathSet.indices.forEach((index) => {
-              if (index == 0) {
+              if (data.hasOwnProperty(slug) && index < data[slug].length) {
                 results.push({
                   path: ['articlesBySlug', slug, 'related', index],
-                  value: $ref(['articlesBySlug', "cartoon-rain-in-abu-dhabi"])
-                });
-              }
-              else {
-                results.push({
-                  path: ['articlesBySlug', slug, 'related', index],
-                  value: $ref(['articlesBySlug', data[index].slug])
+                  value: $ref(['articlesBySlug', data[slug][index]])
                 });
               }
             });
@@ -279,8 +271,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
               }
             }).catch((err) => {
               // figure out what you should actually do here
-              console.error(err);
-              reject(err);
+              throw(err);
             });
           });
         });
@@ -477,17 +468,17 @@ export default class FalcorRouter extends BaseRouter.createClass([
     route: "trending[{integers:indices}]",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
-        ghostArticleQuery("limit=30&fields=slug").then((data) => {
+        // This function will at the moment only return 10 trending articles
+        // so you cannot request anything above index 9
+        dbTrendingQuery().then((data) => {
           const results = [];
-          data = data.posts;
-          data = data.filter((post) => {
-            return post.slug !== 'welcome-to-ghost';
-          });
           pathSet.indices.forEach((index) => {
-            results.push({
-              path: ['trending', index],
-              value: $ref(['articlesBySlug', data[index].slug])
-            });
+            if (index < data.length) {
+              results.push({
+                path: ['trending', index],
+                value: $ref(['articlesBySlug', data[index].slug])
+              });
+            }
           });
           resolve(results);
         });

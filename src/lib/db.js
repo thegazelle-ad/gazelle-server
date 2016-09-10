@@ -202,7 +202,8 @@ export function dbLatestIssueQuery() {
     // const database = knex(knexConnectionObject);
     database.select('issue_order')
     .from('issues')
-    .orderBy('issue_order', 'desc').limit(1)
+    .orderBy('issue_order', 'desc')
+    .whereNotNull('published_at').limit(1)
     .then((rows) => {
       // database.destroy();
       resolve(rows);
@@ -248,7 +249,9 @@ export function dbCategoryArticleQuery(slugs) {
     .from('posts')
     .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
     .innerJoin('categories', 'categories.id', '=', 'posts_meta.category_id')
-    .whereIn('categories.slug', slugs).orderBy('gazelle_published_at', 'desc')
+    .whereIn('categories.slug', slugs)
+    .whereNotNull('gazelle_published_at')
+    .orderBy('gazelle_published_at', 'desc')
     .then((rows) => {
       // rows is an array of objects with keys post_slug and cat_slug
       const data = {};
@@ -470,6 +473,49 @@ export function dbIssueQuery(issueNumbers, columns) {
     .catch((e) => {
       // database.destroy();
       throw new Error(e);
+    });
+  });
+}
+
+// THIS IS TEMPORARY
+export function dbTrendingQuery() {
+  return new Promise((resolve, reject) => {
+    database.select('slug')
+    .from('posts')
+    .innerJoin('posts_meta', 'posts_meta.id', '=', 'posts.id')
+    .whereNotNull('gazelle_published_at')
+    .orderBy('gazelle_published_at', 'desc')
+    .limit(10)
+    .then((rows) => {
+      resolve(rows);
     })
+    .catch((e) => {
+      throw new Error(e);
+    });
+  });
+}
+
+// THIS IS TEMPORARY
+export function dbRelatedArticleQuery(slugs) {
+  return new Promise((resolve, reject) => {
+    database.select('slug')
+    .from('posts')
+    .innerJoin('posts_meta', 'posts_meta.id', '=', 'posts.id')
+    .whereNotNull('gazelle_published_at')
+    .orderBy('gazelle_published_at', 'desc')
+    .limit(3)
+    .then((rows) => {
+      console.log(rows);
+      const results = {};
+      const relatedArticlesArray = rows.map((row) => {return row.slug});
+      console.log(relatedArticlesArray);
+      slugs.forEach((slug) => {
+        results[slug] = relatedArticlesArray.slice();
+      });
+      resolve(results);
+    })
+    .catch((e) => {
+      throw new Error(e);
+    });
   })
 }
