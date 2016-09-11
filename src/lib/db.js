@@ -505,10 +505,8 @@ export function dbRelatedArticleQuery(slugs) {
     .orderBy('gazelle_published_at', 'desc')
     .limit(3)
     .then((rows) => {
-      console.log(rows);
       const results = {};
       const relatedArticlesArray = rows.map((row) => {return row.slug});
-      console.log(relatedArticlesArray);
       slugs.forEach((slug) => {
         results[slug] = relatedArticlesArray.slice();
       });

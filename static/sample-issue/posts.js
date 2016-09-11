@@ -331,7 +331,7 @@ const data = {
         },
         "changes-with-marhaba": {
             "authors": [
-                { $type: "ref", value: ["authorsBySlug", "suka-naja"] },
+                { $type: "ref", value: ["authorsBySlug", "saka-naka"] },
                 { $type: "ref", value: ["authorsBySlug", "taj-chapman"] },
             ],
             "featuredImage": "//thegazelle.s3.amazonaws.com/gazelle/2016/02/changes-to-marhaba.png",
@@ -822,7 +822,7 @@ Managing Editor</p>
     authorsBySlug: {
         "khadeeja-farooqui": {
             "name": 'Khadeeja Farooqui',
-            "photo": '//thegazelle.s3.amazonaws.com/gazelle/2015/10/Ka.jpg',
+            "photo": 'https://thegazelle.s3.amazonaws.com/gazelle/2015/10/Ka.jpg',
             "slug": 'khadeeja-farooqui',
             "title": 'Editor-in-Chief',
             "biography": "Khadeeja can often be found juggling Norton’s literature anthologies and a mug of Lipton. Hailing from Pakistan, she loves all things Pakistani, which primarily include naans, paans, laughter and monsoon. In her year away from The Gazelle, she has warmly welcomed back the Oxford comma in her life, but alas that is about to change. She studies postcolonial theory and literature and hopes to make a career out of it. Apparently, this semester she is also learning how to code, in case postcolonial theory doesn’t work out, you know.",
@@ -833,7 +833,7 @@ Managing Editor</p>
         },
         "joey-bui": {
             name: 'Joey Bui',
-            photo: '//thegazelle.s3.amazonaws.com/gazelle/2013/09/JOEY22.jpg',
+            photo: 'https://thegazelle.s3.amazonaws.com/gazelle/2013/09/JOEY22.jpg',
             slug: 'joey-bui',
             title: 'Contributer',
             biography: 'Joey Bui is a Vietnamese Australian senior. She is principally interested in immigration policy, literature and coffee. In her free time, Joey enjoys making cà phê sữa đá and testing walls for Platform Nine and Three Quarters potential.',
@@ -844,7 +844,7 @@ Managing Editor</p>
         },
         "jamie-sutherland": {
             name: "Jamie Sutherland",
-            photo: "//1.gravatar.com/avatar/51fd76c08da7d64e4daf0d15c1ee1738?s=200&d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D200&r=G",
+            photo: null,
             slug: "jamie-sutherland",
             title: "Contributer",
             biography: "",
@@ -854,7 +854,7 @@ Managing Editor</p>
         },
         "zoe-hu": {
             name: "Zoe Hu",
-            photo: "//thegazelle.s3.amazonaws.com/gazelle/2013/08/ZOE2.jpg",
+            photo: "https://thegazelle.s3.amazonaws.com/gazelle/2013/08/ZOE2.jpg",
             slug: "zoe-hu",
             title: "Contributer",
             biography: "Zoe Hu is a senior Literature major from Hong Kong and the United States. Her goals for the year include conquering her capstone thesis, keeping up with her Arabic and figuring out how to not feel so bad about the stack of unread books by her bed.",
@@ -864,7 +864,7 @@ Managing Editor</p>
         },
         "tessa-ayson": {
             name: "Tessa Ayson",
-            photo: "//thegazelle.s3.amazonaws.com/gazelle/2014/09/TSP.jpg",
+            photo: "https://thegazelle.s3.amazonaws.com/gazelle/2014/09/TSP.jpg",
             slug: "tessa-ayson",
             title: "Contributer",
             biography: "Tessa is a senior majoring in Economics, but is frequently told she 'doesn't look like an econ major,' so there's that. She likes to spend her spare time searching for cardamom-flavoured ice cream near Madinat Zayed and being confused about why she has spare time — it's a busy year. Tessa does not enjoy chocolate, slow walkers or personal jokes. She would also be very happy if the Oxford comma were in the list of dislikes published in her bio.",
@@ -874,7 +874,7 @@ Managing Editor</p>
         },
         "karolina-wilczynska": {
             name: "Karolina Wilczynska",
-            photo: "//thegazelle.s3.amazonaws.com/gazelle/2015/04/karolina.jpg",
+            photo: "https://thegazelle.s3.amazonaws.com/gazelle/2015/04/karolina.jpg",
             slug: "karolina-wilczynska",
             title: "Contributor",
             biography: "Karolina is a sophomore passionate about social sciences and where the world is going. When she is not busy drinking her coffee, Karolina likes to tests her luck playing capoeira and the guitar. She was drawn to journalism by the conviction that what we know influences our views and actions; she thinks it coincides nicely with her preference to talk about the world around her rather than herself.",
@@ -885,7 +885,7 @@ Managing Editor</p>
         },
         "the-gazelle-staff": {
             name: "The Gazelle Staff",
-            photo: "//thegazelle.s3.amazonaws.com/gazelle/2013/09/gazelleTEAM.jpg",
+            photo: "https://thegazelle.s3.amazonaws.com/gazelle/2013/09/gazelleTEAM.jpg",
             slug: "the-gazelle-staff",
             title: "",
             biography: "",
@@ -896,7 +896,7 @@ Managing Editor</p>
         },
         "lina-elmusa": {
             name: "Lina Elmusa",
-            photo: "//0.gravatar.com/avatar/aa8fd14652d66e2a2059736cb3fb9b60?s=200",
+            photo: null,
             slug: "lina-elmulsa",
             title: "Contributor",
             biography: "",
@@ -906,7 +906,7 @@ Managing Editor</p>
         },
         "annie-bauer": {
             name: "Annie Bauer",
-            photo: "//thegazelle.s3.amazonaws.com/gazelle/2015/04/Annie.jpg",
+            photo: "https://thegazelle.s3.amazonaws.com/gazelle/2015/04/Annie.jpg",
             slug: "annie-bauer",
             title: "Deputy Copy Chief",
             biography: "Annie is a sophomore studying Psychology who frequently changes her mind on possible concentrations. She likes coffee and editing, which is why she enjoys being deputy copy chief. She grew up on a farm in northern Vermont and though she loves Abu Dhabi, she still misses alpine skiing and big mountains.",
@@ -916,7 +916,7 @@ Managing Editor</p>
         },
         "larayb-abrar": {
             name: "Larayb Abrar",
-            photo: "//thegazelle.s3.amazonaws.com/gazelle/2015/10/1_0.jpg",
+            photo: "https://thegazelle.s3.amazonaws.com/gazelle/2015/10/1_0.jpg",
             slug: "larayb-abrar",
             title: "Contributor",
             biography: "Larayb is a very cool and charming individual who often likes to maintain a healthy sense of humility. She is double-majoring in Literature and Social Research and Public Policy. In her free time, she can be found eavesdropping on conversations to find material for her writing.",
@@ -926,7 +926,7 @@ Managing Editor</p>
         },
         "krushika-uday-patankar": {
             name: "Krushika Patankar",
-            photo: "//0.gravatar.com/avatar/c63ec0271e2c8a10b2e343bbd1dec547?s=200&d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D200&r=G",
+            photo: null,
             slug: "krushika-uday-patankar",
             title: "Contributor",
             biography: "",
@@ -936,7 +936,7 @@ Managing Editor</p>
         },
         "connor-pearce": {
             name: "Connor Pearce",
-            photo: "//thegazelle.s3.amazonaws.com/gazelle/2015/04/connor.jpg",
+            photo: "https://thegazelle.s3.amazonaws.com/gazelle/2015/04/connor.jpg",
             slug: "connor-pearce",
             title: "Co-Editor-In-Chief",
             biography: "Connor Pearce is a tenacious junior who hails from the beautiful coast of Sydney, Australia. His interests revolve primarily around cycling, and you’ll likely find him scrolling through avant-garde Facebook memes in his room, alone, in the dark. Undertaking a History major gives Connor the privilege to write the token history article every special issue.",
@@ -948,7 +948,7 @@ Managing Editor</p>
         },
         "supriya-kamath": {
             name: "Supriya Kamath",
-            photo: "//thegazelle.s3.amazonaws.com/gazelle/2016/01/Sup.jpg",
+            photo: "https://thegazelle.s3.amazonaws.com/gazelle/2016/01/Sup.jpg",
             slug: "supriya-kamath",
             title: "Contributor",
             biography: "Supriya is a Taurus, an ISFJ and a freshman from Mumbai, India. A big believer in the comedic power of Winnie-the-Pooh and Stalinism, she aspires to write sitcoms about pigeons trying to make it in a man’s world. Some say that she’s a huge fan of the British television show Top Gear, but all we know is that she has strong emotional reactions to sans serif typefaces and global warming. She intends to major in Psychology, because she savors the thought of exploring the darkest recesses of the human psyche. She’s also considering Literature, because it’s rad.",
@@ -958,7 +958,7 @@ Managing Editor</p>
         },
         "safa-salim": {
             name: "Safa Salim",
-            photo: "//0.gravatar.com/avatar/c63ec0271e2c8a10b2e343bbd1dec547?s=200&d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D200&r=G",
+            photo: null,
             slug: "safa-salim",
             title: "Contributor",
             biography: "",
@@ -966,10 +966,10 @@ Managing Editor</p>
                 { $type: "ref", value: ["articlesBySlug", "nyuad-survival-guide"] },
             ],
         },
-        "suka-naja": {
-            name: "Suka Naja",
-            photo: "//0.gravatar.com/avatar/c63ec0271e2c8a10b2e343bbd1dec547?s=200&d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D200&r=G",
-            slug: "suka-naja",
+        "saka-naka": {
+            name: "Saka Naka",
+            photo: null,
+            slug: "saka-naka",
             title: "Contributor",
             biography: "",
             articles: [
@@ -978,7 +978,7 @@ Managing Editor</p>
         },
         "taj-chapman": {
             name: "Taj Chapman",
-            photo: "//0.gravatar.com/avatar/c63ec0271e2c8a10b2e343bbd1dec547?s=200&d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D200&r=G",
+            photo: null,
             slug: "taj-chapman",
             title: "Contributor",
             biography: "",
@@ -1008,7 +1008,7 @@ Managing Editor</p>
         },
         "liza-tait-bailey": {
             name: "Liza Tait-Bailey",
-            photo: "//thegazelle.s3.amazonaws.com/gazelle/2015/10/liza.jpg",
+            photo: "https://thegazelle.s3.amazonaws.com/gazelle/2015/10/liza.jpg",
             slug: "liza-tait-bailey",
             title: "Social Media Consultant",
             biography: "Liza comes from rainy England, and realized that she spent so much time on social media that she might as well do something useful with it. When she is not tweeting or Instagramming she can be found running around campus with a Vanilla Latte in hand, thinking of new ideas for her advice and travel blog. She is currently in Ghana, trying to eat as many mangoes as humanly possible.",
