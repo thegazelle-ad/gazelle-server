@@ -1,5 +1,5 @@
 import http from 'http';
-import ghostConfig from 'lib/../../ghost.config';
+import ghostConfig from 'lib/../../config/ghost.config';
 
 export function ghostArticleQuery(params) {
 	return new Promise((resolve, reject) => {

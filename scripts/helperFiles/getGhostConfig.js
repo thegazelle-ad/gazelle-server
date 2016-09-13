@@ -4,7 +4,7 @@ const fs = require('fs');
 
 let databaseConfig;
 try {
-  databaseConfig = fs.readFileSync('database.config.js', 'utf8');
+  databaseConfig = fs.readFileSync(__dirname+'/../../config/database.config.js', 'utf8');
     // removes the export default and last 2 characters '`;'
     databaseConfig = databaseConfig.substring(15, databaseConfig.length-2);
 } catch(err) {
@@ -33,10 +33,10 @@ const database = require('knex')({
   connection: databaseConfig,
 });
 
-fs.stat('ghost.config.js', (err, stats) => {
+fs.stat(__dirname+'/../../config/ghost.config.js', (err, stats) => {
   if (!err) {
     // File exists
-    let ghostConfig = fs.readFileSync('ghost.config.js', 'utf8');
+    let ghostConfig = fs.readFileSync(__dirname+'/../../config/ghost.config.js', 'utf8');
     // removes the export default and last 2 characters '`;'
     ghostConfig = ghostConfig.substring(15, ghostConfig.length-2);
     // Remove comments for easy parsing
@@ -57,7 +57,7 @@ fs.stat('ghost.config.js', (err, stats) => {
       }
       ghostConfig.client_id = rows[0].slug;
       ghostConfig.client_secret = rows[0].secret;
-      fs.writeFileSync("ghost.config.js", "export default " + JSON.stringify(ghostConfig, null, 2) + ';\n');
+      fs.writeFileSync(__dirname+"/../../config/ghost.config.js", "export default " + JSON.stringify(ghostConfig, null, 2) + ';\n');
       database.destroy();
     });
   }

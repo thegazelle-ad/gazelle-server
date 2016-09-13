@@ -1,7 +1,8 @@
 build/
 static/build/
-database.config.js
-ghost.config.js
+config/database.config.js
+config/ghost.config.js
+scripts/backupDatabase.sh
 
 ## Below this is automatically generated
 

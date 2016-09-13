@@ -1,5 +1,5 @@
 import knex from 'knex';
-import databaseConfig from 'lib/../../database.config';
+import databaseConfig from 'lib/../../config/database.config';
 import _ from 'lodash';
 
 const knexConnectionObject = {
