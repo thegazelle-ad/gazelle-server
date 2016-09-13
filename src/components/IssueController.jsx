@@ -26,7 +26,7 @@ export default class IssueController extends FalcorController {
     if (params.issueNumber) { // If not on home page grab specificed issue
       const issueNumber = mapLegacyIssueSlugsToIssueNumber(params.issueNumber);
       return [
-        ["issuesByNumber", issueNumber, "published_at"],
+        ["issuesByNumber", issueNumber, ["issueNumber", "published_at"]],
 
         // Request the featured article
         ["issuesByNumber", issueNumber, "featured", ["title", "teaser", "issueNumber", "category", "slug", "image"]],
@@ -52,7 +52,7 @@ export default class IssueController extends FalcorController {
     }
     else { // User is on home page
       return [
-        ["latestIssue", "published_at"],
+        ["latestIssue", ["issueNumber", "published_at"]],
 
         // Request the featured article
         ["latestIssue", "featured", ["title", "teaser", "issueNumber", "category", "slug", "image"]],
@@ -120,10 +120,10 @@ export default class IssueController extends FalcorController {
           {name: "description", content: "The Gazelle is a weekly student publication, serving the NYU Abu Dhabi community and the greater Global Network University at NYU."},
 
           // Social media
-          {property: "og:title", content: "The Gazelle"},
+          {property: "og:title", content: "Issue " + issueData.issueNumber + " | The Gazelle"},
           {property: "og:type", content: "website"},
           {property: "og:url", content: "beta.thegazelle.org"},
-          {property: "og:image", content: "https://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png"},
+          {property: "og:image", content: issueData.featured.image},
           {property: "og:description", content: "The Gazelle is a weekly student publication serving the NYU Abu Dhabi community."},
         ];
         // Top level elements can't have classes or it will break transitions
