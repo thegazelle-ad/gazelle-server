@@ -39,9 +39,8 @@ export default class ArticleController extends FalcorController {
         const articleData = this.state.data.articlesBySlug[articleSlug];
         const trendingData = this.state.data.trending;
         const relatedArticlesData = articleData.related;
-        // if (!articleData.image) {
-        //   articleData.image = "http://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg";// Default featured image for articles
-        // }
+        // make sure article meta image has default
+        const articleMetaImage = articleData.image || "https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg";
         const meta = [
           // Search results
           {name: "description", content: this.props.teaser},
@@ -50,7 +49,7 @@ export default class ArticleController extends FalcorController {
           {property: "og:title", content: articleData.title + " | The Gazelle"},
           {property: "og:type", content: "article"},
           {property: "og:url", content: "beta.thegazelle.org/issue/" + articleData.issueNumber.toString() + '/' + articleData.category + '/' + articleData.slug},
-          {property: "og:image", content: articleData.image},
+          {property: "og:image", content: articleMetaImage},
           {property: "og:description", content: articleData.teaser},
           {property: "og:site_name", content: "The Gazelle"},
         ];

@@ -115,6 +115,9 @@ export default class IssueController extends FalcorController {
             );
           });
 
+        // Make sure issueImage has a default
+        const issueImage = issueData.featured.image || "https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg";
+
         const meta = [
           // Search results
           {name: "description", content: "The Gazelle is a weekly student publication, serving the NYU Abu Dhabi community and the greater Global Network University at NYU."},
@@ -123,7 +126,7 @@ export default class IssueController extends FalcorController {
           {property: "og:title", content: "Issue " + issueData.issueNumber + " | The Gazelle"},
           {property: "og:type", content: "website"},
           {property: "og:url", content: "beta.thegazelle.org"},
-          {property: "og:image", content: issueData.featured.image},
+          {property: "og:image", content: issueImage},
           {property: "og:description", content: "The Gazelle is a weekly student publication serving the NYU Abu Dhabi community."},
         ];
         // Top level elements can't have classes or it will break transitions
