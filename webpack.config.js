@@ -105,6 +105,17 @@ module.exports = [{
   ],
 
   module: {
+    preLoaders: [
+      /*
+       * Linting warnings and errors will be displayed in the console when
+       * Webpack is compiled.
+       */
+      {
+        test: /\.jsx$/,
+        loaders: ['eslint'],
+        exclude: /node_modules/,
+      },
+    ],
     loaders: [
       {
         loader: 'babel',
@@ -146,6 +157,17 @@ module.exports = [{
   ],
 
   module: {
+    preLoaders: [
+      /*
+       * Linting warnings and errors will be displayed in the console when
+       * Webpack is compiled.
+       */
+      {
+        test: /\.jsx$/,
+        loaders: ['eslint'],
+        exclude: /node_modules/,
+      },
+    ],
     loaders: [
       {
         loader: 'babel-loader',
@@ -178,6 +200,17 @@ module.exports = [{
   ],
 
   module: {
+    preLoaders: [
+      /*
+       * Linting warnings and errors will be displayed in the console when
+       * Webpack is compiled.
+       */
+      {
+        test: /\.jsx$/,
+        loaders: ['eslint'],
+        exclude: /node_modules/,
+      },
+    ],
     loaders: [
       {
         loader: 'babel',

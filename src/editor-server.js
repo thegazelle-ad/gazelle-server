@@ -148,11 +148,11 @@ server.get('*', (req, res) => {
 });
 
 
-server.listen(3000, err => {
+server.listen(4000, err => {
   if (err) {
     console.error(err);
     return;
   }
 
-  console.log('Server started on port 3000');
+  console.log('Editor tools server started on port 4000');
 });
