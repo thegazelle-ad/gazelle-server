@@ -1,5 +1,6 @@
+/* eslint react/jsx-no-bind: 0 */
+
 import React from 'react';
-import ReactDOM from 'react-dom';
 import BaseComponent from 'lib/BaseComponent';
 import _ from 'lodash';
 
@@ -7,7 +8,7 @@ export default class EditAuthorsForm extends BaseComponent {
   constructor(props) {
     super(props);
     this.safeSetState({
-      addAuthorValue: ""
+      addAuthorValue: "",
     });
     this.handleClickAddAuthor = this.handleClickAddAuthor.bind(this);
   }
@@ -53,7 +54,7 @@ export default class EditAuthorsForm extends BaseComponent {
           _.map(this.props.authorsAdded, (name, slug) => {
             return(
               <div key={slug}>
-                <a style={{float: "left", cursor: "pointer"}} aria-label="Remove Author Button" onClick={this.props.handleDeleteAuthor.bind(null, slug, false)}>&times;&nbsp;</a>
+                <a style={{float: "left", cursor: "pointer"}} aria-label="Remove Author Button" onClick={this.props.handleDeleteAuthor.bind(null, slug, false)}>&times;&nbsp;</a> {}
                 <div>{name}</div>
               </div>
             );

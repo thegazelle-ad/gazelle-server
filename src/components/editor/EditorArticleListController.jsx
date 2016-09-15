@@ -1,5 +1,5 @@
 import React from 'react';
-import { browserHistory, Link } from 'react-router';
+import { Link } from 'react-router';
 import FalcorController from "lib/falcor/FalcorController";
 import _ from "lodash";
 
@@ -10,7 +10,7 @@ export default class EditorArticleListController extends FalcorController {
     super(props);
     this.getNewPagePath = this.getNewPagePath.bind(this);
     this.state = {
-      slugSearchValue: ""
+      slugSearchValue: "",
     };
   }
   static getFalcorPathSets(params) {
@@ -25,12 +25,14 @@ export default class EditorArticleListController extends FalcorController {
   }
 
   render() {
-    let data, page, maxPage, firstIndex, indexConverter, pathStart, length, slugSearchLink;
+    let data, page, maxPage, length, slugSearchLink;
     if (this.state.ready) {
       // If trying to access inacessible page, redirect to page 1
       if (!this.state.data.articlesByPage) {
-        return <p>You have tried accessing a page that doesn't exist. Please press <Link to="/articles/page/1">this link</Link> to return to page 1.
-          If you believe this was unintended and there is an error with the website please contact the web development team of The Gazelle.</p>;
+        return (
+          <p>You have tried accessing a page that doesn't exist. Please press <Link to="/articles/page/1">this link</Link> to return to page 1.
+          If you believe this was unintended and there is an error with the website please contact the web development team of The Gazelle.</p>
+        );
       }
 
       page = this.props.params.page;
@@ -58,7 +60,7 @@ export default class EditorArticleListController extends FalcorController {
               <Link to={slugSearchLink} onClick={() => {this.safeSetState({slugSearchValue: ""})}}><button type="button" className={"pure-button" + (this.state.slugSearchValue ? "" : " pure-button-disabled")}>Submit</button></Link>
             </form>
           }
-          {!this.state.ready ? 
+          {!this.state.ready ?
             <p>loading...</p> :
             <div style={{overflow: "auto", maxHeight:"50vh"}}>
               {
@@ -66,7 +68,7 @@ export default class EditorArticleListController extends FalcorController {
                   // For Ling: I was kind of freestyling here, so don't have any idea whether this is good development style
                   // at all, if it is I guess this is an appropriate place to use <br> though right? As it's actually a line break.
                   // Otherwise, do you have any other ideas?
-                  return <div key={article.slug}><Link to={"/articles/page/" + page + "/slug/"+article.slug}>{article.title}</Link><br/></div>;
+                  return <div key={article.slug}><Link to={"/articles/page/" + page + "/slug/"+article.slug}>{article.title}</Link><br /></div>;
                 })
               }
             </div>
