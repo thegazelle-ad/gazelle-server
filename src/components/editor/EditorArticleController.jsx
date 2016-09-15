@@ -28,10 +28,10 @@ export default class EditorArticleController extends FalcorController {
         authors: false
       }
     });
-    
+
     this.debouncedHandleMainFormChanges = debounce((event) => {
       const formNode = event.target.parentNode;
-      const fields = ["category", "issue", "description"];
+      const fields = ["category", "issue", "teaser"];
       const falcorData = this.state.data.articlesBySlug[this.props.params.slug];
 
       const changedFlag = fields.some((field) => {
@@ -59,7 +59,10 @@ export default class EditorArticleController extends FalcorController {
   }
 
   static getFalcorPathSets(params) {
-    return [['articlesBySlug', params.slug, ['title', 'issue', 'category', 'description']], ['articlesBySlug', params.slug, 'authors', {to: 2}, ['slug', 'name']], ['latestIssue']];
+    return [
+      ['articlesBySlug', params.slug, ['title', 'issue', 'category', 'teaser']],
+      ['articlesBySlug', params.slug, 'authors', {length: 5}, ['slug', 'name']],
+      ['latestIssue', 'issueNumber']];
   }
 
   componentWillReceiveProps(nextProps) {
@@ -113,7 +116,7 @@ export default class EditorArticleController extends FalcorController {
     // This can also be done with an iterator like in handleFormChanges
     const category = formNode.category.value;
     const issue = formNode.issue.value;
-    const description = formNode.description.value;
+    const teaser = formNode.teaser.value;
 
     const authorsAdded = this.state.authorsAdded;
     const authorsDeleted = this.state.authorsDeleted;
@@ -149,7 +152,7 @@ export default class EditorArticleController extends FalcorController {
       let newAuthorsDeleted = Object.assign({}, this.state.authorsDeleted, newValue);
       this.safeSetState({
         authorsDeleted: newAuthorsDeleted
-      });      
+      });
     }
     else {
       // TODO: Autocomplete which also includes validating that the authors indeed exist
@@ -198,7 +201,7 @@ export default class EditorArticleController extends FalcorController {
 
       const slug = this.props.params.slug;
       const article = this.state.data.articlesBySlug[slug];
-      const latestIssue = this.state.data.latestIssue;
+      const latestIssueNumber = this.state.data.latestIssue.issueNumber;
 
       let changedStateMessage;
       const changedStateStyle = {};
@@ -208,17 +211,17 @@ export default class EditorArticleController extends FalcorController {
         }
         else {
           changedStateMessage = "Saved";
-          changedStateStyle.color = "green";          
+          changedStateStyle.color = "green";
         }
       }
       else {
         if (!this.state.saving) {
           changedStateMessage = "Unsaved Changes";
-          changedStateStyle.color = "red";          
+          changedStateStyle.color = "red";
         }
         else {
           changedStateMessage = "Saving"
-          changedStateStyle.color = "#65e765";         
+          changedStateStyle.color = "#65e765";
         }
       }
 
@@ -238,15 +241,16 @@ export default class EditorArticleController extends FalcorController {
             Change Issue Number:
             <select defaultValue={article.issue} name="issue">
               {
-                _.range(latestIssue, 0, -1).map((issue) => {
-                  return <option value={issue} key={issue}>{issue.toString() + (issue === latestIssue ? " (latest issue)" : "")}</option>;
+                _.range(latestIssueNumber, 0, -1).map((issue) => {
+                  return <option value={issue} key={issue}>{issue.toString() + (issue === latestIssueNumber ? " (latest issue)" : "")}</option>;
                 })
               }
             </select>
-            Change Description:
+            Change Teaser:
             {/*TODO: Style this description so initial size is bigger and more approriate (and also responsive)*/}
-            <textarea defaultValue={article.description} name="description" />
-            <EditAuthorsForm authors={article.authors} onChange={this.handleAuthorChanges} handleAddAuthor={this.handleAddAuthor} handleDeleteAuthor={this.handleDeleteAuthor} authorsDeleted={this.state.authorsDeleted} authorsAdded={this.state.authorsAdded} />
+            <textarea defaultValue={article.teaser} style={{width: "30em", height: "8em", marginBottom: "10px"}} name="teaser" />
+            Update Authors:
+            <EditAuthorsForm style={{marginBottom: "10px", marginTop: "6px"}} authors={article.authors} onChange={this.handleAuthorChanges} handleAddAuthor={this.handleAddAuthor} handleDeleteAuthor={this.handleDeleteAuthor} authorsDeleted={this.state.authorsDeleted} authorsAdded={this.state.authorsAdded} />
             {/*Be aware you might want to change when the button is disabled later*/}
             <input className={"pure-button pure-button-primary" + (!this.state.changed || this.state.saving ? " pure-button-disabled" : "")} type="submit" value="Save Changes" disabled={!this.state.changed || this.state.saving} />
           </form>

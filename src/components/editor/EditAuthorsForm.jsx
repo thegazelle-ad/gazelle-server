@@ -23,9 +23,7 @@ export default class EditAuthorsForm extends BaseComponent {
 
   render() {
     return (
-      <div>
-        <input placeholder="Add Author" value={this.state.addAuthorValue} onChange={(e)=>{e.stopPropagation(); this.safeSetState({addAuthorValue: e.target.value});}} />
-        <button className="pure-button" type="button" onClick={this.handleClickAddAuthor}>Add Author</button>
+      <div style={this.props.style}>
         {
           _.map(this.props.authors, (author) => {
             // Striked will correctly evaluate to false if there is no key
@@ -61,6 +59,9 @@ export default class EditAuthorsForm extends BaseComponent {
             );
           })
         }
+
+        <input placeholder="Add Author" value={this.state.addAuthorValue} onChange={(e)=>{e.stopPropagation(); this.safeSetState({addAuthorValue: e.target.value});}} />
+        <button className="pure-button" type="button" onClick={this.handleClickAddAuthor}>Add Author</button>
       </div>
     )
   }
