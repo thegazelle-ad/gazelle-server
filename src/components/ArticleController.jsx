@@ -22,8 +22,8 @@ export default class ArticleController extends FalcorController {
       ["articlesBySlug", params.articleSlug, "related", {length: 2},  "authors", {length: 10}, ["name", "slug"]],
 
       // Fetch first five Trending articles
-      ["trending", {length: 7}, ["title", "issueNumber", "category", "slug", "image"]],
-      ["trending", {length: 7}, "authors", {length: 10}, ["name", "slug"]],
+      ["trending", {length: 6}, ["title", "issueNumber", "category", "slug", "image"]],
+      ["trending", {length: 6}, "authors", {length: 10}, ["name", "slug"]],
 
     ];
   }
