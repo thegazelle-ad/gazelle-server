@@ -133,8 +133,10 @@ export class TransitionManager extends BaseComponent {
         this.delayedModeChange("loadEnding", "fadingStart", TRANSITION_OUT_TIME);
         break;
       case "fadingStart":
-        this.visibleTransitionOut();
-        this.visibleTransitionOut = null;
+        if (this.visibleTransitionOut) {
+          this.visibleTransitionOut();
+          this.visibleTransitionOut = null;
+        }
         this.delayedModeChange("fadingStart", "fadingIn", 10);
         break;
       case "fadingIn":
@@ -162,6 +164,7 @@ export class TransitionManager extends BaseComponent {
 
   // Causes the current component queued to leave to actually leave.
   handleLeaveCallback(leaveCallback) {
+    console.log("Coming out")
     if (leaveCallback) {
       switch (this.mode) {
         case "rest":

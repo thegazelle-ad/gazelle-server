@@ -1,0 +1,24 @@
+.archives {
+  //max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+  &__issue-item {
+    min-width: $column-3-1;
+    max-width: $column-3-2;
+    margin: 1rem;
+    text-align: center;
+    &__issue-number {
+      font-size: 2rem;
+      margin: 0.2rem 0 0 0;
+      font-weight: 400;
+    }
+    &__publication-date {
+      margin: 0 0 0.5rem 0;
+      font-size: 1rem;
+      color: $light-grey;
+    }
+  }
+}
