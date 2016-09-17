@@ -5,6 +5,7 @@
   justify-content: space-between;
   align-items: stretch;
   padding: 0 1rem;
+  height: 39px;
 
   &__beta { // TODO: remove when search feature works
     align-self: center;
@@ -68,19 +69,11 @@
 
   &__title {
     &__content {
-      &__site-name {
-        display: inline-block;
-        @include uppercase();
-        text-align: center;
-        font-size: 2.2rem;
-        font-weight: 400;
-        margin: 0;
-      }
       img {
-        display: inline-block;
+        position: absolute;
         width: 50px;
         height: 50px;
-        margin: 0 0 -10px 0;
+        margin: -0.1rem 0 0 0;
       }
     }
   }
@@ -108,11 +101,28 @@
 
     &--twitter {
       cursor: pointer;
+      margin-right: 0.5rem;
       stroke: $light-grey;
       fill: $lighter-grey;
       &:hover, &:active {
         stroke: #55acee;
         fill: #55acee;
+      }
+    }
+
+    &--instagram {
+      cursor: pointer;
+      stroke: none;
+      fill: $light-grey;
+      &--bg {
+        fill: #F3F3F3; // Lighter to counteract human color perception
+      }
+      &:hover, &:active {
+        .header__social--instagram--bg {
+          fill: #F3F3F3;
+        }
+        stroke: #125688;
+        fill: #125688;
       }
     }
   }
@@ -142,22 +152,21 @@
     }
     &__search {
       margin: 0.25rem;
+      display: none;
     }
     &__title {
       &__content {
         margin: 0;
-        &__site-name {
-          display: none;
-        }
         img {
-          margin: 0.2rem 0 0rem 0;
+          position: fixed;
+          margin: -0.45rem 0 0 0;
           width: 35px;
           height: 35px;
         }
       }
     }
     &__social {
-      padding-right: 0.2rem;
+      padding: 0.2rem 0.2rem 0 0;
     }
   }
 }
