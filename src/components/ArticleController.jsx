@@ -50,6 +50,8 @@ export default class ArticleController extends FalcorController {
           {property: "og:type", content: "article"},
           {property: "og:url", content: "www.thegazelle.org/issue/" + articleData.issueNumber.toString() + '/' + articleData.category + '/' + articleData.slug},
           {property: "og:image", content: articleMetaImage},
+          {property: "og:image:width", content: "540"}, // 1.8:1 ratio
+          {property: "og:image:height", content: "300"},
           {property: "og:description", content: articleData.teaser},
           {property: "og:site_name", content: "The Gazelle"},
         ];
