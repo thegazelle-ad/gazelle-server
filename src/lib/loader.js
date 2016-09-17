@@ -164,7 +164,6 @@ export class TransitionManager extends BaseComponent {
 
   // Causes the current component queued to leave to actually leave.
   handleLeaveCallback(leaveCallback) {
-    console.log("Coming out")
     if (leaveCallback) {
       switch (this.mode) {
         case "rest":

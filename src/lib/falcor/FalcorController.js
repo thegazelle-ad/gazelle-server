@@ -142,16 +142,13 @@ export default class FalcorController extends BaseComponent {
   }
 
   componentWillAppear(cb) {
-    console.log("I'm appearing")
     cb()
   }
 
   componentWillEnter(cb) {
-    console.log("I'm entering")
     cb()
   }
   componentWillLeave(cb) {
-    console.log("I'm leaving")
     signalLeaving(cb);
   }
 }

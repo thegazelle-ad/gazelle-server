@@ -6,8 +6,6 @@ import moment from 'moment';
 
 export default class Archives extends BaseComponent {
   render () {
-    //console.log("Data: " + JSON.stringify(this.props.archivesData));
-    //const archives = this.props.archivesData.issuesByNumber.reverse()
     let renderIssueList =
       // Returns reversed array of issues
       _.reverse(_.map((this.props.archivesData.issuesByNumber || []), (issue) => {
