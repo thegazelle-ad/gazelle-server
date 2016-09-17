@@ -103,6 +103,12 @@ module.exports = [{
 
   plugins: [
     new webpack.OldWatchingPlugin(),
+    new webpack.DefinePlugin({
+      'process.env':{
+        'NODE_ENV': '"production"', // compiles React as production build
+  'PORT': 8001, // we use a reverse proxy to forward this to port 80
+      },
+    }),
   ],
 
   module: {
