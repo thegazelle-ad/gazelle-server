@@ -5,13 +5,30 @@ import { Link } from 'react-router';
 import moment from 'moment';
 
 export default class Navigation extends BaseComponent {
+
   render() {
-    if (this.props.navigationData != null) { // Wait for navigation data to come in asynchronous
+    const categories = [
+      {
+        name: "commentary",
+        slug: "commentary",
+      },
+      {
+        name: "on campus",
+        slug: "on-campus",
+      },
+      {
+        name: "off campus",
+        slug: "off-campus",
+      },
+      {
+        name: "in focus",
+        slug: "in-focus",
+      },
+    ]
+    if (this.props.navigationData != null) { // Wait for navigation data to come in asynchronously
       const data = this.props.navigationData;
-      // Renders only categories that exist in the issue as passed through
-      // the 'categories' prop
       let renderCategories =
-        _.map((data.categories || []), function(category) {
+        _.map((categories || []), function(category) {
           return(
             <li
               key={category.slug}

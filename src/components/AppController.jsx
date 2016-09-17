@@ -27,13 +27,11 @@ export default class AppController extends FalcorController {
       return [
         ["latestIssue", ["issueNumber"]], // Used for robustness when setting navigationData
         ["issuesByNumber", issueNumber, ["published_at", "issueNumber"]],
-        ["issuesByNumber", issueNumber, "categories", {length:10}, ["name", "slug"]],
       ];
     }
     else { // User is on home page
       return [
         ["latestIssue", ["published_at", "issueNumber"]],
-        ["latestIssue", "categories", {length:10}, ["name", "slug"]],
       ];
     }
   }
