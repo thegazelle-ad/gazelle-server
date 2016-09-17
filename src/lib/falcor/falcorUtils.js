@@ -135,10 +135,8 @@ export function pathSetsInCache(cache, falcorPathSets) {
         // It is also needed in the software development to know how many
         // items you will actually receive when overfetching.
         if (!curObject.hasOwnProperty("length")) {
-          console.warn("No length property on object in cache. This might be a developer mistake.\
- If error checking flag is true current object will be printed below.");
-          // As this will be printing a lot we don't want to always print full objects
           if (process.env.NODE_ENV !== "production") {
+            console.warn("No length property on object in cache. This might be a developer mistake.");
             console.log("Current object in pathSetsInCache:");
             console.log(curObject);
             console.log("remainingKeySets in pathSetsInCache");

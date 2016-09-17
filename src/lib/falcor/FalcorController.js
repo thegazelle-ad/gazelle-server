@@ -62,11 +62,12 @@ export default class FalcorController extends BaseComponent {
       // Found on the net that console.error was deprecated, watch out for that and maybe restructure
       const err = new Error("Serverside render of component: " + this.constructor.name +
         " failed. Data not in cache. Falcor Path attempted fetched was: " + JSON.stringify(falcorPathSets));
-      console.error(err);
+      if (process.env.NODE_ENV !== "production") {
+        console.error(err);
+      }
       this.safeSetState({
         ready: true,
         data: null,
-        error: err
       });
     }
   }
@@ -103,12 +104,13 @@ export default class FalcorController extends BaseComponent {
       }
       else {
         const err = new Error("FalcorPathSets: " + JSON.stringify(falcorPathSets) + " returned no data.")
-        console.error(err);
+        if (process.env.NODE_ENV !== "production") {
+          console.error(err);
+        }
         this.safeSetState({
           ready: true,
           fetching: false,
           data: null,
-          error: err,
         });
       }
     });

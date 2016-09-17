@@ -174,7 +174,9 @@ server.use("/favicon.ico", (req, res) => {
 server.use(compression());
 
 server.get('*', (req, res) => {
-  console.log("GOT REQUEST");
+  if (process.env.NODE_ENV !== "production") {
+    console.log("GOT REQUEST");
+  }
   match({ routes, location: req.url },
     (error, redirectLocation, renderProps) => {
       if (error) {
