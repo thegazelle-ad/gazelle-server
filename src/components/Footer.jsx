@@ -19,7 +19,7 @@ export default class Footer extends BaseComponent {
         */}
         {/* On hover, change to "the herd" */}
         <li className="footer__item">
-          <Link to="/archives/">Previous Issues</Link>
+          <Link to="/archives">Previous Issues</Link>
         </li>
       </ul>
     );

@@ -34,7 +34,7 @@ export default class Navigation extends BaseComponent {
               </ul>
             </nav>
             {/* TODO: change link to archives list */}
-            <Link to="/" className="navigation__issueNumber">{"Issue " + data.issueNumber}</Link>
+            <Link to="/archives" className="navigation__issueNumber">{"Issue " + data.issueNumber}</Link>
           </div>
         </div>
       );
