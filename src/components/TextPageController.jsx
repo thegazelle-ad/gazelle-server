@@ -43,7 +43,7 @@ export default class TextPageController extends FalcorController {
           // Social media
           {property: "og:title", content: uppercase(data.title) + " | The Gazelle"},
           {property: "og:type", content: "website"},
-          {property: "og:url", content: "beta.thegazelle.org/" + data.slug},
+          {property: "og:url", content: "www.thegazelle.org/" + data.slug},
           {property: "og:image", content: "https://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png"},
           {property: "og:description", content: "The Gazelle is a weekly student publication serving the NYU Abu Dhabi community."},
         ];

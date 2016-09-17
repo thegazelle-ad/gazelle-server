@@ -40,7 +40,7 @@ export default class AuthorController extends FalcorController {
           // Social media
           {property: "og:title", content: authorData.name + " | The Gazelle"},
           {property: "og:type", content: "website"},
-          {property: "og:url", content: "beta.thegazelle.org/author/" + authorData.slug},
+          {property: "og:url", content: "www.thegazelle.org/author/" + authorData.slug},
           {property: "og:description", content: authorData.biography},
         ];
         return (

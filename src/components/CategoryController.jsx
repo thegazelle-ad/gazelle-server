@@ -45,7 +45,7 @@ export default class CategoryController extends FalcorController {
           // Social media
           {property: "og:title", content: "The Gazelle"},
           {property: "og:type", content: "website"},
-          {property: "og:url", content: "beta.thegazelle.org/category/" + categoryData.slug},
+          {property: "og:url", content: "www.thegazelle.org/category/" + categoryData.slug},
           {property: "og:description", content: "The Gazelle is a weekly student publication serving the NYU Abu Dhabi community."},
         ];
         return (

@@ -48,7 +48,7 @@ export default class ArticleController extends FalcorController {
           // Social media sharing
           {property: "og:title", content: articleData.title + " | The Gazelle"},
           {property: "og:type", content: "article"},
-          {property: "og:url", content: "beta.thegazelle.org/issue/" + articleData.issueNumber.toString() + '/' + articleData.category + '/' + articleData.slug},
+          {property: "og:url", content: "www.thegazelle.org/issue/" + articleData.issueNumber.toString() + '/' + articleData.category + '/' + articleData.slug},
           {property: "og:image", content: articleMetaImage},
           {property: "og:description", content: articleData.teaser},
           {property: "og:site_name", content: "The Gazelle"},
@@ -66,7 +66,7 @@ export default class ArticleController extends FalcorController {
               html={articleData.html}
               authors={articleData.authors}
               featuredImage={articleData.image}
-              url={"beta.thegazelle.org/issue/" + articleData.issueNumber.toString() + '/' + articleData.category + '/' + articleData.slug}
+              url={"www.thegazelle.org/issue/" + articleData.issueNumber.toString() + '/' + articleData.category + '/' + articleData.slug}
               trending={trendingData}
               relatedArticles={relatedArticlesData}
             />
