@@ -80,7 +80,7 @@ export default class IssueController extends FalcorController {
 
   render () {
     if (this.state.ready) {
-      if (this.state.data === null) {
+      if (!this.state.data || (this.props.params.issueNumber && !this.state.data.issuesByNumber)) {
         return (
           <NotFound />
         );

@@ -29,7 +29,7 @@ export default class ArticleController extends FalcorController {
   }
   render() {
     if (this.state.ready) {
-      if (this.state.data == null) {
+      if (!this.state.data || !this.state.data.articlesBySlug || !this.state.data.articlesBySlug[this.props.params.aritcleSlug]) {
         return (
           <NotFound />
         );
