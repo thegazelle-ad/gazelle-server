@@ -41,7 +41,7 @@ module.exports = [{
     new webpack.DefinePlugin({
       'process.env':{
         'NODE_ENV': '"production"', // compiles React as production build
-	'PORT': 8001, // we use a reverse proxy to forward this to port 80
+	      'PORT': 8001, // we use a reverse proxy to forward this to port 80
       },
     }),
     new webpack.optimize.UglifyJsPlugin({
@@ -106,7 +106,6 @@ module.exports = [{
     new webpack.DefinePlugin({
       'process.env':{
         'NODE_ENV': '"production"', // compiles React as production build
-  'PORT': 8001, // we use a reverse proxy to forward this to port 80
       },
     }),
   ],
