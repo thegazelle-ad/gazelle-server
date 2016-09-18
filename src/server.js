@@ -88,7 +88,11 @@ const renderApp = (renderProps) => {
   let falcorPaths = _.compact(renderProps.routes.map((route) => {
     const component = route.component;
     if (component.prototype instanceof FalcorController) {
-      return component.getFalcorPathSets(renderProps.params);
+      let pathSets = component.getFalcorPathSets(renderProps.params);
+      if (!(pathSets instanceof Array) || pathSets.length === 0) {
+        return null;
+      }
+      return pathSets;
     }
     return null;
   }));

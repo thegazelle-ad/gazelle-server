@@ -1,5 +1,6 @@
 import React from "react";
 import FalcorController from "lib/falcor/FalcorController";
+import _ from 'lodash';
 
 // create a curried createElement that injects a
 // falcor model instance into each of the falcon controllers
@@ -44,7 +45,15 @@ export function validateFalcorPathSets(falcorPathSets) {
   if (!(falcorPathSets[0] instanceof Array)) {
     return [falcorPathSets];
   }
-  return falcorPathSets;
+
+  // Remove any empty arrays (would also remove falsey values, but they shouldn't
+  // be present in a falcorPathSet anyway)
+  return _.compact(falcorPathSets.map((pathSet) => {
+    if (!(pathSet instanceof Array) || pathSet.length === 0) {
+      return null;
+    }
+    return pathSet;
+  }));
 }
 
 function followPath(path, object) {
