@@ -113,6 +113,11 @@ export default class FalcorController extends BaseComponent {
           data: null,
         });
       }
+    })
+    .catch((e) => {
+      if (process.env.NODE_ENV !== "production") {
+        console.error(e);
+      }
     });
   }
 
