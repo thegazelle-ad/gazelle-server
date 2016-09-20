@@ -80,6 +80,9 @@ const buildHtmlString = (body, cache) => {
 // You can also hardcode / stub parts of the model here
 const serverModel = new falcor.Model({
   source: new FalcorRouter(),
+  // maxSize is 300 MB in production and 50 MB when in development or beta mode
+  maxSize: process.env.NODE_ENV === "production" ? 300*1000*1000 : 50*1000*1000,
+  collectRatio: 0.75,
 }).batch();
 
 // Asynchronously render this application
@@ -212,8 +215,7 @@ server.listen(process.env.PORT ? process.env.PORT : 3000, err => {
     return;
   }
   process.env.NODE_ENV === "production" ?
-    console.log("PRODUCTION BUILD") : console.log("DEVELOPMENT BUILD");
-
+    console.log("PRODUCTION BUILD") : process.env.NODE_ENV === "beta" ? console.log("BETA BUILD") : console.log("DEVELOPMENT BUILD");
 
   console.log('Server started on port ' + (process.env.PORT ? process.env.PORT : 3000));
 });
