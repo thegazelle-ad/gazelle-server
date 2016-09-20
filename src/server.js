@@ -80,8 +80,8 @@ const buildHtmlString = (body, cache) => {
 // You can also hardcode / stub parts of the model here
 const serverModel = new falcor.Model({
   source: new FalcorRouter(),
-  // maxSize is 300 MB in production and 50 MB when in development or beta mode
-  maxSize: process.env.NODE_ENV === "production" ? 300*1000*1000 : 50*1000*1000,
+  // maxSize is 500 MB in production and 100 MB when in development or beta mode
+  maxSize: process.env.NODE_ENV === "production" ? 500*1000*1000 : 100*1000*1000,
   collectRatio: 0.75,
 }).batch();
 
