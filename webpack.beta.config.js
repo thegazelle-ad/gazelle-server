@@ -40,7 +40,7 @@ module.exports = [{
     }),
     new webpack.DefinePlugin({
       'process.env':{
-        'NODE_ENV': '"beta"', // compiles React as production build
+        'NODE_ENV': '"beta"', // compiles React as beta build
 	      'PORT': 8004, // we use a reverse proxy to forward this to port 80
       },
     }),
@@ -105,7 +105,7 @@ module.exports = [{
     new webpack.OldWatchingPlugin(),
     new webpack.DefinePlugin({
       'process.env':{
-        'NODE_ENV': '"production"', // compiles React as production build
+        'NODE_ENV': '"beta"', // compiles React as beta build
       },
     }),
   ],
