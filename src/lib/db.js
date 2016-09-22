@@ -517,3 +517,23 @@ export function dbRelatedArticleQuery(slugs) {
     });
   })
 }
+
+export function dbSearchPostsQuery(queries) {
+  return new Promise((resolve, reject) => {
+    let queriesReturned = 0;
+    const results = {};
+    queries.forEach((query) => {
+      database.select('slug')
+      .from('posts')
+      .where('title', 'like', '%'+query+'%')
+      .limit(50)
+      .then((rows) => {
+        queriesReturned++;
+        results[query] = _.map(rows, (row) => {return row.slug});
+        if (queriesReturned >= queries.length) {
+          resolve(results);
+        }
+      });
+    });
+  });
+}

@@ -55,11 +55,7 @@ export default class CategoryController extends FalcorController {
               title={uppercase(categoryData.name) + " | The Gazelle"}
             />
             <h2 className="category__header">{categoryData.name}</h2>
-            {/*
-              <div>Controller for category: {category}</div>
-              <div>Ready?: {this.state.ready ? 'true' : 'false'}</div>
-            */}
-
+            
             {/* Render all articles fetched through ArticleList */}
             <ArticleList articles={categoryData.articles} />
           </div>

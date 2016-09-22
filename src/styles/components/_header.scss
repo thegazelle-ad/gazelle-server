@@ -14,7 +14,6 @@
   }
 
   &__search {
-    opacity: 0; // hide until search feature is ready
     display: flex;
     align-items: center;
     margin-bottom: 0.5rem;
@@ -25,11 +24,6 @@
         width: 200px;
         height: 35px;
       }
-
-  		.header__search__tail,
-      .header__search__text {
-        visibility: hidden;
-  		}
     }
     &__main {
       display: inline-block;

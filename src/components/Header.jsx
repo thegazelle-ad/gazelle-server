@@ -1,25 +1,28 @@
 import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 
 export default class Header extends BaseComponent {
+  // Allows user to navigate to populated search page on pressing 'Enter'
+  handleKeyPress (e) {
+    if (e.nativeEvent.key == 'Enter'){ // Enter pressed
+      browserHistory.push('/search?q=' + e.target.value);
+    }
+  }
+
   render() {
     return (
       <div>
         <div className="header">
-          {/* // Removd for beta
           <div className="header__search">
-              <input
-                className="header__search__main"
-                type="text"
-                placeholder="Search The Gazelle"
-              />
-              <div className="header__search__tail"></div>
-              <div className="header__search__text">SEARCH</div>
-          </div>
-          */}
-          <div className="header__beta">
-            BETA
+            <input
+              className="header__search__main"
+              type="text"
+              placeholder="Search The Gazelle"
+              onKeyPress={this.handleKeyPress}
+            />
+            <div className="header__search__tail"></div>
+            <div className="header__search__text">SEARCH</div>
           </div>
           <div className="header__title">
             {/* TODO: change link to proper Gazelle icon uploaded to server*/}
