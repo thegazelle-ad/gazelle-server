@@ -31,8 +31,8 @@ export default class FalcorController extends BaseComponent {
   // FalcorPath can depend on props only (to get server side rendering working)
   // Also you cannot as of now make the first keySet in a pathSet an array
   // as being able to pass an array of pathSets properly depends on that.
-  // And hopefully it shouldn't be necessary either
-  static getFalcorPathSets(params) {
+  // This will probably never be needed either.
+  static getFalcorPathSets(params, queryParams) {
     throw new TypeError(
       "You must implement the getFalcorPathSets method " +
       "in children of FalcorController"
@@ -59,11 +59,9 @@ export default class FalcorController extends BaseComponent {
         data: data
       })
     } else {
-      // Found on the net that console.error was deprecated, watch out for that and maybe restructure
-      const err = new Error("Serverside render of component: " + this.constructor.name +
-        " failed. Data not in cache. Falcor Path attempted fetched was: " + JSON.stringify(falcorPathSets));
       if (process.env.NODE_ENV !== "production") {
-        console.error(err);
+        console.warn("Serverside render of component: " + this.constructor.name +
+          " failed. Data not in cache. Falcor Path attempted fetched was: " + JSON.stringify(falcorPathSets));
       }
       this.safeSetState({
         ready: true,
@@ -124,8 +122,8 @@ export default class FalcorController extends BaseComponent {
   // If the new props requires a new falcor call
   // this will pick it up and refresh the falcor state
   componentWillReceiveProps(nextProps) {
-    const newPathSets = this.constructor.getFalcorPathSets(nextProps.params)
-    const oldPathSets = this.constructor.getFalcorPathSets(this.props.params)
+    const newPathSets = this.constructor.getFalcorPathSets(nextProps.params, nextProps.location.query)
+    const oldPathSets = this.constructor.getFalcorPathSets(this.props.params, this.props.location.query)
     if (!_.isEqual(oldPathSets, newPathSets)) {
       this.safeSetState({ready: false});
       if (pathSetsInCache(this.props.model.getCache(), newPathSets)) {
@@ -140,7 +138,7 @@ export default class FalcorController extends BaseComponent {
   // render on client only. This is to avoid an immediate falcorFetch
   // on the first clientside render
   componentWillMount() {
-    const falcorPathSets = this.constructor.getFalcorPathSets(this.props.params);
+    const falcorPathSets = this.constructor.getFalcorPathSets(this.props.params, this.props.location.query);
     if (!isAppReady() || pathSetsInCache(this.props.model.getCache(), falcorPathSets)) {
       this.loadFalcorCache(falcorPathSets)
     } else {
