@@ -2,7 +2,7 @@ import BaseRouter from "falcor-router"
 import { ghostArticleQuery } from 'lib/ghostAPI'
 import { dbAuthorQuery, dbArticleQuery, dbAuthorArticleQuery, dbInfoPagesQuery, dbArticleIssueQuery,
 dbArticleAuthorQuery, dbLatestIssueQuery, dbCategoryQuery, dbCategoryArticleQuery,
-dbFeaturedArticleQuery, dbEditorPickQuery, dbIssueCategoryQuery, dbIssueCategoryArticleQuery, dbIssueQuery, dbRelatedArticleQuery, dbTrendingQuery } from 'lib/db'
+dbFeaturedArticleQuery, dbEditorPickQuery, dbIssueCategoryQuery, dbIssueCategoryArticleQuery, dbIssueQuery, dbRelatedArticleQuery, dbTrendingQuery, dbSearchPostsQuery } from 'lib/db'
 import falcor from 'falcor'
 import _ from 'lodash';
 
@@ -511,6 +511,28 @@ export default class FalcorRouter extends BaseRouter.createClass([
           }]);
         })
       })
+    }
+  },
+  {
+    // Search for posts
+    route: "search['posts'][{keys:queries}][{integers:indices}]",
+    get: (pathSet) => {
+      return new Promise((resolve, reject) => {
+        dbSearchPostsQuery(pathSet.queries).then((data) => {
+          const results = [];
+          _.forEach(data, (queryResults, query) => {
+            pathSet.indices.forEach((index) => {
+              if (index < queryResults.length) {
+                results.push({
+                  path: ['search', 'posts', query, index],
+                  value: $ref(['articlesBySlug', queryResults[index]]),
+                });
+              }
+            });
+          });
+          resolve(results);
+        });
+      });
     }
   },
 ])
