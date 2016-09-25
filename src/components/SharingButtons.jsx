@@ -11,7 +11,7 @@ export default class SharingButtons extends BaseComponent {
       {/* Facebook Sharing Button */}
       if (this.props.facebook) {
         nodes.push (
-          <a key={"facebook"} className="sharing-buttons__item__link" href={'https://facebook.com/sharer/sharer.php?u=https://' + url} target="_blank" aria-label="">
+          <a key={"facebook"} className="sharing-buttons__item__link" href={'https://facebook.com/sharer/sharer.php?u=https://www.' + url} target="_blank" aria-label="">
             <div className="sharing-buttons__item sharing-buttons__item--facebook">
               <div aria-hidden="true" className="sharing-buttons__item__icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 25 25">
@@ -41,7 +41,7 @@ export default class SharingButtons extends BaseComponent {
       {/* linkedIn Sharing Button */}
       if (this.props.linkedin) {
         nodes.push(
-          <a key={"linkedin"} className="sharing-buttons__item__link" href={'https://www.linkedin.com/shareArticle?mini=true&amp;url=https://' + url + '&amp;title=' + title + '&amp;summary=' + teaser + '&amp;source=' + url} target="_blank" aria-label="">
+          <a key={"linkedin"} className="sharing-buttons__item__link" href={'https://www.linkedin.com/shareArticle?mini=true&amp;url=https://www.' + url + '&amp;title=' + title + '&amp;summary=' + teaser + '&amp;source=' + url} target="_blank" aria-label="">
             <div className="sharing-buttons__item sharing-buttons__item--linkedin">
               <div aria-hidden="true" className="sharing-buttons__item__icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
