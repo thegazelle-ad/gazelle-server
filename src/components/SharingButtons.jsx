@@ -96,7 +96,7 @@ SharingButtons.defaultProps = {
   twitter: true,
   linkedin: true,
   email: true,
-  url: "http://www.thegazelle.org/",
+  url: "thegazelle.org",
   title: "The Gazelle | NYUAD's Independent Student News Publication",
   teaser: "The Gazelle is a weekly student publication serving the NYU Abu Dhabi community and the greater Global Network Universtiy at NYU.",
 };
