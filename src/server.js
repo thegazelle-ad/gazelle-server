@@ -194,9 +194,16 @@ server.get('*', (req, res) => {
         renderApp(renderProps).then((html) => {
           res.status(200).send(html);
         }).catch((err) => {
-          console.error('Failed to render: ', req.url);
-          console.error(err.stack || err)
-          res.status(500).send(err.stack || err);
+          if (process.env.NODE_ENV !== "production") {
+            console.error('Failed to render: ', req.url);
+            console.error(err.stack || err)
+            res.status(500).send(err.stack || err);
+          }
+          else {
+            res.status(500).send("There was an error while serving you this webpage." +
+              " Please contact The Gazelle team and tell them this link is broken. We hope" +
+              " to fix it soon. Thank you.");
+          }
         });
       } else {
         res.status(404).send('Not Found');
