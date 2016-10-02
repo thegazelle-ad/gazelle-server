@@ -68,9 +68,11 @@
       margin: 2rem 0;
     }
     img, iframe, video {
-    //  @include full-width;
       height: auto;
       padding-bottom: auto;
+    }
+    img {
+      @include full-width;
     }
     iframe, video {
       min-height: 500px;
@@ -132,7 +134,7 @@
 
   @media (min-width: $medium) {
     &__body {
-      img, iframe, video {
+      iframe, video {
         @include full-width;
       }
     }
@@ -144,6 +146,7 @@
         width: 100%;
         left: 0;
         right: 0;
+        margin-right: 0;
         min-height: 400px;
       }
     }
