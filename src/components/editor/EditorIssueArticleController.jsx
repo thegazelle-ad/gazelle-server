@@ -7,6 +7,7 @@ import update from 'react-addons-update';
 import { formatDate } from 'lib/utilities';
 
 const ARTICLE_FIELDS = ['id', 'title', 'slug', 'category', 'published_at'];
+const ARTICLE_LIST_LENGTH = 100;
 
 export default class EditorIssueArticleController extends FalcorController {
   constructor(props) {
@@ -36,7 +37,7 @@ export default class EditorIssueArticleController extends FalcorController {
       ['issuesByNumber', params.issueNumber, 'featured', 'authors', 0, 'slug'],
       ['issuesByNumber', params.issueNumber, 'picks', {length: 10}, 'authors', 0, 'slug'],
       // This is for the articleList
-      ['articlesByPage', 30, 1, {length: 30}, ARTICLE_FIELDS],
+      ['articlesByPage', ARTICLE_LIST_LENGTH, 1, {length: ARTICLE_LIST_LENGTH}, ARTICLE_FIELDS],
     ];
   }
 
@@ -405,7 +406,7 @@ export default class EditorIssueArticleController extends FalcorController {
       const modes = ["picks", "featured", "main"];
       if (modes.find((mode) => {return mode === this.state.showArticleListMode})) {
         // Filter picked articles
-        let articles = this.state.data.articlesByPage[30][1];
+        let articles = this.state.data.articlesByPage[ARTICLE_LIST_LENGTH][1];
         const seen = {};
         const allArticles = this.state.mainArticles.concat(
           this.state.featuredArticles, this.state.picks);
