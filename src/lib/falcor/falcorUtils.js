@@ -1,6 +1,7 @@
 import React from "react";
 import FalcorController from "lib/falcor/FalcorController";
 import _ from 'lodash';
+import update from 'react-addons-update';
 
 // create a curried createElement that injects a
 // falcor model instance into each of the falcon controllers
@@ -221,7 +222,7 @@ export function expandCache(cache) {
     // This does still leave us vulnerable to an expanded object though, but in by far most cases
     // it would be very bad form to put an object in an atom, so this is not supported at this time.
     if (val === null || (val instanceof Array)) return false;
-    return typeof val === "object";
+    return (typeof val) === "object";
   }
 
   function handleRef(pathToRef, refPath) {
@@ -319,4 +320,57 @@ export function expandCache(cache) {
     }
   };
   return cache;
+}
+
+export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
+  /* This function takes the updates returned by falcorUpdate
+  and merges them with as few copies as possible to a new object
+  with the updates integrated. We do this with react-addons-update
+  to help handle the immutability and not need to do a deep copy */
+
+  function isObject(val) {
+    if (val === null) return false;
+    return (typeof val) === "object";
+  }
+
+  function recursivelyConvertObject(curObject, correspondingOldObject, depth) {
+    /*
+    This function recursively goes through an object and converts all
+    non-object values to a $set command for react-addons-update in place.
+    It has the depth argument so we can make sure that if it receives
+    a circular JSON structure it will terminate correctly
+    */
+
+    if (depth >= maxDepth) return;
+
+    _.forEach(curObject, (value, key) => {
+      if (value instanceof Error) {
+        throw value;
+      }
+      if (correspondingOldObject.hasOwnProperty(key)) {
+        if (isObject(value)) {
+          recursivelyConvertObject(value, correspondingOldObject[key], depth+1);
+        }
+        else {
+          curObject[key] = {$set: value};
+        }
+      }
+      else {
+        curObject[key] = {$set: value};
+      }
+    });
+    return;
+  }
+
+  // Function starts here
+
+  if (!oldData) {
+    // There was no this.state.data before
+    return dataUpdates;
+  }
+
+  recursivelyConvertObject(dataUpdates, oldData, 0);
+
+  // This command returns a copy of oldData with the new updates applied
+  return update(oldData, dataUpdates);
 }

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
+import EditorSearchBar from 'components/editor/EditorSearchBar';
 import _ from 'lodash';
 
 export default class EditAuthorsForm extends BaseComponent {
@@ -9,17 +10,19 @@ export default class EditAuthorsForm extends BaseComponent {
     super(props);
     this.safeSetState({
       addAuthorValue: "",
+      authorAutocomplete: [],
     });
     this.handleClickAddAuthor = this.handleClickAddAuthor.bind(this);
   }
 
   componentDidUpdate() {
-    this.props.onChange();
+    if (!this.props.disabled) {
+      this.props.onChange();
+    }
   }
 
-  handleClickAddAuthor() {
-    this.props.handleAddAuthor(this.state.addAuthorValue, false);
-    this.safeSetState({addAuthorValue: ""});
+  handleClickAddAuthor(author) {
+    this.props.handleAddAuthor(author.id, author.name, false);
   }
 
   render() {
@@ -30,7 +33,7 @@ export default class EditAuthorsForm extends BaseComponent {
             // Striked will correctly evaluate to false if there is no key
             // with that slug yet, which means it has neither been striked nor unstriked yet
             // It will return undefined which is a falsy value
-            let striked = this.props.authorsDeleted[author.slug];
+            let striked = this.props.authorsDeleted[author.id];
             let authorNameStyle = {marginLeft: "1em"};
             if (striked) {
               authorNameStyle.textDecoration = "line-through";
@@ -38,11 +41,23 @@ export default class EditAuthorsForm extends BaseComponent {
             }
 
             return(
-              <div key={author.slug}>
+              <div key={author.id}>
                 {
                   !striked
-                    ? <button type="button" className="reset-button-style" style={{float: "left"}} aria-label="Remove Author Button" onClick={this.props.handleDeleteAuthor.bind(null, author.slug, true)}>&times;&nbsp;</button>
-                    : <button type="button" className="reset-button-style" style={{float: "left"}} aria-label="Remove Author Button" onClick={this.props.handleAddAuthor.bind(null, author.slug, true)}>~&nbsp;</button>
+                    ?
+                    <button
+                      type="button"
+                      className="toggle-button"
+                      aria-label="Remove Author Button"
+                      onClick={this.props.handleDeleteAuthor.bind(null, author.id, true)}
+                    >&times;&nbsp;</button>
+                    :
+                    <button
+                      type="button"
+                      className="toggle-button"
+                      aria-label="Remove Author Button"
+                      onClick={this.props.handleAddAuthor.bind(null, author.id, true)}
+                    >~&nbsp;</button>
                 }
                 <div style={authorNameStyle}>{author.name}</div>
               </div>
@@ -50,19 +65,27 @@ export default class EditAuthorsForm extends BaseComponent {
           })
         }
         {
-          // Key is slug, value is name
-          _.map(this.props.authorsAdded, (name, slug) => {
+          this.props.authorsAdded.map((author) => {
             return(
-              <div key={slug}>
-                <a style={{float: "left", cursor: "pointer"}} aria-label="Remove Author Button" onClick={this.props.handleDeleteAuthor.bind(null, slug, false)}>&times;&nbsp;</a> {}
-                <div>{name}</div>
+              <div key={author.id}>
+                <button
+                  type="button"
+                  className="toggle-button"
+                  aria-label="Remove Author Button"
+                  onClick={this.props.handleDeleteAuthor.bind(null, author.id, false)}
+                >&times;&nbsp;</button>
+                <div>{author.name}</div>
               </div>
             );
           })
         }
-
-        <input placeholder="Add Author" value={this.state.addAuthorValue} onChange={(e)=>{e.stopPropagation(); this.safeSetState({addAuthorValue: e.target.value});}} />
-        <button className="pure-button" type="button" onClick={this.handleClickAddAuthor}>Add Author</button>
+        <EditorSearchBar
+          model={this.props.model}
+          mode="authors"
+          fields={['id']}
+          length={3}
+          handleClick={this.handleClickAddAuthor}
+        />
       </div>
     )
   }

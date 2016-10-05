@@ -74,6 +74,8 @@
     "webpack-node-externals": "^1.2.0"
   },
   "dependencies": {
+    "body-parser": "^1.15.2",
+    "child_process": "^1.0.2",
     "classnames": "^2.2.5",
     "compression": "^1.6.2",
     "express": "^4.13.4",
@@ -89,8 +91,9 @@
     "moment": "^2.14.1",
     "mongodb": "^2.1.18",
     "mysql": "^2.11.1",
-    "react": "^15.3.0",
+    "react": "^15.3.1",
     "react-addons-transition-group": "^15.3.0",
+    "react-addons-update": "^15.3.1",
     "react-dom": "^15.1.0",
     "react-helmet": "^3.1.0",
     "react-router": "^2.4.1"

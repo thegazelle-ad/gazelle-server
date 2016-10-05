@@ -3,8 +3,13 @@
   color: black;
 }
 
-.reset-button-style {
+.toggle-button {
   border: 0;
   padding: 0;
   background-color: white;
+  float: left;
+}
+
+a:visited:not(.active-link) {
+  color: #0000EE;
 }

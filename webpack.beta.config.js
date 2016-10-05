@@ -41,7 +41,8 @@ module.exports = [{
     new webpack.DefinePlugin({
       'process.env':{
         'NODE_ENV': '"beta"', // compiles React as beta build
-	      'PORT': 8004, // we use a reverse proxy to forward this to port 80
+	      'MAIN_PORT': 8003, // we use a reverse proxy to forward this to port 80 of editor.thegazelle.org
+        'EDITOR_PORT': 8004,
       },
     }),
     new webpack.optimize.UglifyJsPlugin({
@@ -128,41 +129,7 @@ module.exports = [{
     ],
   },
 },
-// Editor tools copy
 {
-  target: 'node',
-  entry: './src/editor-server.js',
-  output: {
-    path: __dirname,
-    filename: "./build/editor-server.js",
-  },
-  externals: [nodeExternals()],
-  resolve: {
-    root: __dirname,
-    modulesDirectories: [
-      'node_modules',
-      './src/',
-    ],
-    extensions: ['', '.js', '.jsx'],
-  },
-
-  plugins: [
-    new webpack.OldWatchingPlugin(),
-  ],
-
-  module: {
-    loaders: [
-      {
-        loader: 'babel-loader',
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        query: {
-          presets: ['es2015', 'react'],
-        },
-      },
-    ],
-  },
-}, {
   target: 'web',
   entry: './src/editor-client.js',
   output: {
@@ -176,6 +143,14 @@ module.exports = [{
     ],
     extensions: ['', '.js', '.jsx'],
   },
+  plugins: [
+    new webpack.OldWatchingPlugin(),
+    new webpack.DefinePlugin({
+      'process.env':{
+        'NODE_ENV': '"beta"', // compiles React as production build
+      },
+    }),
+  ],
   module: {
     loaders: [
       {

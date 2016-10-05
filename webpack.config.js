@@ -134,53 +134,7 @@ module.exports = [{
   },
   devtool: 'source-map'
 },
-// Editor tools copy
 {
-  target: 'node',
-  entry: './src/editor-server.js',
-  output: {
-    path: __dirname,
-    filename: "./build/editor-server.js"
-  },
-  externals: [nodeExternals()],
-  resolve: {
-    root: __dirname,
-    modulesDirectories: [
-      'node_modules',
-      './src/',
-    ],
-    extensions: ['', '.js', '.jsx']
-  },
-
-  plugins: [
-    new webpack.OldWatchingPlugin(),
-  ],
-
-  module: {
-    preLoaders: [
-      /*
-       * Linting warnings and errors will be displayed in the console when
-       * Webpack is compiled.
-       */
-      {
-        test: /\.jsx$/,
-        loaders: ['eslint'],
-        exclude: /node_modules/,
-      },
-    ],
-    loaders: [
-      {
-        loader: 'babel-loader',
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        query: {
-          presets: ['es2015', 'react'],
-        },
-      },
-    ],
-  },
-  devtool: 'source-map',
-}, {
   target: 'web',
   entry: './src/editor-client.js',
   output: {
