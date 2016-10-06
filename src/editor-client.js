@@ -3,15 +3,15 @@ import ReactDOM from 'react-dom';
 import { Router, browserHistory } from 'react-router';
 import falcor from 'falcor';
 import routes from 'lib/editor-routes';
-import { injectModelCreateElement } from 'lib/falcor/falcorUtils';
+import { injectModelCreateElement, setAppReady } from 'lib/falcor/falcorUtils';
 import HttpDataSource from 'falcor-http-datasource';
+
+// Set app ready so falcor doesn't try to load from cache
+setAppReady();
 
 let clientModel = new falcor.Model({
   source: new HttpDataSource('/model.json')
 });
-
-// _initialCache is a global exposed by the first server side render
-clientModel.setCache(_initialCache); // eslint-disable-line no-undef
 
 ReactDOM.render(
   <Router

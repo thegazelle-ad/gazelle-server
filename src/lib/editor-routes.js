@@ -9,6 +9,7 @@ import EditorIssueListController from 'components/editor/EditorIssueListControll
 import EditorMainIssueController from 'components/editor/EditorMainIssueController';
 import EditorIssueArticleController from 'components/editor/EditorIssueArticleController';
 import EditorIssueCategoryController from 'components/editor/EditorIssueCategoryController';
+import EditorNotFound from 'components/editor/EditorNotFound';
 import Login from 'components/editor/Login';
 
 export default (
@@ -26,5 +27,6 @@ export default (
       <Route path="articles" component={EditorIssueArticleController} />
       <Route path="categories" component={EditorIssueCategoryController} />
     </Route>
+    <Route path="*" component={EditorNotFound} />
   </Route>
 );

@@ -78,30 +78,23 @@ const buildMainHtmlString = (body, cache) => {
 const editorClientHash = md5Hash('./static/build/editor-client.js');
 const editorCssHash = md5Hash('./static/editorStyles.css');
 
-const buildEditorHtmlString = (body, cache) => {
-  return (
-    `<!DOCTYPE html>
-      <html style>
-        <head>
-          <title>Gazelle Editor Tools</title>
-          <link rel="stylesheet" href="/pure-min.css">
-          <link rel="stylesheet" type="text/css" href="/editorStyles.css?h=` + editorCssHash + `">
-          <meta name="viewport" content="width=device-width, initial-scale=1">
-        </head>
-        <body>
-          <div id="main">`
-            + body +
-          `</div>
-          <script>
-            var _initialCache =
-            ` + JSON.stringify(cache) + `
-            ;
-          </script>
-          <script src="/build/editor-client.js?h=` + editorClientHash + `"></script>
-        </body>
-      </html>`
-  );
-};
+const editorHtmlString = (
+  `<!DOCTYPE html>
+    <html>
+      <head>
+        <title>Gazelle Editor Tools</title>
+        <link rel="stylesheet" href="/pure-min.css">
+        <link rel="stylesheet" type="text/css" href="/editorStyles.css?h=` + editorCssHash + `">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      </head>
+      <body>
+        <div id="main">
+          loading...
+        </div>
+        <script src="/build/editor-client.js?h=` + editorClientHash + `"></script>
+      </body>
+    </html>`
+);
 
 // Shared serverModel
 // You can also hardcode / stub parts of the model here
@@ -114,7 +107,7 @@ const serverModel = new falcor.Model({
 
 // Asynchronously render this application
 // Returns a promise
-const renderApp = (renderProps, isMainApp) => {
+const renderApp = (renderProps) => {
   let falcorPaths = _.compact(renderProps.routes.map((route) => {
     const component = route.component;
     if (component.prototype instanceof FalcorController) {
@@ -148,44 +141,8 @@ const renderApp = (renderProps, isMainApp) => {
 
   // If the component doesn't want any data
   if (!falcorPaths || falcorPaths.length === 0 || falcorPaths[0].length === 0 && falcorPaths.length === 1) {
-    if (isMainApp) {
-      return new Promise((resolve) => {
-        resolve(
-          buildMainHtmlString(
-            renderToString(
-              <RouterContext
-                createElement={injectModelCreateElement(localModel)}
-                {...renderProps}
-              />
-            ),
-            localModel.getCache()
-          )
-        );
-      });
-    }
-    else {
-      return new Promise((resolve) => {
-        resolve(
-          buildEditorHtmlString(
-            renderToString(
-              <RouterContext
-                createElement={injectModelCreateElement(localModel)}
-                {...renderProps}
-              />
-            ),
-            localModel.getCache()
-          )
-        );
-      });
-    }
-  }
-
-  // Silenced Falcor path logs
-  // console.log('FETCHING Falcor Paths:');
-  // console.log(falcorPaths);
-  if (isMainApp) {
-    return localModel.preload(...falcorPaths).then(() => {
-      return (
+    return new Promise((resolve) => {
+      resolve(
         buildMainHtmlString(
           renderToString(
             <RouterContext
@@ -198,21 +155,23 @@ const renderApp = (renderProps, isMainApp) => {
       );
     });
   }
-  else {
-    return localModel.preload(...falcorPaths).then(() => {
-      return (
-        buildEditorHtmlString(
-          renderToString(
-            <RouterContext
-              createElement={injectModelCreateElement(localModel)}
-              {...renderProps}
-            />
-          ),
-          localModel.getCache()
-        )
-      );
-    });
-  }
+
+  // Silenced Falcor path logs
+  // console.log('FETCHING Falcor Paths:');
+  // console.log(falcorPaths);
+  return localModel.preload(...falcorPaths).then(() => {
+    return (
+      buildMainHtmlString(
+        renderToString(
+          <RouterContext
+            createElement={injectModelCreateElement(localModel)}
+            {...renderProps}
+          />
+        ),
+        localModel.getCache()
+      )
+    );
+  });
 };
 
 // The Gazelle website server
@@ -231,36 +190,75 @@ mainApp.use("/favicon.ico", (req, res) => {
 
 mainApp.use(compression());
 
-mainApp.get('*', (req, res) => {
-  if (process.env.NODE_ENV !== "production") {
-    console.log("GOT REQUEST");
-  }
-  match({ routes: mainRoutes, location: req.url },
-    (error, redirectLocation, renderProps) => {
-      if (error) {
-        res.status(500).send(error.message);
-      } else if (redirectLocation) {
-        res.redirect(302, redirectLocation.pathname + redirectLocation.search);
-      } else if (renderProps) {
-        renderApp(renderProps, true).then((html) => {
-          res.status(200).send(html);
-        }).catch((err) => {
-          if (process.env.NODE_ENV !== "production") {
-            console.error('Failed to render: ', req.url);
-            console.error(err.stack || err)
-            res.status(500).send(err.stack || err);
-          }
-          else {
-            res.status(500).send("There was an error while serving you this webpage." +
-              " Please contact The Gazelle team and tell them this link is broken. We hope" +
-              " to fix it soon. Thank you.");
-          }
-        });
-      } else {
-        res.status(404).send('Not Found');
+if (process.env.NODE_ENV === "beta") {
+  mainApp.get('/login', (req, res) => {
+    if (process.env.NODE_ENV !== "production") {
+      console.log("GOT REQUEST");
+    }
+    match({ routes: mainRoutes, location: req.url },
+      (error, redirectLocation, renderProps) => {
+        if (error) {
+          res.status(500).send(error.message);
+        } else if (redirectLocation) {
+          res.redirect(302, redirectLocation.pathname + redirectLocation.search);
+        } else if (renderProps) {
+          renderApp(renderProps, true).then((html) => {
+            res.status(200).send(html);
+          }).catch((err) => {
+            if (process.env.NODE_ENV !== "production") {
+              console.error('Failed to render: ', req.url);
+              console.error(err.stack || err)
+              res.status(500).send(err.stack || err);
+            }
+            else {
+              res.status(500).send("There was an error while serving you this webpage." +
+                " Please contact The Gazelle team and tell them this link is broken. We hope" +
+                " to fix it soon. Thank you.");
+            }
+          });
+        } else {
+          res.status(404).send('Not Found');
+        }
       }
-    });
-});
+    );
+  });
+  mainApp.get(/(?!\/login)/, (req, res) => {
+    res.redirect(307, '/login');
+  });
+}
+else {
+  mainApp.get('*', (req, res) => {
+    if (process.env.NODE_ENV !== "production") {
+      console.log("GOT REQUEST");
+    }
+    match({ routes: mainRoutes, location: req.url },
+      (error, redirectLocation, renderProps) => {
+        if (error) {
+          res.status(500).send(error.message);
+        } else if (redirectLocation) {
+          res.redirect(302, redirectLocation.pathname + redirectLocation.search);
+        } else if (renderProps) {
+          renderApp(renderProps, true).then((html) => {
+            res.status(200).send(html);
+          }).catch((err) => {
+            if (process.env.NODE_ENV !== "production") {
+              console.error('Failed to render: ', req.url);
+              console.error(err.stack || err)
+              res.status(500).send(err.stack || err);
+            }
+            else {
+              res.status(500).send("There was an error while serving you this webpage." +
+                " Please contact The Gazelle team and tell them this link is broken. We hope" +
+                " to fix it soon. Thank you.");
+            }
+          });
+        } else {
+          res.status(404).send('Not Found');
+        }
+      }
+    );
+  });
+}
 
 // To start server with PORT=3000 default: run `npm start`
 // NOTE: On Linux systems, any port below 1024 requires root access (`sudo` command)
@@ -354,28 +352,7 @@ editorTools.get('/restartserver', (req, res) => {
 
 if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "beta") {
   editorTools.get('/login', (req, res) => {
-    match({ routes: editorRoutes, location: req.url },
-      (error, redirectLocation, renderProps) => {
-        if (error) {
-          res.status(500).send(error.message);
-        } else if (redirectLocation) {
-          res.redirect(302, redirectLocation.pathname + redirectLocation.search);
-        } else if (renderProps) {
-          renderApp(renderProps, false).then((html) => {
-            res.status(200).send(html);
-          }).catch((err) => {
-            console.error('Failed to render: ', req.url);
-            if (err.stack) {
-              console.error(err.stack);
-            } else {
-              console.error(err);
-            }
-            res.status(500).send(err.stack);
-          });
-        } else {
-          res.status(404).send('Not Found');
-        }
-      });
+    res.status(200).send(editorHtmlString);
   });
 
   editorTools.get(/(?!\/restartserver|\/login).*/, (req, res) => {
@@ -385,31 +362,7 @@ if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "beta") {
 
 else {
   editorTools.get(/(?!\/restartserver).*/, (req, res) => {
-    if (!process.env.NODE_ENV === "production") {
-      console.log("GOT REQUEST");
-    }
-    match({ routes: editorRoutes, location: req.url },
-      (error, redirectLocation, renderProps) => {
-        if (error) {
-          res.status(500).send(error.message);
-        } else if (redirectLocation) {
-          res.redirect(302, redirectLocation.pathname + redirectLocation.search);
-        } else if (renderProps) {
-          renderApp(renderProps, false).then((html) => {
-            res.status(200).send(html);
-          }).catch((err) => {
-            console.error('Failed to render: ', req.url);
-            if (err.stack) {
-              console.error(err.stack);
-            } else {
-              console.error(err);
-            }
-            res.status(500).send(err.stack);
-          });
-        } else {
-          res.status(404).send('Not Found');
-        }
-      });
+    res.status(200).send(editorHtmlString);
   });
 }
 
