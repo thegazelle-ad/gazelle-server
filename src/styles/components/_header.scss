@@ -1,22 +1,13 @@
 .header {
   font-family: "Roboto", Helvetica, Arial, sans-serif;
   @include grey-bottom-border;
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
   padding: 0 1rem;
   height: 39px;
 
-  &__beta { // TODO: remove when search feature works
-    align-self: center;
-    font-size: $authors-small;
-    color: $dark-grey;
-  }
-
   &__search {
+    float: left;
     display: flex;
     align-items: center;
-    margin-bottom: 0.5rem;
 
     &:active,
     &:hover {
@@ -24,6 +15,11 @@
         width: 200px;
         height: 35px;
       }
+    }
+
+    input:focus {
+      width: 200px;
+      height: 35px;
     }
     &__main {
       display: inline-block;
@@ -62,6 +58,9 @@
   }
 
   &__title {
+    position: absolute;
+    left: calc(45%);
+    right: 50%;
     &__content {
       img {
         position: absolute;
@@ -73,6 +72,7 @@
   }
 
   &__social {
+    float: right;
     display: flex;
     stroke: $light-grey;
     fill: none;
@@ -144,23 +144,45 @@
     & > * {
       padding-bottom: 0rem;
     }
-    &__search {
-      margin: 0.25rem;
-      display: none;
-    }
     &__title {
       &__content {
         margin: 0;
         img {
           position: fixed;
-          margin: -0.45rem 0 0 0;
+          margin: 0;
+          padding-top: 0.32rem;
           width: 35px;
           height: 35px;
         }
       }
     }
+    &__search {
+      margin: 0.25rem;
+      padding-top: 0.20rem;
+      &:active,
+      &:hover {
+    		.header__search__main{
+          padding-top: 0.15rem;
+          width: 92vw;
+          height: 35px;
+        }
+      }
+      input:focus {
+        padding-top: 0.15rem;
+        width: 92vw;
+        height: 35px;
+        .header__title {
+          display: none;
+        }
+      }
+      &:active ~ .header__title,
+      &:hover ~ .header__title { // Make Gazelle logo disappear
+        display: none;
+      }
+    }
+
     &__social {
-      padding: 0.2rem 0.2rem 0 0;
+      padding: 0.7rem 0.2rem 0 0;
     }
   }
 }

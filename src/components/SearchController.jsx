@@ -22,15 +22,27 @@ export default class SearchController extends FalcorController {
   }
 
   render() {
+    // Render no results found message or list of found articles
+    let renderContent = () => {
+      if (!this.state.data) {
+        return (
+          <div className="search__no-data">
+            Oops! No Results found. <br />
+            Please try another query.
+          </div>
+        )
+      }
+      else {
+        const query = this.props.location.query.q;
+        const results = this.state.data.search.posts[query];
+        return <ArticleList className="search" articles={results} />
+      }
+    }
     if (this.state.ready) {
       if (!this.props.location.query.q) {
         return <NotFound />
       }
-      if (!this.state.data) {
-        return <div className="search__no-data">No Results. Please try another query.</div>;
-      }
       const query = this.props.location.query.q;
-      const results = this.state.data.search.posts[query];
       return (
         <div className="search">
           <div className="search__search-header">
@@ -43,7 +55,7 @@ export default class SearchController extends FalcorController {
               autoFocus
             />
           </div>
-          <ArticleList className="search" articles={results} />
+          {renderContent()}
         </div>
       );
     }

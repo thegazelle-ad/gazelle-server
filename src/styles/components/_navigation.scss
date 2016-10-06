@@ -7,6 +7,11 @@
   @include uppercase();
   padding: 0 1rem;
 
+  &__publication-date {
+    float: left;
+    left: 0;
+  }
+
   &__categories {
     display: flex;
     justify-content: center;
@@ -21,6 +26,7 @@
 
   &__issueNumber {
     @include uppercase;
+    float: right;
     font-size: $authors-small;
     text-align: right;
     display: flex;
@@ -61,9 +67,9 @@
         white-space: nowrap;
         margin: 0 0.6rem;
         //width: 100px;
-        &--active { // Active class
-          font-weight: 700;
-        }
+        // &--active { // Active class
+        //   font-weight: 700;
+        // }
       }
     }
   }
