@@ -1,7 +1,6 @@
 import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
 import { Link, browserHistory } from 'react-router';
-import { setAppReady } from "lib/falcor/falcorUtils";
 import http from 'http';
 
 const HOSTNAME = process.env.NODE_ENV === "production" ?
@@ -16,10 +15,6 @@ export default class EditorAppController extends BaseComponent {
     super(props);
     this.handleDisableLink = this.handleDisableLink.bind(this);
     this.resetGhostInfo = this.resetGhostInfo.bind(this);
-  }
-
-  componentDidMount() {
-    setAppReady();
   }
 
   handleDisableLink(e) {
