@@ -356,6 +356,8 @@ export default class db {
             return "categories.slug";
           case "name":
             return "categories.name";
+          case "id":
+            return "categories.id";
           default:
             throw new Error("Unexpected field passed to dbIssueCategoryQuery");
         }
@@ -1055,5 +1057,41 @@ export default class db {
         resolve(true);
       })
     });
+  }
+
+  updateIssueCategories(issueNumber, idArray) {
+    return new Promise((resolve, reject) => {
+      // First delete old categories order and get issue id
+      database.select('id')
+      .from('issues')
+      .where('issue_order', '=', issueNumber)
+      .then((rows) => {
+        if (!rows || !rows.length || !rows[0].id) {
+          throw new Error("Invalid issue number passed to updateIssueCategories");
+        }
+        const issueId = rows[0].id;
+        database('issues_categories_order')
+        .where('issue_id', '=', issueId)
+        .del().then(() => {
+          // Insert the new categories
+          const toInsert = idArray.map((id, index) => {
+            return {
+              category_id: id,
+              issue_id: issueId,
+              categories_order: index,
+            };
+          });
+          database('issues_categories_order').insert(toInsert)
+          .then(() => {
+            // The easiest way for now to handle this is to just
+            // invalidate all the data and then refetch it instead
+            // of updating everything. Otherwise you would have
+            // to implement all the updates here, which we might do
+            // at a later time
+            resolve(true);
+          });
+        });
+      })
+    })
   }
 }

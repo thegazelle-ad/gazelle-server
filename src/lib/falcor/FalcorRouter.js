@@ -535,7 +535,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
       But we can't just give a ref here since because the articles of a category is different
       depending on whether it is fetched directly from categories which is ordered chronologically
       and all articles from that category are fetched or from an issue where it is ordered by editor tools */
-    route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers:indices}]['name', 'slug']",
+    route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers:indices}]['id', 'name', 'slug']",
     get: (pathSet) => {
       return new Promise((resolve, reject) => {
         const requestedFields = pathSet[4];
@@ -683,6 +683,31 @@ export default class FalcorRouter extends BaseRouter.createClass([
           if (toAdd.hasOwnProperty('published')) {
             results = results.concat(toAdd.published);
           }
+          resolve(results);
+        })
+      })
+    }
+  },
+  {
+    route: "issuesByNumber[{integers:issueNumbers}]['updateIssueCategories']",
+    call: (callPath, args) => {
+      return new Promise((resolve, reject) => {
+        const issueNumber = callPath.issueNumbers[0];
+        const idArray = args[0];
+        db.updateIssueCategories(issueNumber, idArray).then((flag) => {
+          if (flag !== true) {
+            throw new Error("updateIssueCategories returned non-true flag");
+          }
+          const results = [
+            {
+              path: ['placeholder'],
+              value: 'placeholder',
+            },
+            {
+              path: ['issuesByNumber', issueNumber, 'categories'],
+              invalidated: true,
+            },
+          ];
           resolve(results);
         })
       })
@@ -857,6 +882,16 @@ export default class FalcorRouter extends BaseRouter.createClass([
       });
     }
   },
+  {
+    // A placeholder so we can do empty calls that just invalidate
+    route: "placeholder",
+    get: (pathSet) => {
+      return [{
+        path: ['placeholder'],
+        value: "placeholder",
+      }];
+    }
+  }
 ])
 // Begin actual class methods below
 {
