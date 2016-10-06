@@ -322,7 +322,12 @@ export default class EditorIssueArticleController extends FalcorController {
         changed: false,
       });
       // Set timeout so "saved" message shows for a while
-      setTimeout(() => {this.safeSetState({saving: false})}, 1000);
+      setTimeout(() => {
+        this.safeSetState({saving: false});
+        window.alert('Remember that categories have now been put in a random' +
+          ' order as you changed the articles. Please go check that they are' +
+          ' ordered as you wish.');
+      }, 1000);
     }
 
     const refPaths = ARTICLE_FIELDS.map((field) => {
