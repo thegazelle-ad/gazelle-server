@@ -4,25 +4,9 @@ import { Link, browserHistory } from 'react-router';
 
 export default class Header extends BaseComponent {
   // Allows user to navigate to populated search page on pressing 'Enter'
-  handleKeyPress (e) {
-    if (e.nativeEvent.key == 'Enter'){ // 'Enter' pressed
-      browserHistory.push('/search?q=' + e.target.value);
-    }
-  }
-  // handleSubmit (e) {
-  //   console.log(document.getElementById('search-box').value)
-  //   // if (e.nativeEvent.key == 'Enter'){ // 'Enter' pressed
-  //   //   browserHistory.push('/search?q=' + e.target.value);
-  //   // } else {
-  //   //
-  //   // }
-  //   browserHistory.push('/search?q=' + document.getElementById('search-box').target.value)
-  // }
-
   handleSubmit (e) {
     e.preventDefault();
     browserHistory.push('/search?q=' + e.target["search-box"].value);
-    // console.log(e.target["search-box"].value);
   }
 
   // onKeyPress={this.handleKeyPress}

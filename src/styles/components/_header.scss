@@ -17,7 +17,7 @@
     &:active,
     &:hover {
   		.header__search__main{
-        width: 150px;
+        width: 200px;
         height: 35px;
       }
       .header__search__tail {
@@ -53,8 +53,9 @@
     }
 
     &__text{
-      display: block;
-      padding: 0 20px;
+      display: inline-block;
+      float: left;
+      margin-left: -10px;
       font-size: $authors-small;
       font-weight: 400;
       color: $dark-grey;
@@ -65,7 +66,7 @@
 
   &__title {
     position: absolute;
-    left: 50%;
+    left: calc(50% - 25px);
     right: 50%;
     &__content {
       img {
@@ -129,20 +130,26 @@
 
   @media (min-width: $medium) {
     &__search{
-      input:focus {
-        width: 150px;
+      input[type="text"]:focus {
+        width: 200px;
         height: 35px;
       }
       input:focus ~ .header__search__tail {
-        display: none;
+        visibility: hidden;
       }
     }
   }
   @media (max-width: $medium) {
     // Remove search bar text
-    &__search__text{
-      display: none;
+    &__search {
+      &__text {
+        display: none;
+      }
+      &__tail {
+        width: 2px;
+      }
     }
+
   }
 
   @media only screen and (max-width: $small) {
@@ -178,10 +185,13 @@
       padding-top: 0.20rem;
       &:active,
       &:hover {
-    		.header__search__main{
-          padding-top: 0.15rem;
-          width: 70vw;
-          height: 35px;
+    		input[type="text"]{
+          padding-top: -0.2rem;
+          width: 75vw;
+          height: 30px;
+        }
+        .header__search__text {
+          display: block;
         }
       }
       &:active ~ .header__search__text--mobile,
