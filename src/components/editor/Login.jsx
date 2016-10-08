@@ -47,21 +47,33 @@ export default class Login extends BaseComponent {
 
   render() {
     return(
-      <div>
-        <form className="pure form" onSubmit={this.handleSubmit}>
-          Input Password:<br />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            autoFocus
-          />
-          <input
-            type="submit"
-            className="pure-button"
-            value="Enter Editor Tools"
-          />
-        </form>
+      <div className="login site__container">
+        <div className="grid__container">
+          <h2>This page is private.</h2>
+          <p>If you are looking for The Gazelle's home page please click <a href="https:www.thegazelle.org">here</a>.</p>
+          <form className="form form-login pure form" onSubmit={this.handleSubmit}>
+            <div className="form__field">
+              <label className="fontawesome-lock" htmlFor="login__password"><span className="hidden">Password</span></label>
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                id="login__password"
+                className="form__input"
+                autoFocus
+                required
+              />
+            </div>
+
+            <div className="form__field">
+              <input
+                type="submit"
+                className="pure-button"
+                value="Enter Editor Tools"
+              />
+            </div>
+          </form>
+        </div>
       </div>
     );
   }
