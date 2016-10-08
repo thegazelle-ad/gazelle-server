@@ -36,7 +36,10 @@ export default class EditorIssueListController extends FalcorController {
       window.alert("This issue has already been created, you cannot create it again");
       return;
     }
-    const fields = Object.keys(formNode.children).filter((key) => {
+    const children = _.map(formNode.children, (child) => {
+      return child.name;
+    })
+    const fields = children.filter((key) => {
       return isNaN(parseInt(key)) && key !== "length";
     });
     const issue = {};

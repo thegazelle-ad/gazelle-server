@@ -1,6 +1,7 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import { debounce } from 'lib/utilities';
+import _ from 'lodash';
 
 const MAX_BIOGRAPHY_LENGTH = 400;
 
@@ -22,8 +23,11 @@ export default class EditorAuthorController extends FalcorController {
       const formNode = event.target.parentNode;
 
       // Gets all the input elements that we named
-      const fields = Object.keys(formNode.children).filter((key) => {
-        return isNaN(parseInt(key)) && key !== "length";
+      const children = _.map(formNode.children, (child) => {
+        return child.name;
+      })
+      const fields = children.filter((key) => {
+        return key && isNaN(parseInt(key)) && key !== "length";
       });
 
       const falcorData = this.state.data.authorsBySlug[this.props.params.slug];
@@ -89,8 +93,11 @@ export default class EditorAuthorController extends FalcorController {
     const authorSlug = this.props.params.slug
 
     // Gets all the input elements that we named
-    const fields = Object.keys(formNode.children).filter((key) => {
-      return isNaN(parseInt(key)) && key !== "length";
+    const children = _.map(formNode.children, (child) => {
+      return child.name;
+    })
+    const fields = children.filter((key) => {
+      return key && isNaN(parseInt(key)) && key !== "length";
     });
 
     const falcorData = this.state.data.authorsBySlug[authorSlug];

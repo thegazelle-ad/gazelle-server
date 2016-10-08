@@ -36,8 +36,11 @@ export default class EditorArticleController extends FalcorController {
       const formNode = event.target.parentNode;
 
       // Gets all the input elements that we named
-      const fields = Object.keys(formNode.children).filter((key) => {
-        return isNaN(parseInt(key)) && key !== "length";
+      const children = _.map(formNode.children, (child) => {
+        return child.name;
+      })
+      const fields = children.filter((key) => {
+        return key && isNaN(parseInt(key)) && key !== "length";
       });
 
       const falcorData = this.state.data.articlesBySlug[this.props.params.slug];
@@ -141,8 +144,11 @@ export default class EditorArticleController extends FalcorController {
     const formNode = event.target;
     const articleSlug = this.props.params.slug;
     const falcorData = this.state.data.articlesBySlug[articleSlug];
-    const mainFormFields = Object.keys(formNode.children).filter((key) => {
-      return isNaN(parseInt(key)) && key !== "length";
+    const children = _.map(formNode.children, (child) => {
+      return child.name;
+    })
+    const mainFormFields = children.filter((key) => {
+      return key && isNaN(parseInt(key)) && key !== "length";
     });
 
     // Check if we are editing authors
