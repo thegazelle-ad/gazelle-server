@@ -49,6 +49,8 @@ export default class Login extends BaseComponent {
     return(
       <div className="login site__container">
         <div className="grid__container">
+          <h2>This page is private.</h2>
+          <p>If you are looking for The Gazelle's home page please click <a href="https:www.thegazelle.org">here</a>.</p>
           <form className="form form-login pure form" onSubmit={this.handleSubmit}>
             <div className="form__field">
               <label className="fontawesome-lock" htmlFor="login__password"><span className="hidden">Password</span></label>
