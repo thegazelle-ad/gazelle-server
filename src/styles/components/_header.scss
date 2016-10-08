@@ -4,6 +4,11 @@
   padding: 0 1rem;
   height: 39px;
 
+  form {
+    padding: inherit;
+    display: flex;
+  }
+
   &__search {
     float: left;
     display: flex;
@@ -12,15 +17,14 @@
     &:active,
     &:hover {
   		.header__search__main{
-        width: 200px;
+        width: 150px;
         height: 35px;
+      }
+      .header__search__tail {
+        display: none;
       }
     }
 
-    input:focus {
-      width: 200px;
-      height: 35px;
-    }
     &__main {
       display: inline-block;
       position: relative;
@@ -33,33 +37,35 @@
       border-radius: 25px;
       transition: all 250ms ease;
       cursor: text;
-
     }
 
     &__tail{
-        display: inline-block;
-        width: 2px;
-        height: 10px;
-        margin-left: -7px;
-        margin-top: 18px;
-        margin-right: 10px;
-        background: $dark-grey;
-        border-radius: 3px;
-        transform: rotate(-45deg);
-        transition: all 200ms ease;
+      display: inline-block;
+      width: 3px;
+      height: 10px;
+      margin-left: -7px;
+      margin-top: 15px;
+      margin-right: 20px;
+      background: $dark-grey;
+      border-radius: 3px;
+      transform: rotate(-45deg);
+      transition: all 200ms ease;
     }
 
     &__text{
-      display: inline-block;
+      display: block;
+      padding: 0 20px;
       font-size: $authors-small;
+      font-weight: 400;
       color: $dark-grey;
-
+      padding: 0;
+      cursor: pointer;
     }
   }
 
   &__title {
     position: absolute;
-    left: calc(45%);
+    left: 50%;
     right: 50%;
     &__content {
       img {
@@ -121,6 +127,17 @@
     }
   }
 
+  @media (min-width: $medium) {
+    &__search{
+      input:focus {
+        width: 150px;
+        height: 35px;
+      }
+      input:focus ~ .header__search__tail {
+        display: none;
+      }
+    }
+  }
   @media (max-width: $medium) {
     // Remove search bar text
     &__search__text{
@@ -163,18 +180,15 @@
       &:hover {
     		.header__search__main{
           padding-top: 0.15rem;
-          width: 92vw;
+          width: 70vw;
           height: 35px;
         }
       }
-      input:focus {
-        padding-top: 0.15rem;
-        width: 92vw;
-        height: 35px;
-        .header__title {
-          display: none;
-        }
+      &:active ~ .header__search__text--mobile,
+      &:hover ~ .header__search__text--mobile {  // Show input box
+        display: block;
       }
+
       &:active ~ .header__title,
       &:hover ~ .header__title { // Make Gazelle logo disappear
         display: none;

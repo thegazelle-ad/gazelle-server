@@ -5,24 +5,46 @@ import { Link, browserHistory } from 'react-router';
 export default class Header extends BaseComponent {
   // Allows user to navigate to populated search page on pressing 'Enter'
   handleKeyPress (e) {
-    if (e.nativeEvent.key == 'Enter'){ // Enter pressed
+    if (e.nativeEvent.key == 'Enter'){ // 'Enter' pressed
       browserHistory.push('/search?q=' + e.target.value);
     }
   }
+  // handleSubmit (e) {
+  //   console.log(document.getElementById('search-box').value)
+  //   // if (e.nativeEvent.key == 'Enter'){ // 'Enter' pressed
+  //   //   browserHistory.push('/search?q=' + e.target.value);
+  //   // } else {
+  //   //
+  //   // }
+  //   browserHistory.push('/search?q=' + document.getElementById('search-box').target.value)
+  // }
 
+  handleSubmit (e) {
+    e.preventDefault();
+    browserHistory.push('/search?q=' + e.target["search-box"].value);
+    // console.log(e.target["search-box"].value);
+  }
+
+  // onKeyPress={this.handleKeyPress}
   render() {
     return (
       <div>
         <div className="header">
           <div className="header__search">
-            <input
-              className="header__search__main"
-              type="text"
-              placeholder="Search The Gazelle"
-              onKeyPress={this.handleKeyPress}
-            />
-            <div className="header__search__tail"></div>
-            <div className="header__search__text">SEARCH</div>
+            <form onSubmit={this.handleSubmit}>
+              <input
+                name="search-box"
+                className="header__search__main"
+                type="text"
+                placeholder="Search The Gazelle"
+              />
+              <div className="header__search__tail"></div>
+              <input
+                type="submit"
+                className="header__search__text"
+                value="SEARCH"
+              />
+            </form>
           </div>
           <div className="header__title">
             {/* TODO: change link to proper Gazelle icon uploaded to server*/}
