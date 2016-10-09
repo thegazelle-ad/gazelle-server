@@ -281,7 +281,7 @@ mainApp.listen(process.env.MAIN_PORT ? process.env.MAIN_PORT : 3000, err => {
 const editorTools = express();
 
 // This is for parsing post requests
-editorTools.use(bodyParser.urlencoded({extended: true}));
+editorTools.use(bodyParser.urlencoded({extended: true, limit: "50mb"}));
 // For connecting the client to our falcor server
 editorTools.use("/model.json", FalcorServer.dataSourceRoute((req, res) => {
   return serverModel.asDataSource()
