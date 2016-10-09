@@ -193,6 +193,14 @@ export default class EditorArticleController extends FalcorController {
       return;
     }
 
+    if (formNode.image.length > 4 && formNode.image.substr(0, 5) !== "https") {
+      if (!window.confirm("You are saving an image without using https. " +
+        "This can be correct in a few cases but is mostly not. Are you sure " +
+        " you wish to continue saving?")) {
+        return;
+      }
+    }
+
     // Filter fields that didn't change
 
     const filteredFields = mainFormFields.filter((field) => {
