@@ -399,7 +399,7 @@ the save changes button is supposed to be disabled in this case");
     const callback = () => {
       this.safeSetState({changed: false});
       setTimeout(() => {
-        this.safeSetState({saved: false});
+        this.safeSetState({saving: false});
       }, 1000);
     }
     this.safeSetState({

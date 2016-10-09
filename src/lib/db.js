@@ -52,6 +52,7 @@ export default class db {
       .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
       .innerJoin('posts', 'posts.id', '=', 'post_id')
       .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
+      .whereNotNull('gazelle_published_at')
       .whereIn('authors.slug', slugs).orderBy('gazelle_published_at', 'desc')
       .then((rows) => {
         // rows is an array of objects with keys author_slug and post_slug
