@@ -8,7 +8,7 @@ export default class Archives extends BaseComponent {
   render () {
     let renderIssueList =
       // Returns reversed array of issues
-      _.reverse(_.map((this.props.archivesData.issuesByNumber || []), (issue) => {
+      this.props.archivesData.map((issue) => {
         return(
           <div key={issue.issueNumber} className="archives__issue-item">
             <Link to={'/issue/' + issue.issueNumber}>
@@ -19,7 +19,7 @@ export default class Archives extends BaseComponent {
             </Link>
           </div>
         )
-      }));
+      }).reverse();
     return (
       <div className="archives">
         {renderIssueList}
@@ -29,5 +29,5 @@ export default class Archives extends BaseComponent {
 }
 
 Archives.propTypes = {
-  archivesData: React.PropTypes.object,
+  archivesData: React.PropTypes.array,
 }

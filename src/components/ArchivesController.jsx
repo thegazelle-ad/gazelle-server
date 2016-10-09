@@ -6,6 +6,7 @@
 
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
+import _ from 'lodash';
 import Helmet from "react-helmet"; // Add meta tags for pre-Ghost release
 
 // Components
@@ -27,7 +28,9 @@ export default class ArchivesController extends FalcorController {
           <NotFound />
         );
       } else {
-        const data = this.state.data;
+        const data = _.filter(this.state.data.issuesByNumber, (issue) => {
+          return issue.published_at;
+        });
         const meta = [
           // Search results
           {name: "description", content: "The Gazelle is a weekly student publication, serving the NYU Abu Dhabi community and the greater Global Network University at NYU."},
