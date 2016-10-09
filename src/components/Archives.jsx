@@ -1,7 +1,6 @@
 import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
 import { Link } from 'react-router';
-import _ from 'lodash';
 import moment from 'moment';
 
 export default class Archives extends BaseComponent {
