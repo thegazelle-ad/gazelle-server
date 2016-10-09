@@ -10,11 +10,11 @@ import EditorMainIssueController from 'components/editor/EditorMainIssueControll
 import EditorIssueArticleController from 'components/editor/EditorIssueArticleController';
 import EditorIssueCategoryController from 'components/editor/EditorIssueCategoryController';
 import EditorNotFound from 'components/editor/EditorNotFound';
-import Login from 'components/editor/Login';
+import EditorLogin from 'components/editor/EditorLogin';
 
 export default (
   <Route path="/" component={EditorAppController}>
-    <Route path="login" component={Login} />
+    <Route path="login" component={EditorLogin} />
     <IndexRedirect to="articles/page/1" />
     <Route path="articles/page/:page" component={EditorArticleListController}>
       <Route path="slug/:slug" component={EditorArticleController} />

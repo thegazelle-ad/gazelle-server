@@ -190,37 +190,75 @@ mainApp.use("/favicon.ico", (req, res) => {
 
 mainApp.use(compression());
 
-mainApp.get('*', (req, res) => {
-  if (process.env.NODE_ENV !== "production") {
-    console.log("GOT REQUEST");
-  }
-  match({ routes: mainRoutes, location: req.url },
-    (error, redirectLocation, renderProps) => {
-      if (error) {
-        res.status(500).send(error.message);
-      } else if (redirectLocation) {
-        res.redirect(302, redirectLocation.pathname + redirectLocation.search);
-      } else if (renderProps) {
-        renderApp(renderProps, true).then((html) => {
-          res.status(200).send(html);
-        }).catch((err) => {
-          if (process.env.NODE_ENV !== "production") {
-            console.error('Failed to render: ', req.url);
-            console.error(err.stack || err)
-            res.status(500).send(err.stack || err);
-          }
-          else {
-            res.status(500).send("There was an error while serving you this webpage." +
-              " Please contact The Gazelle team and tell them this link is broken. We hope" +
-              " to fix it soon. Thank you.");
-          }
-        });
-      } else {
-        res.status(404).send('Not Found');
-      }
+if (process.env.NODE_ENV === "beta") {
+  mainApp.get('/login', (req, res) => {
+    if (process.env.NODE_ENV !== "production") {
+      console.log("GOT REQUEST");
     }
-  );
-});
+    match({ routes: mainRoutes, location: req.url },
+      (error, redirectLocation, renderProps) => {
+        if (error) {
+          res.status(500).send(error.message);
+        } else if (redirectLocation) {
+          res.redirect(302, redirectLocation.pathname + redirectLocation.search);
+        } else if (renderProps) {
+          renderApp(renderProps, true).then((html) => {
+            res.status(200).send(html);
+          }).catch((err) => {
+            if (process.env.NODE_ENV !== "production") {
+              console.error('Failed to render: ', req.url);
+              console.error(err.stack || err)
+              res.status(500).send(err.stack || err);
+            }
+            else {
+              res.status(500).send("There was an error while serving you this webpage." +
+                " Please contact The Gazelle team and tell them this link is broken. We hope" +
+                " to fix it soon. Thank you.");
+            }
+          });
+        } else {
+          res.status(404).send('Not Found');
+        }
+      }
+    );
+  });
+  mainApp.get(/(?!\/login)/, (req, res) => {
+    res.redirect(307, '/login');
+  });
+}
+else {
+  mainApp.get('*', (req, res) => {
+    if (process.env.NODE_ENV !== "production") {
+      console.log("GOT REQUEST");
+    }
+    match({ routes: mainRoutes, location: req.url },
+      (error, redirectLocation, renderProps) => {
+        if (error) {
+          res.status(500).send(error.message);
+        } else if (redirectLocation) {
+          res.redirect(302, redirectLocation.pathname + redirectLocation.search);
+        } else if (renderProps) {
+          renderApp(renderProps, true).then((html) => {
+            res.status(200).send(html);
+          }).catch((err) => {
+            if (process.env.NODE_ENV !== "production") {
+              console.error('Failed to render: ', req.url);
+              console.error(err.stack || err)
+              res.status(500).send(err.stack || err);
+            }
+            else {
+              res.status(500).send("There was an error while serving you this webpage." +
+                " Please contact The Gazelle team and tell them this link is broken. We hope" +
+                " to fix it soon. Thank you.");
+            }
+          });
+        } else {
+          res.status(404).send('Not Found');
+        }
+      }
+    );
+  });
+}
 
 // To start server with PORT=3000 default: run `npm start`
 // NOTE: On Linux systems, any port below 1024 requires root access (`sudo` command)

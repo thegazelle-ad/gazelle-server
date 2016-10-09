@@ -1,0 +1,206 @@
+.login-container {
+
+  p {
+    display: block;
+    width: 80%;
+    margin: 0 auto 1rem;
+    text-align: left;
+  }
+
+  a {
+    color: $link-blue;
+  }
+
+  h2 {
+    display: block;
+    margin: 0 auto 1rem;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 400;
+    color: #3e3e3e;
+    @media (max-width: $small) {
+      margin: 0.1rem auto 0.5rem;
+    }
+  }
+
+  .login {
+    margin-top: 2rem;
+    height: 100%;
+    width: 100vw;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    form {
+      width: 200px;
+      flex-grow: 1;
+      justify-content: center;
+      align-content: center;
+    }
+    // Fonts
+    @import url(http://weloveiconfonts.com/api/?family=fontawesome);
+    @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,700);
+
+    // Vendor
+
+    [class*="fontawesome-"]:before {
+      font-family: 'FontAwesome', sans-serif;
+    }
+
+    // Variables
+
+    $base__bgcolor: #2c3338;
+    $base__color: #606468;
+    $base__font-family-fallback: sans-serif;
+    $base__font-family: 'Roboto';
+    $base__font-size: .875rem;
+    $base__font-weight: 400;
+    $base__line-height: 1.5;
+
+    $form--login__border-radus: .25rem;
+    $form--login__color: #606468;
+    $form--login__label__bgcolor: #363b41;
+    $form--login__input__bgcolor: #3b4148;
+    $form--login__input__bgcolor--hover: #434A52;
+    $form--login__submit__bgcolor: #ea4c88;
+    $form--login__submit__bgcolor--hover: #d44179;
+    $form--login__submit__color: #eee;
+
+    $grid__container__max-width: 20rem;
+    $grid__container__width: 90%;
+
+    $link__color: #eee;
+
+    // a {
+    //   color: $link__color;
+    //   outline: 0;
+    //   text-decoration: none;
+    //
+    //   &:focus,
+    //   &:hover {
+    //     text-decoration: underline;
+    //   }
+    //
+    // }
+    input {
+      border: 0;
+      color: inherit;
+      font: inherit;
+      margin: 0;
+      outline: 0;
+      padding: 0;
+      transition: background-color .3s;
+    }
+
+    // Layout
+
+    .site {
+
+      &__container {
+        flex: 1;
+        padding: 3rem 0;
+      }
+
+    }
+
+    // Forms
+
+    .form {
+
+      input {
+
+        &[type="password"],
+        &[type="text"]{
+          max-width: 200px;
+        }
+        &[type="submit"] {
+          max-width: 270px;
+        }
+
+      }
+
+      &--login {
+        color: $form--login__color;
+
+        label,
+        input[type="text"],
+        input[type="password"],
+        input[type="submit"] {
+          border-radius: $form--login__border-radus;
+          padding: 1rem;
+        }
+
+        label {
+          background-color: $form--login__label__bgcolor;
+          border-bottom-right-radius: 0;
+          border-top-right-radius: 0;
+          padding-left: 1.25rem;
+          padding-right: 1.25rem;
+        }
+
+        input {
+          &[type="password"] {
+            background-color: $light-grey;
+            border-bottom-left-radius: 0;
+            border-top-left-radius: 0;
+
+            &:focus,
+            &:hover {
+              background-color: $lighter-grey;
+            }
+
+          }
+
+          &[type="submit"] {
+            width: calc(253px);
+            background-color: $dark-grey;
+            color: $form--login__submit__color;
+            font-weight: 400;
+            text-transform: uppercase;
+
+            &:focus,
+            &:hover {
+              background-color: $dark-grey;
+            }
+
+          }
+
+        }
+
+      }
+
+      &__field {
+        display: flex;
+        margin-bottom: 1rem;
+        justify-content: center;
+      }
+
+    }
+  }
+  .align {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .hidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+
+  .text {
+
+    &--center {
+      text-align: center;
+    }
+
+  }
+
+}
