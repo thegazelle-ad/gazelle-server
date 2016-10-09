@@ -299,7 +299,11 @@ export default class EditorIssueArticleController extends FalcorController {
           return _.some(category.articles, (post) => {
             return slug === post.slug;
           });
-        });
+        }) ||
+          data.featured.slug === slug ||
+          _.some(data.picks, (post) => {
+            return post.slug === slug;
+          });
         if (isOldArticle) {
           return true;
         }

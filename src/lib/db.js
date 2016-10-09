@@ -962,8 +962,6 @@ export default class db {
                     const date = new Date();
                     const toPublish = allArticles.filter((article) => {
                       if (!article.published_at) {
-                        console.log("not published but will be");
-                        console.log(JSON.stringify(article, null, 4));
                         data.published.push({
                           path: ['articlesBySlug', article.slug, 'published_at'],
                           value: date.getTime(),
