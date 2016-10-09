@@ -38,6 +38,7 @@ export default class EditorIssueArticleController extends FalcorController {
       ['issuesByNumber', params.issueNumber, 'picks', {length: 10}, 'authors', 0, 'slug'],
       // This is for the articleList
       ['articlesByPage', ARTICLE_LIST_LENGTH, 1, {length: ARTICLE_LIST_LENGTH}, ARTICLE_FIELDS],
+      ['articlesByPage', ARTICLE_LIST_LENGTH, 1, {length: ARTICLE_LIST_LENGTH}, 'authors', 0, 'slug'],
     ];
   }
 
