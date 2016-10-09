@@ -52,6 +52,8 @@ export default class Login extends BaseComponent {
       return <NotFound />
     }
 
+    const url = this.props.location.query.url || "";
+
     return(
       <div className="login-container">
         <div className="align">
@@ -60,7 +62,7 @@ export default class Login extends BaseComponent {
               <h2>Gazelle Beta Login Page</h2>
               <p>
                 Welcome to the Gazelle Beta, if you were looking for the
-                main Gazelle webpage please follow <a href="https://www.thegazelle.org">
+                main Gazelle webpage please follow <a href={"https://www.thegazelle.org" + url}>
                 this link</a>. This page is only meant for The Gazelle Team to test
                 out new features before we release them on the main page. <br /><br />
                 If you on the other hand are part of The Gazelle and want to use the

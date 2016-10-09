@@ -190,7 +190,7 @@ mainApp.use("/favicon.ico", (req, res) => {
 
 mainApp.use(compression());
 
-if (process.env.NODE_ENV === "beta") {
+if (process.env.NODE_ENV !== "production") {
   mainApp.get('/login', (req, res) => {
     if (process.env.NODE_ENV !== "production") {
       console.log("GOT REQUEST");
@@ -223,7 +223,7 @@ if (process.env.NODE_ENV === "beta") {
     );
   });
   mainApp.get(/(?!\/login)/, (req, res) => {
-    res.redirect(307, '/login');
+    res.redirect(307, '/login?url=' + req.url);
   });
 }
 else {
