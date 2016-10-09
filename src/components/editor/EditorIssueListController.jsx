@@ -40,7 +40,7 @@ export default class EditorIssueListController extends FalcorController {
       return child.name;
     })
     const fields = children.filter((key) => {
-      return isNaN(parseInt(key)) && key !== "length";
+      return key && isNaN(parseInt(key)) && key !== "length";
     });
     const issue = {};
     fields.forEach((field) => {
@@ -50,6 +50,9 @@ export default class EditorIssueListController extends FalcorController {
 
     const callback = () => {
       this.safeSetState({saving: false});
+      fields.forEach((field) => {
+        formNode[field].value = "";
+      });
     }
     this.safeSetState({
       saving: true,
@@ -95,21 +98,24 @@ export default class EditorIssueListController extends FalcorController {
               <input
                 type="text"
                 name="name"
-                placeholder="Name"
+                placeholder="Input Issue Name"
                 defaultValue={"Issue " + nextIssue}
+                disabled={this.state.saving}
               />
               Issue Number:
               {/* Don't use type=number here as it had weird problems in Chrome */}
               <input
                 type="text"
                 name="issueNumber"
-                placeholder="Issue Number"
+                placeholder="Input Issue Number"
                 defaultValue={nextIssue}
+                disabled={this.state.saving}
               />
               <input
                 type="submit"
                 className="pure-button pure-button-primary"
                 value="Create Issue"
+                disabled={this.state.saving}
               />
             </form>
             <p>Choose the issue you want to edit in the dropdown here
