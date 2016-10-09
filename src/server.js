@@ -190,7 +190,7 @@ mainApp.use("/favicon.ico", (req, res) => {
 
 mainApp.use(compression());
 
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV === "beta") {
   mainApp.get('/login', (req, res) => {
     if (process.env.NODE_ENV !== "production") {
       console.log("GOT REQUEST");

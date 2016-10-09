@@ -1,6 +1,7 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import { browserHistory } from 'react-router';
+import _ from 'lodash';
 
 // Components
 import ArticleList from 'components/ArticleList';
@@ -9,7 +10,7 @@ import NotFound from 'components/NotFound';
 export default class SearchController extends FalcorController {
   static getFalcorPathSets(params, queryParams) {
     return [
-      ["search", "posts", queryParams.q, {length: 20}, ["title", "teaser", "issueNumber", "category", "slug", "image"]],
+      ["search", "posts", queryParams.q, {length: 20}, ["title", "teaser", "issueNumber", "category", "slug", "image", 'published_at']],
       ["search", "posts", queryParams.q, {length: 20}, "authors", {length: 10}, ["name", "slug"]],
     ];
   }
@@ -34,7 +35,9 @@ export default class SearchController extends FalcorController {
       }
       else {
         const query = this.props.location.query.q;
-        const results = this.state.data.search.posts[query];
+        const results = _.filter(this.state.data.search.posts[query], (article) => {
+          return article.published_at;
+        });
         return <ArticleList className="search" articles={results} />
       }
     }

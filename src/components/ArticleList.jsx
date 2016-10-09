@@ -33,5 +33,8 @@ export default class ArticleList extends BaseComponent {
 
 // Formatted as list of objects
 ArticleList.propTypes = {
-  articles: React.PropTypes.object.isRequired,
+  articles: React.PropTypes.oneOfType([
+    React.PropTypes.object,
+    React.PropTypes.array,
+  ]).isRequired,
 }
