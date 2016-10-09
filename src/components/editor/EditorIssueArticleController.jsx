@@ -6,7 +6,7 @@ import _ from 'lodash';
 import update from 'react-addons-update';
 import { formatDate } from 'lib/utilities';
 
-const ARTICLE_FIELDS = ['id', 'title', 'slug', 'category', 'published_at'];
+const ARTICLE_FIELDS = ['id', 'title', 'slug', 'category', 'published_at', 'html'];
 const ARTICLE_LIST_LENGTH = 100;
 
 export default class EditorIssueArticleController extends FalcorController {
@@ -309,6 +309,13 @@ export default class EditorIssueArticleController extends FalcorController {
           window.alert(article.title + " has no authors assigned. Please correct this" +
             " before adding the article to an already published issue");
           return false;
+        }
+        if (/http(?!s)/.test(article.html)) {
+          if (!window.confirm(article.title + " has a non https link in it's body. " +
+            " please make sure this link is not an image/video etc. being loaded in. " +
+            " If you are sure of this press okay to continue, else cancel to check.")) {
+            return false;
+          }
         }
         return true;
       });

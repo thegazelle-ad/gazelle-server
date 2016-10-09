@@ -21,7 +21,7 @@ export default class EditorMainIssueController extends FalcorController {
       // window.alert("Issue successfully published");
     }
     const falcorPathSets = [
-      ['issuesByNumber', this.props.params.issueNumber, 'categories', {length: 20}, 'articles', {length: 50}, ['title', 'teaser', 'category']],
+      ['issuesByNumber', this.props.params.issueNumber, 'categories', {length: 20}, 'articles', {length: 50}, ['title', 'teaser', 'category', 'html']],
       ['issuesByNumber', this.props.params.issueNumber, 'categories', {length: 20}, 'articles', {length: 50}, 'authors', 0],
       ['issuesByNumber', this.props.params.issueNumber, ['id', 'published_at', 'name']],
     ];
@@ -54,9 +54,16 @@ export default class EditorMainIssueController extends FalcorController {
             if (!valid) {
               return false;
             }
-            if (!article.authors || !article.authors[0]) {
+            if (!article.hasOwnProperty('authors') || !article.authors[0]) {
               window.alert(article.title + " has no authors. Please correct this");
               return false;
+            }
+            if (/http(?!s)/.test(article.html)) {
+              if (!window.confirm(article.title + " has a non https link in it's body. " +
+                " please make sure this link is not an image/video etc. being loaded in. " +
+                " If you are sure of this press okay to continue, else cancel to check.")) {
+                return false;
+              }
             }
             return true;
           });
