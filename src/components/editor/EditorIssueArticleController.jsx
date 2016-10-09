@@ -294,6 +294,15 @@ export default class EditorIssueArticleController extends FalcorController {
         return field !== "published_at";
       });
       const valid = allArticles.every((article) => {
+        const slug = article.slug;
+        const isOldArticle = _.some(data.categories, (category) => {
+          return _.some(category.articles, (post) => {
+            return slug === post.slug;
+          });
+        });
+        if (isOldArticle) {
+          return true;
+        }
         const valid = fields.every((field) => {
           if (!article[field]) {
             window.alert(article.title + " has no " + field + ". Please correct this" +
