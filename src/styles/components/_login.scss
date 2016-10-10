@@ -26,7 +26,6 @@
   .login {
     margin-top: 2rem;
     height: 100%;
-    width: 100vw;
     flex-grow: 1;
     display: flex;
     align-items: center;
@@ -38,9 +37,9 @@
       justify-content: center;
       align-content: center;
     }
+    
     // Fonts
     @import url(http://weloveiconfonts.com/api/?family=fontawesome);
-    @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,700);
 
     // Vendor
 
@@ -50,8 +49,6 @@
 
     // Variables
 
-    $base__bgcolor: #2c3338;
-    $base__color: #606468;
     $base__font-family-fallback: sans-serif;
     $base__font-family: 'Roboto';
     $base__font-size: .875rem;
@@ -67,22 +64,6 @@
     $form--login__submit__bgcolor--hover: #d44179;
     $form--login__submit__color: #eee;
 
-    $grid__container__max-width: 20rem;
-    $grid__container__width: 90%;
-
-    $link__color: #eee;
-
-    // a {
-    //   color: $link__color;
-    //   outline: 0;
-    //   text-decoration: none;
-    //
-    //   &:focus,
-    //   &:hover {
-    //     text-decoration: underline;
-    //   }
-    //
-    // }
     input {
       border: 0;
       color: inherit;
@@ -91,17 +72,6 @@
       outline: 0;
       padding: 0;
       transition: background-color .3s;
-    }
-
-    // Layout
-
-    .site {
-
-      &__container {
-        flex: 1;
-        padding: 3rem 0;
-      }
-
     }
 
     // Forms
@@ -158,6 +128,7 @@
             color: $form--login__submit__color;
             font-weight: 400;
             text-transform: uppercase;
+            cursor: pointer;
 
             &:focus,
             &:hover {
@@ -177,11 +148,6 @@
       }
 
     }
-  }
-  .align {
-    align-items: center;
-    display: flex;
-    flex-direction: row;
   }
 
   .hidden {
