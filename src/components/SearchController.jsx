@@ -16,10 +16,9 @@ export default class SearchController extends FalcorController {
   }
 
   // Allows user to navigate to populated search page on pressing 'Enter'
-  handleKeyPress (e) {
-    if (e.nativeEvent.key == 'Enter'){ // Enter pressed
-      browserHistory.push('/search?q=' + e.target.value);
-    }
+  handleSubmit (e) {
+    e.preventDefault();
+    browserHistory.push('/search?q=' + e.target.search.value);
   }
 
   render() {
@@ -50,13 +49,15 @@ export default class SearchController extends FalcorController {
         <div className="search">
           <div className="search__search-header">
             <h2 className="search__search-header__text" >Search: </h2>
-            <input
-              className="search__search-header__search-box"
-              type="text"
-              defaultValue={query}
-              onKeyPress={this.handleKeyPress}
-              autoFocus
-            />
+            <form onSubmit={this.handleSubmit}>
+              <input
+                className="search__search-header__search-box"
+                type="text"
+                name="search"
+                defaultValue={query}
+                autoFocus
+              />
+            </form>
           </div>
           {renderContent()}
         </div>
