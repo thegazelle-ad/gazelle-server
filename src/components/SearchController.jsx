@@ -9,6 +9,10 @@ import NotFound from 'components/NotFound';
 
 export default class SearchController extends FalcorController {
   static getFalcorPathSets(params, queryParams) {
+    // If you just went straight to the search page
+    if (!queryParams.q) {
+      return [];
+    }
     return [
       ["search", "posts", queryParams.q, {length: 20}, ["title", "teaser", "issueNumber", "category", "slug", "image", 'published_at']],
       ["search", "posts", queryParams.q, {length: 20}, "authors", {length: 10}, ["name", "slug"]],
@@ -22,8 +26,11 @@ export default class SearchController extends FalcorController {
   }
 
   render() {
-    // Render no results found message or list of found articles
+    // Render no results found message, empty results or list of found articles
     let renderContent = () => {
+      if (!this.props.location.query.q) {
+        return null;
+      }
       if (!this.state.data) {
         return (
           <div className="search__no-data">
@@ -41,10 +48,7 @@ export default class SearchController extends FalcorController {
       }
     }
     if (this.state.ready) {
-      if (!this.props.location.query.q) {
-        return <NotFound />
-      }
-      const query = this.props.location.query.q;
+      const query = this.props.location.query.q || "";
       return (
         <div className="search">
           <div className="search__search-header">
