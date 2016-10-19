@@ -5,7 +5,6 @@ import _ from 'lodash';
 
 // Components
 import ArticleList from 'components/ArticleList';
-import NotFound from 'components/NotFound';
 
 export default class SearchController extends FalcorController {
   static getFalcorPathSets(params, queryParams) {
