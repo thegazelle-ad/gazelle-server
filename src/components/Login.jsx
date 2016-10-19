@@ -2,6 +2,7 @@ import BaseComponent from 'lib/BaseComponent';
 import React from 'react';
 import { browserHistory } from 'react-router';
 import NotFound from 'components/NotFound';
+import _ from 'lodash';
 
 const H1PRIME = 4189793;
 const H2PRIME = 3296731;
@@ -42,7 +43,15 @@ export default class Login extends BaseComponent {
     }
     else {
       // Otherwise it is correct and we let the site redirect the client
-      browserHistory.push("/");
+      let url = this.props.location.query.url || "";
+      if (url) {
+        _.forEach(this.props.location.query, (q, name) => {
+          if (name != "url") {
+            url += "&" + name + "=" + q;
+          }
+        });
+      }
+      browserHistory.push(url);
     }
   }
 
@@ -52,7 +61,14 @@ export default class Login extends BaseComponent {
       return <NotFound />
     }
 
-    const url = this.props.location.query.url || "";
+    let url = this.props.location.query.url || "";
+    if (url) {
+      _.forEach(this.props.location.query, (q, name) => {
+        if (name != "url") {
+          url += "&" + name + "=" + q;
+        }
+      });
+    }
 
     return(
       <div className="login-container">

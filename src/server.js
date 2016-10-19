@@ -356,7 +356,7 @@ if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "beta") {
   });
 
   editorTools.get(/(?!\/restartserver|\/login).*/, (req, res) => {
-    res.redirect(307, '/login');
+    res.redirect(307, '/login?url=' + req.url);
   });
 }
 
