@@ -1,6 +1,6 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
-import { debounce } from 'lib/utilities';
+import { debounce, markdownLength } from 'lib/utilities';
 import _ from 'lodash';
 
 const MAX_BIOGRAPHY_LENGTH = 400;
@@ -178,7 +178,7 @@ the save changes button is supposed to be disabled in this case");
 
   handleBiographyChanges(e) {
     let biography = e.target.value;
-    if (biography.length > MAX_BIOGRAPHY_LENGTH) {
+    if (markdownLength(biography) > MAX_BIOGRAPHY_LENGTH) {
       biography = biography.substr(0, MAX_BIOGRAPHY_LENGTH);
     }
     this.safeSetState({
@@ -257,7 +257,7 @@ the save changes button is supposed to be disabled in this case");
             />
             Change Biography:<br />
             <span style={{fontSize: "0.95em", fontStyle: "italic"}}>
-              {this.state.biography.length} of {MAX_BIOGRAPHY_LENGTH} characters
+              {markdownLength(this.state.biography)} of {MAX_BIOGRAPHY_LENGTH} characters
             </span>
             <textarea
               value={this.state.biography}

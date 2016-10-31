@@ -154,3 +154,35 @@ export function formatDateTime(date) {
 
   return dateTimeString;
 }
+
+// this currently only supports parsing links
+export function parseMarkdown(str) {
+  // parse links
+  const exp = /\[(.*?)\]\((.*?)\)/g;
+  let result;
+  const output = [];
+  let end = 0;
+  while (result = exp.exec(str)) {
+    output.push(str.substring(end, result.index));
+    output.push(<a href={result[2]} key={result[1] + '-' + result[2]}>{result[1]}</a>);
+    end = exp.lastIndex;
+  }
+  output.push(str.substring(end));
+  return output;
+}
+
+// this currently only supports parsing links
+export function markdownLength(str) {
+  const array = parseMarkdown(str);
+  let length = 0;
+  array.forEach((element) => {
+    if ((typeof element) === "string") {
+      length += element.length;
+    }
+    else {
+      // assume it is a link
+      length += element.props.children.length;
+    }
+  });
+  return length;
+}
