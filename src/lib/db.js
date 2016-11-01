@@ -7,6 +7,10 @@ import { formatDate, formatDateTime } from 'lib/utilities';
 const knexConnectionObject = {
   client: 'mysql',
   connection: databaseConfig,
+  pool: {
+    min: 10,
+    max: 50,
+  },
 };
 
 const database = knex(knexConnectionObject);
@@ -643,10 +647,12 @@ export default class db {
       const updatesCalled = Object.keys(jsonGraphArg).length;
       let updatesReturned = 0;
       const categorySlugsToFind = [];
-      _.forEach(jsonGraphArg, (article) => {
+      const articlesWithChangedCategory = [];
+      _.forEach(jsonGraphArg, (article, slug) => {
         Object.keys(article).forEach((field) => {
           if (field === "category") {
             categorySlugsToFind.push(article[field]);
+            articlesWithChangedCategory.push(slug);
           }
         });
       });
@@ -706,9 +712,83 @@ export default class db {
               }
               updatesReturned++;
               if (updatesReturned >= updatesCalled) {
+                // If categories changed make sure issue data is still consistent
+                if (articlesWithChangedCategory.length > 0) {
+                  database.distinct('issue_id').select()
+                  .from('issues_posts_order')
+                  .innerJoin('posts', 'posts.id', '=', 'issues_posts_order.post_id')
+                  .whereIn('posts.slug', articlesWithChangedCategory)
+                  .then((issueRows) => {
+                    const issuesToUpdate = issueRows.map((row) => {
+                      return row.issue_id;
+                    });
+                    // If the articles were actually published in any issues
+                    if (issuesToUpdate.length > 0) {
+                      this.orderArticlesInIssues(issuesToUpdate).then((flag) => {
+                        if (flag !== true) {
+                          throw new Error("error while reordering articles in issues: " + JSON.stringify(issuesToUpdate));
+                        }
+                        resolve(true);
+                      });
+                    }
+                    else {
+                      // Nothing to fix
+                      resolve(true);
+                    }
+                  });
+                }
+              }
+            });
+          });
+        });
+      });
+    });
+  }
+
+  orderArticlesInIssues(issues) {
+    // Issues is assumed to be an array of integers where
+    // the integers are the ids of issues
+    return new Promise((resolve, reject) => {
+      let updatesCalled = 0;
+      let updatesReturned = 0;
+      issues.forEach((issueId) => {
+        database.select('issues_posts_order.id as id', 'category_id', 'posts_order')
+        .from('issues_posts_order')
+        .innerJoin('posts_meta', 'posts_meta.id', '=', 'issues_posts_order.post_id')
+        .where('type', '=', 0)
+        .where('issue_id', '=', issueId)
+        .orderBy('category_id', 'ASC')
+        .orderBy('issues_posts_order.posts_order', 'ASC')
+        .then((postRows) => {
+          let lastCategory = null;
+          let order = 0;
+          const toUpdate = [];
+          postRows.forEach((row) => {
+            if (lastCategory !== row.category_id) {
+              lastCategory = row.category_id;
+              order = 0;
+            }
+            if (order !== row.posts_order) {
+              toUpdate.push({
+                id: row.id,
+                update: {
+                  posts_order: order,
+                },
+              });
+            }
+            order++;
+          });
+          updatesCalled += toUpdate.length;
+          toUpdate.forEach((obj) => {
+            database('issues_posts_order')
+            .where('id', '=', obj.id)
+            .update(obj.update)
+            .then(() => {
+              updatesReturned++;
+              if (updatesReturned >= updatesCalled) {
                 resolve(true);
               }
-            })
+            });
           });
         });
       });
