@@ -151,18 +151,37 @@ export default class db {
   articleIssueQuery(slugs) {
     // the parameter is the slugs the issueNumber is being requested from
     return new Promise((resolve, reject) => {
-      // const database = knex(knexConnectionObject);
       database.select('issue_order as issueNumber', 'posts.slug as slug')
       .from('posts')
       .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
       .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issue_id')
       .whereIn('posts.slug', slugs)
+      .orderBy('posts.slug')
       .then((rows) => {
-        // database.destroy();
+        // We always want to return the first issue the article was published in
+        // and no more (currently we don't support falcor fetching all issues an
+        // article was published in, if needed that's not a problem though)
+        const toDelete = [];
+        let lastRow = null;
+        rows.forEach((row, index) => {
+          if (lastRow && row.slug === lastRow.slug) {
+            if (row.issueNumber < lastRow.issueNumber) {
+              toDelete.push(index-1);
+            }
+            else if (row.issueNumber > lastRow.issueNumber) {
+              toDelete.push(index);
+            }
+            else {
+              throw new Error("Data corrupted, article: " + row.slug + " occurs twice in issue " + lastRow.issueNumber.toString());
+            }
+          }
+        });
+        toDelete.reverse().forEach((index) => {
+          rows.splice(index, 1);
+        });
         resolve(rows);
       })
       .catch((e) => {
-        // database.destroy();
         throw new Error(e);
       })
     });
