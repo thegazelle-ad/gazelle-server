@@ -48,9 +48,8 @@ module.exports = [{
        * Webpack is compiled.
        */
       {
-        test: /\.jsx$/,
+        test: /src\/.*\.jsx?$/,
         loaders: ['eslint'],
-        exclude: /node_modules/,
       },
     ],
     loaders: [
@@ -111,9 +110,8 @@ module.exports = [{
        * Webpack is compiled.
        */
       {
-        test: /\.jsx$/,
+        test: /src\/.*\.jsx?$/,
         loaders: ['eslint'],
-        exclude: /node_modules/,
       },
     ],
     loaders: [
@@ -160,9 +158,8 @@ module.exports = [{
        * Webpack is compiled.
        */
       {
-        test: /\.jsx$/,
+        test: /src\/.*\.jsx?$/,
         loaders: ['eslint'],
-        exclude: /node_modules/,
       },
     ],
     loaders: [

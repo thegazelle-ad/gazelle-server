@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { isAppReady, expandCache, pathSetsInCache, validateFalcorPathSets, mergeUpdatedData } from "lib/falcor/falcorUtils";
+import { isAppReady, expandCache, pathSetsInCache, validateFalcorPathSets } from "lib/falcor/falcorUtils";
 import BaseComponent from "lib/BaseComponent";
 import { setLoading, signalLeaving } from "lib/loader";
 import { uuid } from 'lib/utilities';
@@ -17,7 +17,7 @@ export default class FalcorController extends BaseComponent {
     this.safeSetState({
       fetching: false,
       ready: false,
-      data: null
+      data: null,
     })
 
     // For loader tracking
@@ -32,7 +32,7 @@ export default class FalcorController extends BaseComponent {
   // Also you cannot as of now make the first keySet in a pathSet an array
   // as being able to pass an array of pathSets properly depends on that.
   // This will probably never be needed either.
-  static getFalcorPathSets(params, queryParams) {
+  static getFalcorPathSets(params, queryParams) { //eslint-disable-line no-unused-vars
     throw new TypeError(
       "You must implement the getFalcorPathSets method " +
       "in children of FalcorController"
@@ -47,7 +47,7 @@ export default class FalcorController extends BaseComponent {
     if (falcorPathSets === undefined) {
       this.safeSetState({
         ready: true,
-        data: null
+        data: null,
       });
       return;
     }
@@ -56,11 +56,11 @@ export default class FalcorController extends BaseComponent {
     if (data) {
       this.safeSetState({
         ready: true,
-        data: data
+        data: data,
       })
     } else {
       if (process.env.NODE_ENV !== "production") {
-        console.warn("Serverside render of component: " + this.constructor.name +
+        console.warn("Serverside render of component: " + this.constructor.name + // eslint-disable-line no-console
           " failed. Data not in cache. Falcor Path attempted fetched was: " + JSON.stringify(falcorPathSets));
       }
       this.safeSetState({
@@ -112,7 +112,7 @@ export default class FalcorController extends BaseComponent {
       else {
         const err = new Error("FalcorPathSets: " + JSON.stringify(falcorPathSets) + " returned no data.")
         if (process.env.NODE_ENV !== "production") {
-          console.error(err);
+          console.error(err); // eslint-disable-line no-console
         }
         Object.assign(stateToSet, {
           ready: true,
@@ -127,9 +127,9 @@ export default class FalcorController extends BaseComponent {
     })
     .catch((e) => {
       if (process.env.NODE_ENV !== "production") {
-        console.error(e);
+        console.error(e); // eslint-disable-line no-console
         if (e instanceof Error) {
-          console.error(e.stack);
+          console.error(e.stack); // eslint-disable-line no-console
         }
       }
     });
@@ -139,7 +139,7 @@ export default class FalcorController extends BaseComponent {
   // and update the cache accordingly
   falcorUpdate(jsonGraphEnvelope, stateToSet = {}, callback) {
     this.safeSetState({fetching: true});
-    this.props.model.set(jsonGraphEnvelope).then((x) => {
+    this.props.model.set(jsonGraphEnvelope).then(() => {
       // For now we'll just fetch every time after an update
       // This would be very bad for updating views, so maybe we'll do that differently
       // but at the moment we have no good way to merge updated data especially when
@@ -165,9 +165,9 @@ export default class FalcorController extends BaseComponent {
     })
     .catch((e) => {
       if (process.env.NODE_ENV !== "production") {
-        console.error(e);
+        console.error(e); // eslint-disable-line no-console
         if (e instanceof Error) {
-          console.error(e.stack);
+          console.error(e.stack); // eslint-disable-line no-console
         }
       }
       let error = null;
@@ -196,7 +196,7 @@ export default class FalcorController extends BaseComponent {
     this.safeSetState({fetching: true});
     // for some reason 'call' can't handle undefined arguments
     // so we use .apply on it
-    this.props.model.call(functionPath, args, refSuffixes, thisPaths).then((x) => {
+    this.props.model.call(functionPath, args, refSuffixes, thisPaths).then(() => {
       // For now we'll just fetch every time after an update
       // This would be very bad for updating views, so maybe we'll do that differently
       // but at the moment we have no good way to merge updated data especially when
@@ -222,9 +222,9 @@ export default class FalcorController extends BaseComponent {
     })
     .catch((e) => {
       if (process.env.NODE_ENV !== "production") {
-        console.error(e);
+        console.error(e); // eslint-disable-line no-console
         if (e instanceof Error) {
-          console.error(e.stack);
+          console.error(e.stack); // eslint-disable-line no-console
         }
       }
       let error = null;

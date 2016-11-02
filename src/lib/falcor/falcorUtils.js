@@ -146,11 +146,11 @@ export function pathSetsInCache(cache, falcorPathSets) {
         // items you will actually receive when overfetching.
         if (!curObject.hasOwnProperty("length")) {
           if (process.env.NODE_ENV !== "production") {
-            console.warn("No length property on object in cache. This might be a developer mistake.");
-            console.log("Current object in pathSetsInCache:");
-            console.log(curObject);
-            console.log("remainingKeySets in pathSetsInCache");
-            console.log(remainingKeySets);
+            console.warn("No length property on object in cache. This might be a developer mistake."); // eslint-disable-line no-console
+            console.log("Current object in pathSetsInCache:"); // eslint-disable-line no-console
+            console.log(curObject); // eslint-disable-line no-console
+            console.log("remainingKeySets in pathSetsInCache"); // eslint-disable-line no-console
+            console.log(remainingKeySets); // eslint-disable-line no-console
           }
           // If it's not a developer mistake the length property could simply be missing
           // because this data is not in cache.
@@ -318,7 +318,7 @@ export function expandCache(cache) {
         stack.push(next);
       });
     }
-  };
+  }
   return cache;
 }
 

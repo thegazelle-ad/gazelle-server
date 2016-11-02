@@ -10,7 +10,7 @@ import HttpDataSource from 'falcor-http-datasource';
 setAppReady();
 
 let clientModel = new falcor.Model({
-  source: new HttpDataSource('/model.json')
+  source: new HttpDataSource('/model.json'),
 });
 
 ReactDOM.render(

@@ -20,7 +20,7 @@ export default class db {
     // parameters are both expected to be arrays
     // the first one with author slugs to fetch
     // and the other one the columns to retrieve from the authors
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // const database = knex(knexConnectionObject);
       // So the Falcor Router knows which author we're talking about
       if (!columns.some((col) => {return col === "slug"})) {
@@ -49,7 +49,7 @@ export default class db {
     // The function returns an object with author slugs
     // as keys and values being arrays of article slugs
     // sorted by most recent article first.
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // const database = knex(knexConnectionObject);
       database.select('posts.slug as post_slug', 'authors.slug as author_slug')
       .from('authors')
@@ -85,7 +85,7 @@ export default class db {
     // parameters are both expected to be arrays
     // first one with page slugs to fetch
     // second one which columns to fetch from the db
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // const database = knex(knexConnectionObject);
       // So the Falcor Router knows which author we're talking about
       if (columns.find((col) => {return col === "slug"}) === undefined) {
@@ -112,7 +112,7 @@ export default class db {
     // parameters are both expected to be arrays
     // first one with article slugs to fetch
     // second one which columns to fetch from the posts_meta table
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // const database = knex(knexConnectionObject);
       // we join with posts table to find slug, and always return slug
       columns = columns.map((col) => {
@@ -150,7 +150,7 @@ export default class db {
 
   articleIssueQuery(slugs) {
     // the parameter is the slugs the issueNumber is being requested from
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       database.select('issue_order as issueNumber', 'posts.slug as slug')
       .from('posts')
       .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
@@ -192,7 +192,7 @@ export default class db {
     // of which to fetch the authors of.
     // The function returns an object with article slugs
     // as keys and values being arrays of author slugs.
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // const database = knex(knexConnectionObject);
       database.select('posts.slug as post_slug', 'authors.slug as author_slug')
       .from('authors')
@@ -226,7 +226,7 @@ export default class db {
 
   latestIssueQuery() {
     // returns the newest issue number
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // const database = knex(knexConnectionObject);
       database.select('issue_order')
       .from('issues')
@@ -246,7 +246,7 @@ export default class db {
   categoryQuery(slugs, columns) {
     // slugs parameter is an array of category slugs
     // to fetch the name of
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // const database = knex(knexConnectionObject);
       if (columns.find((col) => {return col==="slug"}) === undefined) {
         // Copy so as to not change pathSet
@@ -269,7 +269,7 @@ export default class db {
   categoryArrayQuery() {
     // fetch all the categories in the database and return
     // an array of slugs. It is important the order is deterministic though
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       database.select('slug')
       .from('categories')
       .orderBy('id', 'desc')
@@ -288,7 +288,7 @@ export default class db {
     // of which to fetch the articles from
     // Will return object where keys are category slugs
     // and values are arrays of articles from newest to oldest
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // const database = knex(knexConnectionObject);
       database.select('posts.slug as post_slug', 'categories.slug as cat_slug')
       .from('posts')
@@ -322,7 +322,7 @@ export default class db {
 
   featuredArticleQuery(issueNumbers) {
     // Get the featured articles from all the issueNumbers
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // const database = knex(knexConnectionObject);
       database.select('posts.slug', 'issue_order')
       .from('posts')
@@ -342,7 +342,7 @@ export default class db {
 
   editorPickQuery(issueNumbers) {
     // Get the editor's picks from all the issueNumbers
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // const database = knex(knexConnectionObject);
       database.select('posts.slug', 'issue_order')
       .from('posts')
@@ -371,7 +371,7 @@ export default class db {
 
   issueCategoryQuery(issueNumbers, fields) {
     // get the categories from each issueNumber
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // const database = knex(knexConnectionObject);
       // rewrite the columns to proper format
       let columns = fields.map((col) => {
@@ -422,7 +422,7 @@ export default class db {
 
   issueCategoryArticleQuery(issueNumbers) {
     // get the categories from each issueNumber
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // const database = knex(knexConnectionObject);
       database.select('issue_order', 'posts.slug', 'posts_order', 'posts_meta.category_id')
       .from('issues')
@@ -501,7 +501,7 @@ export default class db {
   }
 
   issueQuery(issueNumbers, columns) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // const database = knex(knexConnectionObject);
       const hasIssueNumber = columns.find((col) => {col === "issue_order"}) !== undefined;
       if (!hasIssueNumber) {
@@ -525,7 +525,7 @@ export default class db {
 
   // THIS IS TEMPORARY
   trendingQuery() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       database.select('slug')
       .from('posts')
       .innerJoin('posts_meta', 'posts_meta.id', '=', 'posts.id')
@@ -543,7 +543,7 @@ export default class db {
 
   // THIS IS TEMPORARY
   relatedArticleQuery(slugs) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       database.select('slug')
       .from('posts')
       .innerJoin('posts_meta', 'posts_meta.id', '=', 'posts.id')
@@ -565,7 +565,7 @@ export default class db {
   }
 
   searchAuthorsQuery(queries, min, max) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let queriesReturned = 0;
       const results = {};
       queries.forEach((query) => {
@@ -585,7 +585,7 @@ export default class db {
   }
 
   searchPostsQuery(queries, min, max) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let queriesReturned = 0;
       const results = {};
       queries.forEach((query) => {
@@ -607,7 +607,7 @@ export default class db {
   }
 
   updateAuthors(articleId, newAuthors) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       database('authors_posts').where('post_id', '=', articleId).del()
       .then(() => {
         const insertArray = _.map(newAuthors, (authorId) => {
@@ -630,7 +630,7 @@ export default class db {
   }
 
   updateGhostFields(jsonGraphArg) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const updatesCalled = Object.keys(jsonGraphArg).length;
       let updatesReturned = 0;
       _.forEach(jsonGraphArg, (article, slug) => {
@@ -662,7 +662,7 @@ export default class db {
   }
 
   updatePostMeta(jsonGraphArg) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const updatesCalled = Object.keys(jsonGraphArg).length;
       let updatesReturned = 0;
       const categorySlugsToFind = [];
@@ -767,7 +767,7 @@ export default class db {
   orderArticlesInIssues(issues) {
     // Issues is assumed to be an array of integers where
     // the integers are the ids of issues
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let updatesCalled = 0;
       let updatesReturned = 0;
       issues.forEach((issueId) => {
@@ -872,7 +872,7 @@ export default class db {
   }
 
   updateMainAuthorData(jsonGraphArg) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const updatesCalled = Object.keys(jsonGraphArg).length;
       let updatesReturned = 0;
       _.forEach(jsonGraphArg, (authorObject, slug) => {
@@ -888,16 +888,16 @@ export default class db {
           }
         })
         .catch((e) => {
-          reject(e);
+          throw e;
         });
       });
     });
   }
 
   createAuthor(authorObject) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       database('authors').insert(authorObject)
-      .then((data) => {
+      .then(() => {
         // Insert statements should throw errors themselves
         // if they fail
         resolve(true);
@@ -910,7 +910,7 @@ export default class db {
     // This is simply to make our job easier, and update statements
     // don't have to be exceedingly efficient either as they are called
     // very rarely, and the user expects a wait time on saving changes
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       database.select('id', 'published_at')
       .from('issues')
       .where('issue_order', '=', issueNumber)
@@ -1061,7 +1061,7 @@ export default class db {
                     }
                     data.picks.push({
                       path: ['issuesByNumber', issueNumber, 'picks', index],
-                      value: {$type: "ref", value: ['articlesBySlug', article.slug]}
+                      value: {$type: "ref", value: ['articlesBySlug', article.slug]},
                     });
                   });
 
@@ -1080,9 +1080,9 @@ export default class db {
                           slug: category.slug,
                           articles: [{
                             path: ['issuesByNumber', issueNumber, 'categories', category.index, 'articles', order],
-                            value: {$type: "ref", value: ['articlesBySlug', article.slug]}
+                            value: {$type: "ref", value: ['articlesBySlug', article.slug]},
                           }],
-                        }
+                        },
                       };
                     }
                     // index > 0
@@ -1095,7 +1095,7 @@ export default class db {
                         slug: category.slug,
                         articles: [{
                           path: ['issuesByNumber', issueNumber, 'categories', category.index, 'articles', order],
-                          value: {$type: "ref", value: ['articlesBySlug', article.slug]}
+                          value: {$type: "ref", value: ['articlesBySlug', article.slug]},
                         }],
                       };
                     }
@@ -1104,7 +1104,7 @@ export default class db {
                       const category = slugToObject[article.category];
                       data.categories[category.index].articles.push({
                         path: ['issuesByNumber', issueNumber, 'categories', category.index, 'articles', order],
-                        value: {$type: "ref", value: ['articlesBySlug', article.slug]}
+                        value: {$type: "ref", value: ['articlesBySlug', article.slug]},
                       });
                     }
                     // Increment the order
@@ -1148,18 +1148,18 @@ export default class db {
   }
 
   updateIssueData(jsonGraphArg) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const issueNumber = Object.keys(jsonGraphArg.issuesByNumber)[0];
       const value = jsonGraphArg.issuesByNumber[issueNumber].published_at;
       database('issues').where('issue_order', '=', issueNumber)
-      .update('published_at', value).then((data) => {
+      .update('published_at', value).then(() => {
         resolve(true);
       })
     })
   }
 
   publishIssue(issueId) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // We first find all unpublished articles in the issue
       database.select('posts.id', 'slug', 'gazelle_published_at')
       .from('posts')
@@ -1203,7 +1203,7 @@ export default class db {
   }
 
   addIssue(issueObject) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const insertObject = {};
       _.forEach(issueObject, (value, key) => {
         insertObject[mapGhostNames(key)] = value;
@@ -1215,7 +1215,7 @@ export default class db {
   }
 
   updateIssueCategories(issueNumber, idArray) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // First delete old categories order and get issue id
       database.select('id')
       .from('issues')

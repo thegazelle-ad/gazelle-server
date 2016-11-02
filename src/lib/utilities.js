@@ -1,5 +1,4 @@
 import React from "react";
-import BaseComponent from "lib/BaseComponent"
 
 // TODO: Add Jest Testing
 export function debounce (func, timeout, addInstantFlag = false) {
@@ -77,7 +76,7 @@ export function mapLegacyIssueSlugsToIssueNumber(slug) {
 // Modified slightly from ghost/core/server/models/base.js
 export function slugifyPost(postSlug) {
   // Remove URL reserved chars: `:/?#[]@!$&'()*+,;=` as well as `\%<>|^~£"`
-  slug = postSlug.replace(/[:\/\?#\[\]@!$&'()*+,;=\\%<>\|\^~£"]/g, '')
+  let slug = postSlug.replace(/[:\/\?#\[\]@!$&'()*+,;=\\%<>\|\^~£"]/g, '')
               .replace(/(\s|\.)/g, '-')
               .replace(/-+/g, '-')
               .toLowerCase();
@@ -162,7 +161,7 @@ export function parseMarkdown(str) {
   let result;
   const output = [];
   let end = 0;
-  while (result = exp.exec(str)) {
+  while (result = exp.exec(str)) { // eslint-disable-line no-cond-assign
     output.push(str.substring(end, result.index));
     output.push(<a href={result[2]} key={result[1] + '-' + result[2]}>{result[1]}</a>);
     end = exp.lastIndex;
