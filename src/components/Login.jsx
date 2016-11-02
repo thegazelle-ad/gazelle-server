@@ -1,12 +1,9 @@
 import BaseComponent from 'lib/BaseComponent';
 import React from 'react';
 import { browserHistory } from 'react-router';
+import { hash } from 'lib/utilities';
 import NotFound from 'components/NotFound';
 import _ from 'lodash';
-
-const H1PRIME = 4189793;
-const H2PRIME = 3296731;
-const BIG_PRIME = 5003943032159437;
 
 export default class Login extends BaseComponent {
   constructor(props) {
@@ -18,15 +15,6 @@ export default class Login extends BaseComponent {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  hash(password) {
-    let num = password.charCodeAt(0);
-    for (let i = 1; i < password.length; i++) {
-      num = ((num*256)%BIG_PRIME + password.charCodeAt(i))%BIG_PRIME;
-    }
-    const hash = ((num % H1PRIME) + 5*(num % H2PRIME) + 1 + 25)%BIG_PRIME;
-    return hash;
-  }
-
   handlePasswordChange(e) {
     this.safeSetState({
       passwordValue: e.target.value,
@@ -36,8 +24,7 @@ export default class Login extends BaseComponent {
   handleSubmit(e) {
     e.preventDefault();
     const pass = e.target.password.value;
-    const hash = this.hash(pass);
-    if (hash !== 2451962) {
+    if (hash(pass) !== 2451962) {
       window.alert("Incorrect password");
       e.target.password.value = "";
     }
