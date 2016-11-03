@@ -6,6 +6,7 @@ import routes from 'lib/routes';
 import { injectModelCreateElement } from 'lib/falcor/falcorUtils';
 import HttpDataSource from 'falcor-http-datasource';
 import { setIsClient } from 'lib/utilities';
+import ReactGA from 'react-ga';
 
 // Let the app know we are running as client, activates certain behaviors like
 // global client tracking.
@@ -18,10 +19,20 @@ let clientModel = new falcor.Model({
 // _initialCache is a global exposed by the first server side render
 clientModel.setCache(_initialCache); // eslint-disable-line no-undef
 
+ReactGA.initialize('UA-84302849-1', {
+  debug: true,
+});
+
+let logPageView = () =>{
+  ReactGA.set({ page: window.location.pathname });
+  ReactGA.pageview(window.location.pathname);
+}
+
 ReactDOM.render(
   <Router
     history={browserHistory}
     routes={routes}
+    onUpdate={logPageView}
     createElement={injectModelCreateElement(clientModel)}
   />,
 document.getElementById('main'));
