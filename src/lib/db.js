@@ -862,7 +862,7 @@ export default class db {
                 });
               });
             }
-            else {
+            else if (updatesCalled === 0) {
               resolve(true);
             }
           });
