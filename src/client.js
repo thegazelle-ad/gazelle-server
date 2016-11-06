@@ -19,10 +19,10 @@ let clientModel = new falcor.Model({
 // _initialCache is a global exposed by the first server side render
 clientModel.setCache(_initialCache); // eslint-disable-line no-undef
 
-ReactGA.initialize('UA-84302849-1', {
-  debug: true,
-});
+// Initialize Google Analytics tracking
+ReactGA.initialize('UA-84302849-1');
 
+// Establish pageview tracking
 let logPageView = () =>{
   ReactGA.set({ page: window.location.pathname });
   ReactGA.pageview(window.location.pathname);
