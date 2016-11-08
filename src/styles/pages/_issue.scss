@@ -10,6 +10,7 @@
       .article-preview {
         min-width: 0;
         max-width: none;
+        min-width: 30%;
         flex-grow: 1;
         flex: 1;
         -webkit-flex: 1 1 15em; // Fixes Safari flex-wrap bug
