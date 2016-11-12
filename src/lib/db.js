@@ -587,7 +587,7 @@ export default class db {
           slugs.forEach((slug) => {
             const post = posts[slug];
             if (post === undefined) {
-              throw new Error("Article couldn't be found in related articles query");
+              throw new Error("Article " + slug + " couldn't be found in related articles query");
             }
 
             // update amount of tags in common with current post
