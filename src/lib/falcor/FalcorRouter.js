@@ -344,12 +344,12 @@ export default class FalcorRouter extends BaseRouter.createClass([
   },
   {
     // Get related articles
-    // THIS IS TEMPORARY
     route: "articlesBySlug[{keys:slugs}]['related'][{integers:indices}]",
     get: (pathSet) => {
       return new Promise((resolve) => {
         // The dbRelatedArticleQuery function will only return 3 related articles
-        // per article queried right now, so you cannot request an index higher than 2
+        // per article queried right now (as you shouldn't need more),
+        // so you cannot request an index higher than 2
         db.relatedArticleQuery(pathSet.slugs).then((data) => {
           const results = [];
           pathSet.slugs.forEach((slug) => {

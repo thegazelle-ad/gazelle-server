@@ -1,4 +1,5 @@
 import knex from 'knex';
+import stable from 'stable';
 import databaseConfig from 'lib/../../config/database.config';
 import { mapGhostNames } from 'lib/falcor/FalcorRouter';
 import _ from 'lodash';
@@ -548,27 +549,87 @@ export default class db {
     });
   }
 
-  // THIS IS TEMPORARY
   relatedArticleQuery(slugs) {
     return new Promise((resolve) => {
-      database.select('slug')
-      .from('posts')
-      .innerJoin('posts_meta', 'posts_meta.id', '=', 'posts.id')
-      .whereNotNull('gazelle_published_at')
-      .orderBy('gazelle_published_at', 'desc')
-      .limit(3)
-      .then((rows) => {
-        const results = {};
-        const relatedArticlesArray = rows.map((row) => {return row.slug});
-        slugs.forEach((slug) => {
-          results[slug] = relatedArticlesArray.slice();
+      database.select('id')
+      .from('issues')
+      .orderBy('issue_order', 'desc')
+      .whereNotNull('published_at').limit(1)
+      .then((issueRows) => {
+        const latestIssueId = issueRows[0].id;
+        database.select('tag_id', 'posts.slug',
+          'issues_posts_order.issue_id', 'category_id')
+        .from('posts')
+        .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
+        .leftJoin('posts_tags', 'posts_tags.post_id', '=', 'posts.id')
+        .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
+        .whereNotNull('gazelle_published_at')
+        .where(function() {
+          this.where('issues_posts_order.issue_id', '=', latestIssueId).orWhereIn('slug', slugs)
+        }).then((postRows) => {
+          const posts = {};
+          postRows.forEach((post) => {
+            const slug = post.slug;
+            if (!posts[slug]) {
+              posts[slug] = post;
+              posts[slug].tags = [];
+            }
+            if (post.tag_id) {
+              posts[slug].tags.push(post.tag_id);
+            }
+          });
+
+          const results = {};
+          slugs.forEach((slug) => {
+            const post = posts[slug];
+            if (post === undefined) {
+              throw new Error("Article couldn't be found in related articles query");
+            }
+
+            // update amount of tags in common with current post
+            // and whether the category is the same
+            _.forEach(posts, (currentPost) => {
+              let cnt = 0;
+              currentPost.tags.forEach((currentTag) => {
+                if (post.tags.find((postTag) => {return postTag === currentTag})) {
+                  cnt++;
+                }
+              });
+              currentPost.tagsInCommon = cnt;
+              currentPost.categoryInCommon = currentPost.category_id === post.category_id;
+            });
+
+            const ranking = Object.keys(posts).filter((currentSlug) => {
+              return posts[currentSlug].issue_id === latestIssueId && currentSlug !== post.slug;
+            });
+            if (ranking.length < 3) {
+              throw new Error("Less than three posts to qualify as related posts");
+            }
+            stable.inplace(ranking, (slugA, slugB) => {
+              const a = posts[slugA];
+              const b = posts[slugB];
+              if (a.tagsInCommon !== b.tagsInCommon) {
+                // This puts a before b if a has more tags in common
+                return b.tagsInCommon - a.tagsInCommon;
+              }
+              if (a.categoryInCommon !== b.categoryInCommon) {
+                if (a.categoryInCommon) {
+                  return -1;
+                }
+                return 1;
+              }
+              return 0;
+            });
+            // since the sort is stable we know we should always get the
+            // same values, also if there are no posts with related tags
+            // or categories. It should still be deterministic which article
+            // is the first unrelated one in the order
+            results[slug] = ranking.slice(0, 3);
+          });
+          resolve(results);
         });
-        resolve(results);
-      })
-      .catch((e) => {
-        throw new Error(e);
       });
-    })
+    });
   }
 
   searchAuthorsQuery(queries, min, max) {
