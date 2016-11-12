@@ -227,17 +227,14 @@ export default class db {
   latestIssueQuery() {
     // returns the newest issue number
     return new Promise((resolve) => {
-      // const database = knex(knexConnectionObject);
       database.select('issue_order')
       .from('issues')
       .orderBy('issue_order', 'desc')
       .whereNotNull('published_at').limit(1)
       .then((rows) => {
-        // database.destroy();
         resolve(rows);
       })
       .catch((e) => {
-        // database.destroy();
         throw new Error(e);
       })
     })
@@ -256,11 +253,9 @@ export default class db {
       .from('categories')
       .whereIn('slug', slugs)
       .then((rows) => {
-        // database.destroy();
         resolve(rows);
       })
       .catch((e) => {
-        // database.destroy();
         throw new Error(e);
       });
     });
@@ -523,21 +518,33 @@ export default class db {
     });
   }
 
-  // THIS IS TEMPORARY
   trendingQuery() {
     return new Promise((resolve) => {
-      database.select('slug')
-      .from('posts')
-      .innerJoin('posts_meta', 'posts_meta.id', '=', 'posts.id')
-      .whereNotNull('gazelle_published_at')
-      .orderBy('gazelle_published_at', 'desc')
-      .limit(10)
-      .then((rows) => {
-        resolve(rows);
+      database.select('id')
+      .from('issues')
+      .orderBy('issue_order', 'desc')
+      .whereNotNull('published_at').limit(1)
+      .then((issueRows) => {
+        const latestIssueId = issueRows[0].id;
+
+        database.select('slug')
+        .from('posts')
+        .innerJoin('posts_meta', 'posts_meta.id', '=', 'posts.id')
+        .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
+        .whereNotNull('gazelle_published_at')
+        .where('issue_id', '=', latestIssueId)
+        .orderBy('views', 'DESC')
+        .limit(10)
+        .then((postRows) => {
+          // At the moment if there were less than 5-7 articles in the issue
+          // there wouldn't be enough to show, it is very easy to implement that it
+          // just continues with the second-newest issue, it depends on what editors want
+          resolve(postRows);
+        })
+        .catch((e) => {
+          throw new Error(e);
+        });
       })
-      .catch((e) => {
-        throw new Error(e);
-      });
     });
   }
 
