@@ -104,6 +104,15 @@ const serverModel = new falcor.Model({
   collectRatio: 0.75,
 }).batch();
 
+// reset cache trending data every minute
+// so we're sure that we always have up to date
+// trending data available
+function resetTrending() {
+  serverModel.invalidate(['trending']);
+}
+
+setInterval(resetTrending, 60*1000);
+
 // Asynchronously render this application
 // Returns a promise
 const renderApp = (renderProps) => {
