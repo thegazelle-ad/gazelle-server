@@ -1,5 +1,6 @@
 import React from 'react';
 import Helmet from 'react-helmet'; // Add <head> data
+import { viewArticle, isArticleViewed } from 'lib/utilities';
 
 // Components
 import Article from 'components/Article';
@@ -27,6 +28,28 @@ export default class ArticleController extends FalcorController {
 
     ];
   }
+
+  componentDidMount() {
+    super.componentDidMount();
+    const slug = this.props.params.articleSlug;
+    // We don't want beta views to count towards the total view count
+    // and we only want to count each view once per session (might use cookies
+    // later to make this consistent for a user in general?)
+    if (process.env.NODE_ENV !== "beta" && !isArticleViewed(slug)) {
+      viewArticle(slug);
+      this.props.model.call(['articlesBySlug', slug, 'addView'], [], [], []).then(() => {});
+    }
+  }
+
+  componentWillReceiveProps(nextProps, nextContext) {
+    super.componentWillReceiveProps(nextProps, nextContext);
+    const slug = this.props.params.articleSlug;
+    if (process.env.NODE_ENV !== "beta" && !isArticleViewed(slug)) {
+      viewArticle(slug);
+      this.props.model.call(['articlesBySlug', slug, 'addView'], [], [], []).then(() => {});
+    }
+  }
+
   render() {
     if (this.state.ready) {
       if (!this.state.data || !this.state.data.articlesBySlug || !this.state.data.articlesBySlug[this.props.params.articleSlug] ||

@@ -177,6 +177,9 @@ const renderApp = (renderProps) => {
 
 const mainApp = express();
 
+// For post requests to go through correctly
+mainApp.use(bodyParser.urlencoded({extended: true}));
+
 mainApp.use("/model.json", FalcorServer.dataSourceRoute(() => {
   return serverModel.asDataSource()
 }));

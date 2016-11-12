@@ -368,6 +368,28 @@ export default class FalcorRouter extends BaseRouter.createClass([
     },
   },
   {
+    route: "articlesBySlug[{keys:slugs}]['addView']",
+    call: (callPath) => {
+      return new Promise((resolve) => {
+        // It's a function call so there should only be one slug
+        if (callPath.slugs.length !== 1) {
+          throw new Error("addView route was called with " + callPath.slugs.length.toString()
+            + " slugs, there should only be 1");
+        }
+        const slug = callPath.slugs[0];
+        db.addView(slug).then((views) => {
+          if (!views || (typeof views) !== 'number') {
+            throw new Error("addView for slug " + slug + " returned unexpected value");
+          }
+          resolve([{
+            path: ['articlesBySlug', slug, 'views'],
+            value: views,
+          }]);
+        });
+      });
+    },
+  },
+  {
     /*
     Get articles by page (they are also in chronological order, articlesByPage[pageLength][1][0]
     is the latest published article to the Ghost database). Only use positive integer page lengths

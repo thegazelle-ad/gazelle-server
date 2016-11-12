@@ -198,3 +198,14 @@ export function hash(password) {
   const hash = ((num % H1PRIME) + 5*(num % H2PRIME) + 1 + 25)%BIG_PRIME;
   return hash;
 }
+
+// For tracking the articles visited in that particular session
+// so we at least don't count views more than once per session
+const viewed = {};
+export function viewArticle(slug) {
+  viewed[slug] = true;
+}
+
+export function isArticleViewed(slug) {
+  return viewed[slug] === true;
+}

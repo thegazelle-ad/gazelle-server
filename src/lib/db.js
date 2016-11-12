@@ -1249,4 +1249,24 @@ export default class db {
       })
     })
   }
+
+  addView(slug) {
+    return new Promise((resolve) => {
+      database.select('posts.id', 'views')
+      .from('posts')
+      .innerJoin('posts_meta', 'posts_meta.id', '=', 'posts.id')
+      .where('slug', '=', slug)
+      .then((rows) => {
+        const row = rows[0];
+        const views = row.views+1;
+        const id = row.id;
+        database('posts_meta')
+        .where('id', '=', id)
+        .update('views', views)
+        .then(() => {
+          resolve(views);
+        })
+      })
+    });
+  }
 }
