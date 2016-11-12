@@ -574,6 +574,10 @@ export default class db {
               posts[slug] = post;
               posts[slug].tags = [];
             }
+            // We could have several instances of the same article if it
+            // exists in different issues, but it would only be relevant for the
+            // target articles and therefore it's not a problem as we never iterate
+            // through the target articles' tags.
             if (post.tag_id) {
               posts[slug].tags.push(post.tag_id);
             }
