@@ -378,13 +378,19 @@ export default class FalcorRouter extends BaseRouter.createClass([
         }
         const slug = callPath.slugs[0];
         db.addView(slug).then((views) => {
-          if (!views || (typeof views) !== 'number') {
+          if (views === false) {
+            // Means the article wasn't found
+            resolve([]);
+          }
+          else if (!views || (typeof views) !== 'number') {
             throw new Error("addView for slug " + slug + " returned unexpected value");
           }
-          resolve([{
-            path: ['articlesBySlug', slug, 'views'],
-            value: views,
-          }]);
+          else {
+            resolve([{
+              path: ['articlesBySlug', slug, 'views'],
+              value: views,
+            }]);
+          }
         });
       });
     },

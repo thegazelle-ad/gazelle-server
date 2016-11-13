@@ -587,48 +587,52 @@ export default class db {
           slugs.forEach((slug) => {
             const post = posts[slug];
             if (post === undefined) {
-              throw new Error("Article " + slug + " couldn't be found in related articles query");
+              // Most likely this means a garbage URL was accessed
+              if (process.env.NODE_ENV !== "production") {
+                console.warn("Article " + slug + " couldn't be found in related articles query"); // eslint-disable-line no-console
+              }
             }
-
-            // update amount of tags in common with current post
-            // and whether the category is the same
-            _.forEach(posts, (currentPost) => {
-              let cnt = 0;
-              currentPost.tags.forEach((currentTag) => {
-                if (post.tags.find((postTag) => {return postTag === currentTag})) {
-                  cnt++;
-                }
+            else {
+              // update amount of tags in common with current post
+              // and whether the category is the same
+              _.forEach(posts, (currentPost) => {
+                let cnt = 0;
+                currentPost.tags.forEach((currentTag) => {
+                  if (post.tags.find((postTag) => {return postTag === currentTag})) {
+                    cnt++;
+                  }
+                });
+                currentPost.tagsInCommon = cnt;
+                currentPost.categoryInCommon = currentPost.category_id === post.category_id;
               });
-              currentPost.tagsInCommon = cnt;
-              currentPost.categoryInCommon = currentPost.category_id === post.category_id;
-            });
 
-            const ranking = Object.keys(posts).filter((currentSlug) => {
-              return posts[currentSlug].issue_id === latestIssueId && currentSlug !== post.slug;
-            });
-            if (ranking.length < 3) {
-              throw new Error("Less than three posts to qualify as related posts");
-            }
-            stable.inplace(ranking, (slugA, slugB) => {
-              const a = posts[slugA];
-              const b = posts[slugB];
-              if (a.tagsInCommon !== b.tagsInCommon) {
-                // This puts a before b if a has more tags in common
-                return b.tagsInCommon - a.tagsInCommon;
+              const ranking = Object.keys(posts).filter((currentSlug) => {
+                return posts[currentSlug].issue_id === latestIssueId && currentSlug !== post.slug;
+              });
+              if (ranking.length < 3) {
+                throw new Error("Less than three posts to qualify as related posts");
               }
-              if (a.categoryInCommon !== b.categoryInCommon) {
-                if (a.categoryInCommon) {
-                  return -1;
+              stable.inplace(ranking, (slugA, slugB) => {
+                const a = posts[slugA];
+                const b = posts[slugB];
+                if (a.tagsInCommon !== b.tagsInCommon) {
+                  // This puts a before b if a has more tags in common
+                  return b.tagsInCommon - a.tagsInCommon;
                 }
-                return 1;
-              }
-              return 0;
-            });
-            // since the sort is stable we know we should always get the
-            // same values, also if there are no posts with related tags
-            // or categories. It should still be deterministic which article
-            // is the first unrelated one in the order
-            results[slug] = ranking.slice(0, 3);
+                if (a.categoryInCommon !== b.categoryInCommon) {
+                  if (a.categoryInCommon) {
+                    return -1;
+                  }
+                  return 1;
+                }
+                return 0;
+              });
+              // since the sort is stable we know we should always get the
+              // same values, also if there are no posts with related tags
+              // or categories. It should still be deterministic which article
+              // is the first unrelated one in the order
+              results[slug] = ranking.slice(0, 3);
+            }
           });
           resolve(results);
         });
@@ -1329,15 +1333,20 @@ export default class db {
       .innerJoin('posts_meta', 'posts_meta.id', '=', 'posts.id')
       .where('slug', '=', slug)
       .then((rows) => {
-        const row = rows[0];
-        const views = row.views+1;
-        const id = row.id;
-        database('posts_meta')
-        .where('id', '=', id)
-        .update('views', views)
-        .then(() => {
-          resolve(views);
-        })
+        if (rows.length === 0) {
+          resolve(false);
+        }
+        else {
+          const row = rows[0];
+          const views = row.views+1;
+          const id = row.id;
+          database('posts_meta')
+          .where('id', '=', id)
+          .update('views', views)
+          .then(() => {
+            resolve(views);
+          });
+        }
       })
     });
   }
