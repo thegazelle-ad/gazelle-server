@@ -252,9 +252,9 @@ else {
           renderApp(renderProps, true).then((html) => {
             res.status(200).send(html);
           }).catch((err) => {
+            console.error('Failed to render: ', req.url); // eslint-disable-line no-console
+            console.error(err.stack || err) // eslint-disable-line no-console
             if (process.env.NODE_ENV !== "production") {
-              console.error('Failed to render: ', req.url); // eslint-disable-line no-console
-              console.error(err.stack || err) // eslint-disable-line no-console
               res.status(500).send(err.stack || err);
             }
             else {
