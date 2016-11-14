@@ -156,6 +156,7 @@ export function formatDateTime(date) {
 
 // this currently only supports parsing links
 export function parseMarkdown(str) {
+  if (!str) return str;
   // parse links
   const exp = /\[(.*?)\]\((.*?)\)/g;
   let result;
@@ -172,6 +173,7 @@ export function parseMarkdown(str) {
 
 // this currently only supports parsing links
 export function markdownLength(str) {
+  if (!str) return 0;
   const array = parseMarkdown(str);
   let length = 0;
   array.forEach((element) => {
