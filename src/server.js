@@ -17,6 +17,7 @@ import fs from "fs"
 import Helmet from "react-helmet";
 import bodyParser from 'body-parser';
 import { exec } from 'child_process';
+import { hash } from 'lib/utilities';
 
 process.env.NODE_ENV === "production" ?
   console.log("PRODUCTION BUILD") : process.env.NODE_ENV === "beta" ? console.log("BETA BUILD") : console.log("DEVELOPMENT BUILD"); // eslint-disable-line no-console
@@ -316,24 +317,13 @@ editorTools.use(allowCrossDomain);
 
 const PATH_NAME = process.env.NODE_ENV === "production" ?
   '~/gazelle-production/scripts/restartServers.sh' : process.env.NODE_ENV === "beta" ?
-  '~/gazelle-beta/scripts/restartServers.sh' : '~/code/gazelle-front-end/scripts/restartServers.sh';
+  '~/gazelle-beta/scripts/restartServers.sh' : __dirname + '/scripts/restartServers.sh';
 
 editorTools.get('/restartserver', (req, res) => {
   if (!process.env.NODE_ENV) {
     // in dev mode
     res.status(200).send("restarted");
     return;
-  }
-  const H1PRIME = 4189793;
-  const H2PRIME = 3296731;
-  const BIG_PRIME = 5003943032159437;
-  let hash = function(password) {
-    let num = password.charCodeAt(0);
-    for (let i = 1; i < password.length; i++) {
-      num = ((num*256)%BIG_PRIME + password.charCodeAt(i))%BIG_PRIME;
-    }
-    const hash = ((num % H1PRIME) + 5*(num % H2PRIME) + 1 + 25)%BIG_PRIME;
-    return hash;
   }
 
   const password = req.query.password;

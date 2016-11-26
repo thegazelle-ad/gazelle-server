@@ -28,23 +28,29 @@ export default class EditorAppController extends BaseComponent {
     const options = {
       hostname: HOSTNAME,
       port: PORT,
-      path: '/restartserver?password=' + password.toString(),
+      path: '/restartserver?password=' + password,
     }
     http.get(options, (res) => {
+      let reply = '';
+
       res.on('data', (chunk) => {
-        if (chunk === "restarted") {
+        reply += chunk;
+      });
+
+      res.on('end', () => {
+        if (reply === "restarted") {
           window.alert("Servers restarted successfully");
         }
-        else if (chunk === "error") {
+        else if (reply === "error") {
           window.alert("there was an error restarting the servers");
         }
-        else if (chunk === "invalid") {
+        else if (reply === "invalid") {
           window.alert("invalid password");
         }
         else {
           window.alert("unknown error");
         }
-      })
+      });
     });
   }
 
