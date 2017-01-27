@@ -320,9 +320,7 @@ const PATH_NAME = process.env.NODE_ENV === "production" ?
   '~/gazelle-beta/scripts/restartServers.sh' : __dirname + '/scripts/restartServers.sh';
 
 editorTools.get('/restartserver', (req, res) => {
-  console.log(req);
   if (!process.env.NODE_ENV) {
-    console.log("5");
     // in dev mode
     res.status(200).send("restarted");
     return;
@@ -330,20 +328,17 @@ editorTools.get('/restartserver', (req, res) => {
 
   const password = req.query.password;
   if ((typeof password) !== "string" || password.length < 1) {
-    console.log("4");
     res.status(401).send('invalid');
   }
   else if (hash(password) === 8692053) {
     exec(PATH_NAME, (err, stdout, stderr) => {
       if (err) {
-        console.log("1");
         if (process.env.NODE_ENV !== "production") {
           console.error(err); // eslint-disable-line no-console
         }
         res.status(500).send('error');
       }
       else {
-        console.log("2");
         if (process.env.NODE_ENV !== "production") {
           console.log(stdout); // eslint-disable-line no-console
           console.log(stderr); // eslint-disable-line no-console
@@ -353,7 +348,6 @@ editorTools.get('/restartserver', (req, res) => {
     });
   }
   else {
-    console.log("3");
     res.status(401).send('invalid');
   }
 })
