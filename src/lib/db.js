@@ -22,7 +22,6 @@ export default class db {
     // the first one with author slugs to fetch
     // and the other one the columns to retrieve from the authors
     return new Promise((resolve) => {
-      // const database = knex(knexConnectionObject);
       // So the Falcor Router knows which author we're talking about
       if (!columns.some((col) => {return col === "slug"})) {
         // Use concat to make a copy, if you just push
@@ -43,6 +42,35 @@ export default class db {
       });
     });
   }
+  
+  authorTeamQuery(slugs) {
+    // Arguments: `slugs`: array of author slugs
+    // Returns: an object with author slugs (keys), each mapped 
+    // to an array of team slugs (values).
+    return new Promise((resolve) => {
+      database.select('teams.slug as team_slug', 'authors.slug as author_slug')
+      .from('authors')
+      .innerJoin('teams_authors', 'authors.id', '=', 'author_id')
+      .innerJoin('teams', 'teams.id', '=', 'team_id')
+      .whereIn('authors.slug', slugs)
+      .then((rows) => {
+        // `rows`: array of objects with keys `author_slug` and `team_slug`
+        const data = {};
+        rows.forEach((row) => {
+          if (!data.hasOwnProperty(row.author_slug)) {
+            data[row.author_slug] = [row.team_slug];
+          }
+          else {
+            data[row.author_slug].push(row.team_slug);
+          }
+        });
+        resolve(data);
+      })
+      .catch((e) => {
+        throw new Error(e);
+      });
+    });
+  }
 
   authorArticleQuery(slugs) {
     // slugs function parameter is an array of author slugs
@@ -51,7 +79,6 @@ export default class db {
     // as keys and values being arrays of article slugs
     // sorted by most recent article first.
     return new Promise((resolve) => {
-      // const database = knex(knexConnectionObject);
       database.select('posts.slug as post_slug', 'authors.slug as author_slug')
       .from('authors')
       .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
@@ -87,7 +114,6 @@ export default class db {
     // first one with page slugs to fetch
     // second one which columns to fetch from the db
     return new Promise((resolve) => {
-      // const database = knex(knexConnectionObject);
       // So the Falcor Router knows which author we're talking about
       if (columns.find((col) => {return col === "slug"}) === undefined) {
         // Use concat to make a copy, if you just push
@@ -114,7 +140,6 @@ export default class db {
     // first one with article slugs to fetch
     // second one which columns to fetch from the posts_meta table
     return new Promise((resolve) => {
-      // const database = knex(knexConnectionObject);
       // we join with posts table to find slug, and always return slug
       columns = columns.map((col) => {
         // make it compatible for the sql query
@@ -194,7 +219,6 @@ export default class db {
     // The function returns an object with article slugs
     // as keys and values being arrays of author slugs.
     return new Promise((resolve) => {
-      // const database = knex(knexConnectionObject);
       database.select('posts.slug as post_slug', 'authors.slug as author_slug')
       .from('authors')
       .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
@@ -245,7 +269,6 @@ export default class db {
     // slugs parameter is an array of category slugs
     // to fetch the name of
     return new Promise((resolve) => {
-      // const database = knex(knexConnectionObject);
       if (columns.find((col) => {return col==="slug"}) === undefined) {
         // Copy so as to not change pathSet
         columns = columns.concat(['slug']);
@@ -285,7 +308,6 @@ export default class db {
     // Will return object where keys are category slugs
     // and values are arrays of articles from newest to oldest
     return new Promise((resolve) => {
-      // const database = knex(knexConnectionObject);
       database.select('posts.slug as post_slug', 'categories.slug as cat_slug')
       .from('posts')
       .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
@@ -315,11 +337,71 @@ export default class db {
       })
     })
   }
+  
+  teamArrayQuery() {
+    return new Promise((resolve) => {
+      database.select('slug')
+      .from('teams')
+      .orderBy('name', 'asc')
+      .then((rows) => {
+        const result = _.map(rows, (row) => {return row.slug});
+        resolve(result);
+      })
+      .catch((e) => {
+        throw new Error(e);
+      })
+    })
+  }
+  
+  teamQuery(slugs, columns) {
+    return new Promise((resolve) => {
+      if (columns.find((col) => {return col === 'slug'}) === undefined) {
+        columns = columns.concat(['slug']);
+      }
+      database.select(...columns)
+      .from('teams')
+      .whereIn('slug', slugs)
+      .then((rows) => {
+        resolve(rows);
+      })
+      .catch((e) => {
+        throw new Error(e);
+      });
+    });
+  }
+  
+  teamAuthorQuery(slugs) {
+    // Arguments: `slugs`: array of team slugs
+    // Returns: an object with team slugs (keys), each mapped 
+    // to an array of author slugs (values).
+    return new Promise((resolve) => {
+      database.select('teams.slug as team_slug', 'authors.slug as author_slug')
+      .from('authors')
+      .innerJoin('teams_authors', 'authors.id', '=', 'author_id')
+      .innerJoin('teams', 'teams.id', '=', 'team_id')
+      .whereIn('teams.slug', slugs)
+      .then((rows) => {
+        // `rows`: array of objects with keys `author_slug` and `team_slug`
+        const data = {};
+        rows.forEach((row) => {
+          if (!data.hasOwnProperty(row.post_slug)) {
+            data[row.team_slug] = [row.author_slug];
+          }
+          else {
+            data[row.team_slug].push(row.author_slug);
+          }
+        });
+        resolve(data);
+      })
+      .catch((e) => {
+        throw new Error(e);
+      });
+    });
+  }
 
   featuredArticleQuery(issueNumbers) {
     // Get the featured articles from all the issueNumbers
     return new Promise((resolve) => {
-      // const database = knex(knexConnectionObject);
       database.select('posts.slug', 'issue_order')
       .from('posts')
       .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
@@ -339,7 +421,6 @@ export default class db {
   editorPickQuery(issueNumbers) {
     // Get the editor's picks from all the issueNumbers
     return new Promise((resolve) => {
-      // const database = knex(knexConnectionObject);
       database.select('posts.slug', 'issue_order')
       .from('posts')
       .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
@@ -368,7 +449,6 @@ export default class db {
   issueCategoryQuery(issueNumbers, fields) {
     // get the categories from each issueNumber
     return new Promise((resolve) => {
-      // const database = knex(knexConnectionObject);
       // rewrite the columns to proper format
       let columns = fields.map((col) => {
         switch(col) {
@@ -419,7 +499,6 @@ export default class db {
   issueCategoryArticleQuery(issueNumbers) {
     // get the categories from each issueNumber
     return new Promise((resolve) => {
-      // const database = knex(knexConnectionObject);
       database.select('issue_order', 'posts.slug', 'posts_order', 'posts_meta.category_id')
       .from('issues')
       .innerJoin('issues_posts_order', 'issues_posts_order.issue_id', '=', 'issues.id')
@@ -498,7 +577,6 @@ export default class db {
 
   issueQuery(issueNumbers, columns) {
     return new Promise((resolve) => {
-      // const database = knex(knexConnectionObject);
       const hasIssueNumber = columns.find((col) => {col === "issue_order"}) !== undefined;
       if (!hasIssueNumber) {
         // use concat to do a copy instead of changing original pathSet
@@ -681,7 +759,28 @@ export default class db {
       });
     });
   }
-
+  
+  searchTeamsQuery(queries, min, max) {
+    return new Promise((resolve) => {
+      let queriesReturned = 0;
+      const results = {};
+      queries.forEach((query) => {
+        database.select('slug')
+        .from('teams')
+        .where('name', 'like', '%'+query+'%')
+        .limit(max-min+1).offset(min)
+        .then((rows) => {
+          queriesReturned++;
+          results[query] = _.map(rows, (row) => {return row.slug});
+          if (queriesReturned >= queries.length) {
+            resolve(results);
+          }
+        })
+      })
+    })
+  }
+  
+  // Suggestion: rename to updateArticleAuthors
   updateAuthors(articleId, newAuthors) {
     return new Promise((resolve) => {
       database('authors_posts').where('post_id', '=', articleId).del()
@@ -969,7 +1068,9 @@ export default class db {
       });
     });
   }
-
+  
+  // Refactoring suggestion: rename to `addAuthor`
+  // to follow the style of the rest of the code
   createAuthor(authorObject) {
     return new Promise((resolve) => {
       database('authors').insert(authorObject)
@@ -1348,6 +1449,41 @@ export default class db {
           });
         }
       })
+    });
+  }
+  
+  addTeam(teamObject) {
+    return new Promise((resolve) => {
+      const insertObject = {};
+      _.forEach(teamObject, (value, key) => {
+        insertObject[key] = value;
+      });
+      database('teams').insert(insertObject).then(() => {
+        resolve(true);
+      });
+    });
+  }
+  
+  updateTeams(jsonGraphArg) {
+    return new Promise((resolve) => {
+      const updatesCalled = Object.keys(jsonGraphArg).length;
+      let updatesReturned = 0;
+      _.forEach(jsonGraphArg, (teamObject, slug) => {
+        database('teams').where('slug', '=', slug)
+        .update(teamObject)
+        .then((data) => {
+          if (data !== 1) {
+            throw new Error("Problems updating team data of: " + slug);
+          }
+          updatesReturned++;
+          if (updatesReturned >= updatesCalled) {
+            resolve(true);
+          }
+        })
+        .catch((e) => {
+          throw e;
+        });
+      });
     });
   }
 }
