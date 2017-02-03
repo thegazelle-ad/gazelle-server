@@ -12,12 +12,9 @@ export default class Footer extends BaseComponent {
         <li className="footer__item">
           <Link to="/ethics">Code of Ethics</Link>
         </li>
-        {/*
         <li className="footer__item">
           <Link to="/team">Our Team</Link>
         </li>
-        */}
-        {/* On hover, change to "the herd" */}
         <li className="footer__item">
           <Link to="/archives">Previous Issues</Link>
         </li>

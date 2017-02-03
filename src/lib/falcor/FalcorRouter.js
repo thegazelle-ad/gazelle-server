@@ -94,10 +94,24 @@ export default class FalcorRouter extends BaseRouter.createClass([
     },
   },
   {
-    // TODO: FINISH THIS
     route: "authorsBySlug[{keys:slugs}]['teams'][{integers:indices}]",
-    get: () => {
-      return null;
+    get: (pathSet) => {
+      return new Promise((resolve) => {
+        db.authorTeamQuery(pathSet.slugs).then((data) => {
+          const results = [];
+          _.forEach(data, (teamSlugArray, authorSlug) => {
+            pathSet.indices.forEach((index) => {
+              if (index < teamSlugArray.length) {
+                results.push({
+                  path: ['authorsBySlug', authorSlug, 'teams', index],
+                  value: $ref(['teamsBySlug', teamSlugArray[index]]),
+                });
+              }
+            });
+          });
+          resolve(results);
+        })
+      });
     },
   },
   {
@@ -907,6 +921,146 @@ export default class FalcorRouter extends BaseRouter.createClass([
                 });
               }
             });
+          });
+          resolve(results);
+        });
+      });
+    },
+  },
+  {
+    route: "search['teams'][{keys:queries}][{integers:indices}]",
+    get: (pathSet) => {
+      return new Promise((resolve) => {
+        let minIndex = pathSet.indices[0];
+        let maxIndex = pathSet.indices[0];
+        pathSet.indices.forEach((index) => {
+          if (index < minIndex) {
+            minIndex = index;
+          }
+          if (index > maxIndex) {
+            maxIndex = index;
+          }
+        });
+        db.searchTeamsQuery(pathSet.queries, minIndex, maxIndex).then((data) => {
+          // Map all the indices down to fit the indices returned by the db call
+          pathSet.indices = pathSet.indices.map((index) => {return index-minIndex});
+          const results = [];
+          _.forEach(data, (queryResults, query) => {
+            pathSet.indices.forEach((index) => {
+              if (index < queryResults.length) {
+                results.push({
+                  path: ['search', 'teams', query, index],
+                  value: $ref(['teamsBySlug', queryResults[index]]),
+                });
+              }
+            });
+          });
+          resolve(results);
+        });
+      });
+    },
+  },
+  {
+    route: "teamsBySlug[{keys:slugs}]['slug', 'id', 'name', 'description']",
+    get: (pathSet) => {
+      return new Promise((resolve) => {
+        const requestedFields = pathSet[2];
+        db.teamQuery(pathSet.slugs, requestedFields).then((data) => {
+          const results = [];
+          data.forEach((team) => {
+            requestedFields.forEach((field) => {
+              results.push({
+                path: ["teamsBySlug", team.slug, field],
+                value: team[field],
+              });
+            });
+          });
+          resolve(results);
+        });
+      });
+    },
+    set: (jsonGraphArg) => {
+      return new Promise((resolve, reject) => {
+        const teamsBySlug = jsonGraphArg.teamsBySlug;
+        db.updateTeams(teamsBySlug).then((flag) => {
+          if (!flag) {
+            throw new Error("For unknown reasons updateTeams returned a non-true flag");
+          }
+          const results = [];
+          _.forEach(teamsBySlug, (teamObject, slug) => {
+            _.forEach(teamObject, (value, field) => {
+              results.push({
+                path: ['teamsBySlug', slug, field],
+                value: value,
+              });
+            });
+          });
+          resolve(results);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+      });
+    },
+  },
+  {
+    route: "teamsBySlug[{keys:slugs}]['authors'][{integers:indices}]",
+    get: (pathSet) => {
+      return new Promise((resolve) => {
+        db.teamAuthorQuery(pathSet.slugs).then((data) => {
+          const results = [];
+          _.forEach(data, (authorSlugArray, teamSlug) => {
+            pathSet.indices.forEach((index) => {
+              if (index < authorSlugArray.length) {
+                results.push({
+                  path: ['teamsBySlug', teamSlug, 'authors', index],
+                  value: $ref(['authorsBySlug', authorSlugArray[index]]),
+                });
+              }
+            });
+          });
+          resolve(results);
+        });
+      });
+    },
+  },
+  {
+    route: "teamsBySlug['createTeam']",
+    call: (callPath, args) => {
+      return new Promise((resolve) => {
+        const teamObject = args[0];
+        if (!(teamObject.hasOwnProperty('slug') && teamObject.hasOwnProperty('name'))) {
+          throw new Error("When creating an team you must provide both name and slug");
+        }
+        db.addTeam(teamObject).then((flag) => {
+          if (!flag) {
+            throw new Error("For unknown reasons addTeam returned a non-true flag");
+          }
+          const results = [];
+          _.forEach(teamObject, (value, field) => {
+            results.push({
+              path: ['teamsBySlug', teamObject.slug, field],
+              value: value,
+            });
+          });
+          resolve(results);
+        });
+      });
+    },
+  },
+  {
+    route: "teamsByIndex[{integers:indices}]",
+    get: (pathSet) => {
+      return new Promise((resolve) => {
+        db.teamArrayQuery().then((data) => {
+          const results = [];
+          pathSet.indices.forEach((index) => {
+            if (index < data.length) {
+              results.push({
+                path: ['teamsByIndex', index],
+                value: $ref(['teamsBySlug', data[index]]),
+              });
+            }
           });
           resolve(results);
         });
