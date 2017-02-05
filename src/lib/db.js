@@ -42,10 +42,10 @@ export default class db {
       });
     });
   }
-  
+
   authorTeamQuery(slugs) {
     // Arguments: `slugs`: array of author slugs
-    // Returns: an object with author slugs (keys), each mapped 
+    // Returns: an object with author slugs (keys), each mapped
     // to an array of team slugs (values).
     return new Promise((resolve) => {
       database.select('teams.slug as team_slug', 'authors.slug as author_slug')
@@ -337,7 +337,7 @@ export default class db {
       })
     })
   }
-  
+
   teamArrayQuery() {
     return new Promise((resolve) => {
       database.select('slug')
@@ -352,7 +352,7 @@ export default class db {
       })
     })
   }
-  
+
   teamQuery(slugs, columns) {
     return new Promise((resolve) => {
       if (columns.find((col) => {return col === 'slug'}) === undefined) {
@@ -369,22 +369,23 @@ export default class db {
       });
     });
   }
-  
+
   teamAuthorQuery(slugs) {
     // Arguments: `slugs`: array of team slugs
-    // Returns: an object with team slugs (keys), each mapped 
+    // Returns: an object with team slugs (keys), each mapped
     // to an array of author slugs (values).
     return new Promise((resolve) => {
       database.select('teams.slug as team_slug', 'authors.slug as author_slug')
       .from('authors')
       .innerJoin('teams_authors', 'authors.id', '=', 'author_id')
-      .innerJoin('teams', 'teams.id', '=', 'team_id')
+      .innerJoin('teams', 'teams.id', '=', 'teams_authors.team_id')
+
       .whereIn('teams.slug', slugs)
       .then((rows) => {
         // `rows`: array of objects with keys `author_slug` and `team_slug`
         const data = {};
         rows.forEach((row) => {
-          if (!data.hasOwnProperty(row.post_slug)) {
+          if (!data.hasOwnProperty(row.team_slug)) {
             data[row.team_slug] = [row.author_slug];
           }
           else {
@@ -759,7 +760,7 @@ export default class db {
       });
     });
   }
-  
+
   searchTeamsQuery(queries, min, max) {
     return new Promise((resolve) => {
       let queriesReturned = 0;
@@ -779,7 +780,7 @@ export default class db {
       })
     })
   }
-  
+
   // Suggestion: rename to updateArticleAuthors
   updateAuthors(articleId, newAuthors) {
     return new Promise((resolve) => {
@@ -1068,7 +1069,7 @@ export default class db {
       });
     });
   }
-  
+
   // Refactoring suggestion: rename to `addAuthor`
   // to follow the style of the rest of the code
   createAuthor(authorObject) {
@@ -1451,7 +1452,7 @@ export default class db {
       })
     });
   }
-  
+
   addTeam(teamObject) {
     return new Promise((resolve) => {
       const insertObject = {};
@@ -1463,7 +1464,7 @@ export default class db {
       });
     });
   }
-  
+
   updateTeams(jsonGraphArg) {
     return new Promise((resolve) => {
       const updatesCalled = Object.keys(jsonGraphArg).length;

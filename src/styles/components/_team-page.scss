@@ -1,0 +1,42 @@
+.team-page {
+  &__title {
+    @include uppercase;
+    @include roboto-bold;
+    text-align: center;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.7rem;
+    text-align: center;
+    @media (max-width: $small) {
+      margin: 0.75rem 0;
+    }
+  }
+  &__team__members {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    &__member {
+      width: 200px;
+      margin: 1rem;
+      text-align: center;
+      &__image {
+        @include uppercase;
+        object-fit: cover;
+        padding: 0 1rem 0 0;
+        width: 200px;
+        height: 200px;
+      }
+      &__name {
+        font-size: 1.3rem;
+        font-weight: 400;
+        margin: 0 0.75rem 0 0;
+      }
+      &__job-title {
+        font-size: 1rem;
+        font-weight: 300;
+        color: $light-grey;
+        margin: 0 0.5rem 0 0;
+      }
+    }
+  }
+}
