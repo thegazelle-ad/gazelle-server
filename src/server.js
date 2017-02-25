@@ -18,6 +18,10 @@ import Helmet from "react-helmet";
 import bodyParser from 'body-parser';
 import { exec } from 'child_process';
 import { hash } from 'lib/utilities';
+import multer from 'multer';
+import s3_config from '../config/s3.config.js';
+import s3 from 's3';
+import AWS from 'aws-sdk';
 
 process.env.NODE_ENV === "production" ?
   console.log("PRODUCTION BUILD") : process.env.NODE_ENV === "beta" ? console.log("BETA BUILD") : console.log("DEVELOPMENT BUILD"); // eslint-disable-line no-console
@@ -196,9 +200,9 @@ mainApp.use("/model.json", FalcorServer.dataSourceRoute(() => {
 
 mainApp.use("/static", express.static("static"));
 
-mainApp.use("/favicon.ico", (req, res) => {
+/*mainApp.use("/favicon.ico", (req, res) => {
   res.sendFile(path.join(__dirname, "./static"));
-});
+}); What is it this? What purpose does it have?*/
 
 mainApp.use(compression());
 
@@ -302,7 +306,7 @@ editorTools.use("/model.json", FalcorServer.dataSourceRoute(() => {
 editorTools.use(express.static("static"));
 
 var allowCrossDomain = function(req, res, next) {
-    if ('OPTIONS' == req.method) {
+    if ('OPTIONS' === req.method) {
       res.header('Access-Control-Allow-Origin', '*');
       res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
       res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
@@ -350,20 +354,93 @@ editorTools.get('/restartserver', (req, res) => {
   else {
     res.status(401).send('invalid');
   }
-})
+});
+
+const upload_dir = path.join(__dirname, '../tmp');
+
+if (!fs.existsSync(upload_dir)) {
+  fs.mkdirSync(upload_dir);
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, upload_dir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({storage: storage});
+
+const aws_sdk_client = new AWS.S3(
+  Object.assign(s3_config, {apiVersion: '2006-03-01'})
+);
+
+const s3_client = s3.createClient({
+  s3Client: aws_sdk_client,
+});
+
+editorTools.post('/upload', upload.single('image'), (req, res) => {
+  const file_path = req.file.path;
+  const year = new Date().getFullYear().toString();
+  let month = new Date().getMonth()+1;
+  if (month < 10) {
+    month = '0' + month.toString();
+  }
+  else {
+    month = month.toString();
+  }
+
+  const Bucket = "thegazelle";
+  const Key = 'gazelle/' + year + '/' + month + '/' + req.file.originalname;
+  const s3_params = {
+    localFile: file_path,
+    s3Params: {
+      Bucket,
+      Key,
+    },
+  };
+  const delete_tmp_file = () => {
+    fs.unlink(file_path, (err) => {
+      if (err) {
+        console.error(err); //eslint-disable-line no-console
+      }
+    });
+  };
+  aws_sdk_client.headObject({Bucket, Key}, (err) => {
+    if (err && err.code === "NotFound") {
+      const s3_uploader = s3_client.uploadFile(s3_params);
+      s3_uploader.on('error', err => {
+        console.error(err); //eslint-disable-line no-console
+        delete_tmp_file();
+        return res.status(500).send("Error uploading");
+      });
+      s3_uploader.on('end', () => {
+        const image_url = s3.getPublicUrl(Bucket, Key)
+        delete_tmp_file();
+        return res.status(200).send("success " + image_url);
+      });
+    }
+    else {
+      delete_tmp_file();
+      return res.status(409).send("object already exists," + Key);
+    }
+  });
+});
 
 if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "beta") {
   editorTools.get('/login', (req, res) => {
     res.status(200).send(editorHtmlString);
   });
 
-  editorTools.get(/(?!\/restartserver|\/login).*/, (req, res) => {
+  editorTools.get(/(?!\/restartserver|\/login|\/upload).*/, (req, res) => {
     res.redirect(307, '/login?url=' + req.url);
   });
 }
 
 else {
-  editorTools.get(/(?!\/restartserver).*/, (req, res) => {
+  editorTools.get(/(?!\/restartserver|\/upload).*/, (req, res) => {
     res.status(200).send(editorHtmlString);
   });
 }
