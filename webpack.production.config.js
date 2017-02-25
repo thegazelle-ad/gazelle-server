@@ -24,6 +24,10 @@ module.exports = [{
     path: __dirname,
     filename: "./build/server.js",
   },
+  node: {
+    __dirname: false,
+    __filename: false,
+  },
   externals: [nodeExternals()],
   resolve: {
     root: __dirname,
