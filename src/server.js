@@ -382,51 +382,59 @@ const s3_client = s3.createClient({
 });
 
 editorTools.post('/upload', upload.single('image'), (req, res) => {
-  const file_path = req.file.path;
-  const year = new Date().getFullYear().toString();
-  let month = new Date().getMonth()+1;
-  if (month < 10) {
-    month = '0' + month.toString();
+  if (!process.env.NODE_ENV) {
+    // We are in dev, we don't actually want to upload to s3
+    // you can either compile with production mode or remove this
+    // if extra s3 tests are needed at some point
+    res.status(200).send("success crazy_ass_URL");
   }
   else {
-    month = month.toString();
-  }
-
-  const Bucket = "thegazelle";
-  const Key = 'gazelle/' + year + '/' + month + '/' + req.file.originalname;
-  const s3_params = {
-    localFile: file_path,
-    s3Params: {
-      Bucket,
-      Key,
-    },
-  };
-  const delete_tmp_file = () => {
-    fs.unlink(file_path, (err) => {
-      if (err) {
-        console.error(err); //eslint-disable-line no-console
-      }
-    });
-  };
-  aws_sdk_client.headObject({Bucket, Key}, (err) => {
-    if (err && err.code === "NotFound") {
-      const s3_uploader = s3_client.uploadFile(s3_params);
-      s3_uploader.on('error', err => {
-        console.error(err); //eslint-disable-line no-console
-        delete_tmp_file();
-        return res.status(500).send("Error uploading");
-      });
-      s3_uploader.on('end', () => {
-        const image_url = s3.getPublicUrl(Bucket, Key)
-        delete_tmp_file();
-        return res.status(200).send("success " + image_url);
-      });
+    const file_path = req.file.path;
+    const year = new Date().getFullYear().toString();
+    let month = new Date().getMonth()+1;
+    if (month < 10) {
+      month = '0' + month.toString();
     }
     else {
-      delete_tmp_file();
-      return res.status(409).send("object already exists," + Key);
+      month = month.toString();
     }
-  });
+
+    const Bucket = "thegazelle";
+    const Key = 'gazelle/' + year + '/' + month + '/' + req.file.originalname;
+    const s3_params = {
+      localFile: file_path,
+      s3Params: {
+        Bucket,
+        Key,
+      },
+    };
+    const delete_tmp_file = () => {
+      fs.unlink(file_path, (err) => {
+        if (err) {
+          console.error(err); //eslint-disable-line no-console
+        }
+      });
+    };
+    aws_sdk_client.headObject({Bucket, Key}, (err) => {
+      if (err && err.code === "NotFound") {
+        const s3_uploader = s3_client.uploadFile(s3_params);
+        s3_uploader.on('error', err => {
+          console.error(err); //eslint-disable-line no-console
+          delete_tmp_file();
+          return res.status(500).send("Error uploading");
+        });
+        s3_uploader.on('end', () => {
+          const image_url = s3.getPublicUrl(Bucket, Key)
+          delete_tmp_file();
+          return res.status(200).send("success " + image_url);
+        });
+      }
+      else {
+        delete_tmp_file();
+        return res.status(409).send("object already exists," + Key);
+      }
+    });
+  }
 });
 
 if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "beta") {
