@@ -342,9 +342,18 @@ export default class db {
     return new Promise((resolve) => {
       database.select('slug')
       .from('teams')
-      .orderBy('name', 'asc')
+      .innerJoin('teams_authors', 'teams.id', '=', 'teams_authors.team_id')
+      .orderBy('teams_authors.team_order', 'asc')
       .then((rows) => {
-        const result = _.map(rows, (row) => {return row.slug});
+        // The SQL is returning a copy of the team for each author.
+        const result = [];
+        const resultSeen = {};
+        rows.forEach((row) => {
+          if (!resultSeen.hasOwnProperty(row.slug)) {
+            result.push(row.slug);
+            resultSeen[row.slug] = true;
+          }
+        });
         resolve(result);
       })
       .catch((e) => {
@@ -379,8 +388,8 @@ export default class db {
       .from('authors')
       .innerJoin('teams_authors', 'authors.id', '=', 'author_id')
       .innerJoin('teams', 'teams.id', '=', 'teams_authors.team_id')
-
       .whereIn('teams.slug', slugs)
+      .orderBy('teams_authors.author_order', 'asc')
       .then((rows) => {
         // `rows`: array of objects with keys `author_slug` and `team_slug`
         const data = {};
