@@ -14,6 +14,7 @@ import FeaturedArticle from "components/FeaturedArticle";
 import EditorsPicks from "components/EditorsPicks";
 import Trending from "components/Trending";
 import ArticleList from "components/ArticleList";
+import MailingListButton from "components/MailingListButton";
 import NotFound from "components/NotFound";
 
 export default class IssueController extends FalcorController {
@@ -143,6 +144,7 @@ export default class IssueController extends FalcorController {
                 <Trending articles={trendingData} />
               </div>
                 {renderCategories}
+              <MailingListButton />
             </div>
           </div>
         );
