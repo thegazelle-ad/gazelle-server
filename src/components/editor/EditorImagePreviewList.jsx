@@ -22,3 +22,11 @@ export default class EditorImagePreviewList extends BaseComponent {
     }
   }
 }
+
+// .isRequired was removed here because of annoying behaviour
+// with React.cloneElement which is needed with current modularized
+// structure though.
+EditorImagePreviewList.propTypes = {
+  images: React.PropTypes.array,
+  onChange: React.PropTypes.func,
+};

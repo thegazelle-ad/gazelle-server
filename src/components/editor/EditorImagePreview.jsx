@@ -79,3 +79,13 @@ export default class EditorImagePreview extends BaseComponent {
     return component;
   }
 }
+
+EditorImagePreview.propTypes = {
+  url: React.PropTypes.string,
+  name: React.PropTypes.string.isRequired,
+  upload_status: React.PropTypes.number,
+  amazonURL: React.PropTypes.string,
+  error_message: React.PropTypes.string,
+  onDelete: React.PropTypes.func.isRequired,
+  onChangeName: React.PropTypes.func.isRequired,
+};
