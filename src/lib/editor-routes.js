@@ -11,7 +11,9 @@ import EditorIssueArticleController from 'components/editor/EditorIssueArticleCo
 import EditorIssueCategoryController from 'components/editor/EditorIssueCategoryController';
 import EditorNotFound from 'components/editor/EditorNotFound';
 import EditorLogin from 'components/editor/EditorLogin';
-import EditorImageUploader from 'components/editor/EditorImageUploader';
+import EditorImageController from 'components/editor/EditorImageController';
+import EditorImagePreviewList from 'components/editor/EditorImagePreviewList';
+import EditorImageArchive from 'components/editor/EditorImageArchive';
 
 export default (
   <Route path="/" component={EditorAppController}>
@@ -28,7 +30,10 @@ export default (
       <Route path="articles" component={EditorIssueArticleController} />
       <Route path="categories" component={EditorIssueCategoryController} />
     </Route>
-    <Route path="image-uploader" component={EditorImageUploader} />
+    <Route path="images" component={EditorImageController}>
+      <Route path="upload" component={EditorImagePreviewList} />
+      <Route path="archive" component={EditorImageArchive} />
+    </Route>
     <Route path="*" component={EditorNotFound} />
   </Route>
 );

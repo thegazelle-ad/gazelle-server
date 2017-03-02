@@ -383,10 +383,12 @@ const s3_client = s3.createClient({
 
 editorTools.post('/upload', upload.single('image'), (req, res) => {
   if (!process.env.NODE_ENV) {
-    // We are in dev, we don't actually want to upload to s3
+    // We are in dev-mode, we don't actually want to upload to s3
     // you can either compile with production mode or remove this
-    // if extra s3 tests are needed at some point
-    res.status(200).send("success crazy_ass_URL");
+    // temporarily if extra s3 tests are needed at some point
+    setTimeout(() => {
+      res.status(200).send("success test_url");
+    }, 2000);
   }
   else {
     const file_path = req.file.path;

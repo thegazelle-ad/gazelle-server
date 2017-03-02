@@ -15,11 +15,10 @@ a:visited:not(.active-link) {
 }
 
 .image-submit {
-  margin-top: 30%;
   margin-bottom: 30;
 }
 
-.imgPreview {
+.imgPreviewList {
   text-align: center
   margin: 5px 15px;
   height: 100%;
