@@ -19,16 +19,21 @@ export default (
   <Route path="/" component={EditorAppController}>
     <Route path="login" component={EditorLogin} />
     <IndexRedirect to="articles/page/1" />
-    <Route path="articles/page/:page" component={EditorArticleListController}>
-      <Route path="slug/:slug" component={EditorArticleController} />
+    <Route path="articles">
+      <IndexRedirect to="page/1" />
+      <Route path="page/:page" component={EditorArticleListController}>
+        <Route path="slug/:slug" component={EditorArticleController} />
+      </Route>
     </Route>
-    <Route path="authors/page/:page" component={EditorAuthorListController}>
-      <Route path="slug/:slug" component={EditorAuthorController} />
+    <Route path="authors" component={EditorAuthorListController}>
+      <Route path=":slug" component={EditorAuthorController} />
     </Route>
-    <Route path="issues(/:issueNumber)" component={EditorIssueListController}>
-      <Route path="main" component={EditorMainIssueController} />
-      <Route path="articles" component={EditorIssueArticleController} />
-      <Route path="categories" component={EditorIssueCategoryController} />
+    <Route path="issues" component={EditorIssueListController}>
+      <Route path=":issueNumber">
+        <Route path="main" component={EditorMainIssueController} />
+        <Route path="articles" component={EditorIssueArticleController} />
+        <Route path="categories" component={EditorIssueCategoryController} />
+      </Route>
     </Route>
     <Route path="images" component={EditorImageController}>
       <Route path="upload" component={EditorImagePreviewList} />

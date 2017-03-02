@@ -67,8 +67,8 @@ export default class EditorAppController extends BaseComponent {
             <h2>Gazelle Editor Tools</h2>
             <p>Please choose what you would like to edit</p>
             <ul>
-              <li><Link to="/articles/page/1" activeClassName="active-link" onClick={this.handleDisableLink}>Articles</Link></li>
-              <li><Link to="/authors/page/1" activeClassName="active-link" onClick={this.handleDisableLink}>Authors</Link></li>
+              <li><Link to="/articles" activeClassName="active-link" onClick={this.handleDisableLink}>Articles</Link></li>
+              <li><Link to="/authors" activeClassName="active-link" onClick={this.handleDisableLink}>Authors</Link></li>
               <li><Link to="/issues" activeClassName="active-link" onClick={this.handleDisableLink}>Issues</Link></li>
               <li><Link to="/images" activeClassName="active-link" onClick={this.handleDisableLink}>Images</Link></li>
             </ul>

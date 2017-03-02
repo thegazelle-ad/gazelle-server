@@ -101,7 +101,7 @@ export default class EditorAuthorListController extends FalcorController {
               <input type="text" value={this.state.slugSearchValue} placeholder="Input Name" onChange={this.handleSearchChange} />
               {
                 this.state.searchSuggestions.map((author) => {
-                  const link = "/authors/page/" + this.props.params.page + "/slug/" + author.slug;
+                  const link = "/authors/" + author.slug;
                   return (
                     <div key={author.slug}>
                       <Link to={link} onClick={() => {this.safeSetState({slugSearchValue: "", searchSuggestions: []})}}>
