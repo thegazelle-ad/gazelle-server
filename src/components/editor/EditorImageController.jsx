@@ -199,7 +199,7 @@ export default class EditorImageUploader extends BaseComponent {
   }
 
   changeImageName(name) {
-    const newName = window.prompt("Please enter new name for " + name + ":");
+    const newName = window.prompt("Please enter new name (and remember to keep the extension) for " + name + ":");
     if (!newName) {
       return;
     }
@@ -266,8 +266,8 @@ export default class EditorImageUploader extends BaseComponent {
     const isUpload = /upload\/?$/.test(window.location.pathname);
 
     return (
-      <div className="pure-g">
-        <div className="pure-u-1-2">
+      <div className="pure-g" style={{flexGrow: "1"}}>
+        <div className="pure-u-1-4">
           <h3>Images</h3>
           <ul>
             <li><Link activeClassName="active-link" to="/images/upload">Upload</Link></li>
@@ -306,7 +306,7 @@ export default class EditorImageUploader extends BaseComponent {
             </div>
           : null}
         </div>
-        <div className="pure-u-1-2">
+        <div className="pure-u-3-4">
           {isUpload ?
             React.cloneElement(this.props.children,
             {

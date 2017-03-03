@@ -61,8 +61,8 @@ export default class EditorAppController extends BaseComponent {
 
   render() {
     return (
-      <div>
-        <div className="pure-g">
+      <div className="mainContainer">
+        <div className="pure-g" style={{flexShrink: "0"}}>
           <div className="pure-u-1-2">
             <h2>Gazelle Editor Tools</h2>
             <p>Please choose what you would like to edit</p>

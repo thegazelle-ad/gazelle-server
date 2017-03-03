@@ -40,10 +40,10 @@ export default class EditorImagePreview extends BaseComponent {
 
     let messageComponent;
     if (amazonURL) {
-      messageComponent = <div className="previewURL">{amazonURL}</div>;
+      messageComponent = <div className="previewURL">URL: {amazonURL}</div>;
     }
     else if (error_message) {
-      messageComponent = <div className="preview_error">{error_message}</div>;
+      messageComponent = <div className="preview_error">Error: {error_message}</div>;
     }
     else {
       messageComponent = null;
@@ -54,11 +54,15 @@ export default class EditorImagePreview extends BaseComponent {
       component = (
         <div className="imagePreview">
           <img alt={"preview of " + name} src={url} />
+          <br/>
           {name}
+          <br/>
           <button type="button" onClick={this.onDelete}>Delete</button>
+          <br/>
           <button type="button" onClick={this.onChangeName}>Change name</button>
+          <br/>
           {uploading_component}
-          {amazonURL}
+          {messageComponent}
         </div>
       );
     }
@@ -67,9 +71,11 @@ export default class EditorImagePreview extends BaseComponent {
         <div className="imagePreview">
           <div className="imagePreviewLoading">
             Loading...<button type="button" onClick={this.onDelete}>Delete</button>
+            <br/>
             <button type="button" onClick={this.onChangeName}>Change name></button>
           </div>
           {name}
+          <br/>
           {uploading_component}
           {messageComponent}
         </div>
