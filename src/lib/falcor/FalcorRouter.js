@@ -172,8 +172,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
         const requestedFields = pathSet[2];
         let query = "filter=";
         pathSet.slugs.forEach((slug, index) => {
-          query += (index > 0 ? "," : "") + "slug:" + "'" + slug + "'"; // Extra quotation marks are needed to avoid bug when slug starts with number
-          // Remember to remove the extra quotation marks when the Ghost patch goes live.
+          query += (index > 0 ? "," : "") + "slug:" + slug;
         });
         query += "&fields=slug"
         requestedFields.forEach((field) => {
