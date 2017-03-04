@@ -54,13 +54,13 @@ export default class EditorImagePreview extends BaseComponent {
       component = (
         <div className="imagePreview">
           <img alt={"preview of " + name} src={url} />
-          <br/>
+          <br />
           {name}
-          <br/>
+          <br />
           <button type="button" onClick={this.onDelete}>Delete</button>
-          <br/>
+          <br />
           <button type="button" onClick={this.onChangeName}>Change name</button>
-          <br/>
+          <br />
           {uploading_component}
           {messageComponent}
         </div>
@@ -71,11 +71,11 @@ export default class EditorImagePreview extends BaseComponent {
         <div className="imagePreview">
           <div className="imagePreviewLoading">
             Loading...<button type="button" onClick={this.onDelete}>Delete</button>
-            <br/>
+            <br />
             <button type="button" onClick={this.onChangeName}>Change name></button>
           </div>
           {name}
-          <br/>
+          <br />
           {uploading_component}
           {messageComponent}
         </div>
