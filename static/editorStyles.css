@@ -49,10 +49,18 @@ a:visited:not(.active-link) {
 }
 
 .mainContainer {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  margin-left: 7px;
+}
+
+.editor-body {
+}
+
+.editor-items {
+  margin-left: 64px;
+}
+
+.mainContainer a {
+  text-decoration: none;
+  color: inherit;
 }
 
 .previewURL {
