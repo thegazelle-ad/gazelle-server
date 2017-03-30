@@ -109,13 +109,9 @@ export default class EditorSearchBar extends BaseComponent {
   }
 
   render() {
-    const style = this.props.style || {};
-    if (this.props.mode === 'articles') {
+    if (this.props.mode === "articles") {
       return (
-        <div
-          className="pure-form"
-          style={style}
-        >
+        <div>
           <input
             type="text"
             value={this.state.searchValue}
@@ -155,10 +151,7 @@ export default class EditorSearchBar extends BaseComponent {
       );
     } else if (this.props.mode === 'authors') {
       return (
-        <div
-          className="pure-form"
-          style={style}
-        >
+        <div >
           <input
             type="text"
             value={this.state.searchValue}
@@ -168,18 +161,19 @@ export default class EditorSearchBar extends BaseComponent {
           />
           <div>
             {
-              this.state.searchSuggestions.map(author => (
-                <div key={author.slug}>
-                  {/* eslint-disable react/jsx-no-bind */}
-                  <button
-                    type="button"
-                    className="pure-button"
-                    onClick={this.handleClick.bind(this, author)}
-                    disabled={this.props.disabled}
-                  >{author.name}</button>
-                  {/* eslint-enable react/jsx-no-bind */}
-                </div>
-              ))
+              this.state.searchSuggestions.map((author) => {
+                return (
+                  <div key={author.slug}>
+                    {/* eslint-disable react/jsx-no-bind */}
+                    <button
+                      type="button"
+                      onClick={this.handleClick.bind(this, author)}
+                      disabled={this.props.disabled}
+                    >{author.name}</button>
+                    {/* eslint-enable react/jsx-no-bind */}
+                  </div>
+                );
+              })
             }
           </div>
         </div>
