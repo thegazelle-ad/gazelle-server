@@ -4,6 +4,9 @@ import FalcorController from "lib/falcor/FalcorController";
 import EditorSearchBar from 'components/editor/EditorSearchBar';
 import EditorList from 'components/editor/EditorList';
 
+// material-ui
+import ListItem from 'material-ui/List/ListItem';
+
 const NUM_ARTICLES_IN_PAGE = 50;
 
 export default class EditorArticleListController extends FalcorController {
@@ -35,9 +38,9 @@ export default class EditorArticleListController extends FalcorController {
 
   createListElement(page, article) {
     return (
-      <div key={article.slug}>
-        <Link to={"/articles/page/" + page + "/slug/"+article.slug} activeClassName="active-link">{article.title}</Link>
-      </div>
+      <Link to={"/articles/page/" + page + "/slug/"+article.slug} key={article.slug}>
+        <ListItem primaryText={article.title} />
+      </Link>
     );
   }
 
@@ -57,9 +60,7 @@ export default class EditorArticleListController extends FalcorController {
       length = this.state.data.totalAmountOfArticles;
       maxPage = Math.ceil(length/NUM_ARTICLES_IN_PAGE);
     }
-
-    // TODO: Style it much better for small screens, add good responsiveness
-
+    
     if (this.state.ready) {
       return (
         <div>
@@ -75,7 +76,6 @@ export default class EditorArticleListController extends FalcorController {
           <EditorList
             elements={data}
             createElement={this.createListElement.bind(null, page)}
-            maxHeight="50vh"
           />
           {/* eslint-enable react/jsx-no-bind */}
           <Link to={this.getNewPagePath(-1)}><button type="button" disabled={page <= 1}>Previous Page</button></Link>

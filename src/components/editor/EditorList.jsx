@@ -2,16 +2,19 @@ import BaseComponent from 'lib/BaseComponent';
 import React from 'react';
 import _ from 'lodash';
 
+import List from 'material-ui/List/List';
+
+
 export default class EditorArticleList extends BaseComponent {
   render() {
     if (this.props.elements) {
       const elements = this.props.elements;
       return (
-        <div style={{overflow: "auto", maxHeight: "100vh"}}>
+        <List style={{overflow: "auto", maxHeight: "100vh"}}>
           {
             _.map(elements, this.props.createElement)
           }
-        </div>
+        </List>
       )
     }
     else {
@@ -26,5 +29,4 @@ EditorArticleList.propTypes = {
     React.PropTypes.object,
   ]).isRequired,
   createElement: React.PropTypes.func.isRequired,
-  maxHeight: React.PropTypes.string.isRequired,
 }
