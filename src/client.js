@@ -7,8 +7,6 @@ import { injectModelCreateElement } from 'lib/falcor/falcorUtils';
 import HttpDataSource from 'falcor-http-datasource';
 import { setIsClient } from 'lib/utilities';
 import ReactGA from 'react-ga';
-import injectTapEventPlugin from 'react-tap-event-plugin';
-
 
 // Let the app know we are running as client, activates certain behaviors like
 // global client tracking.
@@ -23,9 +21,6 @@ clientModel.setCache(_initialCache); // eslint-disable-line no-undef
 
 // Initialize Google Analytics tracking
 ReactGA.initialize('UA-84302849-1');
-
-// Needed for onTouchTap
-injectTapEventPlugin();
 
 // Establish pageview tracking
 let logPageView = () =>{
