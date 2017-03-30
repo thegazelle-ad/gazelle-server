@@ -1,12 +1,17 @@
 import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
-import { Link, browserHistory } from 'react-router';
+import { browserHistory } from 'react-router';
 import http from 'http';
 
 // material-ui
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import RaisedButton from 'material-ui/RaisedButton';
 import injectTapEventPlugin from 'react-tap-event-plugin';
+import AppBar from 'material-ui/AppBar';
+import FlatButton from 'material-ui/FlatButton';
+import IconButton from 'material-ui/IconButton';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 
 // Components
 import EditorNavigation from 'components/editor/EditorNavigation';
@@ -23,6 +28,7 @@ export default class EditorAppController extends BaseComponent {
     super(props);
     this.handleDisableLink = this.handleDisableLink.bind(this);
     this.resetGhostInfo = this.resetGhostInfo.bind(this);
+    this.state = {isLoggedIn: true}; // TODO: change to false when log in works
   }
 
   componentWillMount() {
@@ -73,48 +79,56 @@ export default class EditorAppController extends BaseComponent {
   }
 
   render() {
+    const navItems = ["Articles", "Authors", "Issues", "Images"];
+    const bodyStyle = { transition: 'margin-left 450ms cubic-bezier(0.23, 1, 0.32, 1)' };
+    if (this.state.isLoggedIn) { bodyStyle.marginLeft = 256; }
+
+    this.props.location.pathname === "/login" ?
+      this.state.isLoggedIn == false : this.state.isLoggedIn == true;
+
+    const LoggedIn = () => {
+      return (
+        <IconMenu
+          iconButtonElement={
+            <IconButton><MoreVertIcon /></IconButton>
+          }
+          targetOrigin={{horizontal: 'right', vertical: 'top'}}
+          anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+        >
+          <MenuItem
+            primaryText="Restart Server"
+            onClick={this.restartServer}
+            style={{color: '#C62828'}}
+          />
+          <MenuItem
+            primaryText="Refresh Ghost Data"
+            onClick={this.resetGhostInfo}
+            disabled
+          />
+          <MenuItem primaryText="Sign out" />
+        </IconMenu>
+      );
+    }
+
     return (
       <MuiThemeProvider>
         <div className="mainContainer">
-          <EditorNavigation title={"Gazelle Editor Tools"} />
-          <div className="pure-g" style={{flexShrink: "0"}}>
-            <div className="pure-u-1-2">
-              <h2>Gazelle Editor Tools</h2>
-              <p>Please choose what you would like to edit</p>
-              <ul>
-                <li><Link to="/articles" activeClassName="active-link" onClick={this.handleDisableLink}>Articles</Link></li>
-                <li><Link to="/authors" activeClassName="active-link" onClick={this.handleDisableLink}>Authors</Link></li>
-                <li><Link to="/issues" activeClassName="active-link" onClick={this.handleDisableLink}>Issues</Link></li>
-                <li><Link to="/images" activeClassName="active-link" onClick={this.handleDisableLink}>Images</Link></li>
-              </ul>
-            </div>
-            <div className="pure-u-1-2">
-              <button
-                type="button"
-                onClick={this.restartServer}
-                className="pure-button"
-                style={{
-                  width: "15em",
-                  height: "10em",
-                  backgroundColor: "rgb(202, 60, 60)",
-                  float: "left",
-                }}
-                disabled={this.props.location.pathname === "/login"}
-              >RESTART SERVERS</button>
-              <button
-                type="button"
-                onClick={this.resetGhostInfo}
-                className="pure-button"
-                style={{
-                  width: "15em",
-                  height: "10em",
-                  backgroundColor: "green",
-                }}
-                disabled={true || this.props.location.pathname === "/login"}
-              >REFRESH GHOST DATA <br />(Out of order)</button>
+          {/* TODO: Make isLoggedIn work */}
+          <AppBar
+            title={"Editor Tools"}
+            iconElementRight={this.state.isLoggedIn ?
+              <LoggedIn /> :
+              <FlatButton label="Sign In" />}
+            showMenuIconButton={false}
+          />
+
+          {/* Only show nav on login */}
+          <EditorNavigation navItems={navItems} isNavOpen={this.state.isLoggedIn} />
+          <div style={bodyStyle} className="editor-body">
+            <div className="editor-items">
+              {this.props.children}
             </div>
           </div>
-          {this.props.children}
         </div>
       </MuiThemeProvider>
     );

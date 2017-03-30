@@ -7,7 +7,7 @@ export default class EditorArticleList extends BaseComponent {
     if (this.props.elements) {
       const elements = this.props.elements;
       return (
-        <div style={{overflow: "auto", maxHeight: this.props.maxHeight}}>
+        <div style={{overflow: "auto", maxHeight: "100vh"}}>
           {
             _.map(elements, this.props.createElement)
           }
