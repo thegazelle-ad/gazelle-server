@@ -105,13 +105,9 @@ export default class EditorSearchBar extends BaseComponent {
   }
 
   render() {
-    const style = this.props.style || {};
     if (this.props.mode === "articles") {
       return (
-        <div
-          className="pure-form"
-          style={style}
-        >
+        <div>
           <input
             type="text"
             value={this.state.searchValue}
@@ -153,10 +149,7 @@ export default class EditorSearchBar extends BaseComponent {
     }
     else if (this.props.mode === "authors") {
       return (
-        <div
-          className="pure-form"
-          style={style}
-        >
+        <div >
           <input
             type="text"
             value={this.state.searchValue}
@@ -172,7 +165,6 @@ export default class EditorSearchBar extends BaseComponent {
                     {/* eslint-disable react/jsx-no-bind */}
                     <button
                       type="button"
-                      className="pure-button"
                       onClick={this.handleClick.bind(this, author)}
                       disabled={this.props.disabled}
                     >{author.name}</button>
@@ -186,7 +178,7 @@ export default class EditorSearchBar extends BaseComponent {
       );
     }
     else {
-      return <div style={{color: "red"}}>Sorry, an error occured, please contact developers</div>;
+      return <div style={{color: "red"}}>Sorry, an error occured, please contact the developers</div>;
     }
   }
 }
