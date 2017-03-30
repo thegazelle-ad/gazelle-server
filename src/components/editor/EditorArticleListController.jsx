@@ -62,60 +62,34 @@ export default class EditorArticleListController extends FalcorController {
 
     if (this.state.ready) {
       return (
-        <div className="pure-g">
-          <div className="pure-u-3-8">
-            <h3>Articles</h3>
-            <p>Here the 50 most recent articles are shown in the list, if you have an older article in mind,
-            you can search for it here by entering the title of the article</p>
-            <EditorSearchBar
-              model={this.props.model}
-              mode="articles"
-              handleClick={this.clickSearchSuggestion}
-              length={3}
-              fields={[]}
-              showPubDate
-            />
-            {/* eslint-disable react/jsx-no-bind */}
-            <EditorList
-              elements={data}
-              createElement={this.createListElement.bind(null, page)}
-              maxHeight="50vh"
-            />
-            {/* eslint-enable react/jsx-no-bind */}
-            <div className="pure-g">
-              <div className="pure-u-1-3">
-                <Link to={this.getNewPagePath(-1)}><button type="button" className="pure-button" disabled={page <= 1}>Previous Page</button></Link>
-              </div>
-              <div className="pure-u-1-3">
-                <div style={{padding: "0.5em"}}>
-                  Page {page} of {maxPage}
-                </div>
-              </div>
-              <div className="pure-u-1-3">
-                <Link to={this.getNewPagePath(1)}><button type="button" className="pure-button" disabled={page >= maxPage}>Next Page</button></Link>
-              </div>
-            </div>
-          </div>
-          <div className="pure-u-1-8"></div>
-          <div className="pure-u-1-2">
-            {this.props.children}
-          </div>
+        <div>
+          <EditorSearchBar
+            model={this.props.model}
+            mode="articles"
+            handleClick={this.clickSearchSuggestion}
+            length={3}
+            fields={[]}
+            showPubDate
+          />
+          {/* eslint-disable react/jsx-no-bind */}
+          <EditorList
+            elements={data}
+            createElement={this.createListElement.bind(null, page)}
+            maxHeight="50vh"
+          />
+          {/* eslint-enable react/jsx-no-bind */}
+          <Link to={this.getNewPagePath(-1)}><button type="button" disabled={page <= 1}>Previous Page</button></Link>
+          Page {page} of {maxPage}
+          <Link to={this.getNewPagePath(1)}><button type="button" disabled={page >= maxPage}>Next Page</button></Link>
+          {this.props.children}
         </div>
       );
     }
     else {
       return (
-        <div className="pure-g">
-          <div className="pure-u-3-8">
-            <h3>Articles</h3>
-            <p>Here the 50 most recent articles are shown in the list, if you have an older article in mind,
-            you can search for it here by entering the title of the article</p>
-            <p>loading...</p>
-          </div>
-          <div className="pure-u-1-8"></div>
-          <div className="pure-u-1-2">
-            {this.props.children}
-          </div>
+        <div>
+          <p>loading...</p>
+          {this.props.children}
         </div>
       );
     }
