@@ -6,6 +6,7 @@ import EditorList from 'components/editor/EditorList';
 
 // material-ui
 import ListItem from 'material-ui/List/ListItem';
+import CircularProgress from 'material-ui/CircularProgress';
 
 const NUM_ARTICLES_IN_PAGE = 50;
 
@@ -60,7 +61,7 @@ export default class EditorArticleListController extends FalcorController {
       length = this.state.data.totalAmountOfArticles;
       maxPage = Math.ceil(length/NUM_ARTICLES_IN_PAGE);
     }
-    
+
     if (this.state.ready) {
       return (
         <div>
@@ -88,7 +89,7 @@ export default class EditorArticleListController extends FalcorController {
     else {
       return (
         <div>
-          <p>loading...</p>
+          <CircularProgress />
           {this.props.children}
         </div>
       );

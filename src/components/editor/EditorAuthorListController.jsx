@@ -4,6 +4,9 @@ import { debounce, slugifyAuthor } from 'lib/utilities';
 import { Link } from 'react-router';
 import _ from 'lodash';
 
+// material-ui
+import CircularProgress from 'material-ui/CircularProgress';
+
 export default class EditorAuthorListController extends FalcorController {
   constructor(props) {
     super(props);
@@ -147,15 +150,9 @@ export default class EditorAuthorListController extends FalcorController {
     }
     else {
       return (
-        <div className="pure-g">
-          <div className="pure-u-3-8">
-            <h3>Authors</h3>
-            <p>loading...</p>
-          </div>
-          <div className="pure-u-1-8"></div>
-          <div className="pure-u-1-2">
-            {this.props.children}
-          </div>
+        <div>
+          <CircularProgress />
+          {this.props.children}
         </div>
       );
     }

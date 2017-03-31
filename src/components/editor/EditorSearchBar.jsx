@@ -3,6 +3,9 @@ import BaseComponent from 'lib/BaseComponent';
 import { debounce, formatDate } from 'lib/utilities';
 import _ from 'lodash';
 
+// material-ui
+import TextField from 'material-ui/TextField';
+
 export default class EditorSearchBar extends BaseComponent {
   constructor(props) {
     super(props);
@@ -104,16 +107,23 @@ export default class EditorSearchBar extends BaseComponent {
     this.props.handleClick(article);
   }
 
+  // <input
+  //   type="text"
+  //   value={this.state.searchValue}
+  //   placeholder={this.props.placeholder || "Input Title"}
+  //   onChange={this.handleSearchChange}
+  //   style={{marginBottom: "5px"}}
+  // />
+
   render() {
     if (this.props.mode === "articles") {
       return (
         <div>
-          <input
-            type="text"
+          <TextField
+            hintText="Search for articles"
+            fullWidth
             value={this.state.searchValue}
-            placeholder={this.props.placeholder || "Input Title"}
             onChange={this.handleSearchChange}
-            style={{marginBottom: "5px"}}
           />
           <div>
             {

@@ -6,6 +6,9 @@ import _ from 'lodash';
 import update from 'react-addons-update';
 import { formatDate } from 'lib/utilities';
 
+// material-ui
+import CircularProgress from 'material-ui/CircularProgress';
+
 const ARTICLE_FIELDS = ['id', 'title', 'slug', 'category', 'published_at', 'html'];
 const ARTICLE_LIST_LENGTH = 100;
 
@@ -622,7 +625,7 @@ export default class EditorIssueArticleController extends FalcorController {
       }
     }
     else {
-      return <div>loading...</div>;
+      return <CircularProgress />;
     }
   }
 }
