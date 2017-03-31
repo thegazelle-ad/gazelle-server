@@ -3,6 +3,9 @@ import FalcorController from 'lib/falcor/FalcorController';
 import { debounce, markdownLength } from 'lib/utilities';
 import _ from 'lodash';
 
+// material-ui
+import CircularProgress from 'material-ui/CircularProgress';
+
 const MAX_BIOGRAPHY_LENGTH = 400;
 
 export default class EditorAuthorController extends FalcorController {
@@ -267,6 +270,6 @@ export default class EditorAuthorController extends FalcorController {
         </div>
       );
     }
-    return <div><p>loading...</p></div>;
+    return <CircularProgress />;
   }
 }
