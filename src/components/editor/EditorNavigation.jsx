@@ -13,7 +13,6 @@ import LibraryBooks from 'material-ui/svg-icons/av/library-books';
 
 export default class EditorNavigation extends BaseComponent {
   render() {
-    // TODO: create renderNavItem function
     const styles = {
       title: {
         fontSize: '20px',
@@ -37,6 +36,5 @@ export default class EditorNavigation extends BaseComponent {
 }
 
 EditorNavigation.propTypes = {
-  navItems: React.PropTypes.array,
   isNavOpen: React.PropTypes.bool.isRequired,
 }

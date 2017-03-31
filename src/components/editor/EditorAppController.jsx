@@ -12,6 +12,7 @@ import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import Divider from 'material-ui/Divider';
 
 // Components
 import EditorNavigation from 'components/editor/EditorNavigation';
@@ -28,7 +29,11 @@ export default class EditorAppController extends BaseComponent {
     super(props);
     this.handleDisableLink = this.handleDisableLink.bind(this);
     this.resetGhostInfo = this.resetGhostInfo.bind(this);
-    this.state = {isLoggedIn: true}; // TODO: change to false when log in works
+    this.state = {
+      isLoggedIn: true, // TODO: change to false when log in works
+      isRestartedSnackBarOpen: false,
+      isGhostResetSnackBarOpen: false,
+    };
   }
 
   componentWillMount() {
@@ -105,6 +110,7 @@ export default class EditorAppController extends BaseComponent {
             onClick={this.resetGhostInfo}
             disabled
           />
+          <Divider />
           <MenuItem primaryText="Sign out" />
         </IconMenu>
       );

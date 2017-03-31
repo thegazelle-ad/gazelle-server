@@ -4,6 +4,10 @@ import _ from 'lodash';
 import EditAuthorsForm from './EditAuthorsForm';
 import { debounce } from 'lib/utilities';
 import update from 'react-addons-update';
+import EditorArticle from 'components/editor/EditorArticle';
+
+// material-ui
+import CircularProgress from 'material-ui/CircularProgress';
 
 const MAX_TEASER_LENGTH = 156;
 
@@ -412,9 +416,10 @@ the save changes button is supposed to be disabled in this case");
   render() {
     if (this.state.ready) {
       if (!this.state.data || !this.state.data.articlesBySlug) {
-        return <div><p>No articles match this slug</p></div>;
+        return <div><p>Error: No articles match this slug</p></div>;
       }
 
+      <EditorArticle />
       const slug = this.props.params.slug;
       const article = this.state.data.articlesBySlug[slug];
 
@@ -516,7 +521,7 @@ the save changes button is supposed to be disabled in this case");
       );
     }
     else {
-      return <div><p>loading...</p></div>;
+      return  <CircularProgress />;
     }
   }
 }
