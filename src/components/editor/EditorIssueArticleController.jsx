@@ -6,6 +6,9 @@ import _ from 'lodash';
 import update from 'react-addons-update';
 import { formatDate } from 'lib/utilities';
 
+// material-ui
+import CircularProgress from 'material-ui/CircularProgress';
+
 const ARTICLE_FIELDS = ['id', 'title', 'slug', 'category', 'published_at', 'html'];
 const ARTICLE_LIST_LENGTH = 100;
 
@@ -624,6 +627,7 @@ export default class EditorIssueArticleController extends FalcorController {
               }
             </div>
           </div>
+<<<<<<< f48ea6257fa3b478c6bb32e7da87acc00b1430a3
           {/* eslint-enable react/jsx-no-bind */}
           <div style={{ fontSize: '1.2em' }}>
             <b>{mainArticles.length} articles</b>
@@ -637,6 +641,13 @@ export default class EditorIssueArticleController extends FalcorController {
           >Save Changes</button>
         </div>
       );
+=======
+        );
+      }
+    }
+    else {
+      return <CircularProgress />;
+>>>>>>> Further updates
     }
     return <div>loading...</div>;
   }

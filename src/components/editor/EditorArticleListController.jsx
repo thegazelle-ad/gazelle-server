@@ -6,6 +6,7 @@ import EditorList from 'components/editor/EditorList';
 
 // material-ui
 import ListItem from 'material-ui/List/ListItem';
+import CircularProgress from 'material-ui/CircularProgress';
 
 const NUM_ARTICLES_IN_PAGE = 50;
 
@@ -100,7 +101,7 @@ export default class EditorArticleListController extends FalcorController {
     else {
       return (
         <div>
-          <p>loading...</p>
+          <CircularProgress />
           {this.props.children}
         </div>
         <div className="pure-u-1-8"></div>
