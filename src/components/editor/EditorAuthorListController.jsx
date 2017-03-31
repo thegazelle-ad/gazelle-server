@@ -6,6 +6,8 @@ import _ from 'lodash';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
+import Paper from 'material-ui/Paper';
+import Divider from 'material-ui/Divider';
 
 export default class EditorAuthorListController extends FalcorController {
   constructor(props) {
@@ -93,14 +95,25 @@ export default class EditorAuthorListController extends FalcorController {
       }
     })
   }
+
   render() {
+    const style = {
+      height: '100%',
+      width: '100%',
+      marginTop: 20,
+      marginBottom: 20,
+      textAlign: 'center',
+      display: 'inline-block',
+    };
+
     if (this.state.ready) {
       return (
-        <div className="pure-g">
-          <div className="pure-u-3-8">
-            <h3>Authors</h3>
+        <div>
+          <h1>Authors</h1>
+          <Divider />
+          <Paper style={style} zDepth={2}>
             <p>You can search for authors by name to edit here</p>
-            <form className="pure-form" onSubmit={(e)=>{e.preventDefault()}}>
+            <form onSubmit={(e)=>{e.preventDefault()}}>
               <input type="text" value={this.state.slugSearchValue} placeholder="Input Name" onChange={this.handleSearchChange} />
               {
                 this.state.searchSuggestions.map((author) => {
@@ -117,7 +130,6 @@ export default class EditorAuthorListController extends FalcorController {
             </form>
             <h4>Create New Author</h4>
             <form
-              className="pure-form pure-form-stacked"
               onSubmit={this.createAuthor}
               onChange={this.handleCreateAuthorChange}
             >
@@ -140,8 +152,7 @@ export default class EditorAuthorListController extends FalcorController {
                 value="Create Author"
               />
             </form>
-          </div>
-          <div className="pure-u-1-8"></div>
+          </Paper>
           <div className="pure-u-1-2">
             {this.props.children}
           </div>

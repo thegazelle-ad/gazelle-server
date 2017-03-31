@@ -5,6 +5,14 @@ import _ from 'lodash';
 import update from 'react-addons-update';
 import { Link } from 'react-router';
 
+// material-ui
+import Divider from 'material-ui/Divider';
+import Paper from 'material-ui/Paper';
+import {Tabs, Tab} from 'material-ui/Tabs';
+import FileUpload from 'material-ui/svg-icons/file/file-upload';
+import Folder from 'material-ui/svg-icons/file/folder';
+import RaisedButton from 'material-ui/RaisedButton';
+
 const UPLOAD_URL = process.env.NODE_ENV ? (process.env.NODE_ENV === "production" ? "https://admin.thegazelle.org/upload" : "https://adminbeta.thegazelle.org/upload") : "http://localhost:4000/upload";
 
 export default class EditorImageUploader extends BaseComponent {
@@ -265,57 +273,101 @@ export default class EditorImageUploader extends BaseComponent {
 
     const isUpload = /upload\/?$/.test(window.location.pathname);
 
+    const styles = {
+      button: {
+        margin: 12,
+      },
+      exampleImageInput: {
+        cursor: 'pointer',
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        right: 0,
+        left: 0,
+        width: '100%',
+        opacity: 0,
+      },
+      paper: {
+        height: '100%',
+        width: '100%',
+        marginTop: 20,
+        marginBottom: 20,
+        textAlign: 'center',
+        display: 'inline-block',
+      },
+    };
+
+
     return (
-      <div className="pure-g" style={{flexGrow: "1"}}>
-        <div className="pure-u-1-4">
-          <h3>Images</h3>
-          <ul>
-            <li><Link activeClassName="active-link" to="/images/upload">Upload</Link></li>
-            <li><Link activeClassName="active-link" to="/images/archive">Archive</Link></li>
-          </ul>
-          {isUpload ?
-            <div>
-              <h4 style={changedStateStyle}>{changedStateMessage}</h4>
-              <form
-                className="image-submit pure-form pure-form-stacked"
-                onSubmit={this.handleUpload}
-              >
-                <input
-                  type="file"
-                  name="file-selector"
-                  accept="image/*"
-                  onChange={this.handleInputChange}
-                  disabled={this.state.uploading}
-                  multiple
-                />
-                <input
-                  type="submit"
-                  className="pure-button pure-button-primary"
-                  value="Upload"
-                  disabled={this.state.uploading || !this.state.changed}
-                />
-              </form>
-              {this.state.uploading && !this.state.changed ?
-                <button
-                  type="button"
-                  className="pure-button pure-button-primary"
-                  onClick={this.postUploadReset}
-                >Clear Upload</button>
-              : null
-              }
-            </div>
-          : null}
-        </div>
-        <div className="pure-u-3-4">
-          {isUpload ?
-            React.cloneElement(this.props.children,
-            {
-              images: imagePreviews,
-              onChange: this.handlePreviewChange,
-            })
-          : this.props.children
-          }
-        </div>
+      <div>
+        <h1>Images</h1>
+        <Divider />
+        <Paper style={styles.paper} zDepth={2} >
+          <Tabs>
+            <Tab
+              icon={<FileUpload />}
+              label="UPLOAD"
+              containerElement={<Link to="/images/upload" />}
+            />
+            <Tab
+              icon={<Folder />}
+              label="ARCHIVES"
+              containerElement={<Link to="/images/archive" />}
+            />
+          </Tabs>
+          <div>
+            {isUpload ?
+              <div>
+                <h4 style={changedStateStyle}>{changedStateMessage}</h4>
+                <form
+                  className="image-submit pure-form pure-form-stacked"
+                  onSubmit={this.handleUpload}
+                >
+                  <RaisedButton
+                    label="Choose an Image"
+                    labelPosition="before"
+                    style={styles.button}
+                    containerElement="label"
+                  >
+                    <input
+                      type="file"
+                      name="file-selector"
+                      accept="image/*"
+                      onChange={this.handleInputChange}
+                      disabled={this.state.uploading}
+                      multiple
+                    />
+                  </RaisedButton>
+
+                  <input
+                    type="submit"
+                    className="pure-button pure-button-primary"
+                    value="Upload"
+                    disabled={this.state.uploading || !this.state.changed}
+                  />
+                </form>
+                {this.state.uploading && !this.state.changed ?
+                  <button
+                    type="button"
+                    className="pure-button pure-button-primary"
+                    onClick={this.postUploadReset}
+                  >Clear Upload</button>
+                : null
+                }
+              </div>
+            : null}
+          </div>
+          <div>
+            {isUpload ?
+              React.cloneElement(this.props.children,
+              {
+                images: imagePreviews,
+                onChange: this.handlePreviewChange,
+              })
+            : this.props.children
+            }
+          </div>
+        </Paper>
       </div>
     );
   }

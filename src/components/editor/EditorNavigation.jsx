@@ -28,7 +28,7 @@ export default class EditorNavigation extends BaseComponent {
           <Link to="/articles"><MenuItem leftIcon={<Description />}>Articles</MenuItem></Link>
           <Link to="/issues"><MenuItem leftIcon={<LibraryBooks />}>Issues</MenuItem></Link>
           <Link to="/authors"><MenuItem leftIcon={<Person />}>Authors</MenuItem></Link>
-          <Link to="/images"><MenuItem leftIcon={<Photo />}>Images</MenuItem></Link>
+          <Link to="/images/upload"><MenuItem leftIcon={<Photo />}>Images</MenuItem></Link>
         </Drawer>
       </div>
     );
