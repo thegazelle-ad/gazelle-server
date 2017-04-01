@@ -20,7 +20,7 @@ export default class EditorNavigation extends BaseComponent {
     };
     return (
       <div>
-        <Drawer open={this.props.isNavOpen}>
+        <Drawer open={this.props.isNavOpen} zDepth={2}>
           <AppBar
             title={<span style={styles.title}>Gazelle Editor Tools</span>}
             showMenuIconButton={false}
