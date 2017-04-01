@@ -1,13 +1,22 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import { debounce, slugifyAuthor } from 'lib/utilities';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import _ from 'lodash';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
 import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
+import {Tabs, Tab} from 'material-ui/Tabs';
+import TextField from 'material-ui/TextField';
+import RaisedButton from 'material-ui/RaisedButton';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
+import PersonAdd from 'material-ui/svg-icons/social/person-add';
+import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
+
+
 
 export default class EditorAuthorListController extends FalcorController {
   constructor(props) {
@@ -19,6 +28,8 @@ export default class EditorAuthorListController extends FalcorController {
       slugSearchValue: "",
       searchSuggestions: [],
       createAuthorValid: false,
+      inputName: "",
+      inputSlug: "",
     });
     this.debouncedGetSuggestions = debounce((query, wasCalledInstantly = false) => {
       /* Since we provided the instantFlag to the debounced function we have to be careful
@@ -58,9 +69,8 @@ export default class EditorAuthorListController extends FalcorController {
     });
   }
 
-  handleCreateAuthorChange(e) {
-    const formNode = e.target.parentNode;
-    const validFlag = formNode.slug.value && formNode.name.value;
+  handleCreateAuthorChange() {
+    const validFlag = this.state.inputSlug && this.state.inputName;
     if (validFlag !== this.state.createAuthorValid) {
       this.safeSetState({createAuthorValid: validFlag});
     }
@@ -68,9 +78,8 @@ export default class EditorAuthorListController extends FalcorController {
 
   createAuthor(e) {
     e.preventDefault();
-    const formNode = e.target;
-    const slug = formNode.slug.value;
-    const name = formNode.name.value;
+    const slug = this.state.inputSlug;
+    const name = this.state.inputName;
 
     if (slug !== slugifyAuthor(slug)) {
       window.alert("Your slug is not in the right format. Our programatically suggested" +
@@ -89,6 +98,7 @@ export default class EditorAuthorListController extends FalcorController {
         // Create the author
         const callback = () => {
           window.alert("Author added successfully");
+          browserHistory.push('/authors/' + slug);
         }
         this.falcorCall(['authorsBySlug', 'createAuthor'], [{slug: slug, name: name}],
           undefined, undefined, undefined, callback);
@@ -97,13 +107,28 @@ export default class EditorAuthorListController extends FalcorController {
   }
 
   render() {
-    const style = {
-      height: '100%',
-      width: '100%',
-      marginTop: 20,
-      marginBottom: 20,
-      textAlign: 'center',
-      display: 'inline-block',
+    const styles = {
+      paper: {
+        height: '100%',
+        width: '100%',
+        marginTop: 20,
+        marginBottom: 20,
+        textAlign: 'left',
+        display: 'inline-block',
+      },
+      tabs: {
+        paddingLeft: 30,
+        paddingRight: 30,
+        paddingBottom: 15,
+      },
+      buttons: {
+        marginTop: 24,
+        marginBottom: 12,
+      },
+      authorMenu: {
+        display: 'inline-block',
+        margin: 0,
+      },
     };
 
     if (this.state.ready) {
@@ -111,51 +136,89 @@ export default class EditorAuthorListController extends FalcorController {
         <div>
           <h1>Authors</h1>
           <Divider />
-          <Paper style={style} zDepth={2}>
-            <p>You can search for authors by name to edit here</p>
-            <form onSubmit={(e)=>{e.preventDefault()}}>
-              <input type="text" value={this.state.slugSearchValue} placeholder="Input Name" onChange={this.handleSearchChange} />
-              {
-                this.state.searchSuggestions.map((author) => {
-                  const link = "/authors/" + author.slug;
-                  return (
-                    <div key={author.slug}>
-                      <Link to={link} onClick={() => {this.safeSetState({slugSearchValue: "", searchSuggestions: []})}}>
-                        <button type="button" className="pure-button">{author.name}</button>
-                      </Link>
-                    </div>
-                  );
-                })
-              }
-            </form>
-            <h4>Create New Author</h4>
-            <form
-              onSubmit={this.createAuthor}
-              onChange={this.handleCreateAuthorChange}
-            >
-              Name:
-              <input
-                type="text"
-                placeholder="Input Name"
-                name="name"
-              />
-              Slug:
-              <input
-                type="text"
-                placeholder="Input Slug"
-                name="slug"
-              />
-              <input
-                type="submit"
-                className="pure-button pure-button-primary"
-                disabled={!this.state.createAuthorValid}
-                value="Create Author"
-              />
-            </form>
-          </Paper>
-          <div className="pure-u-1-2">
+          <Paper style={styles.paper} zDepth={2}>
+            <Tabs>
+              <Tab label="EDIT" icon={<ModeEdit />}>
+                <div style={styles.tabs}>
+                  <h2>Edit Author</h2>
+                  <Divider />
+                  <form onSubmit={(e)=>{e.preventDefault()}}>
+                    <TextField
+                      type="text"
+                      hintText="John Appleseed"
+                      floatingLabelText="Input Name"
+                      value={this.state.slugSearchValue}
+                      onChange={this.handleSearchChange}
+                    />
+                    <br />
+                    <Paper
+                      style={styles.authorMenu}
+                      zDepth={0}
+                    >
+                      <Menu>
+                      {
+                        this.state.searchSuggestions.map((author) => {
+                          const link = "/authors/" + author.slug;
+                          return (
+                            <div key={author.slug}>
+                              <Link
+                                to={link}
+                                onClick={() => {
+                                  this.safeSetState({slugSearchValue: author.name,
+                                  searchSuggestions: []})}
+                                }
+                              >
+                                <MenuItem primaryText={author.name} />
+                              </Link>
+                            </div>
+                          );
+                        })
+                      }
+                      </Menu>
+                    </Paper>
+                  </form>
+                </div>
+              </Tab>
+              <Tab label="ADD NEW" icon={<PersonAdd />}>
+                <div style={styles.tabs}>
+                  <h2>Add New Author</h2>
+                  <Divider />
+                  <form
+                    onSubmit={this.createAuthor}
+                    onChange={this.handleCreateAuthorChange}
+                  >
+                    <TextField
+                      type="text"
+                      name="name"
+                      hintText="John Appleseed"
+                      floatingLabelText="Input Name"
+                      value={this.state.inputName}
+                      onChange={e => this.setState({ inputName: e.target.value })}
+                    />
+                    <br />
+                    <TextField
+                      type="text"
+                      name="slug"
+                      hintText="john-appleseed"
+                      floatingLabelText="Input URL Slug"
+                      value={this.state.inputSlug}
+                      onChange={e => this.setState({ inputSlug: e.target.value })}
+                    />
+                    <br />
+                    <RaisedButton
+                      label="Create Author"
+                      type="submit"
+                      disabled={!this.state.createAuthorValid}
+                      primary
+                      style={styles.buttons}
+                    />
+                  </form>
+                </div>
+              </Tab>
+            </Tabs>
+            <Divider />
             {this.props.children}
-          </div>
+          </Paper>
         </div>
       );
     }
