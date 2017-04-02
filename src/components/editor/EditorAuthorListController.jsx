@@ -16,8 +16,6 @@ import MenuItem from 'material-ui/MenuItem';
 import PersonAdd from 'material-ui/svg-icons/social/person-add';
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
 
-
-
 export default class EditorAuthorListController extends FalcorController {
   constructor(props) {
     super(props);
@@ -217,8 +215,11 @@ export default class EditorAuthorListController extends FalcorController {
               </Tab>
             </Tabs>
             <Divider />
+          </Paper>
+          <Paper style={styles.paper} zDepth={2}>
             {this.props.children}
           </Paper>
+          <br />
         </div>
       );
     }
