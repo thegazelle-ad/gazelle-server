@@ -1,7 +1,6 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import { debounce, markdownLength } from 'lib/utilities';
-import _ from 'lodash';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -36,39 +35,41 @@ export default class EditorAuthorController extends FalcorController {
       }
     }, 500);
 
-    this.debouncedHandleFormChanges = debounce((event) => {
-      // We don't want the debounced event to happen if we're saving
-      if (this.state.saving) return;
+  //   this.debouncedHandleFormChanges = debounce((event) => {
+  //     // We don't want the debounced event to happen if we're saving
+  //     if (this.state.saving) return;
+  //
+  //     const formNode = event.target.parentNode;
+  //
+  //     // Gets all the input elements that we named
+  //     const children = _.map(formNode.children, (child) => {
+  //       return child.name;
+  //     })
+  //     const fields = children.filter((key) => {
+  //       return key && isNaN(parseInt(key)) && key !== "length";
+  //     });
+  //
+  //     const falcorData = this.state.data.authorsBySlug[this.props.params.slug];
+  //
+  //     const changedFlag = fields.some((field) => {
+  //       const formValue = formNode[field].value;
+  //       const falcorValue = falcorData[field];
+  //
+  //       // The last boolean check here checks if both values are falsey
+  //       // like null and empty string, in that case we'll say there's no change
+  //       if ((formValue !== falcorValue) && !(!formValue && !falcorValue)) {
+  //         return true;
+  //       }
+  //       return false;
+  //     });
+  //
+  //     if (changedFlag !== this.state.changed) {
+  //       this.safeSetState({changed: changedFlag});
+  //     }
+  //   }, 0);
 
-      const formNode = event.target.parentNode;
-
-      // Gets all the input elements that we named
-      const children = _.map(formNode.children, (child) => {
-        return child.name;
-      })
-      const fields = children.filter((key) => {
-        return key && isNaN(parseInt(key)) && key !== "length";
-      });
-
-      const falcorData = this.state.data.authorsBySlug[this.props.params.slug];
-
-      const changedFlag = fields.some((field) => {
-        const formValue = formNode[field].value;
-        const falcorValue = falcorData[field];
-
-        // The last boolean check here checks if both values are falsey
-        // like null and empty string, in that case we'll say there's no change
-        if ((formValue !== falcorValue) && !(!formValue && !falcorValue)) {
-          return true;
-        }
-        return false;
-      });
-
-      if (changedFlag !== this.state.changed) {
-        this.safeSetState({changed: changedFlag});
-      }
-    }, 0);
   }
+
   static getFalcorPathSets(params) {
     return [
       ['authorsBySlug', params.slug, ['name', 'image', 'biography', 'slug', 'job_title']],

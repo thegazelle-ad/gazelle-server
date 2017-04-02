@@ -3,6 +3,10 @@ import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
 import update from 'react-addons-update';
 
+// material-ui
+import Divider from 'material-ui/Divider';
+import Paper from 'material-ui/Paper';
+
 export default class EditorIssueCategoryController extends FalcorController {
   constructor(props) {
     super(props);
@@ -108,12 +112,33 @@ export default class EditorIssueCategoryController extends FalcorController {
   }
 
   render() {
+    const styles = {
+      paper: {
+        height: '100%',
+        width: '100%',
+        marginTop: 20,
+        marginBottom: 20,
+        textAlign: 'left',
+        display: 'inline-block',
+      },
+      innerPaper: {
+        margin: 20,
+      },
+      tabs: {
+        paddingLeft: 30,
+        paddingRight: 30,
+        paddingBottom: 15,
+      },
+      buttons: {
+        marginTop: 12,
+        marginBottom: 24,
+      },
+    }
+
     if (this.state.ready) {
       if (!this.state.data) {
         return <div>Incorrect issue number provided, this page was not found</div>;
       }
-      const issueNumber = this.props.params.issueNumber;
-      const data = this.state.data.issuesByNumber[issueNumber];
       const categories = this.state.categories;
       if (!categories || categories.length === 0) {
         return (
@@ -127,39 +152,40 @@ export default class EditorIssueCategoryController extends FalcorController {
       }
 
       let changedStateMessage;
-      const changedStateStyle = {};
       if (!this.state.changed) {
         if (!this.state.saving) {
           changedStateMessage = "No Changes";
         }
         else {
           changedStateMessage = "Saved";
-          changedStateStyle.color = "green";
         }
       }
       else {
         if (!this.state.saving) {
-          changedStateMessage = "Unsaved Changes";
-          changedStateStyle.color = "red";
+          changedStateMessage = "Save Changes";
         }
         else {
           changedStateMessage = "Saving"
-          changedStateStyle.color = "#65e765";
         }
       }
 
       return (
-        <div>
-          <h2 style={changedStateStyle}>{changedStateMessage}</h2>
-          <h3>{data.name}</h3>
-          <p>
-            Here you can reorder the categories. Remember that every time you
-            change which articles are in the issue, for now the order of the categories
-            will be randomized and you will have to come back here and reorder them. <br />
-            Also remember that this should be the last step before the issue is published and
-            at this point all articles you want in the issue should be already added.
-          </p>
-          <h4>Categories</h4>
+        <div style={styles.tabs}>
+          <Paper style={styles.paper} zDepth={1}>
+            <div style={styles.innerPaper}>
+              <p>
+                Here you can reorder the categories. Remember that every time you
+                change which articles are in the issue, for now the order of the categories
+                will be randomized and you will have to come back here and reorder them. <br /><br />
+                Also remember that this should be the last step before the issue is published and
+                at this point all articles you want in the issue should be already added.
+              </p>
+            </div>
+          </Paper>
+          <br />
+          <h3>Categories</h3>
+          <Divider />
+          <br />
           <div>
             {
               categories.map((category, index) => {
@@ -193,7 +219,7 @@ export default class EditorIssueCategoryController extends FalcorController {
             className="pure-button pure-button-primary"
             onClick={this.handleSave}
             disabled={this.state.saving || !this.state.changed}
-          >Save Changes</button>
+          >{changedStateMessage}</button>
         </div>
       );
     }

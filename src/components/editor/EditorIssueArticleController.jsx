@@ -428,6 +428,26 @@ export default class EditorIssueArticleController extends FalcorController {
   }
 
   render() {
+    const styles = {
+      paper: {
+        height: '100%',
+        width: '100%',
+        marginTop: 20,
+        marginBottom: 20,
+        textAlign: 'left',
+        display: 'inline-block',
+      },
+      tabs: {
+        paddingLeft: 30,
+        paddingRight: 30,
+        paddingBottom: 15,
+      },
+      buttons: {
+        marginTop: 12,
+        marginBottom: 24,
+      },
+    }
+
     if (this.state.ready) {
       if (!this.state.data) {
         return <div>This issue could not be found</div>;
@@ -491,7 +511,7 @@ export default class EditorIssueArticleController extends FalcorController {
           }
         }
         return (
-          <div>
+          <div style={styles.tabs}>
             <button
               type="button"
               className="pure-button"
@@ -616,7 +636,7 @@ export default class EditorIssueArticleController extends FalcorController {
             <button
               type="button"
               className="pure-button pure-button-primary"
-              aria-labet="Save changes"
+              aria-label="Save changes"
               onClick={this.saveChanges}
               disabled={this.state.saving || !this.state.changed}
             >Save Changes</button>
