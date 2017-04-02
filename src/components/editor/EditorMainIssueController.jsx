@@ -2,6 +2,9 @@ import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
 
+// material-ui
+import CircularProgress from 'material-ui/CircularProgress';
+
 export default class EditorMainIssueController extends FalcorController {
   constructor(props) {
     super(props);
@@ -103,13 +106,33 @@ export default class EditorMainIssueController extends FalcorController {
   }
 
   render() {
+    const styles = {
+      paper: {
+        height: '100%',
+        width: '100%',
+        marginTop: 20,
+        marginBottom: 20,
+        textAlign: 'left',
+        display: 'inline-block',
+      },
+      tabs: {
+        paddingLeft: 30,
+        paddingRight: 30,
+        paddingBottom: 15,
+      },
+      buttons: {
+        marginTop: 12,
+        marginBottom: 24,
+      },
+    }
+
     if (this.state.ready) {
       if (!this.state.data) {
         return <p>This issue does not exist</p>;
       }
       const published = this.state.data.issuesByNumber[this.props.params.issueNumber].published_at;
       return (
-        <div>
+        <div style={styles.tabs}>
           {
             published
             ? <h3>Already Published</h3>
@@ -143,7 +166,7 @@ export default class EditorMainIssueController extends FalcorController {
       );
     }
     else {
-      return <div>loading...</div>
+      return <CircularProgress />;
     }
   }
 }
