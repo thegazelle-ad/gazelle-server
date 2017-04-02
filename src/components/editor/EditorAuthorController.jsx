@@ -44,10 +44,6 @@ export default class EditorAuthorController extends FalcorController {
     }, 500);
 
     this.debouncedHandleFormChanges = debounce((event) => {
-      console.log(this.state.name);
-      console.log(this.state.slug);
-      console.log(this.state.biography);
-
       // We don't want the debounced event to happen if we're saving
       if (this.state.saving) return;
 
@@ -78,7 +74,7 @@ export default class EditorAuthorController extends FalcorController {
       if (changedFlag !== this.state.changed) {
         this.safeSetState({changed: changedFlag});
       }
-    }, 500);
+    }, 0);
   }
   static getFalcorPathSets(params) {
     return [
@@ -239,8 +235,7 @@ the save changes button is supposed to be disabled in this case");
     }
   }
 
-  handleBiographyChanges(e) {
-    this.safeSetState({ biography: e.target.value });
+  handleBiographyChanges() {
     let bio = this.state.biography;
     if (markdownLength(bio) > MAX_BIOGRAPHY_LENGTH) {
       bio = bio.substr(0, MAX_BIOGRAPHY_LENGTH);
@@ -305,34 +300,34 @@ the save changes button is supposed to be disabled in this case");
               value={this.state.name}
               floatingLabelText="Name"
               disabled={this.state.saving}
-              onChange={e => {
-                this.safeSetState({ name: e.target.value });
-                this.debouncedHandleFormStateChanges();}}
+              onChange={e =>
+                this.setState({ name: e.target.value }, () => {
+                    this.debouncedHandleFormStateChanges();})}
             /><br />
             <TextField
               value={this.state.slug}
               floatingLabelText="Slug"
               disabled={this.state.saving}
-              onChange={e => {
-                this.safeSetState({ slug: e.target.value });
-                this.debouncedHandleFormStateChanges();}}
+              onChange={e =>
+                this.setState({ slug: e.target.value }, () => {
+                    this.debouncedHandleFormStateChanges();})}
             /><br />
             <TextField
               value={this.state.job_title}
               floatingLabelText="Job Title"
               disabled={this.state.saving}
-              onChange={e => {
-                this.safeSetState({ job_title: e.target.value });
-                this.debouncedHandleFormStateChanges();}}
+              onChange={e =>
+                this.setState({ job_title: e.target.value }, () => {
+                    this.debouncedHandleFormStateChanges();})}
             /><br />
             <TextField
               name="image"
               value={this.state.image}
               floatingLabelText="Image (Remember to use https:// not http://)"
               disabled={this.state.saving}
-              onChange={e => {
-                this.safeSetState({ image: e.target.value });
-                this.debouncedHandleFormStateChanges();}}
+              onChange={e =>
+                this.setState({ image: e.target.value }, () => {
+                    this.debouncedHandleFormStateChanges();})}
               fullWidth
             /><br />
             <TextField
@@ -341,7 +336,11 @@ the save changes button is supposed to be disabled in this case");
                 " of " + MAX_BIOGRAPHY_LENGTH + " characters)"}
               value={this.state.biography}
               disabled={this.state.saving}
-              onChange={this.handleBiographyChanges}
+              onChange={e =>
+                this.setState({ biography: e.target.value }, () => {
+                    this.debouncedHandleFormStateChanges();
+                    this.handleBiographyChanges;
+                  })}
               multiLine
               rows={2}
               rowsMax={5}
@@ -352,65 +351,6 @@ the save changes button is supposed to be disabled in this case");
               primary
               style={styles.buttons}
               disabled={!this.state.changed || this.state.saving}
-            />
-          </form>
-
-
-
-
-          <br />
-          <br />
-          <br />
-          <form
-            onChange={(e) => {e.persist(); this.debouncedHandleFormChanges(e)}}
-            onSubmit={this.handleSaveChanges}
-          >
-            Change Name:
-            <input
-              type="text"
-              defaultValue={author.name}
-              name="name"
-              disabled={this.state.saving}
-            />
-            Change Slug:
-            <input
-              type="text"
-              defaultValue={author.slug}
-              name="slug"
-              disabled={this.state.saving}
-            />
-            Change Job Title:
-            <input
-              type="text"
-              defaultValue={author.job_title}
-              name="job_title"
-              disabled={this.state.saving}
-            />
-            Change Image URL (please use https:// for s3 and other secure links):
-            <input
-              type="text"
-              defaultValue={author.image}
-              name="image"
-              disabled={this.state.saving}
-            />
-            Change Biography:<br />
-            <span style={{fontSize: "0.95em", fontStyle: "italic"}}>
-              {markdownLength(this.state.biography)} of {MAX_BIOGRAPHY_LENGTH} characters
-            </span>
-            <textarea
-              value={this.state.biography}
-              onChange={this.handleBiographyChanges}
-              style={{width: "30em", height: "8em"}}
-              name="biography"
-              disabled={this.state.saving}
-            />
-            <p style={changedStateStyle}>{changedStateMessage}</p>
-            <input
-              className="pure-button pure-button-primary"
-              type="submit"
-              value="Save Changes"
-              disabled={!this.state.changed || this.state.saving}
-              style={{marginTop: "8px"}}
             />
           </form>
         </div>
