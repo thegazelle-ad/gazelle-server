@@ -30,14 +30,7 @@ export default class EditorAuthorController extends FalcorController {
       // We don't want the debounced event to happen if we're saving
       if (this.state.saving) return;
 
-      const falcorData = this.state.data.authorsBySlug[this.props.params.slug];
-      const changedFlag =
-        this.isChanged(this.state.name, falcorData.name) ||
-        this.isChanged(this.state.slug, falcorData.slug) ||
-        this.isChanged(this.state.job_title, falcorData.job_title) ||
-        this.isChanged(this.state.image, falcorData.image) ||
-        this.isChanged(this.state.biography, falcorData.biography);
-
+      const changedFlag = this.isFormChanged();
       if (changedFlag !== this.state.changed) {
         this.safeSetState({changed: changedFlag});
       }
@@ -75,7 +68,6 @@ export default class EditorAuthorController extends FalcorController {
   static getFalcorPathSets(params) {
     return [
       ['authorsBySlug', params.slug, ['name', 'image', 'biography', 'slug', 'job_title']],
-      // ['authorsBySlug', params.slug, 'articles', {length: 100}, 'title'],
     ];
   }
 
@@ -137,33 +129,12 @@ export default class EditorAuthorController extends FalcorController {
   handleSaveChanges(event) {
     event.preventDefault();
 
-    const formNode = event.target;
-
-    const name = this.state.name;
-    const slug = this.state.slug;
-    const job_title = this.state.job_title;
-    const image = this.state.image;
-    const biography = this.state.biography;
-
+    const falcorData = this.state.data.authorsBySlug[this.props.params.slug];
     const authorSlug = this.props.params.slug
 
-    // Gets all the input elements that we named
-    const children = _.map(formNode.children, child => child.name);
-    const fields = children.filter(key => key && isNaN(parseInt(key, 10)) && key !== 'length');
-
-    const falcorData = this.state.data.authorsBySlug[authorSlug];
-    const filteredFields = fields.filter((field) => {
-      const formValue = formNode[field].value;
-      const falcorValue = falcorData[field];
-
-      return formValue !== falcorValue && !(!formValue && !falcorValue);
-    });
-
-    if (filteredFields.length === 0) {
-      throw new Error(
-        'Tried to save changes but there were no changes. ' +
-        'the save changes button is supposed to be disabled in this case'
-      );
+    if (!this.isFormChanged()) {
+      throw new Error("Tried to save changes but there were no changes. \
+the save changes button is supposed to be disabled in this case");
     }
 
     // Modularize the code since we'll be reusing it for checking the slug
@@ -179,7 +150,7 @@ export default class EditorAuthorController extends FalcorController {
       // Build the jsonGraphEnvelope
       const jsonGraphEnvelope = {
         paths: [
-          ['authorsBySlug', authorSlug, filteredFields],
+          ['authorsBySlug', authorSlug, ['name', 'slug', 'job_title', 'image', 'biography']],
         ],
         jsonGraph: {
           authorsBySlug: {
@@ -188,26 +159,28 @@ export default class EditorAuthorController extends FalcorController {
         },
       };
 
-      filteredFields.forEach((field) => {
-        const formValue = formNode[field].value;
-        jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug][field] = formValue;
-      });
+      // Fill in the data
+      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug]['name'] = this.state.name;
+      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug]['slug'] = this.state.slug;
+      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug]['job_title'] = this.state.job_title;
+      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug]['image'] = this.state.image;
+      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug]['biography'] = this.state.biography;
 
       // Update the values
       this.falcorUpdate(jsonGraphEnvelope, undefined, resetState);
     };
 
-    if (filteredFields.find(field => field === 'slug')) {
-      if (!window.confirm('You are about to change the slug of an author, this means' +
-        ' that the url to their webpage will change among other things, it is recommended' +
-        " not to change the slug unless it's very crucial. Are you sure you want to proceed?")) {
+    if (this.isFormFieldChanged(this.state.slug, falcorData.slug)) {
+      if (!window.confirm("You are about to change the slug of an author, this means" +
+        " that the url to their webpage will change among other things, it is strongly recommended" +
+        " not to change the slug unless it's very crucial. Are you sure you wish to proceed?")) {
         return;
       }
       // Start the saving
       this.safeSetState({ saving: true });
 
       // Make sure this slug is not already taken since we operate with unique slugs
-      this.props.model.get(['authorsBySlug', formNode.slug.value, 'slug']).then((x) => {
+      this.props.model.get(['authorsBySlug', this.state.slug, 'slug']).then((x) => {
         if (x) {
           // This slug is already taken as something was returned
           window.alert('The slug you chose is already taken, please change it');
@@ -229,13 +202,24 @@ export default class EditorAuthorController extends FalcorController {
   handleBiographyChanges() {
     let bio = this.state.biography;
     if (markdownLength(bio) > MAX_BIOGRAPHY_LENGTH) {
-      bio = bio.substr(0, MAX_BIOGRAPHY_LENGTH);
+      bio = bio.substr(0, MAX_BIOGRAPHY_LENGTH); // Shorten to enforce length limits
       this.safeSetState({ biography: bio });
     }
   }
 
-  isChanged (userInput, falcorData) {
+  isFormFieldChanged (userInput, falcorData) {
     return ((userInput !== falcorData) && !(!userInput && !falcorData));
+  }
+
+  isFormChanged () {
+    const falcorData = this.state.data.authorsBySlug[this.props.params.slug];
+    const changedFlag =
+      this.isFormFieldChanged(this.state.name, falcorData.name) ||
+      this.isFormFieldChanged(this.state.slug, falcorData.slug) ||
+      this.isFormFieldChanged(this.state.job_title, falcorData.job_title) ||
+      this.isFormFieldChanged(this.state.image, falcorData.image) ||
+      this.isFormFieldChanged(this.state.biography, falcorData.biography);
+    return changedFlag;
   }
 
   render() {
@@ -256,11 +240,7 @@ export default class EditorAuthorController extends FalcorController {
         return <div><p>No authors match the slug given in the URL</p></div>;
       }
 
-      const slug = this.props.params.slug;
-      const author = this.state.data.authorsBySlug[slug];
-
       let changedStateMessage;
-      const changedStateStyle = {};
       if (!this.state.changed) {
         if (!this.state.saving) {
           changedStateMessage = 'No Changes';
@@ -268,14 +248,15 @@ export default class EditorAuthorController extends FalcorController {
           changedStateMessage = 'Saved';
           changedStateStyle.color = 'green';
         }
+        else {
+          changedStateMessage = "Saved";
+        }
       } else {
         if (!this.state.saving) {
           changedStateMessage = "Save Changes";
-          changedStateStyle.color = "red";
         }
         else {
           changedStateMessage = "Saving"
-          changedStateStyle.color = "#65e765";
         }
       }
 
@@ -283,7 +264,6 @@ export default class EditorAuthorController extends FalcorController {
         <div style={styles.authorProfile}>
           <h3>Author Profile: {this.state.name}</h3>
           <Divider />
-          <p>Change the information for the author and press Save Changes to confirm the changes.</p>
           <form onSubmit={this.handleSaveChanges}>
             <TextField
               value={this.state.name}
@@ -328,11 +308,10 @@ export default class EditorAuthorController extends FalcorController {
               onChange={e =>
                 this.setState({ biography: e.target.value }, () => {
                     this.debouncedHandleFormStateChanges();
-                    this.handleBiographyChanges;
+                    this.handleBiographyChanges();
                   })}
               multiLine
               rows={2}
-              rowsMax={5}
               fullWidth
             /><br />
             <RaisedButton
