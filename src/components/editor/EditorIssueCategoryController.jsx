@@ -6,6 +6,7 @@ import update from 'react-addons-update';
 // material-ui
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
+import CircularProgress from 'material-ui/CircularProgress';
 
 export default class EditorIssueCategoryController extends FalcorController {
   constructor(props) {
@@ -133,20 +134,37 @@ export default class EditorIssueCategoryController extends FalcorController {
         marginTop: 12,
         marginBottom: 24,
       },
+      circularProgress: {
+        height: 150,
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
     }
 
     if (this.state.ready) {
       if (!this.state.data) {
-        return <div>Incorrect issue number provided, this page was not found</div>;
+        return (
+          <div style={styles.tabs}>
+            <Paper style={styles.paper} zDepth={1}>
+              <div style={styles.innerPaper}>
+                Incorrect issue number provided, this page was not found
+              </div>
+            </Paper>
+          </div>
+        );
       }
       const categories = this.state.categories;
       if (!categories || categories.length === 0) {
         return (
-          <div>
-            <p>
-              The issue has no categories as of now. Remember to first add all
-              articles you want to be in the issue and then go here to order the categories.
-            </p>
+          <div style={styles.tabs}>
+            <Paper style={styles.paper} zDepth={1}>
+              <div style={styles.innerPaper}>
+                The issue has no categories as of now. Remember to first add all
+                articles you want to be in the issue and then go here to order the categories.
+              </div>
+            </Paper>
           </div>
         );
       }
@@ -224,7 +242,11 @@ export default class EditorIssueCategoryController extends FalcorController {
       );
     }
     else {
-      return <div>loading...</div>;
+      return (
+        <div style={styles.circularProgress}>
+          <CircularProgress />;
+        </div>
+      );
     }
   }
 }

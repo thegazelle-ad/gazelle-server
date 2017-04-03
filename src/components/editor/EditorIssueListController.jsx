@@ -78,6 +78,14 @@ export default class EditorIssueListController extends FalcorController {
     browserHistory.push('/issues/'+issueNumber+'/main');
   }
 
+  getInitialSelectedIndex() {
+    const path = (this.props.location.pathname).split('/'); // Parse URL pathname
+
+    if (path[3] === "main") return 0;
+    else if (path[3] === "articles") return 1;
+    else return 2; // categories
+  }
+
   render() {
     const styles = {
       paper: {
@@ -187,7 +195,7 @@ export default class EditorIssueListController extends FalcorController {
             {
               this.props.params.issueNumber ?
                 <div>
-                  <Tabs>
+                  <Tabs initialSelectedIndex={this.getInitialSelectedIndex()}>
                     <Tab
                       label="MAIN"
                       icon={<Home />}
