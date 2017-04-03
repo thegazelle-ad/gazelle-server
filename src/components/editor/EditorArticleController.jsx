@@ -5,9 +5,15 @@ import EditAuthorsForm from './EditAuthorsForm';
 import { debounce } from 'lib/utilities';
 import update from 'react-addons-update';
 import EditorArticle from 'components/editor/EditorArticle';
+import moment from 'moment';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
+import RaisedButton from 'material-ui/RaisedButton';
+import Divider from 'material-ui/Divider';
+import TextField from 'material-ui/TextField';
+import Warning from 'material-ui/svg-icons/alert/warning';
+
 
 const MAX_TEASER_LENGTH = 156;
 
@@ -416,6 +422,18 @@ export default class EditorArticleController extends FalcorController {
   }
 
   render() {
+    const styles = {
+      buttons: {
+        marginTop: 24,
+        marginBottom: 12,
+      },
+      innerPaper: {
+        paddingLeft: 30,
+        paddingRight: 30,
+        paddingBottom: 15,
+      },
+    };
+
     if (this.state.ready) {
       if (!this.state.data || !this.state.data.articlesBySlug) {
         return <div><p>Error: No articles match this slug</p></div>;
@@ -452,12 +470,14 @@ export default class EditorArticleController extends FalcorController {
       }
 
       return (
-        <div>
-          <h2 style={changedStateStyle}>{changedStateMessage}</h2>
-          <h3>{article.title}</h3>
-          <p>
-            Change the information for the article and press Save Changes to confirm the changes.
-          </p>
+        <div style={styles.innerPaper}>
+          <h2>Article Editor: {article.title}</h2>
+          <Divider />
+          <TextField
+            disabled
+            defaultValue={article.title}
+            floatingLabelText="Title"
+          />
           <form
             className="pure-form pure-form-stacked"
             onChange={(e) => { e.persist(); this.debouncedHandleMainFormChanges(e); }}
@@ -484,7 +504,6 @@ export default class EditorArticleController extends FalcorController {
             <span style={{ fontSize: '0.95em', fontStyle: 'italic' }}>
               {this.state.teaser.length} of {MAX_TEASER_LENGTH} characters
             </span>
-            {/* TODO: Style this to make it responsive*/}
             <textarea
               value={this.state.teaser}
               onChange={this.handleTeaserChanges}
@@ -504,24 +523,31 @@ export default class EditorArticleController extends FalcorController {
               model={this.props.model}
               disabled={this.state.saving}
             />
-            <input
-              className="pure-button pure-button-primary"
-              type="submit" value="Save Changes"
+            <RaisedButton
+              label={changedStateMessage}
+              primary
+              style={styles.buttons}
+              type="submit"
               disabled={!this.state.changed || this.state.saving}
             />
           </form>
+          <br />
+          <Divider />
+          <br />
           {
             article.published_at ?
-            `The article was published at ${new Date(article.published_at)}` :
-            'The article has yet to be published. It will be published automatically' +
-            ' when you publish the issue that contains it.'
+            "This article was published on " +  moment(article.published_at).format('MMMM DD, YYYY') + "." :
+            "The article has yet to be published. It will be published automatically" +
+            " when you publish the issue that contains it."
           } <br />
-          <button
-            type="button"
-            className="pure-button"
-            onClick={this.unpublish}
+          <RaisedButton
+            label="Unpublish Article"
+            secondary
+            style={styles.buttons}
             disabled={!article.published_at}
-          >Unpublish</button>
+            onClick={this.unpublish}
+            icon={<Warning />}
+          />
         </div>
       );
     }
