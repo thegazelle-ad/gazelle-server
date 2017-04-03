@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
+import RaisedButton from 'material-ui/RaisedButton';
 
 export default class EditorMainIssueController extends FalcorController {
   constructor(props) {
@@ -124,40 +125,47 @@ export default class EditorMainIssueController extends FalcorController {
         marginTop: 12,
         marginBottom: 24,
       },
+      publishingButtons: {
+        margin: 12,
+      },
+      circularProgress: {
+        height: 150,
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
     }
 
     if (this.state.ready) {
       if (!this.state.data) {
         return <p>This issue does not exist</p>;
       }
-      const published = this.state.data.issuesByNumber[this.props.params.issueNumber].published_at;
+      const published = this.state.data.issuesByNumber[this.props.params.issueNumber].published_at ? true : false;
       return (
         <div style={styles.tabs}>
-          {
-            published
-            ? <h3>Already Published</h3>
-            : null
-          }
-          <button
-            type="button"
-            className="pure-button"
-            onClick={this.publishIssue}
-            style={{
-              width: "15em",
-              height: "10em",
-              backgroundColor: "green",
-            }}
-          >Publish Issue</button>
-          <button
-            type="button"
-            className="pure-button"
-            onClick={this.unpublishIssue}
-            style={{
-              width: "15em",
-              height: "10em",
-              backgroundColor: "red",
-            }}
-          >Unpublish Issue</button>
+          <RaisedButton
+            label={
+              !published
+              ? "Publish Issue"
+              : "Issue Published"
+            }
+            primary
+            style={styles.publishingButtons}
+            onTouchTap={this.publishIssue}
+            disabled={published}
+          />
+          <RaisedButton
+            label={
+              published
+              ? "Unpublish Issue"
+              : "Issue Not Published"
+            }
+            secondary
+            style={styles.publishingButtons}
+            onTouchTap={this.unpublishIssue}
+            disabled={!published}
+          />
           {this.state.publishing
           ? <h4>Publishing...</h4>
           : null
@@ -166,7 +174,11 @@ export default class EditorMainIssueController extends FalcorController {
       );
     }
     else {
-      return <CircularProgress />;
+      return (
+        <div style={styles.circularProgress}>
+          <CircularProgress />;
+        </div>
+      );
     }
   }
 }
