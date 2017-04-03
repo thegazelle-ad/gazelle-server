@@ -142,7 +142,6 @@ export default class EditorAuthorListController extends FalcorController {
                   <Divider />
                   <form onSubmit={(e)=>{e.preventDefault()}}>
                     <TextField
-                      type="text"
                       hintText="John Appleseed"
                       floatingLabelText="Input Name"
                       value={this.state.slugSearchValue}

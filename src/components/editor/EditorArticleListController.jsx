@@ -3,10 +3,16 @@ import { Link, browserHistory } from 'react-router';
 import FalcorController from "lib/falcor/FalcorController";
 import EditorSearchBar from 'components/editor/EditorSearchBar';
 import EditorList from 'components/editor/EditorList';
+import moment from 'moment';
 
 // material-ui
 import ListItem from 'material-ui/List/ListItem';
 import CircularProgress from 'material-ui/CircularProgress';
+import Paper from 'material-ui/Paper';
+import Divider from 'material-ui/Divider';
+import {darkBlack} from 'material-ui/styles/colors';
+import RaisedButton from 'material-ui/RaisedButton';
+
 
 const NUM_ARTICLES_IN_PAGE = 50;
 
@@ -19,7 +25,7 @@ export default class EditorArticleListController extends FalcorController {
 
   static getFalcorPathSets(params) {
     return [
-      ['articlesByPage', NUM_ARTICLES_IN_PAGE, parseInt(params.page), {length: NUM_ARTICLES_IN_PAGE}, ['title', 'slug']],
+      ['articlesByPage', NUM_ARTICLES_IN_PAGE, parseInt(params.page), {length: NUM_ARTICLES_IN_PAGE}, ['title', 'slug', 'teaser', 'published_at']],
       ['totalAmountOfArticles'],
     ];
   }
@@ -40,12 +46,43 @@ export default class EditorArticleListController extends FalcorController {
   createListElement(page, article) {
     return (
       <Link to={"/articles/page/" + page + "/slug/"+article.slug} key={article.slug}>
-        <ListItem primaryText={article.title} />
+        <ListItem
+          primaryText={article.title}
+          secondaryText={
+            <p>
+              <span style={{color: darkBlack}}>
+                {moment(article.published_at).format('MMM DD, YYYY')}
+              </span> {" -- "}
+              {article.teaser}
+            </p>
+          }
+          secondaryTextLines={2}
+        />
       </Link>
     );
   }
 
   render() {
+    const styles = {
+      paper: {
+        height: '100%',
+        width: '100%',
+        marginTop: 20,
+        marginBottom: 20,
+        textAlign: 'left',
+        display: 'inline-block',
+      },
+      tabs: {
+        paddingLeft: 30,
+        paddingRight: 30,
+        paddingBottom: 15,
+      },
+      buttons: {
+        margin: 12,
+        marginBottom: 24,
+      },
+    }
+
     let data, page, maxPage, length;
     if (this.state.ready) {
       // If trying to access inacessible page, redirect to page 1
@@ -65,24 +102,46 @@ export default class EditorArticleListController extends FalcorController {
     if (this.state.ready) {
       return (
         <div>
-          <EditorSearchBar
-            model={this.props.model}
-            mode="articles"
-            handleClick={this.clickSearchSuggestion}
-            length={3}
-            fields={[]}
-            showPubDate
-          />
-          {/* eslint-disable react/jsx-no-bind */}
-          <EditorList
-            elements={data}
-            createElement={this.createListElement.bind(null, page)}
-          />
-          {/* eslint-enable react/jsx-no-bind */}
-          <Link to={this.getNewPagePath(-1)}><button type="button" disabled={page <= 1}>Previous Page</button></Link>
-          Page {page} of {maxPage}
-          <Link to={this.getNewPagePath(1)}><button type="button" disabled={page >= maxPage}>Next Page</button></Link>
-          {this.props.children}
+          <h1>Articles</h1>
+          <Divider />
+          <Paper style={styles.paper} zDepth={2}>
+            <div style={styles.tabs}>
+              <h2>Select an Article</h2>
+              <Divider />
+              <br />
+              <EditorSearchBar
+                model={this.props.model}
+                mode="articles"
+                handleClick={this.clickSearchSuggestion}
+                length={3}
+                fields={[]}
+                showPubDate
+              />
+              {/* eslint-disable react/jsx-no-bind */}
+              <EditorList
+                elements={data}
+                createElement={this.createListElement.bind(null, page)}
+              />
+              {/* eslint-enable react/jsx-no-bind */}
+              <RaisedButton
+                label="Previous Page"
+                primary
+                style={styles.buttons}
+                disabled={page <= 1}
+                containerElement={<Link to={this.getNewPagePath(-1)} />}
+              />
+              <RaisedButton
+                label="Next Page"
+                primary
+                style={styles.buttons}
+                disabled={page >= maxPage}
+                containerElement={<Link to={this.getNewPagePath(1)} />}
+              />
+            </div>
+          </Paper>
+          <Paper style={styles.paper} zDepth={2}>
+            {this.props.children}
+          </Paper>
         </div>
       );
     }

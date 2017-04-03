@@ -1,10 +1,13 @@
 import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
-import { debounce, formatDate } from 'lib/utilities';
+import { debounce } from 'lib/utilities';
 import _ from 'lodash';
+import moment from 'moment';
 
 // material-ui
 import TextField from 'material-ui/TextField';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
 
 export default class EditorSearchBar extends BaseComponent {
   constructor(props) {
@@ -107,52 +110,46 @@ export default class EditorSearchBar extends BaseComponent {
     this.props.handleClick(article);
   }
 
-  // <input
-  //   type="text"
-  //   value={this.state.searchValue}
-  //   placeholder={this.props.placeholder || "Input Title"}
-  //   onChange={this.handleSearchChange}
-  //   style={{marginBottom: "5px"}}
-  // />
-
   render() {
     if (this.props.mode === "articles") {
       return (
         <div>
           <TextField
-            hintText="Search for articles"
+            floatingLabelText="Search for Articles"
+            hintText="Article"
             fullWidth
             value={this.state.searchValue}
             onChange={this.handleSearchChange}
           />
           <div>
-            {
-              this.state.searchSuggestions.map((article) => {
-                let textShown = article.title;
-                if (this.props.showPubDate) {
-                  let date;
-                  if (article.published_at) {
-                    date = formatDate(new Date(article.published_at));
+            <Menu>
+              {
+                this.state.searchSuggestions.map((article) => {
+                  let textShown = article.title;
+                  if (this.props.showPubDate) {
+                    let date;
+                    if (article.published_at) {
+                      date = "Published: " + moment(article.published_at).format('MMM DD, YYYY');
+                    }
+                    else {
+                      date = "Unpublished";
+                    }
+                    textShown += ' - ' + date;
                   }
-                  else {
-                    date = "Unpublished";
-                  }
-                  textShown += ' - ' + date;
-                }
-                return (
-                  <div key={article.slug}>
-                    {/* eslint-disable react/jsx-no-bind */}
-                    <button
-                      type="button"
-                      className="pure-button"
-                      onClick={this.handleClick.bind(this, article)}
-                      disabled={this.props.disabled}
-                    >{textShown}</button>
-                    {/* eslint-enable react/jsx-no-bind */}
-                  </div>
-                );
-              })
-            }
+                  return (
+                    <div key={article.slug}>
+                      {/* eslint-disable react/jsx-no-bind */}
+                      <MenuItem
+                        primaryText={textShown}
+                        onClick={this.handleClick.bind(this, article)}
+                        disabled={this.props.disabled}
+                      />
+                      {/* eslint-enable react/jsx-no-bind */}
+                    </div>
+                  );
+                })
+              }
+            </Menu>
           </div>
         </div>
       );
@@ -240,3 +237,10 @@ EditorSearchBar.propTypes = {
     }
   },
 }
+
+// <button
+//   type="button"
+//   className="pure-button"
+//   onClick={this.handleClick.bind(this, article)}
+//   disabled={this.props.disabled}
+// >{textShown}</button>
