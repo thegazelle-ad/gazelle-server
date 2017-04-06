@@ -156,30 +156,31 @@ export default class EditorSearchBar extends BaseComponent {
     }
     else if (this.props.mode === "authors") {
       return (
-        <div >
-          <input
-            type="text"
+        <div>
+          <TextField
+            floatingLabelText="Search for Authors"
+            hintText="Author"
             value={this.state.searchValue}
-            placeholder={this.props.placeholder || "Input Name"}
             onChange={this.handleSearchChange}
-            style={{marginBottom: "5px"}}
           />
           <div>
-            {
-              this.state.searchSuggestions.map((author) => {
-                return (
-                  <div key={author.slug}>
-                    {/* eslint-disable react/jsx-no-bind */}
-                    <button
-                      type="button"
-                      onClick={this.handleClick.bind(this, author)}
-                      disabled={this.props.disabled}
-                    >{author.name}</button>
-                    {/* eslint-enable react/jsx-no-bind */}
-                  </div>
-                );
-              })
-            }
+            <Menu style={{width: 200}}>
+              {
+                this.state.searchSuggestions.map((author) => {
+                  return (
+                    <div key={author.slug}>
+                      {/* eslint-disable react/jsx-no-bind */}
+                      <MenuItem
+                        primaryText={author.name}
+                        onClick={this.handleClick.bind(this, author)}
+                        disabled={this.props.disabled}
+                      />
+                      {/* eslint-enable react/jsx-no-bind */}
+                    </div>
+                  );
+                })
+              }
+            </Menu>
           </div>
         </div>
       );
