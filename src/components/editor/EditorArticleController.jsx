@@ -13,6 +13,9 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Divider from 'material-ui/Divider';
 import TextField from 'material-ui/TextField';
 import Warning from 'material-ui/svg-icons/alert/warning';
+import MenuItem from 'material-ui/MenuItem';
+import SelectField from 'material-ui/SelectField';
+
 
 
 const MAX_TEASER_LENGTH = 156;
@@ -22,6 +25,7 @@ export default class EditorArticleController extends FalcorController {
     super(props);
     this.checkFormChanges = this.checkFormChanges.bind(this);
     this.handleAuthorChanges = this.handleAuthorChanges.bind(this);
+    this.handleCategoryChange = this.handleCategoryChange.bind(this);
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
     this.handleAddAuthor = this.handleAddAuthor.bind(this);
     this.handleDeleteAuthor = this.handleDeleteAuthor.bind(this);
@@ -37,7 +41,20 @@ export default class EditorArticleController extends FalcorController {
         authors: false,
       },
       teaser: "",
+      category: "",
+      image: "",
     });
+
+    this.debouncedHandleFormStateChanges = debounce( () => {
+      // We don't want the debounced event to happen if we're saving
+      if (this.state.saving) return;
+
+      const changedFlag = this.isFormChanged();
+      if (changedFlag !== this.state.changed) {
+        this.safeSetState({changed: changedFlag});
+      }
+    }, 500);
+
 
     this.debouncedHandleMainFormChanges = debounce((event) => {
       // We don't want the debounced event to happen if we're saving
@@ -85,24 +102,38 @@ export default class EditorArticleController extends FalcorController {
 
   componentWillMount() {
     const falcorCallback = (data) => {
-      let teaser = data.articlesBySlug[this.props.params.slug].teaser;
-      if (!teaser) {
-        teaser = "";
-      }
+      const article =  data.articlesBySlug[this.props.params.slug];
+      let teaser = article.teaser;
+      let category = article.slug;
+      let image = article.image;
+
+      if (!teaser) { teaser = ""; }
+      if (!category) { category = ""; }
+      if (!image) { image = ""; }
+
       this.safeSetState({
         teaser: teaser,
+        category: category,
+        image: image,
       });
     }
     super.componentWillMount(falcorCallback);
   }
   componentWillReceiveProps(nextProps) {
     const falcorCallback = (data) => {
-      let teaser = data.articlesBySlug[this.props.params.slug].teaser;
-      if (!teaser) {
-        teaser = "";
-      }
+      const article =  data.articlesBySlug[this.props.params.slug];
+      let teaser = article.teaser;
+      let category = article.slug;
+      let image = article.image;
+
+      if (!teaser) { teaser = ""; }
+      if (!category) { category = ""; }
+      if (!image) { image = ""; }
+
       this.safeSetState({
         teaser: teaser,
+        category: category,
+        image: image,
       });
     }
     super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
@@ -382,14 +413,12 @@ the save changes button is supposed to be disabled in this case");
     }
   }
 
-  handleTeaserChanges(e) {
-    let teaser = e.target.value;
+  handleTeaserChanges() {
+    let teaser = this.state.teaser;
     if (teaser.length > MAX_TEASER_LENGTH) {
       teaser = teaser.substr(0, MAX_TEASER_LENGTH);
+      this.safeSetState({ teaser: teaser });
     }
-    this.safeSetState({
-      teaser: teaser,
-    });
   }
 
   unpublish() {
@@ -418,6 +447,24 @@ the save changes button is supposed to be disabled in this case");
     });
     this.falcorUpdate(jsonGraphEnvelope, undefined, callback);
   }
+
+  handleCategoryChange (event, index, value){
+    this.safeSetState({category: value});
+  }
+
+  isFormFieldChanged (userInput, falcorData) {
+    return ((userInput !== falcorData) && !(!userInput && !falcorData));
+  }
+
+  isFormChanged () {
+    const falcorData = this.state.data.articlesBySlug[this.props.params.slug];
+    const changedFlag =
+      this.isFormFieldChanged(this.state.teaser, falcorData.teaser) ||
+      this.isFormFieldChanged(this.state.category, falcorData.category) ||
+      this.isFormFieldChanged(this.state.image, falcorData.image);
+    return changedFlag;
+  }
+
 
   render() {
     const styles = {
@@ -480,38 +527,57 @@ the save changes button is supposed to be disabled in this case");
             floatingLabelText="Title"
           />
           <form
-            className="pure-form pure-form-stacked"
-            onChange={(e) => {e.persist(); this.debouncedHandleMainFormChanges(e)}}
             onSubmit={this.handleSaveChanges}
           >
-            Change the Category:
-            <select
-              defaultValue={article.category}
-              name="category"
+            <SelectField
+              floatingLabelText="Change the Category"
+              maxHeight={400}
+              value={this.state.category}
+              onChange={this.handleCategoryChange}
               disabled={this.state.saving}
+              autoWidth={false}
+              style={{width: 200}}
             >
-              {_.map(categories, (category) => {
-                return <option value={category.slug} key={category.slug}>{category.name}</option>;
-              })}
-            </select>
-            Change Image URL (please use https:// for s3 links and any other appropriate sites):
-            <input
-              type="text"
-              defaultValue={article.image}
+              {
+                _.map(categories, (category) => {
+                  return (
+                    <MenuItem
+                      value={category.slug}
+                      key={category.slug}
+                      primaryText={category.name}
+                    />
+                  );
+                })
+              }
+            </SelectField>
+            <TextField
               name="image"
+              value={this.state.image}
+              floatingLabelText="Image (Remember to use https:// not http://)"
               disabled={this.state.saving}
-            />
-            Change Teaser:<br />
-            <span style={{fontSize: "0.95em", fontStyle: "italic"}}>
-              {this.state.teaser.length} of {MAX_TEASER_LENGTH} characters
-            </span>
-            <textarea
-              value={this.state.teaser}
-              onChange={this.handleTeaserChanges}
-              style={{width: "30em", height: "5em", marginBottom: "10px"}}
+              onChange={e =>
+                this.setState({ image: e.target.value }, () => {
+                    this.debouncedHandleFormStateChanges();})}
+              fullWidth
+            /><br />
+            <TextField
               name="teaser"
+              floatingLabelText={"Teaser (" + this.state.teaser.length +
+                " of " + MAX_TEASER_LENGTH + " characters)"}
+              value={this.state.teaser}
               disabled={this.state.saving}
-            />
+              onChange={e =>
+                this.setState({ teaser: e.target.value }, () => {
+                    this.debouncedHandleFormStateChanges();
+                    this.handleTeaserChanges();
+                  })}
+              multiLine
+              rows={2}
+              fullWidth
+            /><br />
+            <br />
+            <br />
+
             Update Authors:
             <EditAuthorsForm
               style={{marginBottom: "10px", marginTop: "6px"}}
