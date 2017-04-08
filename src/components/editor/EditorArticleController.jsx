@@ -16,8 +16,6 @@ import Warning from 'material-ui/svg-icons/alert/warning';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 
-
-
 const MAX_TEASER_LENGTH = 156;
 
 export default class EditorArticleController extends FalcorController {
@@ -25,7 +23,8 @@ export default class EditorArticleController extends FalcorController {
     super(props);
     this.checkFormChanges = this.checkFormChanges.bind(this);
     this.handleAuthorChanges = this.handleAuthorChanges.bind(this);
-    this.handleCategoryChange = this.handleCategoryChange.bind(this);
+    this.isFormChanged = this.isFormChanged.bind(this);
+    this.isFormFieldChanged = this.isFormFieldChanged.bind(this);
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
     this.handleAddAuthor = this.handleAddAuthor.bind(this);
     this.handleDeleteAuthor = this.handleDeleteAuthor.bind(this);
@@ -55,41 +54,41 @@ export default class EditorArticleController extends FalcorController {
       }
     }, 500);
 
-
-    this.debouncedHandleMainFormChanges = debounce((event) => {
-      // We don't want the debounced event to happen if we're saving
-      if (this.state.saving) return;
-
-      const formNode = event.target.parentNode;
-
-      // Gets all the input elements that we named
-      const children = _.map(formNode.children, (child) => {
-        return child.name;
-      })
-      const fields = children.filter((key) => {
-        return key && isNaN(parseInt(key)) && key !== "length";
-      });
-
-      const falcorData = this.state.data.articlesBySlug[this.props.params.slug];
-
-      let changedFlag = fields.some((field) => {
-        const formValue = formNode[field].value;
-        const falcorValue = falcorData[field];
-
-        // The last boolean check here checks if both values are falsey
-        // like null and empty string, in that case we'll say there's no change
-        return formValue !== falcorValue && !(!formValue && !falcorValue);
-      });
-
-      if (changedFlag !== this.state.changesObject.mainForm) {
-        const newChangesObject = update(this.state.changesObject, {mainForm: {$set: changedFlag}});
-        // this.setState is not a synchronous function, so we check with what will become the new changesObject
-        this.checkFormChanges(newChangesObject);
-        this.safeSetState({
-          changesObject: newChangesObject,
-        });
-      }
-    }, 500);
+    // TODO: remove?
+    // this.debouncedHandleMainFormChanges = debounce((event) => {
+    //   // We don't want the debounced event to happen if we're saving
+    //   if (this.state.saving) return;
+    //
+    //   const formNode = event.target.parentNode;
+    //
+    //   // Gets all the input elements that we named
+    //   const children = _.map(formNode.children, (child) => {
+    //     return child.name;
+    //   })
+    //   const fields = children.filter((key) => {
+    //     return key && isNaN(parseInt(key)) && key !== "length";
+    //   });
+    //
+    //   const falcorData = this.state.data.articlesBySlug[this.props.params.slug];
+    //
+    //   let changedFlag = fields.some((field) => {
+    //     const formValue = formNode[field].value;
+    //     const falcorValue = falcorData[field];
+    //
+    //     // The last boolean check here checks if both values are falsey
+    //     // like null and empty string, in that case we'll say there's no change
+    //     return formValue !== falcorValue && !(!formValue && !falcorValue);
+    //   });
+    //
+    //   if (changedFlag !== this.state.changesObject.mainForm) {
+    //     const newChangesObject = update(this.state.changesObject, {mainForm: {$set: changedFlag}});
+    //     // this.setState is not a synchronous function, so we check with what will become the new changesObject
+    //     this.checkFormChanges(newChangesObject);
+    //     this.safeSetState({
+    //       changesObject: newChangesObject,
+    //     });
+    //   }
+    // }, 500);
   }
 
   static getFalcorPathSets(params) {
@@ -104,7 +103,7 @@ export default class EditorArticleController extends FalcorController {
     const falcorCallback = (data) => {
       const article =  data.articlesBySlug[this.props.params.slug];
       let teaser = article.teaser;
-      let category = article.slug;
+      let category = article.category;
       let image = article.image;
 
       if (!teaser) { teaser = ""; }
@@ -123,7 +122,7 @@ export default class EditorArticleController extends FalcorController {
     const falcorCallback = (data) => {
       const article =  data.articlesBySlug[this.props.params.slug];
       let teaser = article.teaser;
-      let category = article.slug;
+      let category = article.category;
       let image = article.image;
 
       if (!teaser) { teaser = ""; }
@@ -182,15 +181,13 @@ export default class EditorArticleController extends FalcorController {
   handleSaveChanges(event) {
     event.preventDefault();
 
-    const formNode = event.target;
     const articleSlug = this.props.params.slug;
     const falcorData = this.state.data.articlesBySlug[articleSlug];
-    const children = _.map(formNode.children, (child) => {
-      return child.name;
-    })
-    const mainFormFields = children.filter((key) => {
-      return key && isNaN(parseInt(key)) && key !== "length";
-    });
+
+    if (!this.isFormChanged()) {
+      throw new Error("Tried to save changes but there were no changes. \
+the save changes button is supposed to be disabled in this case");
+    }
 
     // Check if we are editing authors
     const authorsAdded = this.state.authorsAdded.length > 0;
@@ -228,13 +225,13 @@ export default class EditorArticleController extends FalcorController {
     }
 
     // Check the special case of someone trying to reassign a category as none
-    if (formNode.category.value === "none" && falcorData.category !== "none") {
+    if (this.state.category === "none" && falcorData.category !== "none") {
       window.alert("Save cancelled, you cannot reset a category to none." +
         " If you wish to have this feature added, speak to the developers");
       return;
     }
 
-    if (formNode.image.length > 4 && formNode.image.substr(0, 5) !== "https") {
+    if (this.state.image.length > 4 && this.state.image.substr(0, 5) !== "https") {
       if (!window.confirm("You are saving an image without using https. " +
         "This can be correct in a few cases but is mostly not. Are you sure " +
         " you wish to continue saving?")) {
@@ -242,23 +239,21 @@ export default class EditorArticleController extends FalcorController {
       }
     }
 
-    // Filter fields that didn't change
+    // TODO: For the sake of clarity for future devs, maybe its best to just
+    // update all fields. Since this is infrequent, it isn't such a big load
+    // on the servers is it?
 
-    const filteredFields = mainFormFields.filter((field) => {
-      const formValue = formNode[field].value;
-      const falcorValue = falcorData[field];
-
-      return formValue !== falcorValue && !(!formValue && !falcorValue);
-    });
-
-    // Determine number of updates to be called
-    const updatesToBeCalled = Number(filteredFields.length > 0) +
-    Number(newAuthors !== null);
-
-    if (updatesToBeCalled === 0) {
-      throw new Error("Tried to save changes but there were no changes. \
-the save changes button is supposed to be disabled in this case");
-    }
+    // // Filter fields that didn't change
+    // const filteredFields = mainFormFields.filter((field) => {
+    //   const formValue = formNode[field].value;
+    //   const falcorValue = falcorData[field];
+    //
+    //   return formValue !== falcorValue && !(!formValue && !falcorValue);
+    // });
+    //
+    // // Determine number of updates to be called
+    // const updatesToBeCalled = Number(filteredFields.length > 0) +
+    // Number(newAuthors !== null);
 
     // Function to be called when all updates are done
     const resetState = () => {
@@ -273,88 +268,99 @@ the save changes button is supposed to be disabled in this case");
     }
 
     // Call necessary updates
-    let updatesDone = 0;
+    // TODO: remove if we end up using promises
+    // let updatesDone = 0;
     this.safeSetState({saving: true});
-    if (filteredFields.length > 0) {
-      // Build the jsonGraphEnvelope
-      const jsonGraphEnvelope = {
-        paths: [
-          ['articlesBySlug', articleSlug, filteredFields],
-        ],
-        jsonGraph: {
-          articlesBySlug: {
-            [articleSlug]: {},
-          },
+    // Build the jsonGraphEnvelope
+    const jsonGraphEnvelope = {
+      paths: [
+        ['articlesBySlug', articleSlug, ['teaser', 'category', 'image']],
+      ],
+      jsonGraph: {
+        articlesBySlug: {
+          [articleSlug]: {},
         },
-      };
+      },
+    };
+    // Fill in the data
+    jsonGraphEnvelope.jsonGraph.authorsBySlug[articleSlug]['teaser'] = this.state.teaser;
+    jsonGraphEnvelope.jsonGraph.authorsBySlug[articleSlug]['category'] = this.state.category;
+    jsonGraphEnvelope.jsonGraph.authorsBySlug[articleSlug]['image'] = this.state.image;
 
-      filteredFields.forEach((field) => {
-        const formValue = formNode[field].value;
-        jsonGraphEnvelope.jsonGraph.articlesBySlug[articleSlug][field] = formValue;
-      });
-      // Update the values
-      this.falcorUpdate(jsonGraphEnvelope, undefined, () => {
-        updatesDone++;
-        if (updatesDone === updatesToBeCalled) {
-          resetState();
-          /* We can get rid of this hacky solution as right now we just do a full falcor fetch */
-          // if (authorsToDelete.length > 0) {
-          //   // This is temporary until we find a good way to remove invalidated paths from the
-          //   // this.falcorCall function itself. It is very bad and should definitely be improved
-          //   setTimeout(() => {
-          //     const dataCopy = Object.assign({}, this.state.data);
-          //     authorsToDelete.forEach((id) => {
-          //       let index = -1;
-          //       _.find(dataCopy.articlesBySlug[articleSlug].authors, (value, key) => {
-          //         if (value.id === id) {
-          //           index = parseInt(key);
-          //           return true;
-          //         }
-          //         return false;
-          //       });
-          //       if (index !== -1) {
-          //         // The author wasn't overwritten by the setState call
-          //         delete dataCopy.articlesBySlug[articleSlug].authors[index];
-          //       }
-          //     });
-          //     this.safeSetState({data: dataCopy});
-          //   }, 200);
-          // }
-        }
-      });
-    }
+    // Update the values
+    this.falcorUpdate(jsonGraphEnvelope, undefined, resetState);
+
+    // TODO: is all of the below necessary??
+
+      // // Update the values
+      // this.falcorUpdate(jsonGraphEnvelope, undefined, () => {
+      //   updatesDone++;
+      //   if (updatesDone === updatesToBeCalled) {
+      //     resetState();
+      //     /* We can get rid of this hacky solution as right now we just do a full falcor fetch */
+      //     // if (authorsToDelete.length > 0) {
+      //     //   // This is temporary until we find a good way to remove invalidated paths from the
+      //     //   // this.falcorCall function itself. It is very bad and should definitely be improved
+      //     //   setTimeout(() => {
+      //     //     const dataCopy = Object.assign({}, this.state.data);
+      //     //     authorsToDelete.forEach((id) => {
+      //     //       let index = -1;
+      //     //       _.find(dataCopy.articlesBySlug[articleSlug].authors, (value, key) => {
+      //     //         if (value.id === id) {
+      //     //           index = parseInt(key);
+      //     //           return true;
+      //     //         }
+      //     //         return false;
+      //     //       });
+      //     //       if (index !== -1) {
+      //     //         // The author wasn't overwritten by the setState call
+      //     //         delete dataCopy.articlesBySlug[articleSlug].authors[index];
+      //     //       }
+      //     //     });
+      //     //     this.safeSetState({data: dataCopy});
+      //     //   }, 200);
+      //     // }
+      //   }
+      // });
+
+    // TODO: are you doing this to force synchronicity? If so, a simpler way would
+    // to be to make these bits promises and call in order using .then(...).then(...) etc.
     if (newAuthors !== null) {
       this.falcorCall(['articlesBySlug', articleSlug, 'authors', 'updateAuthors'], [falcorData.id, newAuthors],
-      [['name'], ['slug']], undefined, undefined, () => {
-        updatesDone++;
-        if (updatesDone === updatesToBeCalled) {
-          resetState();
-          /* We can get rid of this hacky solution as right now we just do a full falcor fetch */
-          // if (authorsToDelete.length > 0) {
-          //   // This is temporary until we find a good way to remove invalidated paths from the
-          //   // this.falcorCall function itself. It is very bad and should definitely be improved
-          //   setTimeout(() => {
-          //     const dataCopy = Object.assign({}, this.state.data);
-          //     authorsToDelete.forEach((slug) => {
-          //       let index = -1;
-          //       _.find(dataCopy.articlesBySlug[articleSlug].authors, (value, key) => {
-          //         if (value.slug === slug) {
-          //           index = parseInt(key);
-          //           return true;
-          //         }
-          //         return false;
-          //       });
-          //       if (index !== -1) {
-          //         // The author wasn't overwritten by the setState call
-          //         delete dataCopy.articlesBySlug[articleSlug].authors[index];
-          //       }
-          //     });
-          //     this.safeSetState({data: dataCopy});
-          //   }, 200);
-          // }
-        }
-      });
+      [['name'], ['slug']], undefined, undefined, resetState);
     }
+
+      // this.falcorCall(['articlesBySlug', articleSlug, 'authors', 'updateAuthors'], [falcorData.id, newAuthors],
+      // [['name'], ['slug']], undefined, undefined, () => {
+      //   updatesDone++;
+      //   if (updatesDone === updatesToBeCalled) {
+      //     resetState();
+      //     /* We can get rid of this hacky solution as right now we just do a full falcor fetch */
+      //     // if (authorsToDelete.length > 0) {
+      //     //   // This is temporary until we find a good way to remove invalidated paths from the
+      //     //   // this.falcorCall function itself. It is very bad and should definitely be improved
+      //     //   setTimeout(() => {
+      //     //     const dataCopy = Object.assign({}, this.state.data);
+      //     //     authorsToDelete.forEach((slug) => {
+      //     //       let index = -1;
+      //     //       _.find(dataCopy.articlesBySlug[articleSlug].authors, (value, key) => {
+      //     //         if (value.slug === slug) {
+      //     //           index = parseInt(key);
+      //     //           return true;
+      //     //         }
+      //     //         return false;
+      //     //       });
+      //     //       if (index !== -1) {
+      //     //         // The author wasn't overwritten by the setState call
+      //     //         delete dataCopy.articlesBySlug[articleSlug].authors[index];
+      //     //       }
+      //     //     });
+      //     //     this.safeSetState({data: dataCopy});
+      //     //   }, 200);
+      //     // }
+      //   }
+      // });
+      // }
   }
 
   // Handle state changes coming from editAuthorsForm
@@ -388,8 +394,11 @@ the save changes button is supposed to be disabled in this case");
     }
   }
 
+  // TODO: deleting author doesnt seem to be working, not sure why
   handleDeleteAuthor(id, isOriginalAuthor) {
     // disabled this if saving
+    console.log("deleting");
+    console.log(this.state.authorsAdded);
     if (this.state.saving) return;
     if (isOriginalAuthor) {
       let newValue = {};
@@ -409,6 +418,8 @@ the save changes button is supposed to be disabled in this case");
       const newAuthorsAdded = update(this.state.authorsAdded, {$splice: [[index, 1]]});
       this.safeSetState({
         authorsAdded: newAuthorsAdded,
+      }, () => {
+        console.log(this.state.authorsAdded);
       });
     }
   }
@@ -446,10 +457,6 @@ the save changes button is supposed to be disabled in this case");
       saving: true,
     });
     this.falcorUpdate(jsonGraphEnvelope, undefined, callback);
-  }
-
-  handleCategoryChange (event, index, value){
-    this.safeSetState({category: value});
   }
 
   isFormFieldChanged (userInput, falcorData) {
@@ -525,15 +532,21 @@ the save changes button is supposed to be disabled in this case");
             disabled
             defaultValue={article.title}
             floatingLabelText="Title"
+            fullWidth
           />
           <form
             onSubmit={this.handleSaveChanges}
           >
             <SelectField
-              floatingLabelText="Change the Category"
+              floatingLabelText="Category"
               maxHeight={400}
               value={this.state.category}
-              onChange={this.handleCategoryChange}
+              onChange={(event, index, value) => {
+                  this.setState({category: value}, () =>{
+                    this.debouncedHandleFormStateChanges();
+                  })
+                }
+              }
               disabled={this.state.saving}
               autoWidth={false}
               style={{width: 200}}
@@ -584,7 +597,7 @@ the save changes button is supposed to be disabled in this case");
               authorsAdded={this.state.authorsAdded}
               model={this.props.model}
               disabled={this.state.saving}
-            /><br />
+            />
             <RaisedButton
               label={changedStateMessage}
               primary
