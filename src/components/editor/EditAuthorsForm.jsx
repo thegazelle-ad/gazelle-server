@@ -92,7 +92,7 @@ export default class EditAuthorsForm extends BaseComponent {
           // })
         }
         <br />
-        <p style={{marginBottom: 10}}>Authors</p>
+        <p style={{marginTop: 0, marginBottom: 10}}>Authors</p>
         <div style={styles.wrapper} >
           {renderChips(this.props.authors)}
           {renderChips(this.props.authorsAdded)}
