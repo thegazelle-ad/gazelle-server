@@ -508,11 +508,11 @@ export default class EditorArticleController extends FalcorController {
         }
       } else {
         if (!this.state.saving) {
-          changedStateMessage = 'Unsaved Changes';
-          changedStateStyle.color = 'red';
+          changedStateMessage = "Save Changes";
+          changedStateStyle.color = "red";
         } else {
-          changedStateMessage = 'Saving';
-          changedStateStyle.color = '#65e765';
+          changedStateMessage = "Saving"
+          changedStateStyle.color = "#65e765";
         }
       }
 
@@ -574,12 +574,7 @@ export default class EditorArticleController extends FalcorController {
               rows={2}
               fullWidth
             /><br />
-            <br />
-            <br />
-
-            Update Authors:
             <EditAuthorsForm
-              style={{ marginBottom: '10px', marginTop: '6px' }}
               authors={article.authors}
               onChange={this.handleAuthorChanges}
               handleAddAuthor={this.handleAddAuthor}
@@ -588,7 +583,7 @@ export default class EditorArticleController extends FalcorController {
               authorsAdded={this.state.authorsAdded}
               model={this.props.model}
               disabled={this.state.saving}
-            />
+            /><br />
             <RaisedButton
               label={changedStateMessage}
               primary
