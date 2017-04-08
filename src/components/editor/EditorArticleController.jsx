@@ -508,7 +508,7 @@ the save changes button is supposed to be disabled in this case");
       }
       else {
         if (!this.state.saving) {
-          changedStateMessage = "Unsaved Changes";
+          changedStateMessage = "Save Changes";
           changedStateStyle.color = "red";
         }
         else {
@@ -575,12 +575,7 @@ the save changes button is supposed to be disabled in this case");
               rows={2}
               fullWidth
             /><br />
-            <br />
-            <br />
-
-            Update Authors:
             <EditAuthorsForm
-              style={{marginBottom: "10px", marginTop: "6px"}}
               authors={article.authors}
               onChange={this.handleAuthorChanges}
               handleAddAuthor={this.handleAddAuthor}
@@ -589,7 +584,7 @@ the save changes button is supposed to be disabled in this case");
               authorsAdded={this.state.authorsAdded}
               model={this.props.model}
               disabled={this.state.saving}
-            />
+            /><br />
             <RaisedButton
               label={changedStateMessage}
               primary
