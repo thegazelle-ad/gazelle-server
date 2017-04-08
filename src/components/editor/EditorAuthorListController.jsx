@@ -224,7 +224,7 @@ export default class EditorAuthorListController extends FalcorController {
     }
     else {
       return (
-        <div>
+        <div className="circular-progress">
           <CircularProgress />
           {this.props.children}
         </div>

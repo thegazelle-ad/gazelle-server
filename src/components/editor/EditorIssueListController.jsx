@@ -16,6 +16,7 @@ import Edit from 'material-ui/svg-icons/editor/mode-edit';
 import Description from 'material-ui/svg-icons/action/description';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
+import CircularProgress from 'material-ui/CircularProgress';
 
 export default class EditorIssueListController extends FalcorController {
   constructor(props) {
@@ -226,15 +227,8 @@ export default class EditorIssueListController extends FalcorController {
     }
     else {
       return (
-        <div className="pure-g">
-          <div className="pure-u-3-8">
-            <h3>Issues</h3>
-            <p>loading...</p>
-          </div>
-          <div className="pure-u-1-8"></div>
-          <div className="pure-u-1-2">
-            {this.props.children}
-          </div>
+        <div className="circular-progress">
+          <CircularProgress />
         </div>
       );
     }
