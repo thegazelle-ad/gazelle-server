@@ -612,6 +612,10 @@ export default class EditorArticleController extends FalcorController {
         </div>
       );
     }
-    return  <CircularProgress />;
+    return (
+      <div className="circular-progress">
+        <CircularProgress />
+      </div>
+    );
   }
 }

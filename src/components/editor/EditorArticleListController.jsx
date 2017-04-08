@@ -87,13 +87,6 @@ export default class EditorArticleListController extends FalcorController {
         margin: 12,
         marginBottom: 24,
       },
-      circularProgress: {
-        height: 150,
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
     }
 
     let data;
@@ -168,7 +161,7 @@ export default class EditorArticleListController extends FalcorController {
     }
     else {
       return (
-        <div style={styles.circularProgress}>
+        <div className="circular-progress">
           <CircularProgress />
           {this.props.children}
         </div>

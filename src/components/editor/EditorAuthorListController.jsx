@@ -227,15 +227,9 @@ export default class EditorAuthorListController extends FalcorController {
       );
     }
     return (
-      <div>
-        <div>
-          <CircularProgress />
-          {this.props.children}
-        </div>
-        <div className="pure-u-1-8"></div>
-        <div className="pure-u-1-2">
-          {this.props.children}
-        </div>
+      <div className="circular-progress">
+        <CircularProgress />
+        {this.props.children}
       </div>
     );
   }

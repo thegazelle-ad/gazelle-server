@@ -131,13 +131,6 @@ export default class EditorIssueCategoryController extends FalcorController {
         marginTop: 12,
         marginBottom: 24,
       },
-      circularProgress: {
-        height: 150,
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
     }
 
     if (this.state.ready) {
@@ -234,8 +227,8 @@ export default class EditorIssueCategoryController extends FalcorController {
       );
     }
     return (
-      <div style={styles.circularProgress}>
-        <CircularProgress />;
+      <div className="circular-progress">
+        <CircularProgress />
       </div>
     );
   }

@@ -329,6 +329,10 @@ the save changes button is supposed to be disabled in this case");
         </div>
       );
     }
-    return <CircularProgress />;
+    return (
+      <div className="circular-progress">
+        <CircularProgress />
+      </div>
+    );
   }
 }
