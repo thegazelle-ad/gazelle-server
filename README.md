@@ -1,6 +1,6 @@
 # The Gazelle
 
-This code is written for [The Gazelle's](http://thegazelle.org) website. The Gazelle is New York University Abu Dhabi's independent online student news publication. The Gazelle's website is developed and maintained entirely by current undergraduate NYUAD students. The publication is managed by a dedicated team of writers, editors, artists, developers and photographers and released to NYUAD, the NYU global network and the greater Abu Dhabi community every Sunday morning.
+This code is written for [The Gazelle's](https://www.thegazelle.org) website. The Gazelle is New York University Abu Dhabi's independent online student news publication. The Gazelle's website is developed and maintained entirely by current undergraduate NYUAD students. The publication is managed by a dedicated team of writers, editors, artists, developers and photographers and released to NYUAD, the NYU global network and the greater Abu Dhabi community every Sunday morning.
 
 ## Resources
 
@@ -14,7 +14,7 @@ This code is written for [The Gazelle's](http://thegazelle.org) website. The Gaz
 
 ## Development
 
-For technical documentation and instructions on getting the site up and running locally, see our [wiki](https://github.com/thegazelle-ad/gazelle-front-end/wiki) page.
+For technical documentation and instructions on getting the site up and running locally, see our [wiki](https://github.com/thegazelle-ad/gazelle-server/wiki) page.
 
 ## Join the Herd
 
