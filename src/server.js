@@ -208,9 +208,6 @@ mainApp.use(compression());
 
 if (process.env.NODE_ENV === "beta") {
   mainApp.get('/login', (req, res) => {
-    if (process.env.NODE_ENV !== "production") {
-      console.log("GOT REQUEST"); // eslint-disable-line no-console
-    }
     match({ routes: mainRoutes, location: req.url },
       (error, redirectLocation, renderProps) => {
         if (error) {
@@ -244,9 +241,6 @@ if (process.env.NODE_ENV === "beta") {
 }
 else {
   mainApp.get('*', (req, res) => {
-    if (process.env.NODE_ENV !== "production") {
-      console.log("GOT REQUEST"); // eslint-disable-line no-console
-    }
     match({ routes: mainRoutes, location: req.url },
       (error, redirectLocation, renderProps) => {
         if (error) {
