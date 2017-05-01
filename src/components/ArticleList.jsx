@@ -17,7 +17,6 @@ export default class ArticleList extends BaseComponent {
     let renderArticlePreviews =
       // Render nothing if this.props.articles is empty
       _.map((this.props.articles || []), (article) => {
-        //console.log("Article: " + article.title);
         return(
           <ArticlePreview key={article.slug} article={article} />
         )
@@ -36,5 +35,5 @@ ArticleList.propTypes = {
   articles: React.PropTypes.oneOfType([
     React.PropTypes.object,
     React.PropTypes.array,
-  ]).isRequired,
+  ]),
 }
