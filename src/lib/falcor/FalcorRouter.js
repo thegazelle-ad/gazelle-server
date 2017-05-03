@@ -196,8 +196,9 @@ export default class FalcorRouter extends BaseRouter.createClass([
           resolve(results);
         })
         .catch((e) => {
-          console.error("Error was found in Ghost query for slugs:");
-          console.error(pathSet.slugs);
+          console.error("Error was found in Ghost query for slugs:"); //eslint-disable-line no-console
+          console.error(pathSet.slugs); //eslint-disable-line no-console
+          console.error(e); //eslint-disable-line no-console
           resolve([]);
         });
       });
