@@ -172,7 +172,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
         const requestedFields = pathSet[2];
         let query = "filter=";
         pathSet.slugs.forEach((slug, index) => {
-          query += (index > 0 ? "," : "") + "slug:" + slug;
+          query += (index > 0 ? "," : "") + `slug:'${slug}'`;
         });
         query += "&fields=slug"
         requestedFields.forEach((field) => {
@@ -194,6 +194,12 @@ export default class FalcorRouter extends BaseRouter.createClass([
             });
           });
           resolve(results);
+        })
+        .catch((e) => {
+          console.error("Error was found in Ghost query for slugs:"); //eslint-disable-line no-console
+          console.error(pathSet.slugs); //eslint-disable-line no-console
+          console.error(e); //eslint-disable-line no-console
+          resolve([]);
         });
       });
     },
