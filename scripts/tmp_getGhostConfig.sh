@@ -1,3 +1,3 @@
 #!/bin/bash
-node "`dirname $0`/../replacement_get_ghost_config.js"
+node "`dirname $0`/helperFiles/getGhostConfig.js"
 echo "successfully fetched Ghost API config"

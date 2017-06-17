@@ -6,7 +6,7 @@ let databaseConfig;
 try {
   databaseConfig = fs.readFileSync(__dirname+'/../../config/database.config.js', 'utf8');
     // removes the export default and last 2 characters '`;'
-  databaseConfig = databaseConfig.substring(15, databaseConfig.length-1);
+    databaseConfig = databaseConfig.substring(15, databaseConfig.length-2);
 } catch(err) {
   if (err.code === "ENOENT") {
     console.error("ERROR: You have to copy and fill out the database.config.example.js file to database.config.js first. Currently no file database.config.js exists");
@@ -36,10 +36,9 @@ const database = require('knex')({
 fs.stat(__dirname+'/../../config/ghost.config.js', (err, stats) => {
   if (!err) {
     // File exists
-    console.error("got here");
     let ghostConfig = fs.readFileSync(__dirname+'/../../config/ghost.config.js', 'utf8');
     // removes the export default and last 2 characters '`;'
-    ghostConfig = ghostConfig.substring(15, ghostConfig.length-1);
+    ghostConfig = ghostConfig.substring(15, ghostConfig.length-2);
     // Remove comments for easy parsing
     let stringArray = ghostConfig.split('\n');
     stringArray = stringArray.map((string) => {

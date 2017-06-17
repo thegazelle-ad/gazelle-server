@@ -65,6 +65,12 @@ export default class EditorMainIssueController extends FalcorController {
                 return false;
               }
             }
+            if (/<a.*?href\s*=\s*["'][^http].*?>/.test(article.html)) {
+              if (!window.alert(article.title + " has an <a> tag with a non-absolute link. " +
+                " please add https:// (or http://) to the beginning of the link to fix this")) {
+                return false;
+              }
+            }
             return true;
           });
         });
