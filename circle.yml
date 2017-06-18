@@ -20,3 +20,13 @@ test:
   override:
     - npm test
     - npm run lint
+
+deployment:
+  beta:
+    branch: master
+    commands:
+      - ./scripts/deployment/deploy-beta.sh
+  production:
+    branch: stable
+    commands:
+      - ./scripts/deployment/deploy-production.sh
