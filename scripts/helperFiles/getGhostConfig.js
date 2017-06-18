@@ -49,23 +49,29 @@ fs.stat(__dirname+'/../../config/ghost.config.js', (err, stats) => {
     });
     // Parse JSON
     ghostConfig = JSON.parse(stringArray.join(''));
-    database.select('slug', 'secret').from('clients').where('slug', '=', 'ghost-admin')
-    .then((rows) => {
-      if (rows.length !== 1) {
+    if (!process.env.CIRCLECI) {
+      // This is a real person setting up their environment
+      database.select('slug', 'secret').from('clients').where('slug', '=', 'ghost-admin')
+      .then((rows) => {
+        if (rows.length !== 1) {
+          database.destroy();
+          throw new Error("database query returned more than 1 ghost-admin");
+        }
+        ghostConfig.client_id = rows[0].slug;
+        ghostConfig.client_secret = rows[0].secret;
+        fs.writeFileSync(__dirname+"/../../config/ghost.config.js", "export default " + JSON.stringify(ghostConfig, null, 2) + ';\n');
         database.destroy();
-        throw new Error("database query returned more than 1 ghost-admin");
-      }
-      ghostConfig.client_id = rows[0].slug;
-      ghostConfig.client_secret = rows[0].secret;
+      });
+    } else {
+      // This is CircleCI testing our build so we create a dummy
+      ghostConfig.client_id = "dummy";
+      ghostConfig.client_secret = "dummy";
       fs.writeFileSync(__dirname+"/../../config/ghost.config.js", "export default " + JSON.stringify(ghostConfig, null, 2) + ';\n');
-      database.destroy();
-    });
-  }
-  else if (err.code === 'ENOENT') {
+    }
+  } else if (err.code === 'ENOENT') {
     database.destroy();
     throw new Error("You have to first copy ghost.config.example.js into ghost.config.js. No ghost.config.js file exists at this time");
-  }
-  else {
+  } else {
     database.destroy();
     throw new Error("Unexpected error code: " + err.code);
   }

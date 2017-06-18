@@ -2,10 +2,20 @@ dependencies:
   override:
     - npm install
 
+checkout:
+  environment:
+    CIRCLECI: true
+  post:
+    - cp config/database.config.example.js config/database.config.js
+    - cp config/s3.config.example.js config/s3.config.js
+    - ./scripts/getGhostConfig.sh
+
+
 compile:
   override:
     - npm run build-production
 
 test:
   override:
-    - npm test && npm run lint
+    - npm test
+    - npm run lint
