@@ -1,0 +1,11 @@
+dependencies:
+  override:
+    - npm install
+
+compile:
+  override:
+    - npm run build-production
+
+test:
+  override:
+    - npm test
