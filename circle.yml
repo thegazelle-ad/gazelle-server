@@ -1,8 +1,12 @@
+machine:
+  # Setup known_hosts so the VM allows ssh access without the prompt
+  post:
+    - echo |1|lngQecMeLZI49/+fr5Ee0gOWaKE=|arylHILm4qsNJewDKKwFKOijBxE= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLONO0airQQL9d1rOZzT/p3SBH8acSYaN4N8qJezd/0UbnF8SBi+m1wB2nay5o0HQBQTM6O+MKXDwzYec886K78= >> ~/.ssh/known_hosts
+
 dependencies:
   override:
     - npm install
-
-checkout:
+  # Set CIRCLECI environment variable so getGhostConfig knows there's no database
   environment:
     CIRCLECI: true
   post:
@@ -10,7 +14,6 @@ checkout:
     - cp config/s3.config.example.js config/s3.config.js
     - cp config/ghost.config.example.js config/ghost.config.js
     - ./scripts/getGhostConfig.sh
-
 
 compile:
   override:
@@ -25,8 +28,8 @@ deployment:
   beta:
     branch: master
     commands:
-      - ./scripts/deployment/deploy-beta.sh
+      - ssh gazelle@51.15.130.216 ./deployment/update-beta.sh
   production:
     branch: stable
     commands:
-      - ./scripts/deployment/deploy-production.sh
+      - ssh gazelle@51.15.130.216 ./deployment/update-production.sh
