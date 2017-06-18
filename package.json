@@ -5,10 +5,10 @@
   "main": "server.js",
   "scripts": {
     "start": "node ./build/server.js",
-    "build-production": "./node_modules/.bin/webpack -p --config ./webpack.production.config.js",
-    "build-beta": "./node_modules/.bin/webpack -p --config ./webpack.beta.config.js",
+    "build-production": "./node_modules/.bin/webpack -p --config ./webpack.production.config.js --progress --bail",
+    "build-beta": "./node_modules/.bin/webpack -p --config ./webpack.beta.config.js --progress --bail",
     "test": "jest --verbose",
-    "lint": "find src -name \"*.js\" -o -name \"*.jsx\" | xargs ./node_modules/.bin/eslint || true"
+    "lint": "find src -name \"*.js\" -o -name \"*.jsx\" | xargs ./node_modules/.bin/eslint"
   },
   "jest": {
     "unmockedModulePathPatterns": [
