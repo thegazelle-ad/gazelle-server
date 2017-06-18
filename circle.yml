@@ -8,6 +8,7 @@ checkout:
   post:
     - cp config/database.config.example.js config/database.config.js
     - cp config/s3.config.example.js config/s3.config.js
+    - cp ghost.config.example.js ghost.config.js
     - ./scripts/getGhostConfig.sh
 
 
