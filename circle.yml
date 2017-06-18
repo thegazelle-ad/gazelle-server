@@ -8,4 +8,4 @@ compile:
 
 test:
   override:
-    - npm test
+    - npm test && npm run lint
