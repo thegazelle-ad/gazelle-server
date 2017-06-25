@@ -61,42 +61,6 @@ export default class EditorArticleController extends FalcorController {
         this.safeSetState({changed: changedFlag});
       }
     }, 500);
-
-    // TODO: remove?
-    // this.debouncedHandleMainFormChanges = debounce((event) => {
-    //   // We don't want the debounced event to happen if we're saving
-    //   if (this.state.saving) return;
-    //
-    //   const formNode = event.target.parentNode;
-    //
-    //   // Gets all the input elements that we named
-    //   const children = _.map(formNode.children, (child) => {
-    //     return child.name;
-    //   })
-    //   const fields = children.filter((key) => {
-    //     return key && isNaN(parseInt(key)) && key !== "length";
-    //   });
-    //
-    //   const falcorData = this.state.data.articlesBySlug[this.props.params.slug];
-    //
-    //   let changedFlag = fields.some((field) => {
-    //     const formValue = formNode[field].value;
-    //     const falcorValue = falcorData[field];
-    //
-    //     // The last boolean check here checks if both values are falsey
-    //     // like null and empty string, in that case we'll say there's no change
-    //     return formValue !== falcorValue && !(!formValue && !falcorValue);
-    //   });
-    //
-    //   if (changedFlag !== this.state.changesObject.mainForm) {
-    //     const newChangesObject = update(this.state.changesObject, {mainForm: {$set: changedFlag}});
-    //     // this.setState is not a synchronous function, so we check with what will become the new changesObject
-    //     this.checkFormChanges(newChangesObject);
-    //     this.safeSetState({
-    //       changesObject: newChangesObject,
-    //     });
-    //   }
-    // }, 500);
   }
 
   static getFalcorPathSets(params) {
@@ -158,6 +122,13 @@ export default class EditorArticleController extends FalcorController {
         authors: false,
       },
     });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.params.slug === this.props.params.slug) {
+      // The update wasn't due to a change in article
+      this.debouncedHandleFormStateChanges();
+    }
   }
 
   checkFormChanges(changesObject) {
