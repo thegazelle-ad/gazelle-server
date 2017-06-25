@@ -6,6 +6,7 @@ import { debounce } from 'lib/utilities';
 import update from 'react-addons-update';
 import EditorArticle from 'components/editor/EditorArticle';
 import moment from 'moment';
+import { updateFieldValue } from 'components/editor/lib/form-field-updaters';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -30,6 +31,13 @@ export default class EditorArticleController extends FalcorController {
     this.handleDeleteAuthor = this.handleDeleteAuthor.bind(this);
     this.handleTeaserChanges = this.handleTeaserChanges.bind(this);
     this.unpublish = this.unpublish.bind(this);
+    this.fieldUpdaters = {
+      teaser: updateFieldValue.bind(this, 'teaser', undefined),
+      category: updateFieldValue.bind(this, 'category', {
+        isMaterialSelect: true,
+      }),
+      image: updateFieldValue.bind(this, 'image', undefined),
+    };
     this.safeSetState({
       changed: false,
       saving: false,
@@ -532,12 +540,7 @@ the save changes button is supposed to be disabled in this case");
               floatingLabelText="Category"
               maxHeight={400}
               value={this.state.category}
-              onChange={(event, index, value) => {
-                  this.setState({category: value}, () =>{
-                    this.debouncedHandleFormStateChanges();
-                  })
-                }
-              }
+              onChange={this.fieldUpdaters.category}
               disabled={this.state.saving}
               autoWidth={false}
               style={{width: 200}}
@@ -559,9 +562,7 @@ the save changes button is supposed to be disabled in this case");
               value={this.state.image}
               floatingLabelText="Image (Remember to use https:// not http://)"
               disabled={this.state.saving}
-              onChange={e =>
-                this.setState({ image: e.target.value }, () => {
-                    this.debouncedHandleFormStateChanges();})}
+              onChange={this.fieldUpdaters.image}
               fullWidth
             /><br />
             <TextField
@@ -570,11 +571,7 @@ the save changes button is supposed to be disabled in this case");
                 " of " + MAX_TEASER_LENGTH + " characters)"}
               value={this.state.teaser}
               disabled={this.state.saving}
-              onChange={e =>
-                this.setState({ teaser: e.target.value }, () => {
-                    this.debouncedHandleFormStateChanges();
-                    this.handleTeaserChanges();
-                  })}
+              onChange={this.fieldUpdaters.teaser}
               multiLine
               rows={2}
               fullWidth
