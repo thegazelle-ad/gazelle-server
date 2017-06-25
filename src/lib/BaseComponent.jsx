@@ -48,14 +48,27 @@ export default class BaseComponent extends React.Component {
     this.mounted = false;
   }
 
-  // Set state that only triggers an update if the component is mounted
-  // This is so that falcor returns after the component has unmounted
-  // don't throw errors
-  safeSetState(newState) {
+  /**
+   * Set state that only triggers an update if the component is mounted.
+   * This is so that if falcor returns after the component has unmounted
+   * it won't throw errors.
+   * See [the React docs]{@link https://facebook.github.io/react/docs/react-component.html#setstate}
+   * for more details about this.setState
+   * @arg {(Object|Function)} updater
+   * @arg {Function} cb - We don't support this callback due to working with Falcor
+   */
+  safeSetState(updater, cb) {
+    if (cb) {
+      throw new Error("We do not support the callback to setState " +
+        "in this codebase, you can probably use componentDidUpdate instead");
+    }
     if (this.mounted) {
-      this.setState(newState);
+      this.setState(updater);
     } else {
-      Object.assign(this.state, newState);
+      if (typeof updater === 'function') {
+        updater = updater(this.state, this.props);
+      }
+      this.state = Object.assign({}, this.state, updater);
     }
   }
 }
