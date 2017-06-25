@@ -3,6 +3,8 @@ import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
 import update from 'react-addons-update';
 
+import { followPath } from 'lib/utilities';
+
 // create a curried createElement that injects a
 // falcor model instance into each of the falcon controllers
 // also passes a flag that lets the FalcorController know
@@ -54,25 +56,6 @@ export function validateFalcorPathSets(falcorPathSets) {
     }
     return pathSet;
   }));
-}
-
-function followPath(path, object) {
-  /*
-  Returns the value at the end of a path at a given object
-  */
-
-  // If using dot notation obj.key.key.key
-  let processedPath = path;
-  if (typeof path === 'string') {
-    processedPath = path.split('.');
-  }
-  return processedPath.reduce((currentObject, nextChild) => {
-    if (currentObject !== undefined && currentObject.hasOwnProperty(nextChild)) {
-      return currentObject[nextChild];
-    }
-
-    return undefined;
-  }, object);
 }
 
 export function pathSetsInCache(cache, falcorPathSets) {

@@ -1,4 +1,5 @@
 jest.unmock('lib/falcor/falcorUtils');
+jest.unmock('lib/utilities');
 
 import { expandCache } from 'lib/falcor/falcorUtils';
 describe('expandCache', () => {
