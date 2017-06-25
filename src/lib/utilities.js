@@ -204,3 +204,29 @@ export function viewArticle(slug) {
 export function isArticleViewed(slug) {
   return viewed[slug] === true;
 }
+
+export function followPath(path, object) {
+  /*
+  Returns the value at the end of a path at a given object
+  */
+
+  // If using dot notation obj.key.key.key
+  if (typeof path === "string") {
+    path = path.split('.');
+  }
+  return path.reduce((currentObject, nextChild) => {
+    if (currentObject !== undefined && currentObject.hasOwnProperty(nextChild)) {
+      return currentObject[nextChild];
+    }
+
+    return undefined;
+  }, object);
+}
+
+export function isPlainObject(element) {
+  // Handle getPrototypeOf throwing error on undefined or null
+  if (!element) {
+    return false;
+  }
+  return Object.getPrototypeOf(element) === Object.prototype;
+}
