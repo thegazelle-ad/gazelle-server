@@ -8,6 +8,28 @@ import _ from 'lodash';
 // material-ui
 import Chip from 'material-ui/Chip';
 
+class AuthorChip extends BaseComponent {
+  constructor(props) {
+    super(props);
+    this.onClick = this.onClick.bind(this);
+  }
+
+  onClick() {
+    this.props.onDelete(this.props.id);
+  }
+
+  render() {
+    return (
+      <Chip
+        onRequestDelete={this.onClick}
+        style={this.props.style}
+      >
+        {this.props.children}
+      </Chip>
+    );
+  }
+}
+
 export default class EditAuthorsForm extends BaseComponent {
   constructor(props) {
     super(props);
@@ -18,14 +40,15 @@ export default class EditAuthorsForm extends BaseComponent {
     this.handleClickAddAuthor = this.handleClickAddAuthor.bind(this);
   }
 
-  componentDidUpdate() {
-    if (!this.props.disabled) {
+  componentDidUpdate(prevProps) {
+    if (!this.props.disabled &&
+      this.props.authors !== prevProps.authors) {
       this.props.onChange();
     }
   }
 
   handleClickAddAuthor(author) {
-    this.props.handleAddAuthor(author.id, author.name, false);
+    this.props.handleAddAuthor(author.id, author.name);
   }
 
   render() {
@@ -34,68 +57,34 @@ export default class EditAuthorsForm extends BaseComponent {
         display: 'flex',
         flexWrap: 'wrap',
       },
-    }
+    };
 
-    const renderChips = (authors) =>
-      _.map(authors, (author) => {
+    const authorChips = this.props.authors.length > 0 ?
+      _.map(this.props.authors, (author) => {
         return(
-          <Chip
+          <AuthorChip
             key={author.id}
-            onRequestDelete={this.props.handleDeleteAuthor.bind(null, author.id, true)}
+            id={author.id}
+            onDelete={this.props.handleDeleteAuthor}
             style={{margin: 4}}
           >
             {author.name}
-          </Chip>
+          </AuthorChip>
         )
-      });
+      }) : null;
+
+    const noAuthorsMessage = (
+      <span style={{color: "rgba(0, 0, 0, 0.3)"}}>
+        No authors are currently assigned to this article
+      </span>
+    );
 
     return (
       <div>
-        {
-          // TODO: EMIL: not exactly sure what this code is doing so I didnt want to delete
-          // Please remove if it's not necessary
-
-
-          // _.map(this.props.authors, (author) => {
-          //   // Striked will correctly evaluate to false if there is no key
-          //   // with that slug yet, which means it has neither been striked nor unstriked yet
-          //   // It will return undefined which is a falsy value
-          //   let striked = this.props.authorsDeleted[author.id];
-          //   let authorNameStyle = {marginLeft: "1em"};
-          //   if (striked) {
-          //     authorNameStyle.textDecoration = "line-through";
-          //     authorNameStyle.opacity = 0.5;
-          //   }
-          //
-          //   return(
-          //     <div key={author.id}>
-          //       {
-          //         !striked
-          //           ?
-          //           <button
-          //             type="button"
-          //             className="toggle-button"
-          //             aria-label="Remove Author Button"
-          //             onClick={this.props.handleDeleteAuthor.bind(null, author.id, true)}
-          //           >&times;&nbsp;</button>
-          //           :
-          //           <button
-          //             type="button"
-          //             className="toggle-button"
-          //             aria-label="Remove Author Button"
-          //             onClick={this.props.handleAddAuthor.bind(null, author.id, true)}
-          //           >~&nbsp;</button>
-          //       }
-          //       <div style={authorNameStyle}>{author.name}</div>
-          //     </div>
-          //   );
-          // })
-        }
         <br />
         <p style={{marginTop: 0, marginBottom: 10}}>Authors</p>
         <div style={styles.wrapper} >
-          {renderChips(this.props.authors)}
-          {renderChips(this.props.authorsAdded)}
+          {authorChips || noAuthorsMessage}
         </div>
         <EditorSearchBar
           model={this.props.model}
