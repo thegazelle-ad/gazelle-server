@@ -4,7 +4,6 @@ import _ from 'lodash';
 import EditAuthorsForm from './EditAuthorsForm';
 import { debounce } from 'lib/utilities';
 import update from 'react-addons-update';
-import EditorArticle from 'components/editor/EditorArticle';
 import moment from 'moment';
 import { updateFieldValue } from 'components/editor/lib/form-field-updaters';
 
@@ -41,8 +40,7 @@ export default class EditorArticleController extends FalcorController {
     this.safeSetState({
       changed: false,
       saving: false,
-      authorsAdded: [],
-      authorsDeleted: {},
+      authors: [],
       changesObject: {
         mainForm: false,
         authors: false,
@@ -76,46 +74,33 @@ export default class EditorArticleController extends FalcorController {
   }
 
   componentWillMount() {
-    const falcorCallback = (data) => {
+    const falcorCallback = data => {
       const article =  data.articlesBySlug[this.props.params.slug];
-      let teaser = article.teaser;
-      let category = article.category;
-      let image = article.image;
+      const teaser = article.teaser || '';
+      const category = article.category || '';
+      const image = article.image || '';
+      const authors = _.map(article.authors, author => author);
 
-      if (!teaser) { teaser = ""; }
-      if (!category) { category = ""; }
-      if (!image) { image = ""; }
-
-      this.safeSetState({
-        teaser: teaser,
-        category: category,
-        image: image,
-      });
-    };
+      this.safeSetState({ teaser, category, image, authors });
+    }
     super.componentWillMount(falcorCallback);
   }
+
   componentWillReceiveProps(nextProps) {
     const falcorCallback = (data) => {
       const article =  data.articlesBySlug[this.props.params.slug];
-      let teaser = article.teaser;
-      let category = article.category;
-      let image = article.image;
+      const teaser = article.teaser || '';
+      const category = article.category || '';
+      const image = article.image || '';
 
-      if (!teaser) { teaser = ""; }
-      if (!category) { category = ""; }
-      if (!image) { image = ""; }
-
-      this.safeSetState({
-        teaser: teaser,
-        category: category,
-        image: image,
-      });
-    };
+      this.safeSetState({ teaser, category, image });
+    }
     super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
+
     this.safeSetState({
       changed: false,
       saving: false,
-      authorsAdded: [],
+      authors: [],
       authorsDeleted: {},
       changesObject: {
         mainForm: false,
@@ -124,8 +109,22 @@ export default class EditorArticleController extends FalcorController {
     });
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.params.slug === this.props.params.slug) {
+  isSameArticle(prevProps, props) {
+    return prevProps.params.slug === props.params.slug;
+  }
+
+  formHasChanged(prevState, state) {
+    return (this.isFormFieldChanged(prevState.authors, state.authors) ||
+      this.isFormFieldChanged(prevState.teaser, state.teaser) ||
+      this.isFormFieldChanged(prevState.category, state.category) ||
+      this.isFormFieldChanged(prevState.image, state.image)
+    );
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.isSameArticle(prevProps, this.props) &&
+      this.formHasChanged(prevState, this.state) &&
+      this.state.ready) {
       // The update wasn't due to a change in article
       this.debouncedHandleFormStateChanges();
     }
@@ -141,12 +140,20 @@ export default class EditorArticleController extends FalcorController {
   }
 
   handleAuthorChanges() {
-    const authorsAdded = this.state.authorsAdded;
-    const authorsDeleted = this.state.authorsDeleted;
+    const currentAuthors = this.state.authors;
+    const slug = this.props.params.slug;
+    const falcorAuthors = this.state.data.articlesBySlug[slug].authors;
+    const falcorAuthorsArray = _.map(falcorAuthors, author => author);
 
-    // Checks if any authors were added or any authors were deleted
-    const changedFlag = authorsAdded.length > 0 ||
-      _.some(authorsDeleted, flag => flag);
+    let changedFlag = true;
+    if (currentAuthors.length === falcorAuthorsArray.length) {
+      const arraysIdentical = currentAuthors.every(author => {
+        return falcorAuthorsArray.find(falcorAuthor => (
+          falcorAuthor.id === author.id
+        )) !== undefined;
+      });
+      changedFlag = !arraysIdentical;
+    }
 
     if (changedFlag !== this.state.changesObject.authors) {
       const newChangesObject = update(this.state.changesObject, { authors: { $set: changedFlag } });
@@ -346,55 +353,38 @@ the save changes button is supposed to be disabled in this case");
 
   // Handle state changes coming from editAuthorsForm
 
-  handleAddAuthor(id, name, isOriginalAuthor) {
+  handleAddAuthor(id, name) {
     // disable this if saving
     if (this.state.saving) return;
-    if (isOriginalAuthor) {
-      const newAuthorsDeleted = update(this.state.authorsDeleted, { [id]: { $set: false } });
-      this.safeSetState({
-        authorsDeleted: newAuthorsDeleted,
-      });
-    } else {
-      const authors = this.state.data.articlesBySlug[this.props.params.slug].authors;
-      // Is this author already added?
-      const inAuthorsAdded = this.state.authorsAdded.find(author => author.id === id) !== undefined;
-      const inOriginalAuthors = _.find(authors, author => author.id === id) !== undefined;
-      if (inAuthorsAdded || inOriginalAuthors) {
-        window.alert('That author is already added');
-        return;
-      }
-      const newAuthorsAdded = update(this.state.authorsAdded, { $push: [{ id, name }] });
-      this.safeSetState({
-        authorsAdded: newAuthorsAdded,
-      });
+
+    const alreadyAdded = this.state.authors.find((author) => {
+      return author.id === id;
+    }) !== undefined;
+
+    if (alreadyAdded) {
+      window.alert("That author is already added");
+      return;
     }
+    const newAuthors = update(this.state.authors, {$push: [{ id, name}]});
+    this.safeSetState({
+      authors: newAuthors,
+    });
   }
 
-  // TODO: deleting author doesnt seem to be working, not sure why
-  handleDeleteAuthor(id, isOriginalAuthor) {
+  handleDeleteAuthor(id) {
     // disabled this if saving
-    console.log("deleting");
-    console.log(this.state.authorsAdded);
     if (this.state.saving) return;
-    if (isOriginalAuthor) {
-      const newValue = {};
-      newValue[id] = true;
-      const newAuthorsDeleted = Object.assign({}, this.state.authorsDeleted, newValue);
-      this.safeSetState({
-        authorsDeleted: newAuthorsDeleted,
-      });
-    } else {
-      const index = this.state.authorsAdded.findIndex(author => author.id === id);
-      if (index === -1) {
-        throw new Error('The author you are trying to delete cannot be found');
-      }
-      const newAuthorsAdded = update(this.state.authorsAdded, { $splice: [[index, 1]] });
-      this.safeSetState({
-        authorsAdded: newAuthorsAdded,
-      }, () => {
-        console.log(this.state.authorsAdded);
-      });
+
+    const index = this.state.authors.findIndex((author) => {
+      return author.id === id;
+    });
+    if (index === -1) {
+      throw new Error("The author you are trying to delete cannot be found");
     }
+    const newAuthors = update(this.state.authors, {$splice: [[index, 1]]});
+    this.safeSetState({
+      authors: newAuthors,
+    });
   }
 
   handleTeaserChanges() {
@@ -464,7 +454,6 @@ the save changes button is supposed to be disabled in this case");
         return <div><p>Error: No articles match this slug</p></div>;
       }
 
-      <EditorArticle />
       const slug = this.props.params.slug;
       const article = this.state.data.articlesBySlug[slug];
 
@@ -548,12 +537,10 @@ the save changes button is supposed to be disabled in this case");
               fullWidth
             /><br />
             <EditAuthorsForm
-              authors={article.authors}
+              authors={this.state.authors}
               onChange={this.handleAuthorChanges}
               handleAddAuthor={this.handleAddAuthor}
               handleDeleteAuthor={this.handleDeleteAuthor}
-              authorsDeleted={this.state.authorsDeleted}
-              authorsAdded={this.state.authorsAdded}
               model={this.props.model}
               disabled={this.state.saving}
             />
