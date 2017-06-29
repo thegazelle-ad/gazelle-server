@@ -18,23 +18,11 @@
   <!-- Style
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <style>
-  .fontIntro {
-    text-align: left; 
-    margin-left: 20%; 
-
-  }
   .fontErr {
-    text-align: left; 
-
-
-  }
-  .fontErr2 {
     text-align: center; 
-  }
-  .fontError {
-    font-family: sans-serif; 
-    color: #FF4242; 
-    /*DB300D*/
+    vertical-align: middle;
+    line-height: 0.5rem; 
+
 
   }
   .centered {
@@ -54,7 +42,7 @@
    .headerLogo {
     margin-left: auto; 
     margin-right: auto;
-    width: 2em;
+    width: 8%;
     
   }
 
@@ -82,16 +70,15 @@
   .column:first-child,
   .columns:first-child {
     margin-left: 0; }
-  .header.column { 
-    width: 10%; margin-left: auto; margin-right: auto; padding-bottom: 0;  
+  .header.column, .headerLogo { 
+    width: 5%; margin-left: auto; margin-right: auto; padding-bottom: 0;   
   }
 
   }
 
 
   body {
-  font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
-/*  line-height: 1.2;*/
+  font-size: 1.5em; 
   font-family: 'Roboto', sans-serif;
   color: #484848;
   text-align: center; }
@@ -100,7 +87,7 @@
 /* Typography
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 h1,h6, p {
-  margin-top: 0;
+  margin-top: 1.5rem;
   margin-bottom: 0;
 }
 h1 { font-size: 2.5rem; line-height: 1.2;  }
@@ -128,6 +115,7 @@ p {
 
 
 code {
+  vertical-align: middle; 
   padding: 0.1rem 0.1rem;
   margin-left: auto;
   margin-right:auto;
@@ -148,6 +136,7 @@ span {
 
 
 
+
   /* Self Clearing Goodness */
 .container:after,
 .row:after,
@@ -164,7 +153,7 @@ span {
 
   <!-- Add Gazelle Favicon 
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <link rel="icon" type="image/svg" href="./">
+  <link rel="icon" type="image/png" href="./favicons/favicon-16x16.png">
 
 </head>
 <body>
@@ -192,8 +181,8 @@ span {
             </g>
             </svg>
       </div>
-       <hr style="width:100%; height:2px; background-color: #000000; border:none;" />
-      
+      <!--  <hr style="width:100%; height:2px; background-color: #000000; border:none;" />
+       -->
 
   </header>
 
@@ -203,11 +192,9 @@ span {
     <div class="row">
       <div style="margin-top: 5%">
         <h1>Shoot...</h1>
-<!--         <h4>That was unexpected...</h4> -->
-        <pre><code> <h6 class="fontErr"> throw(<span style = "color: #0000FF">Error 500</span>) {</h6> <h6 class="fontErr2">console.log(<span style = "color:#FF4242">"Abort: Server broken"</span>);<br/>
-        }</h6></code></pre>
- <!--        <h6 class= "fontError">Error Code: 500</h6> -->
-        <p>It seems there is an issue connecting to the server. We are working vigilantly to fix the bug. In the meantime, we apologize for the inconvienance. </p> 
+        <pre><code><h6><span style ="color: #FF4242">Error Code: </span>500</h6> <!-- <h6 class="fontErr2">console.log(<span style = "color:#FF4242">"Abort: Server broken"</span>);<br/>
+        }</h6> --> </code></pre>
+        <p>It seems there is an issue connecting to the server. We are working vigilantly to fix the bug. In the meantime, we apologize for the inconveinance. </p> 
         </div>
       
     </div>
