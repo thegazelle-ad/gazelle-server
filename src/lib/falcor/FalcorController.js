@@ -91,7 +91,7 @@ export default class FalcorController extends BaseComponent {
     setLoading(this.uuid, true);
     const requestId = uuid();
     this.lastRequestId = requestId;
-    this.props.model.get(...falcorPathSets).then((x) => {
+    return this.props.model.get(...falcorPathSets).then((x) => {
       if (this.lastRequestId !== requestId) {
         // stale request, no action to response
         if (callback) {
@@ -139,7 +139,7 @@ export default class FalcorController extends BaseComponent {
   // and update the cache accordingly
   falcorUpdate(jsonGraphEnvelope, stateToSet = {}, callback) {
     this.safeSetState({fetching: true});
-    this.props.model.set(jsonGraphEnvelope).then(() => {
+    return this.props.model.set(jsonGraphEnvelope).then(() => {
       // For now we'll just fetch every time after an update
       // This would be very bad for updating views, so maybe we'll do that differently
       // but at the moment we have no good way to merge updated data especially when
@@ -196,7 +196,7 @@ export default class FalcorController extends BaseComponent {
     this.safeSetState({fetching: true});
     // for some reason 'call' can't handle undefined arguments
     // so we use .apply on it
-    this.props.model.call(functionPath, args, refSuffixes, thisPaths).then(() => {
+    return this.props.model.call(functionPath, args, refSuffixes, thisPaths).then(() => {
       // For now we'll just fetch every time after an update
       // This would be very bad for updating views, so maybe we'll do that differently
       // but at the moment we have no good way to merge updated data especially when
