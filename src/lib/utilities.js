@@ -237,3 +237,17 @@ export function isPlainObject(element) {
   }
   return Object.getPrototypeOf(element) === Object.prototype;
 }
+
+/**
+ * Taken from https://stackoverflow.com/questions/767486/how-do-you-check-if-a-variable-is-an-array-in-javascript
+ */
+export function isArray(candidate) {
+  return candidate.constructor === Array;
+}
+
+/**
+ * Taken from https://stackoverflow.com/questions/5999998/how-can-i-check-if-a-javascript-variable-is-function-type
+ */
+export function isFunction(candidate) {
+  return typeof candidate === 'function';
+}
