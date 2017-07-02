@@ -1,7 +1,7 @@
 jest.unmock('../form-field-updaters');
 jest.unmock('lib/utilities');
 
-import { updateFieldValue } from '../form-field-updaters';
+import { updateFieldValue, trimField } from '../form-field-updaters';
 
 describe('updateFieldValue', function() {
   beforeEach(function() {
@@ -196,5 +196,26 @@ describe('updateFieldValue', function() {
     const value = 'right';
     boundUpdate(e, null, value);
     expect(_this.state).toEqual({ a: 'right' });
+  });
+});
+
+describe('trimField', function() {
+  beforeEach(function() {
+    // 20 characters long value
+    this.value = "hello this is a test";
+  });
+
+  it('trims field', function() {
+    expect(trimField(5, this.value)).toBe("hello");
+
+    expect(trimField(25, this.value)).toBe(this.value);
+  });
+
+  it('handles empty/null values', function() {
+    expect(trimField(5, '')).toBe('');
+
+    expect(trimField(5, null)).toBe('');
+
+    expect(trimField(5, undefined)).toBe('');
   });
 });

@@ -77,3 +77,11 @@ export function updateFieldValue(keyPath, options = {}, e) {
     return updater;
   });
 }
+
+export function trimField(length, fieldValue) {
+  if (!fieldValue) {
+    return '';
+  }
+
+  return fieldValue.substr(0, length);
+}
