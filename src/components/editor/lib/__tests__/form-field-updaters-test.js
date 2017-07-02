@@ -197,6 +197,20 @@ describe('updateFieldValue', function() {
     boundUpdate(e, null, value);
     expect(_this.state).toEqual({ a: 'right' });
   });
+
+  it('handles trim option', function() {
+    const _this = this.setupTestEnvironment({ a: 'initial' });
+    const e = this.e;
+    const key = 'a';
+    const options = {
+      trim: 5,
+    };
+    const boundUpdate = updateFieldValue.bind(_this, key, options);
+
+    e.target.value = 'hello this is a test';
+    boundUpdate(e);
+    expect(_this.state).toEqual({ a: 'hello' });
+  });
 });
 
 describe('trimField', function() {

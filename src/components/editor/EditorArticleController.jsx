@@ -28,7 +28,9 @@ export default class EditorArticleController extends FalcorController {
     this.handleTeaserChanges = this.handleTeaserChanges.bind(this);
     this.unpublish = this.unpublish.bind(this);
     this.fieldUpdaters = {
-      teaser: updateFieldValue.bind(this, 'teaser', undefined),
+      teaser: updateFieldValue.bind(this, 'teaser', {
+        trim: MAX_TEASER_LENGTH,
+      }),
       category: updateFieldValue.bind(this, 'category', {
         isMaterialSelect: true,
       }),
