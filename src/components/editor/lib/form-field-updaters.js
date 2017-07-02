@@ -15,12 +15,16 @@ import { followPath, isPlainObject } from 'lib/utilities';
  * @arg {boolean} options.isMaterialSelect - Whether connected field is a
  * MaterialUI Select component or not
  *
+ * @arg {number} options.trim - If you wish to trim the field, input the
+ * value of the max length here when you wish the value to be trimmed.
+ *
  * @arg {Object} e - this is the syntheticEvent React will pass to the function
  * when something changes in the form field we bind this function to
  */
 export function updateFieldValue(keyPath, options = {}, e) {
   // Handle options
   let value;
+  let trimLength = false;
   for (const key in options) {
     switch (key) {
       case 'isMaterialSelect':
@@ -35,16 +39,26 @@ export function updateFieldValue(keyPath, options = {}, e) {
         }
         break;
 
+      case 'trim':
+        trimLength = options.trim;
+        break;
+
       default:
         throw new Error("Undefined options not allowed in updateFieldValue");
     }
   }
   if (value === undefined) {
     /**
-     * This also makes sure we get the value before event dissappears and avoids
+     * This means that the materialSelect option wasn't set,
+     * and it also makes sure we get the value before event dissappears and avoids
      * us needing to use event.persist
      */
     value = e.target.value
+  }
+
+  if (trimLength !== false) {
+    // Trim option was set so we trim it
+    value = trimField(trimLength, value);
   }
 
   // Take previous state and treat everything as immutable
