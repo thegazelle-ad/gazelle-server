@@ -1,5 +1,6 @@
 import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
+import ClipboardButton from 'react-clipboard';
 
 /* upload_status prop is encoded as such:
   1: Upload in progress,
@@ -7,6 +8,7 @@ import BaseComponent from 'lib/BaseComponent';
   3: Upload error / failed,
   else: No upload attempted yet
   */
+
 export default class EditorImagePreview extends BaseComponent {
   constructor() {
     super();
@@ -39,14 +41,18 @@ export default class EditorImagePreview extends BaseComponent {
     }
 
     let messageComponent;
+    let copyComponent;
     if (amazonURL) {
       messageComponent = <div className="previewURL">URL: {amazonURL}</div>;
+      copyComponent = <ClipboardButton data-clipboard-text={amazonURL}>Copy link</ClipboardButton>;
     }
     else if (error_message) {
       messageComponent = <div className="preview_error">Error: {error_message}</div>;
+      copyComponent = null;
     }
     else {
       messageComponent = null;
+      copyComponent = null;
     }
 
     let component;
@@ -63,6 +69,7 @@ export default class EditorImagePreview extends BaseComponent {
           <br />
           {uploading_component}
           {messageComponent}
+          {copyComponent}
         </div>
       );
     }
@@ -78,6 +85,7 @@ export default class EditorImagePreview extends BaseComponent {
           <br />
           {uploading_component}
           {messageComponent}
+          {copyComponent}
         </div>
       );
     }
