@@ -1,6 +1,6 @@
 import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
-import ClipboardButton from 'react-clipboard';
+import ClipboardButton from 'react-clipboard.js';
 
 /* upload_status prop is encoded as such:
   1: Upload in progress,
