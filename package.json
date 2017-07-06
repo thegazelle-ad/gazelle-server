@@ -78,7 +78,6 @@
     "body-parser": "^1.15.2",
     "child_process": "^1.0.2",
     "classnames": "^2.2.5",
-    "clipboard": "^1.7.1",
     "compression": "^1.6.2",
     "express": "^4.13.4",
     "falcor": "^0.1.17",
