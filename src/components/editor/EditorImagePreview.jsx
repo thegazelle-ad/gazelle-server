@@ -1,6 +1,6 @@
 import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
-import ClipboardButton from 'react-clipboard.js';
+import Clipboard from 'react-copy-to-clipboard';
 
 /* upload_status prop is encoded as such:
   1: Upload in progress,
@@ -44,7 +44,7 @@ export default class EditorImagePreview extends BaseComponent {
     let copyComponent;
     if (amazonURL) {
       messageComponent = <div className="previewURL">URL: {amazonURL}</div>;
-      copyComponent = <ClipboardButton data-clipboard-text={amazonURL}>Copy link</ClipboardButton>;
+      copyComponent = <Clipboard text={amazonURL}><button>Copy link</button></Clipboard>;
     }
     else if (error_message) {
       messageComponent = <div className="preview_error">Error: {error_message}</div>;
