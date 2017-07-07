@@ -1,6 +1,5 @@
 import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
-import Clipboard from 'react-copy-to-clipboard';
 
 /* upload_status prop is encoded as such:
   1: Upload in progress,
@@ -8,7 +7,6 @@ import Clipboard from 'react-copy-to-clipboard';
   3: Upload error / failed,
   else: No upload attempted yet
   */
-
 export default class EditorImagePreview extends BaseComponent {
   constructor() {
     super();
@@ -22,6 +20,15 @@ export default class EditorImagePreview extends BaseComponent {
 
   onChangeName() {
     this.props.onChangeName(this.props.name);
+  }
+
+  copyToClipboard(amazon_link) {
+    var textField = document.createElement("textarea");
+    textField.innerText = amazon_link;
+    document.body.appendChild(textField);
+    textField.select();
+    document.execCommand("copy");
+    textField.remove();
   }
 
   render() {
@@ -41,18 +48,20 @@ export default class EditorImagePreview extends BaseComponent {
     }
 
     let messageComponent;
-    let copyComponent;
+    let copyComponent = null;
     if (amazonURL) {
       messageComponent = <div className="previewURL">URL: {amazonURL}</div>;
-      copyComponent = <Clipboard text={amazonURL}><button>Copy link</button></Clipboard>;
+      if (document.queryCommandSupported("copy")){
+        copyComponent = <button type="button" onClick={()=>this.copyToClipboard(amazonURL)}>Copy link</button>;
+      } else {
+        //Banner Alert: Copy Button is not compatible with your browser. Upgrade to newest version for full capabilities
+      }
     }
     else if (error_message) {
       messageComponent = <div className="preview_error">Error: {error_message}</div>;
-      copyComponent = null;
     }
     else {
       messageComponent = null;
-      copyComponent = null;
     }
 
     let component;
