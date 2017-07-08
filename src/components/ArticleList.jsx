@@ -12,14 +12,14 @@ import ArticlePreview from 'components/ArticlePreview';
 
 // TODO: create controller component to fetch list of articles in issue
 export default class ArticleList extends BaseComponent {
-  render () {
+  render() {
     // Returns list of <ArticlePreview/> components with their respective posts
     let renderArticlePreviews =
       // Render nothing if this.props.articles is empty
       _.map((this.props.articles || []), (article) => {
-        return(
+        return (
           <ArticlePreview key={article.slug} article={article} />
-        )
+        );
       });
 
     return (
@@ -36,4 +36,4 @@ ArticleList.propTypes = {
     React.PropTypes.object,
     React.PropTypes.array,
   ]),
-}
+};

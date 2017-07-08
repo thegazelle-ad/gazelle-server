@@ -70,7 +70,7 @@ export default class EditorImagePreview extends BaseComponent {
     if (url) {
       component = (
         <div className="imagePreview">
-          <img alt={"preview of " + name} src={url} />
+          <img alt={'preview of ' + name} src={url} />
           <br />
           {name}
           <br />
@@ -100,7 +100,7 @@ export default class EditorImagePreview extends BaseComponent {
         </div>
       );
     }
-      
+
     return component;
   }
 }

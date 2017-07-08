@@ -15,4 +15,4 @@ export default class EditorsPicks extends BaseComponent {
 
 EditorsPicks.propTypes = {
   articles: React.PropTypes.object,
-}
+};

@@ -7,12 +7,12 @@ export default class EditorArticleList extends BaseComponent {
     if (this.props.elements) {
       const elements = this.props.elements;
       return (
-        <div style={{overflow: "auto", maxHeight: this.props.maxHeight}}>
+        <div style={{ overflow: 'auto', maxHeight: this.props.maxHeight }}>
           {
             _.map(elements, this.props.createElement)
           }
         </div>
-      )
+      );
     }
     else {
       return <div>This page does not exist</div>;
@@ -27,4 +27,4 @@ EditorArticleList.propTypes = {
   ]).isRequired,
   createElement: React.PropTypes.func.isRequired,
   maxHeight: React.PropTypes.string.isRequired,
-}
+};

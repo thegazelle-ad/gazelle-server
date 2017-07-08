@@ -9,7 +9,7 @@ export default class EditAuthorsForm extends BaseComponent {
   constructor(props) {
     super(props);
     this.safeSetState({
-      addAuthorValue: "",
+      addAuthorValue: '',
       authorAutocomplete: [],
     });
     this.handleClickAddAuthor = this.handleClickAddAuthor.bind(this);
@@ -34,13 +34,13 @@ export default class EditAuthorsForm extends BaseComponent {
             // with that slug yet, which means it has neither been striked nor unstriked yet
             // It will return undefined which is a falsy value
             let striked = this.props.authorsDeleted[author.id];
-            let authorNameStyle = {marginLeft: "1em"};
+            let authorNameStyle = { marginLeft: '1em' };
             if (striked) {
-              authorNameStyle.textDecoration = "line-through";
+              authorNameStyle.textDecoration = 'line-through';
               authorNameStyle.opacity = 0.5;
             }
 
-            return(
+            return (
               <div key={author.id}>
                 {
                   !striked
@@ -66,7 +66,7 @@ export default class EditAuthorsForm extends BaseComponent {
         }
         {
           this.props.authorsAdded.map((author) => {
-            return(
+            return (
               <div key={author.id}>
                 <button
                   type="button"
@@ -87,6 +87,6 @@ export default class EditAuthorsForm extends BaseComponent {
           handleClick={this.handleClickAddAuthor}
         />
       </div>
-    )
+    );
   }
 }

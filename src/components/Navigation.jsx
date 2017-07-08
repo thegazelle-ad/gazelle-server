@@ -9,36 +9,36 @@ export default class Navigation extends BaseComponent {
   render() {
     const categories = [
       {
-        name: "on campus",
-        slug: "on-campus",
+        name: 'on campus',
+        slug: 'on-campus',
       },
       {
-        name: "in focus",
-        slug: "in-focus",
+        name: 'in focus',
+        slug: 'in-focus',
       },
       {
-        name: "commentary",
-        slug: "commentary",
+        name: 'commentary',
+        slug: 'commentary',
       },
       {
-        name: "off campus",
-        slug: "off-campus",
+        name: 'off campus',
+        slug: 'off-campus',
       },
-    ]
+    ];
     if (this.props.navigationData != null) { // Wait for navigation data to come in asynchronously
       const data = this.props.navigationData;
       let renderCategories =
-        _.map((categories || []), function(category) {
-          return(
+        _.map((categories || []), function (category) {
+          return (
             <li
               key={category.slug}
               className="navigation__categories__item"
             >
-              <Link to={"/category/"+category.slug} activeClassName="navigation__categories__item--active">
+              <Link to={'/category/' + category.slug} activeClassName="navigation__categories__item--active">
                 {category.name}
               </Link>
             </li>
-          )
+          );
         });
 
       return (
@@ -51,7 +51,7 @@ export default class Navigation extends BaseComponent {
               </ul>
             </nav>
             {/* TODO: change link to archives list */}
-            <Link to="/archives" className="navigation__issueNumber">{"Issue " + data.issueNumber}</Link>
+            <Link to="/archives" className="navigation__issueNumber">{'Issue ' + data.issueNumber}</Link>
           </div>
         </div>
       );
@@ -62,7 +62,7 @@ export default class Navigation extends BaseComponent {
         </div>
       );
     }
-	}
+	                    }
 }
 
 Navigation.propTypes = {
@@ -71,4 +71,4 @@ Navigation.propTypes = {
     issueNumber: React.PropTypes.number,
     categories: React.PropTypes.object,
   }),
-}
+};

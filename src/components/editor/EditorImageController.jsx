@@ -5,7 +5,7 @@ import _ from 'lodash';
 import update from 'react-addons-update';
 import { Link } from 'react-router';
 
-const UPLOAD_URL = process.env.NODE_ENV ? (process.env.NODE_ENV === "production" ? "https://admin.thegazelle.org/upload" : "https://adminbeta.thegazelle.org/upload") : "http://localhost:4000/upload";
+const UPLOAD_URL = process.env.NODE_ENV ? (process.env.NODE_ENV === 'production' ? 'https://admin.thegazelle.org/upload' : 'https://adminbeta.thegazelle.org/upload') : 'http://localhost:4000/upload';
 
 export default class EditorImageUploader extends BaseComponent {
   constructor() {
@@ -33,7 +33,7 @@ export default class EditorImageUploader extends BaseComponent {
       this.uploadFile(fileObject);
       // Configure mergeObject to set it as loading
       mergeObject[index] = {
-        meta_data: {$merge: {upload_status: 1}},
+        meta_data: { $merge: { upload_status: 1 } },
       };
     });
     const newFiles = update(this.state.files, mergeObject);
@@ -49,34 +49,34 @@ export default class EditorImageUploader extends BaseComponent {
     const formData = new FormData();
     xhr.onload = () => {
       const response = xhr.response;
-      if (response.split(" ")[0] === "success") {
-        const amazonURL = response.split(" ")[1];
+      if (response.split(' ')[0] === 'success') {
+        const amazonURL = response.split(' ')[1];
         this.handleUploadTerminated(fileObject.meta_data.name, 2, amazonURL);
       }
       else {
         let errorMessage;
-        if (response === "Error uploading") {
-          errorMessage = "The server had an error while trying to upload the image to s3";
+        if (response === 'Error uploading') {
+          errorMessage = 'The server had an error while trying to upload the image to s3';
         }
-        else if (response.split(",")[0] === "object already exists") {
-          errorMessage = "An object already exists with the key: " + response.split(",")[1];
+        else if (response.split(',')[0] === 'object already exists') {
+          errorMessage = 'An object already exists with the key: ' + response.split(',')[1];
         }
         else {
-          errorMessage = "An unexpected error occured: " + response;
+          errorMessage = 'An unexpected error occured: ' + response;
         }
         this.handleUploadTerminated(fileObject.meta_data.name, 3, undefined, errorMessage);
       }
     };
     xhr.onerror = (err) => {
       // Set upload status to failed
-      console.error(err); //eslint-disable-line no-console
-      const error_message = "An unknown error occured contacting the server, error logged in developer console";
+      console.error(err); // eslint-disable-line no-console
+      const error_message = 'An unknown error occured contacting the server, error logged in developer console';
       this.handleUploadTerminated(fileObject.meta_data.name, 3, undefined, error_message);
-    }
-    xhr.open("POST", UPLOAD_URL, true);
+    };
+    xhr.open('POST', UPLOAD_URL, true);
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     // Put file in request and assign user-defined name
-    formData.set("image", file, fileObject.meta_data.name);
+    formData.set('image', file, fileObject.meta_data.name);
     // Send data
     xhr.send(formData);
   }
@@ -95,24 +95,24 @@ export default class EditorImageUploader extends BaseComponent {
     });
     if (index !== -1) {
       const newFiles = update(this.state.files,
-      {
-        [index]: {
-          meta_data: {
-            $merge: {
-              upload_status,
-              amazonURL,
-              error_message,
+        {
+          [index]: {
+            meta_data: {
+              $merge: {
+                upload_status,
+                amazonURL,
+                error_message,
+              },
             },
           },
-        },
-      });
+        });
       this.safeSetState({
         files: newFiles,
         changed: newChanged,
       });
     }
     else {
-      console.error("Unexpected error, couldn't find file"); //eslint-disable-line no-console
+      console.error("Unexpected error, couldn't find file"); // eslint-disable-line no-console
     }
     if (!newChanged) {
       this.safeSetState({
@@ -127,7 +127,7 @@ export default class EditorImageUploader extends BaseComponent {
     const fileArray = _.map(files, (file) => {
       return {
         file,
-        meta_data: {name: file.name},
+        meta_data: { name: file.name },
       };
     });
     let newFiles = this.state.files.concat(fileArray);
@@ -167,7 +167,7 @@ export default class EditorImageUploader extends BaseComponent {
       return fileObject.meta_data.name === name;
     });
     if (index !== -1) {
-      const newFiles = update(this.state.files, {$splice: [[index, 1]]});
+      const newFiles = update(this.state.files, { $splice: [[index, 1]] });
       this.safeSetState({
         files: newFiles,
       });
@@ -183,7 +183,7 @@ export default class EditorImageUploader extends BaseComponent {
       if (index !== -1) {
         const newFiles = update(this.state.files, {
           [index]: {
-            meta_data: {$merge: {url: reader.result}},
+            meta_data: { $merge: { url: reader.result } },
           },
         });
         this.safeSetState({
@@ -192,14 +192,14 @@ export default class EditorImageUploader extends BaseComponent {
       }
     };
     reader.onerror = (e) => {
-      console.error(e); //eslint-disable-line no-console
+      console.error(e); // eslint-disable-line no-console
     };
 
     reader.readAsDataURL(fileObject.file);
   }
 
   changeImageName(name) {
-    const newName = window.prompt("Please enter new name (and remember to keep the extension) for " + name + ":");
+    const newName = window.prompt('Please enter new name (and remember to keep the extension) for ' + name + ':');
     if (!newName) {
       return;
     }
@@ -209,7 +209,7 @@ export default class EditorImageUploader extends BaseComponent {
     if (index !== -1) {
       const newFiles = update(this.state.files, {
         [index]: {
-          meta_data: {$merge: {name: newName}},
+          meta_data: { $merge: { name: newName } },
         },
       });
       this.safeSetState({
@@ -230,21 +230,21 @@ export default class EditorImageUploader extends BaseComponent {
     const changedStateStyle = {};
     if (!this.state.changed) {
       if (!this.state.uploading) {
-        changedStateMessage = "No Changes";
+        changedStateMessage = 'No Changes';
       }
       else {
-        changedStateMessage = "Succesfully uploaded";
-        changedStateStyle.color = "green";
+        changedStateMessage = 'Succesfully uploaded';
+        changedStateStyle.color = 'green';
       }
     }
     else {
       if (!this.state.uploading) {
-        changedStateMessage = "Images awaiting upload";
-        changedStateStyle.color = "red";
+        changedStateMessage = 'Images awaiting upload';
+        changedStateStyle.color = 'red';
       }
       else {
-        changedStateMessage = "Uploading";
-        changedStateStyle.color = "#65e765";
+        changedStateMessage = 'Uploading';
+        changedStateStyle.color = '#65e765';
       }
     }
 
@@ -266,7 +266,7 @@ export default class EditorImageUploader extends BaseComponent {
     const isUpload = /upload\/?$/.test(window.location.pathname);
 
     return (
-      <div className="pure-g" style={{flexGrow: "1"}}>
+      <div className="pure-g" style={{ flexGrow: '1' }}>
         <div className="pure-u-1-4">
           <h3>Images</h3>
           <ul>
@@ -309,10 +309,10 @@ export default class EditorImageUploader extends BaseComponent {
         <div className="pure-u-3-4">
           {isUpload ?
             React.cloneElement(this.props.children,
-            {
-              images: imagePreviews,
-              onChange: this.handlePreviewChange,
-            })
+              {
+                images: imagePreviews,
+                onChange: this.handlePreviewChange,
+              })
           : this.props.children
           }
         </div>

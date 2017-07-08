@@ -13,13 +13,13 @@ export default class EditorIssueListController extends FalcorController {
     });
   }
   static getFalcorPathSets() {
-    return ['issuesByNumber', {from: 1, to: 200}, 'name'];
+    return ['issuesByNumber', { from: 1, to: 200 }, 'name'];
   }
 
   handleChange(e) {
     const issueNumber = e.target.value;
-    if (issueNumber === "none") {
-      browserHistory.push("/issues");
+    if (issueNumber === 'none') {
+      browserHistory.push('/issues');
       return;
     }
     const currentUrl = this.props.location.pathname;
@@ -33,32 +33,32 @@ export default class EditorIssueListController extends FalcorController {
     e.preventDefault();
     const formNode = e.target;
     if (this.state.data.issuesByNumber.hasOwnProperty(formNode.issueNumber.value)) {
-      window.alert("This issue has already been created, you cannot create it again");
+      window.alert('This issue has already been created, you cannot create it again');
       return;
     }
     const children = _.map(formNode.children, (child) => {
       return child.name;
-    })
+    });
     const fields = children.filter((key) => {
-      return key && isNaN(parseInt(key)) && key !== "length";
+      return key && isNaN(parseInt(key)) && key !== 'length';
     });
     const issue = {};
     fields.forEach((field) => {
-      const value = formNode[field].value
-      issue[field] = field === "issueNumber" ? parseInt(value) : value;
+      const value = formNode[field].value;
+      issue[field] = field === 'issueNumber' ? parseInt(value) : value;
     });
 
     const callback = () => {
-      this.safeSetState({saving: false});
+      this.safeSetState({ saving: false });
       fields.forEach((field) => {
-        formNode[field].value = "";
+        formNode[field].value = '';
       });
-    }
+    };
     this.safeSetState({
       saving: true,
     });
     this.falcorCall(['issuesByNumber', 'addIssue'], [issue],
-      undefined, undefined, undefined, callback)
+      undefined, undefined, undefined, callback);
   }
 
   render() {
@@ -76,10 +76,10 @@ export default class EditorIssueListController extends FalcorController {
         return <div>Invalid URL</div>;
       }
       const data = this.state.data.issuesByNumber;
-      const baseUrl = "/issues/" + issueNumber;
+      const baseUrl = '/issues/' + issueNumber;
 
-      const issues = Object.keys(data).map((key) => {return parseInt(key)});
-      const nextIssue = Math.max(...issues)+1;
+      const issues = Object.keys(data).map((key) => { return parseInt(key); });
+      const nextIssue = Math.max(...issues) + 1;
       return (
         <div className="pure-g">
           <div className="pure-u-3-8">
@@ -99,7 +99,7 @@ export default class EditorIssueListController extends FalcorController {
                 type="text"
                 name="name"
                 placeholder="Input Issue Name"
-                defaultValue={"Issue " + nextIssue}
+                defaultValue={'Issue ' + nextIssue}
                 disabled={this.state.saving}
               />
               Issue Number:
@@ -120,7 +120,7 @@ export default class EditorIssueListController extends FalcorController {
             </form>
             <p>Choose the issue you want to edit in the dropdown here
             and pick which type of editing you would like to do in the list below</p>
-            <select defaultValue={issueNumber ? issueNumber : "none"} onChange={this.handleChange}>
+            <select defaultValue={issueNumber ? issueNumber : 'none'} onChange={this.handleChange}>
               <option value="none" key="none">None Chosen</option>
               {
                 _.map(data, (issue, number) => {
@@ -132,9 +132,9 @@ export default class EditorIssueListController extends FalcorController {
             {
               this.props.params.issueNumber ?
                 <ul>
-                  <li><Link to={baseUrl+"/main"} activeClassName="active-link">Main</Link></li>
-                  <li><Link to={baseUrl+"/articles"} activeClassName="active-link">Articles</Link></li>
-                  <li><Link to={baseUrl+"/categories"} activeClassName="active-link">Categories</Link></li>
+                  <li><Link to={baseUrl + '/main'} activeClassName="active-link">Main</Link></li>
+                  <li><Link to={baseUrl + '/articles'} activeClassName="active-link">Articles</Link></li>
+                  <li><Link to={baseUrl + '/categories'} activeClassName="active-link">Categories</Link></li>
                 </ul> :
                 null
             }

@@ -8,7 +8,7 @@ export default class Login extends BaseComponent {
   constructor(props) {
     super(props);
     this.safeSetState({
-      passwordValue: "",
+      passwordValue: '',
     });
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -24,16 +24,16 @@ export default class Login extends BaseComponent {
     e.preventDefault();
     const pass = e.target.password.value;
     if (hash(pass) !== 8692053) {
-      window.alert("Incorrect password");
-      e.target.password.value = "";
+      window.alert('Incorrect password');
+      e.target.password.value = '';
     }
     else {
       // Otherwise it is correct and we let the site redirect the client
-      let url = this.props.location.query.url || "";
+      let url = this.props.location.query.url || '';
       if (url) {
         _.forEach(this.props.location.query, (q, name) => {
-          if (name != "url") {
-            url += "&" + name + "=" + q;
+          if (name != 'url') {
+            url += '&' + name + '=' + q;
           }
         });
       }
@@ -42,7 +42,7 @@ export default class Login extends BaseComponent {
   }
 
   render() {
-    return(
+    return (
       <div>
         <form className="pure form" onSubmit={this.handleSubmit}>
           Input Password:<br />

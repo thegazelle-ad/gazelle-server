@@ -4,7 +4,7 @@ import BaseComponent from 'lib/BaseComponent';
 import { parseMarkdown } from 'lib/utilities';
 
 export default class Author extends BaseComponent {
-  render () {
+  render() {
     let author = this.props.author;
     return (
       <div key={author.slug} className="author">
@@ -30,4 +30,4 @@ Author.propTypes = {
     photo: React.PropTypes.string,
     articles: React.PropTypes.object,
   }),
-}
+};

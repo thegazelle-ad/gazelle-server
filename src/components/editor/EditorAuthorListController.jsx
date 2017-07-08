@@ -11,7 +11,7 @@ export default class EditorAuthorListController extends FalcorController {
     this.handleCreateAuthorChange = this.handleCreateAuthorChange.bind(this);
     this.createAuthor = this.createAuthor.bind(this);
     this.safeSetState({
-      slugSearchValue: "",
+      slugSearchValue: '',
       searchSuggestions: [],
       createAuthorValid: false,
     });
@@ -27,19 +27,19 @@ export default class EditorAuthorListController extends FalcorController {
         query = this.state.slugSearchValue;
       }
       if (!(query.trim())) {
-        this.safeSetState({searchSuggestions: []});
+        this.safeSetState({ searchSuggestions: [] });
         return;
       }
-      this.props.model.get(['search', 'authors', query, {length: 3}, ['name', 'slug']])
+      this.props.model.get(['search', 'authors', query, { length: 3 }, ['name', 'slug']])
       .then((x) => {
         if (!x) {
-          this.safeSetState({searchSuggestions: []});
+          this.safeSetState({ searchSuggestions: [] });
           return;
         }
         const suggestions = x.json.search.authors[query];
-        const suggestionsArray = _.map(suggestions, (value) => {return value});
-        this.safeSetState({searchSuggestions: suggestionsArray});
-      })
+        const suggestionsArray = _.map(suggestions, (value) => { return value; });
+        this.safeSetState({ searchSuggestions: suggestionsArray });
+      });
     }, 250, true);
   }
   static getFalcorPathSets() {
@@ -57,7 +57,7 @@ export default class EditorAuthorListController extends FalcorController {
     const formNode = e.target.parentNode;
     const validFlag = formNode.slug.value && formNode.name.value;
     if (validFlag !== this.state.createAuthorValid) {
-      this.safeSetState({createAuthorValid: validFlag});
+      this.safeSetState({ createAuthorValid: validFlag });
     }
   }
 
@@ -68,8 +68,8 @@ export default class EditorAuthorListController extends FalcorController {
     const name = formNode.name.value;
 
     if (slug !== slugifyAuthor(slug)) {
-      window.alert("Your slug is not in the right format. Our programatically suggested" +
-        " substitute is: " + slugifyAuthor(slug) + ". Feel free to use it or change it to something else");
+      window.alert('Your slug is not in the right format. Our programatically suggested' +
+        ' substitute is: ' + slugifyAuthor(slug) + '. Feel free to use it or change it to something else');
       return;
     }
 
@@ -77,18 +77,18 @@ export default class EditorAuthorListController extends FalcorController {
     this.props.model.get(['authorsBySlug', slug, 'slug']).then((x) => {
       if (x) {
         // Something was found, which means the slug is taken
-        window.alert("This slug is already taken, please change to another one");
+        window.alert('This slug is already taken, please change to another one');
         return;
       }
       else {
         // Create the author
         const callback = () => {
-          window.alert("Author added successfully");
-        }
-        this.falcorCall(['authorsBySlug', 'createAuthor'], [{slug: slug, name: name}],
+          window.alert('Author added successfully');
+        };
+        this.falcorCall(['authorsBySlug', 'createAuthor'], [{ slug, name }],
           undefined, undefined, undefined, callback);
       }
-    })
+    });
   }
   render() {
     if (this.state.ready) {
@@ -97,14 +97,14 @@ export default class EditorAuthorListController extends FalcorController {
           <div className="pure-u-3-8">
             <h3>Authors</h3>
             <p>You can search for authors by name to edit here</p>
-            <form className="pure-form" onSubmit={(e)=>{e.preventDefault()}}>
+            <form className="pure-form" onSubmit={(e) => { e.preventDefault(); }}>
               <input type="text" value={this.state.slugSearchValue} placeholder="Input Name" onChange={this.handleSearchChange} />
               {
                 this.state.searchSuggestions.map((author) => {
-                  const link = "/authors/" + author.slug;
+                  const link = '/authors/' + author.slug;
                   return (
                     <div key={author.slug}>
-                      <Link to={link} onClick={() => {this.safeSetState({slugSearchValue: "", searchSuggestions: []})}}>
+                      <Link to={link} onClick={() => { this.safeSetState({ slugSearchValue: '', searchSuggestions: [] }); }}>
                         <button type="button" className="pure-button">{author.name}</button>
                       </Link>
                     </div>

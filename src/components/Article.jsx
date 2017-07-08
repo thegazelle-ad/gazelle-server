@@ -10,7 +10,7 @@ import SharingButtons from 'components/SharingButtons';
 import Trending from 'components/Trending';
 
 export default class Article extends BaseComponent {
-  render () {
+  render() {
     return (
       <div className="article">
         <div className="article__header">
@@ -26,7 +26,7 @@ export default class Article extends BaseComponent {
             />
           </div>
         </div>
-        <div className="article__body" dangerouslySetInnerHTML={{__html: this.props.html}} />
+        <div className="article__body" dangerouslySetInnerHTML={{ __html: this.props.html }} />
         <div className="article__body__end-mark">
           <Link to="/">
             <img src="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/header-logo.png" alt="Gazelle Logo" />
@@ -59,4 +59,4 @@ Article.propTypes = {
   published_at: React.PropTypes.number,
   trending: React.PropTypes.object,
   relatedArticles: React.PropTypes.object,
-}
+};
