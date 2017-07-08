@@ -22,10 +22,10 @@
     }
   },
   "extends": [
-    "airbnb",
     "eslint:recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
+    "airbnb",
   ],
   "env": {
     "es6": true
