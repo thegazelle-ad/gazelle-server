@@ -1,6 +1,6 @@
 import { isClient } from 'lib/utilities';
-import BaseComponent from "lib/BaseComponent";
-import React from "react";
+import BaseComponent from 'lib/BaseComponent';
+import React from 'react';
 import classnames from 'classnames';
 
 // loading requests end up here for 100ms. If the time elapses, they make it
@@ -26,7 +26,7 @@ export function setLoading(name, isLoading) {
   }
 
   if (!name || typeof name !== 'string') {
-    throw new Error("setLoading must be called with a string name")
+    throw new Error('setLoading must be called with a string name');
   }
 
   if (isLoading) {
@@ -65,7 +65,6 @@ export function signalLeaving(leaveCallback) {
 }
 
 
-
 // Pass a function in which will be called when the loading state has changed.
 // Callback is loadingChangeCallback(isLoading). There is currently no
 // unregister function, so this will pin your function to memory.
@@ -74,7 +73,7 @@ export function registerLoaderCallback(newLoadingChangeCallback) {
     return;
   }
   if (!newLoadingChangeCallback || typeof newLoadingChangeCallback !== 'function') {
-    throw new Error("argument of registerLoaderCallback must be a function");
+    throw new Error('argument of registerLoaderCallback must be a function');
   }
 
   loadingChangeCallbacks.push(newLoadingChangeCallback);
@@ -87,7 +86,7 @@ export function registerTransitionOutCallback(newTransitionOutCallback) {
     return;
   }
   if (!newTransitionOutCallback || typeof newTransitionOutCallback !== 'function') {
-    throw new Error("argument of registerLoaderCallback must be a function");
+    throw new Error('argument of registerLoaderCallback must be a function');
   }
 
   transitionOutCallbacks.push(newTransitionOutCallback);
@@ -122,26 +121,26 @@ export class TransitionManager extends BaseComponent {
   changeMode(mode) {
     this.mode = mode;
     this.safeSetState({
-      mode: mode,
+      mode,
     });
 
     switch (mode) {
-      case "rest":
-      case "loading":
+      case 'rest':
+      case 'loading':
         break;
-      case "loadEnding":
-        this.delayedModeChange("loadEnding", "fadingStart", TRANSITION_OUT_TIME);
+      case 'loadEnding':
+        this.delayedModeChange('loadEnding', 'fadingStart', TRANSITION_OUT_TIME);
         break;
-      case "fadingStart":
+      case 'fadingStart':
         if (this.visibleTransitionOut) {
           this.visibleTransitionOut();
           this.visibleTransitionOut = null;
         }
-        this.delayedModeChange("fadingStart", "fadingIn", 10);
+        this.delayedModeChange('fadingStart', 'fadingIn', 10);
         break;
-      case "fadingIn":
-        window.scrollTo(0,0);
-        this.delayedModeChange("fadingIn", "rest", TRANSITION_IN_TIME);
+      case 'fadingIn':
+        window.scrollTo(0, 0);
+        this.delayedModeChange('fadingIn', 'rest', TRANSITION_IN_TIME);
         break;
     }
   }
@@ -151,14 +150,14 @@ export class TransitionManager extends BaseComponent {
       if (this.mode == fromMode) {
         this.changeMode(toMode);
       }
-    }, delay)
+    }, delay);
   }
 
   loadStatusChange(loading) {
     if (loading) {
-      this.changeMode("loading")
+      this.changeMode('loading');
     } else {
-      this.changeMode("loadEnding")
+      this.changeMode('loadEnding');
     }
   }
 
@@ -166,24 +165,24 @@ export class TransitionManager extends BaseComponent {
   handleLeaveCallback(leaveCallback) {
     if (leaveCallback) {
       switch (this.mode) {
-        case "rest":
+        case 'rest':
           this.visibleTransitionOut = leaveCallback;
-          this.changeMode("loadEnding")
+          this.changeMode('loadEnding');
           break;
-        case "loading":
+        case 'loading':
           if (this.visibleTransitionOut) {
             leaveCallback();
           } else {
             this.visibleTransitionOut = leaveCallback;
           }
           break;
-        case "loadEnding":
-        case "fadingStart":
+        case 'loadEnding':
+        case 'fadingStart':
           leaveCallback();
           break;
-        case "fadingIn":
+        case 'fadingIn':
           this.visibleTransitionOut = leaveCallback;
-          this.changeMode("loadEnding")
+          this.changeMode('loadEnding');
           break;
       }
     }
@@ -191,14 +190,14 @@ export class TransitionManager extends BaseComponent {
 
   render() {
     const classes = classnames('transition-manager', {
-      'loading': this.state.mode == "loading",
-      'load-ending': this.state.mode == "loadEnding",
-      'fading-start': this.state.mode == "fadingStart",
+      'loading': this.state.mode == 'loading',
+      'load-ending': this.state.mode == 'loadEnding',
+      'fading-start': this.state.mode == 'fadingStart',
     });
     return (
       <div className={classes}>
         {this.props.children}
       </div>
-    )
+    );
   }
 }

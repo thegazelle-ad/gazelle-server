@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, browserHistory } from 'react-router';
-import FalcorController from "lib/falcor/FalcorController";
+import FalcorController from 'lib/falcor/FalcorController';
 import EditorSearchBar from 'components/editor/EditorSearchBar';
 import EditorList from 'components/editor/EditorList';
 
@@ -15,7 +15,7 @@ export default class EditorArticleListController extends FalcorController {
 
   static getFalcorPathSets(params) {
     return [
-      ['articlesByPage', NUM_ARTICLES_IN_PAGE, parseInt(params.page), {length: NUM_ARTICLES_IN_PAGE}, ['title', 'slug']],
+      ['articlesByPage', NUM_ARTICLES_IN_PAGE, parseInt(params.page), { length: NUM_ARTICLES_IN_PAGE }, ['title', 'slug']],
       ['totalAmountOfArticles'],
     ];
   }
@@ -23,20 +23,20 @@ export default class EditorArticleListController extends FalcorController {
   getNewPagePath(delta) {
     let path = this.props.location.pathname;
     path = path.split('/');
-    path[3] = (parseInt(path[3])+delta).toString();
+    path[3] = (parseInt(path[3]) + delta).toString();
     return path.join('/');
   }
 
   clickSearchSuggestion(article) {
     const page = this.props.params.page;
-    const path = "/articles/page/" + page + "/slug/"+ article.slug;
+    const path = '/articles/page/' + page + '/slug/' + article.slug;
     browserHistory.push(path);
   }
 
   createListElement(page, article) {
     return (
       <div key={article.slug}>
-        <Link to={"/articles/page/" + page + "/slug/"+article.slug} activeClassName="active-link">{article.title}</Link>
+        <Link to={'/articles/page/' + page + '/slug/' + article.slug} activeClassName="active-link">{article.title}</Link>
       </div>
     );
   }
@@ -55,7 +55,7 @@ export default class EditorArticleListController extends FalcorController {
       page = this.props.params.page;
       data = this.state.data.articlesByPage[NUM_ARTICLES_IN_PAGE][page];
       length = this.state.data.totalAmountOfArticles;
-      maxPage = Math.ceil(length/NUM_ARTICLES_IN_PAGE);
+      maxPage = Math.ceil(length / NUM_ARTICLES_IN_PAGE);
     }
 
     // TODO: Style it much better for small screens, add good responsiveness
@@ -87,7 +87,7 @@ export default class EditorArticleListController extends FalcorController {
                 <Link to={this.getNewPagePath(-1)}><button type="button" className="pure-button" disabled={page <= 1}>Previous Page</button></Link>
               </div>
               <div className="pure-u-1-3">
-                <div style={{padding: "0.5em"}}>
+                <div style={{ padding: '0.5em' }}>
                   Page {page} of {maxPage}
                 </div>
               </div>

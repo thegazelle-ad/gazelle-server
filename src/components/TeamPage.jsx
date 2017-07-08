@@ -1,11 +1,11 @@
-import React from "react";
-import _ from "lodash";
+import React from 'react';
+import _ from 'lodash';
 import BaseComponent from 'lib/BaseComponent';
 
 import TeamMembersList from 'components/TeamMembersList';
 
 export default class TeamPage extends BaseComponent {
-  render () {
+  render() {
     const renderTeams =
       _.map((this.props.teamData || []), (team) => {
         return (
@@ -28,4 +28,4 @@ export default class TeamPage extends BaseComponent {
 
 TeamPage.propTypes = {
   teamData: React.PropTypes.object,
-}
+};

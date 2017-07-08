@@ -3,11 +3,11 @@ import BaseComponent from 'lib/BaseComponent';
 import { Link, browserHistory } from 'react-router';
 import http from 'http';
 
-const HOSTNAME = process.env.NODE_ENV === "production" ?
-  "admin.thegazelle.org" : process.env.NODE_ENV === "beta" ?
-  "adminbeta.thegazelle.org" : "localhost";
-const PORT = process.env.NODE_ENV === "production" ?
-  443 : process.env.NODE_ENV === "beta" ?
+const HOSTNAME = process.env.NODE_ENV === 'production' ?
+  'admin.thegazelle.org' : process.env.NODE_ENV === 'beta' ?
+  'adminbeta.thegazelle.org' : 'localhost';
+const PORT = process.env.NODE_ENV === 'production' ?
+  443 : process.env.NODE_ENV === 'beta' ?
   443 : 4000;
 
 export default class EditorAppController extends BaseComponent {
@@ -18,18 +18,18 @@ export default class EditorAppController extends BaseComponent {
   }
 
   handleDisableLink(e) {
-    if (this.props.location.pathname === "/login") {
+    if (this.props.location.pathname === '/login') {
       e.preventDefault();
     }
   }
 
   restartServer() {
-    const password = window.prompt("Please input the password");
+    const password = window.prompt('Please input the password');
     const options = {
       hostname: HOSTNAME,
       port: PORT,
       path: '/restartserver?password=' + password,
-    }
+    };
     http.get(options, (res) => {
       let reply = '';
 
@@ -38,17 +38,17 @@ export default class EditorAppController extends BaseComponent {
       });
 
       res.on('end', () => {
-        if (reply === "restarted") {
-          window.alert("Servers restarted successfully");
+        if (reply === 'restarted') {
+          window.alert('Servers restarted successfully');
         }
-        else if (reply === "error") {
-          window.alert("there was an error restarting the servers");
+        else if (reply === 'error') {
+          window.alert('there was an error restarting the servers');
         }
-        else if (reply === "invalid") {
-          window.alert("invalid password");
+        else if (reply === 'invalid') {
+          window.alert('invalid password');
         }
         else {
-          window.alert("unknown error");
+          window.alert('unknown error');
         }
       });
     });
@@ -62,7 +62,7 @@ export default class EditorAppController extends BaseComponent {
   render() {
     return (
       <div className="mainContainer">
-        <div className="pure-g" style={{flexShrink: "0"}}>
+        <div className="pure-g" style={{ flexShrink: '0' }}>
           <div className="pure-u-1-2">
             <h2>Gazelle Editor Tools</h2>
             <p>Please choose what you would like to edit</p>
@@ -79,23 +79,23 @@ export default class EditorAppController extends BaseComponent {
               onClick={this.restartServer}
               className="pure-button"
               style={{
-                width: "15em",
-                height: "10em",
-                backgroundColor: "rgb(202, 60, 60)",
-                float: "left",
+                width: '15em',
+                height: '10em',
+                backgroundColor: 'rgb(202, 60, 60)',
+                float: 'left',
               }}
-              disabled={this.props.location.pathname === "/login"}
+              disabled={this.props.location.pathname === '/login'}
             >RESTART SERVERS</button>
             <button
               type="button"
               onClick={this.resetGhostInfo}
               className="pure-button"
               style={{
-                width: "15em",
-                height: "10em",
-                backgroundColor: "green",
+                width: '15em',
+                height: '10em',
+                backgroundColor: 'green',
               }}
-              disabled={true || this.props.location.pathname === "/login"}
+              disabled={true || this.props.location.pathname === '/login'}
             >REFRESH GHOST DATA <br />(Out of order)</button>
           </div>
         </div>

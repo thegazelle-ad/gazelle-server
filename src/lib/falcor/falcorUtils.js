@@ -1,5 +1,5 @@
-import React from "react";
-import FalcorController from "lib/falcor/FalcorController";
+import React from 'react';
+import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
 import update from 'react-addons-update';
 
@@ -10,24 +10,24 @@ import update from 'react-addons-update';
 export function injectModelCreateElement(model) {
   return (Component, props) => {
     if (Component.prototype instanceof FalcorController) {
-      return <Component model={model} {...props} />
+      return <Component model={model} {...props} />;
     } else {
-      return <Component {...props} />
+      return <Component {...props} />;
     }
-  }
+  };
 }
 
 // Turns to true on the client after the first render is entirely
 // completed. Should be set only by the toplevel appController
 // after it has mounted
-let appReady = false
+let appReady = false;
 
 export function isAppReady() {
-  return appReady
+  return appReady;
 }
 
 export function setAppReady() {
-  appReady = true
+  appReady = true;
 }
 
 export function validateFalcorPathSets(falcorPathSets) {
@@ -63,7 +63,7 @@ function followPath(path, object) {
   */
 
   // If using dot notation obj.key.key.key
-  if (typeof path === "string") {
+  if (typeof path === 'string') {
     path = path.split('.');
   }
   return path.reduce((currentObject, nextChild) => {
@@ -96,13 +96,13 @@ export function pathSetsInCache(cache, falcorPathSets) {
       const val = curObject[key];
       if (val.$type) {
         switch (val.$type) {
-          case "error":
-          case "atom":
+          case 'error':
+          case 'atom':
             return nextRemainingKeySets.length === 0;
-          case "ref":
+          case 'ref':
             return checkSinglePathSetInCache(followPath(val.value, cache), nextRemainingKeySets);
           default:
-            throw new Error("pathSetsInCache encountered unexpected type. Type found was: " + val.$type);
+            throw new Error('pathSetsInCache encountered unexpected type. Type found was: ' + val.$type);
         }
       }
       else {
@@ -136,7 +136,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
       nextKeySet = [nextKeySet];
     }
     return nextKeySet.every((keyOrRange) => {
-      if (keyOrRange !== null && typeof keyOrRange === "object") {
+      if (keyOrRange !== null && typeof keyOrRange === 'object') {
         // keyOrRange is a range
 
         // Every time we call a range, there should also be a length property.
@@ -144,12 +144,12 @@ export function pathSetsInCache(cache, falcorPathSets) {
         // in the cache or it's simply because there is no data to fetch.
         // It is also needed in the software development to know how many
         // items you will actually receive when overfetching.
-        if (!curObject.hasOwnProperty("length")) {
-          if (process.env.NODE_ENV !== "production") {
-            console.warn("No length property on object in cache. This might be a developer mistake."); // eslint-disable-line no-console
-            console.log("Current object in pathSetsInCache:"); // eslint-disable-line no-console
+        if (!curObject.hasOwnProperty('length')) {
+          if (process.env.NODE_ENV !== 'production') {
+            console.warn('No length property on object in cache. This might be a developer mistake.'); // eslint-disable-line no-console
+            console.log('Current object in pathSetsInCache:'); // eslint-disable-line no-console
             console.log(curObject); // eslint-disable-line no-console
-            console.log("remainingKeySets in pathSetsInCache"); // eslint-disable-line no-console
+            console.log('remainingKeySets in pathSetsInCache'); // eslint-disable-line no-console
             console.log(remainingKeySets); // eslint-disable-line no-console
           }
           // If it's not a developer mistake the length property could simply be missing
@@ -158,24 +158,24 @@ export function pathSetsInCache(cache, falcorPathSets) {
         }
         let lengthOfFalcorArray = curObject.length;
         let start = 0;
-        if (keyOrRange.hasOwnProperty("from")) {
+        if (keyOrRange.hasOwnProperty('from')) {
           start = keyOrRange.from;
         }
         let end;
-        if (keyOrRange.hasOwnProperty("to")) {
-          if (keyOrRange.hasOwnProperty("length")) {
+        if (keyOrRange.hasOwnProperty('to')) {
+          if (keyOrRange.hasOwnProperty('length')) {
             throw new Error("Falcor Range cannot have both 'to' and 'length' properties at falcor KeySet: " + JSON.stringify(keyOrRange));
           }
           end = keyOrRange.to;
         }
-        else if (keyOrRange.hasOwnProperty("length")) {
-          end = start+keyOrRange.length-1;
+        else if (keyOrRange.hasOwnProperty('length')) {
+          end = start + keyOrRange.length - 1;
         }
         else {
           throw new Error("Falcor Range must have either 'to' or 'length' properties at falcor KeySet: " + JSON.stringify(keyOrRange));
         }
         // Don't check any keys beyond the end of the theoretical falcor array.
-        end = Math.min(lengthOfFalcorArray-1, end);
+        end = Math.min(lengthOfFalcorArray - 1, end);
         for (let i = start; i <= end; i++) {
           if (!handleCheckingSingleKey(curObject, nextRemainingKeySets, i)) {
             return false;
@@ -206,13 +206,13 @@ export function pathSetsInCache(cache, falcorPathSets) {
 export function expandCache(cache) {
   function assignByPath(path, value) {
     // If using dot notation obj.key.key.key
-    if (typeof path === "string") {
+    if (typeof path === 'string') {
       path = path.split('.');
     }
     // Parent also works for array length 1, aka initial keys
     // Parent and Key variables are used for assigning new values later
-    const parent = followPath(path.slice(0, path.length-1), cache);
-    const key = path[path.length-1];
+    const parent = followPath(path.slice(0, path.length - 1), cache);
+    const key = path[path.length - 1];
     // The following key exists as it was pushed on to stack as a valid key
     parent[key] = value;
   }
@@ -222,43 +222,43 @@ export function expandCache(cache) {
     // This does still leave us vulnerable to an expanded object though, but in by far most cases
     // it would be very bad form to put an object in an atom, so this is not supported at this time.
     if (val === null || (val instanceof Array)) return false;
-    return (typeof val) === "object";
+    return (typeof val) === 'object';
   }
 
   function handleRef(pathToRef, refPath) {
     const refPathsSet = new Set();
     // pathToRef is an array path
     if (!(pathToRef instanceof Array)) {
-      throw new Error("pathToRef was passed as a non-array. The value passed was: " + JSON.stringify(pathToRef));
+      throw new Error('pathToRef was passed as a non-array. The value passed was: ' + JSON.stringify(pathToRef));
     }
     // So is refPath
     if (!(pathToRef instanceof Array)) {
-      throw new Error("refPath was passed as a non-array. The value passed was: " + JSON.stringify(refPath));
+      throw new Error('refPath was passed as a non-array. The value passed was: ' + JSON.stringify(refPath));
     }
     refPathsSet.add(pathToRef.join('.'));
     let val = followPath(refPath, cache);
     let path = refPath.join('.');
     if (val === undefined) {
-      throw new Error("Missing part of JSON graph in expandCache function at path: " + path);
+      throw new Error('Missing part of JSON graph in expandCache function at path: ' + path);
     }
     while (isObject(val) && val.$type) {
       switch (val.$type) {
-        case "atom":
+        case 'atom':
           assignByPath(path, val.value);
           val = followPath(path, cache);
           break;
-        case "error":
+        case 'error':
           assignByPath(path, new Error(val.value));
           val = followPath(path, cache);
           break;
-        case "ref":
+        case 'ref':
           if (refPathsSet.has(path)) {
-            let paths = "[";
+            let paths = '[';
             refPathsSet.forEach((pathFromSet) => {
-              paths += pathFromSet + ", ";
+              paths += pathFromSet + ', ';
             });
-            paths = paths.substring(0, paths.length-2) + ']';
-            throw new Error("Neverending loop from ref to ref with no real values present in expandCache. It is made up of the following paths: " + paths)
+            paths = paths.substring(0, paths.length - 2) + ']';
+            throw new Error('Neverending loop from ref to ref with no real values present in expandCache. It is made up of the following paths: ' + paths);
           }
           else {
             refPathsSet.add(path);
@@ -267,7 +267,7 @@ export function expandCache(cache) {
           }
           break;
         default:
-          throw new Error("expandCache encountered a new type of name: " + val.$type + ". And cannot read it at following path: " + path);
+          throw new Error('expandCache encountered a new type of name: ' + val.$type + '. And cannot read it at following path: ' + path);
       }
     }
     refPathsSet.forEach((pathFromSet) => {
@@ -288,31 +288,31 @@ export function expandCache(cache) {
     // it is always an array as we only push arrays onto the stack
     const pathArray = stack.pop();
     if (!(pathArray instanceof Array)) {
-      throw new Error("non-array popped off stack in expandCache. Item popped off was: " + JSON.stringify(pathArray));
+      throw new Error('non-array popped off stack in expandCache. Item popped off was: ' + JSON.stringify(pathArray));
     }
     const val = followPath(pathArray, cache);
     if (val === undefined) {
-      throw new Error("Missing part of JSON graph in expandCache function at path: " + pathArray.join('.'));
+      throw new Error('Missing part of JSON graph in expandCache function at path: ' + pathArray.join('.'));
     }
     if (!isObject(val)) {
       continue;
     }
     else if (val.$type) {
       switch (val.$type) {
-        case "atom":
+        case 'atom':
           assignByPath(pathArray, val.value);
           break;
-        case "error":
+        case 'error':
           assignByPath(pathArray, new Error(val.value));
           break;
-        case "ref":
+        case 'ref':
           handleRef(pathArray, val.value);
           break;
         default:
-          throw new Error("expandCache encountered a new type of name: " + val.$type + ". And cannot read it at following path: " + pathArray.join('.'));
+          throw new Error('expandCache encountered a new type of name: ' + val.$type + '. And cannot read it at following path: ' + pathArray.join('.'));
       }
     }
-    else{
+    else {
       Object.keys(val).forEach((key) => {
         const next = pathArray.concat(key);
         stack.push(next);
@@ -330,7 +330,7 @@ export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
 
   function isObject(val) {
     if (val === null) return false;
-    return (typeof val) === "object";
+    return (typeof val) === 'object';
   }
 
   function recursivelyConvertObject(curObject, correspondingOldObject, depth) {
@@ -349,14 +349,14 @@ export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
       }
       if (correspondingOldObject.hasOwnProperty(key)) {
         if (isObject(value)) {
-          recursivelyConvertObject(value, correspondingOldObject[key], depth+1);
+          recursivelyConvertObject(value, correspondingOldObject[key], depth + 1);
         }
         else {
-          curObject[key] = {$set: value};
+          curObject[key] = { $set: value };
         }
       }
       else {
-        curObject[key] = {$set: value};
+        curObject[key] = { $set: value };
       }
     });
     return;

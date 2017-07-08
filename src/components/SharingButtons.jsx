@@ -8,9 +8,9 @@ export default class SharingButtons extends BaseComponent {
       let nodes = [];
       let { url, title, teaser } = this.props;
 
-      {/* Facebook Sharing Button */}
+      { /* Facebook Sharing Button */ }
       if (this.props.facebook) {
-        nodes.push (
+        nodes.push(
           <a key={"facebook"} className="sharing-buttons__item__link" href={'https://facebook.com/sharer/sharer.php?u=https://www.' + url} target="_blank" aria-label="">
             <div className="sharing-buttons__item sharing-buttons__item--facebook">
               <div aria-hidden="true" className="sharing-buttons__item__icon">
@@ -20,10 +20,10 @@ export default class SharingButtons extends BaseComponent {
               </div>
             </div>
           </a>
-        )
+        );
       }
 
-      {/* Twitter Sharing Button */}
+      { /* Twitter Sharing Button */ }
       if (this.props.twitter) {
         nodes.push(
           <a key={"twitter"} className="sharing-buttons__item__link" href={'https://twitter.com/intent/tweet/?text=%27' + title + '%27%20via%20%40TheGazelleAD%0A' + url + '&url=' + url} target="_blank" aria-label="">
@@ -35,10 +35,10 @@ export default class SharingButtons extends BaseComponent {
               </div>
             </div>
           </a>
-        )
+        );
       }
 
-      {/* linkedIn Sharing Button */}
+      { /* linkedIn Sharing Button */ }
       if (this.props.linkedin) {
         nodes.push(
           <a key={"linkedin"} className="sharing-buttons__item__link" href={'https://www.linkedin.com/shareArticle?mini=true&amp;url=https://www.' + url + '&amp;title=' + title + '&amp;summary=' + teaser + '&amp;source=' + url} target="_blank" aria-label="">
@@ -50,10 +50,10 @@ export default class SharingButtons extends BaseComponent {
               </div>
             </div>
           </a>
-        )
+        );
       }
 
-      {/* Email Sharing Button */}
+      { /* Email Sharing Button */ }
       if (this.props.email) {
         nodes.push(
           <a key={"email"} className="sharing-buttons__items__item__link" href={'mailto:?subject=The%20Gazelle%20%7C%20' + title + '&body=' + url} aria-label="">
@@ -65,17 +65,17 @@ export default class SharingButtons extends BaseComponent {
               </div>
             </div>
           </a>
-        )
+        );
       }
 
       return nodes;
-    }
+    };
 
     return (
       <div className="sharing-buttons">
         {renderButtons()}
       </div>
-    )
+    );
   }
 }
 
@@ -88,7 +88,7 @@ SharingButtons.propTypes = {
   url: React.PropTypes.string.isRequired,
   title: React.PropTypes.string.isRequired,
   teaser: React.PropTypes.string,
-}
+};
 
 // By default, all buttons are rendered
 SharingButtons.defaultProps = {
@@ -96,7 +96,7 @@ SharingButtons.defaultProps = {
   twitter: true,
   linkedin: true,
   email: true,
-  url: "www.thegazelle.org",
+  url: 'www.thegazelle.org',
   title: "The Gazelle | NYUAD's Independent Student News Publication",
-  teaser: "The Gazelle is a weekly student publication serving the NYU Abu Dhabi community and the greater Global Network Universtiy at NYU.",
+  teaser: 'The Gazelle is a weekly student publication serving the NYU Abu Dhabi community and the greater Global Network Universtiy at NYU.',
 };

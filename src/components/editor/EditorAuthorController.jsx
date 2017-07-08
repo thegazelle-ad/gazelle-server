@@ -14,7 +14,7 @@ export default class EditorAuthorController extends FalcorController {
       changed: false,
       saving: false,
       biography: '',
-    })
+    });
 
     this.debouncedHandleFormChanges = debounce((event) => {
       // We don't want the debounced event to happen if we're saving
@@ -25,9 +25,9 @@ export default class EditorAuthorController extends FalcorController {
       // Gets all the input elements that we named
       const children = _.map(formNode.children, (child) => {
         return child.name;
-      })
+      });
       const fields = children.filter((key) => {
-        return key && isNaN(parseInt(key)) && key !== "length";
+        return key && isNaN(parseInt(key)) && key !== 'length';
       });
 
       const falcorData = this.state.data.authorsBySlug[this.props.params.slug];
@@ -45,7 +45,7 @@ export default class EditorAuthorController extends FalcorController {
       });
 
       if (changedFlag !== this.state.changed) {
-        this.safeSetState({changed: changedFlag});
+        this.safeSetState({ changed: changedFlag });
       }
     }, 500);
   }
@@ -60,12 +60,12 @@ export default class EditorAuthorController extends FalcorController {
     const falcorCallback = (data) => {
       let biography = data.authorsBySlug[this.props.params.slug].biography;
       if (!biography) {
-        biography = "";
+        biography = '';
       }
       this.safeSetState({
-        biography: biography,
+        biography,
       });
-    }
+    };
     super.componentWillMount(falcorCallback);
   }
 
@@ -73,12 +73,12 @@ export default class EditorAuthorController extends FalcorController {
     const falcorCallback = (data) => {
       let biography = data.authorsBySlug[this.props.params.slug].biography;
       if (!biography) {
-        biography = "";
+        biography = '';
       }
       this.safeSetState({
-        biography: biography,
+        biography,
       });
-    }
+    };
     super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
     this.safeSetState({
       changed: false,
@@ -90,14 +90,14 @@ export default class EditorAuthorController extends FalcorController {
     event.preventDefault();
 
     const formNode = event.target;
-    const authorSlug = this.props.params.slug
+    const authorSlug = this.props.params.slug;
 
     // Gets all the input elements that we named
     const children = _.map(formNode.children, (child) => {
       return child.name;
-    })
+    });
     const fields = children.filter((key) => {
-      return key && isNaN(parseInt(key)) && key !== "length";
+      return key && isNaN(parseInt(key)) && key !== 'length';
     });
 
     const falcorData = this.state.data.authorsBySlug[authorSlug];
@@ -109,8 +109,8 @@ export default class EditorAuthorController extends FalcorController {
     });
 
     if (filteredFields.length === 0) {
-      throw new Error("Tried to save changes but there were no changes. \
-the save changes button is supposed to be disabled in this case");
+      throw new Error('Tried to save changes but there were no changes. \
+the save changes button is supposed to be disabled in this case');
     }
 
     // Modularize the code since we'll be reusing it for checking the slug
@@ -119,8 +119,8 @@ the save changes button is supposed to be disabled in this case");
         changed: false,
       });
       // This is purely so the 'saved' message can be seen by the user for a second
-      setTimeout(() => {this.safeSetState({saving: false})}, 1000);
-    }
+      setTimeout(() => { this.safeSetState({ saving: false }); }, 1000);
+    };
 
     const update = () => {
       // Build the jsonGraphEnvelope
@@ -142,23 +142,23 @@ the save changes button is supposed to be disabled in this case");
 
       // Update the values
       this.falcorUpdate(jsonGraphEnvelope, undefined, resetState);
-    }
+    };
 
-    if (filteredFields.find((field) => {return field === 'slug'})) {
-      if (!window.confirm("You are about to change the slug of an author, this means" +
-        " that the url to their webpage will change among other things, it is recommended" +
+    if (filteredFields.find((field) => { return field === 'slug'; })) {
+      if (!window.confirm('You are about to change the slug of an author, this means' +
+        ' that the url to their webpage will change among other things, it is recommended' +
         " not to change the slug unless it's very crucial. Are you sure you want to proceed?")) {
         return;
       }
       // Start the saving
-      this.safeSetState({saving: true});
+      this.safeSetState({ saving: true });
 
       // Make sure this slug is not already taken since we operate with unique slugs
       this.props.model.get(['authorsBySlug', formNode.slug.value, 'slug']).then((x) => {
         if (x) {
           // This slug is already taken as something was returned
-          window.alert("The slug you chose is already taken, please change it");
-          this.safeSetState({saving: false});
+          window.alert('The slug you chose is already taken, please change it');
+          this.safeSetState({ saving: false });
           return;
         }
         else {
@@ -166,12 +166,12 @@ the save changes button is supposed to be disabled in this case");
           // without problems
           update();
         }
-      })
+      });
     }
     else {
       // Slug isn't being updated so we can freely update
       // Start the saving
-      this.safeSetState({saving: true});
+      this.safeSetState({ saving: true });
       update();
     }
   }
@@ -182,7 +182,7 @@ the save changes button is supposed to be disabled in this case");
       biography = biography.substr(0, MAX_BIOGRAPHY_LENGTH);
     }
     this.safeSetState({
-      biography: biography,
+      biography,
     });
   }
 
@@ -199,21 +199,21 @@ the save changes button is supposed to be disabled in this case");
       const changedStateStyle = {};
       if (!this.state.changed) {
         if (!this.state.saving) {
-          changedStateMessage = "No Changes";
+          changedStateMessage = 'No Changes';
         }
         else {
-          changedStateMessage = "Saved";
-          changedStateStyle.color = "green";
+          changedStateMessage = 'Saved';
+          changedStateStyle.color = 'green';
         }
       }
       else {
         if (!this.state.saving) {
-          changedStateMessage = "Unsaved Changes";
-          changedStateStyle.color = "red";
+          changedStateMessage = 'Unsaved Changes';
+          changedStateStyle.color = 'red';
         }
         else {
-          changedStateMessage = "Saving"
-          changedStateStyle.color = "#65e765";
+          changedStateMessage = 'Saving';
+          changedStateStyle.color = '#65e765';
         }
       }
 
@@ -224,7 +224,7 @@ the save changes button is supposed to be disabled in this case");
           <p>Change the information for the author and press Save Changes to confirm the changes.</p>
           <form
             className="pure-form pure-form-stacked"
-            onChange={(e) => {e.persist(); this.debouncedHandleFormChanges(e)}}
+            onChange={(e) => { e.persist(); this.debouncedHandleFormChanges(e); }}
             onSubmit={this.handleSaveChanges}
           >
             Change Name:
@@ -256,13 +256,13 @@ the save changes button is supposed to be disabled in this case");
               disabled={this.state.saving}
             />
             Change Biography:<br />
-            <span style={{fontSize: "0.95em", fontStyle: "italic"}}>
+            <span style={{ fontSize: '0.95em', fontStyle: 'italic' }}>
               {markdownLength(this.state.biography)} of {MAX_BIOGRAPHY_LENGTH} characters
             </span>
             <textarea
               value={this.state.biography}
               onChange={this.handleBiographyChanges}
-              style={{width: "30em", height: "8em"}}
+              style={{ width: '30em', height: '8em' }}
               name="biography"
               disabled={this.state.saving}
             />
@@ -271,7 +271,7 @@ the save changes button is supposed to be disabled in this case");
               type="submit"
               value="Save Changes"
               disabled={!this.state.changed || this.state.saving}
-              style={{marginTop: "8px"}}
+              style={{ marginTop: '8px' }}
             />
           </form>
         </div>

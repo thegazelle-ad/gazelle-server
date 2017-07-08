@@ -7,17 +7,17 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
-import Helmet from "react-helmet"; // Add meta tags for pre-Ghost release
+import Helmet from 'react-helmet'; // Add meta tags for pre-Ghost release
 
 // Components
-import Archives from 'components/Archives'
+import Archives from 'components/Archives';
 import NotFound from 'components/NotFound';
 
 export default class ArchivesController extends FalcorController {
   static getFalcorPathSets() {
     return [
       // Returns 150 archived issues
-      ["issuesByNumber", {length: 150}, ["issueNumber", "published_at"]],
+      ['issuesByNumber', { length: 150 }, ['issueNumber', 'published_at']],
     ];
   }
 
@@ -33,14 +33,14 @@ export default class ArchivesController extends FalcorController {
         });
         const meta = [
           // Search results
-          {name: "description", content: "The Gazelle is a weekly student publication, serving the NYU Abu Dhabi community and the greater Global Network University at NYU."},
+          { name: 'description', content: 'The Gazelle is a weekly student publication, serving the NYU Abu Dhabi community and the greater Global Network University at NYU.' },
 
           // Social media
-          {property: "og:title", content: "Archives | The Gazelle"},
-          {property: "og:type", content: "website"},
-          {property: "og:url", content: "www.thegazelle.org/archives"},
-          {property: "og:image", content: "https://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png"},
-          {property: "og:description", content: "The Gazelle is a weekly student publication serving the NYU Abu Dhabi community."},
+          { property: 'og:title', content: 'Archives | The Gazelle' },
+          { property: 'og:type', content: 'website' },
+          { property: 'og:url', content: 'www.thegazelle.org/archives' },
+          { property: 'og:image', content: 'https://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png' },
+          { property: 'og:description', content: 'The Gazelle is a weekly student publication serving the NYU Abu Dhabi community.' },
         ];
         return (
           <div>

@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
 // TODO: Add Jest Testing
-export function debounce (func, timeout, addInstantFlag = false) {
+export function debounce(func, timeout, addInstantFlag = false) {
   /* Be careful of the addInstantFlag, as if you don't call all arguments
   of the debounced function it will append true anyway, to another argument
   than intended, and this might cause unexpected results */
@@ -28,7 +28,7 @@ export function debounce (func, timeout, addInstantFlag = false) {
         scheduled = false;
       }, timeout - (now - lastCalled));
     }
-  }
+  };
   return debouncedFunction;
 }
 
@@ -61,12 +61,12 @@ export function mapLegacyIssueSlugsToIssueNumber(slug) {
   }
   else {
     switch (slug) {
-      case "the-identity-issue":
-        return "76";
-      case "the-love-issue":
-        return "78";
-      case "the-food-issue":
-        return "82";
+      case 'the-identity-issue':
+        return '76';
+      case 'the-love-issue':
+        return '78';
+      case 'the-food-issue':
+        return '82';
       default:
         return slug;
     }
@@ -81,8 +81,8 @@ export function slugifyPost(postSlug) {
               .replace(/-+/g, '-')
               .toLowerCase();
 
-  while(slug.charAt(slug.length - 1) === '-') {
-    slug = slug.substr(0, slug.length-1);
+  while (slug.charAt(slug.length - 1) === '-') {
+    slug = slug.substr(0, slug.length - 1);
   }
   slug = /^(ghost|ghost\-admin|admin|wp\-admin|wp\-login|dashboard|logout|login|signin|signup|signout|register|archive|archives|category|categories|tag|tags|page|pages|post|posts|user|users|rss)$/g
          .test(slug) ? slug + '-post' : slug;
@@ -97,8 +97,8 @@ export function slugifyAuthor(authorSlug) {
               .replace(/-+/g, '-')
               .toLowerCase();
 
-  while(slug.charAt(slug.length - 1) === '-') {
-    slug = slug.substr(0, slug.length-1);
+  while (slug.charAt(slug.length - 1) === '-') {
+    slug = slug.substr(0, slug.length - 1);
   }
   return slug;
 }
@@ -108,11 +108,11 @@ export function formatDate(date) {
   const mm = date.getMonth() + 1; // getMonth() is zero-based
   const dd = date.getDate();
 
-  let dateString = yyyy.toString()+'-';
+  let dateString = yyyy.toString() + '-';
   if (mm < 10) {
     dateString += '0';
   }
-  dateString += mm.toString()+'-';
+  dateString += mm.toString() + '-';
   if (dd < 10) {
     dateString += '0';
   }
@@ -128,11 +128,11 @@ export function formatDateTime(date) {
   const mins = date.getMinutes();
   const ss = date.getSeconds();
 
-  let dateTimeString = yyyy.toString()+'-';
+  let dateTimeString = yyyy.toString() + '-';
   if (mm < 10) {
     dateTimeString += '0';
   }
-  dateTimeString += mm.toString()+'-';
+  dateTimeString += mm.toString() + '-';
   if (dd < 10) {
     dateTimeString += '0';
   }
@@ -141,7 +141,7 @@ export function formatDateTime(date) {
   if (hh < 10) {
     dateTimeString += '0';
   }
-  dateTimeString += hh.toString()+':';
+  dateTimeString += hh.toString() + ':';
   if (mins < 10) {
     dateTimeString += '0';
   }
@@ -177,7 +177,7 @@ export function markdownLength(str) {
   const array = parseMarkdown(str);
   let length = 0;
   array.forEach((element) => {
-    if ((typeof element) === "string") {
+    if ((typeof element) === 'string') {
       length += element.length;
     }
     else {
@@ -195,9 +195,9 @@ const BIG_PRIME = 5003943032159437;
 export function hash(password) {
   let num = password.charCodeAt(0);
   for (let i = 1; i < password.length; i++) {
-    num = ((num*256)%BIG_PRIME + password.charCodeAt(i))%BIG_PRIME;
+    num = ((num * 256) % BIG_PRIME + password.charCodeAt(i)) % BIG_PRIME;
   }
-  const hash = ((num % H1PRIME) + 5*(num % H2PRIME) + 1 + 25)%BIG_PRIME;
+  const hash = ((num % H1PRIME) + 5 * (num % H2PRIME) + 1 + 25) % BIG_PRIME;
   return hash;
 }
 

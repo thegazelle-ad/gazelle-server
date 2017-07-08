@@ -1,15 +1,15 @@
-import _ from "lodash";
-import { isAppReady, expandCache, pathSetsInCache, validateFalcorPathSets } from "lib/falcor/falcorUtils";
-import BaseComponent from "lib/BaseComponent";
-import { setLoading, signalLeaving } from "lib/loader";
+import _ from 'lodash';
+import { isAppReady, expandCache, pathSetsInCache, validateFalcorPathSets } from 'lib/falcor/falcorUtils';
+import BaseComponent from 'lib/BaseComponent';
+import { setLoading, signalLeaving } from 'lib/loader';
 import { uuid } from 'lib/utilities';
 
 // Abstract class for fetching falcor objects
 export default class FalcorController extends BaseComponent {
   constructor(props) {
-    super(props)
+    super(props);
     if (this.constructor == FalcorController) {
-      throw new TypeError("FalcorController is abstract")
+      throw new TypeError('FalcorController is abstract');
     }
     // It might seem like fetching and ready are redundant
     // But you can be ready = true and fetching = true if
@@ -18,7 +18,7 @@ export default class FalcorController extends BaseComponent {
       fetching: false,
       ready: false,
       data: null,
-    })
+    });
 
     // For loader tracking
     this.uuid = uuid();
@@ -32,11 +32,11 @@ export default class FalcorController extends BaseComponent {
   // Also you cannot as of now make the first keySet in a pathSet an array
   // as being able to pass an array of pathSets properly depends on that.
   // This will probably never be needed either.
-  static getFalcorPathSets(params, queryParams) { //eslint-disable-line no-unused-vars
+  static getFalcorPathSets(params, queryParams) { // eslint-disable-line no-unused-vars
     throw new TypeError(
-      "You must implement the getFalcorPathSets method " +
-      "in children of FalcorController"
-    )
+      'You must implement the getFalcorPathSets method ' +
+      'in children of FalcorController'
+    );
   }
 
   // Retrieves all the data for this component from the Falcor cache
@@ -56,12 +56,12 @@ export default class FalcorController extends BaseComponent {
     if (data) {
       this.safeSetState({
         ready: true,
-        data: data,
-      })
+        data,
+      });
     } else {
-      if (process.env.NODE_ENV !== "production") {
-        console.warn("Serverside render of component: " + this.constructor.name + // eslint-disable-line no-console
-          " failed. Data not in cache. Falcor Path attempted fetched was: " + JSON.stringify(falcorPathSets));
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('Serverside render of component: ' + this.constructor.name + // eslint-disable-line no-console
+          ' failed. Data not in cache. Falcor Path attempted fetched was: ' + JSON.stringify(falcorPathSets));
       }
       this.safeSetState({
         ready: true,
@@ -87,7 +87,7 @@ export default class FalcorController extends BaseComponent {
       return;
     }
 
-    this.safeSetState({fetching: true});
+    this.safeSetState({ fetching: true });
     setLoading(this.uuid, true);
     const requestId = uuid();
     this.lastRequestId = requestId;
@@ -110,8 +110,8 @@ export default class FalcorController extends BaseComponent {
         this.safeSetState(stateToSet);
       }
       else {
-        const err = new Error("FalcorPathSets: " + JSON.stringify(falcorPathSets) + " returned no data.")
-        if (process.env.NODE_ENV !== "production") {
+        const err = new Error('FalcorPathSets: ' + JSON.stringify(falcorPathSets) + ' returned no data.');
+        if (process.env.NODE_ENV !== 'production') {
           console.error(err); // eslint-disable-line no-console
         }
         Object.assign(stateToSet, {
@@ -126,7 +126,7 @@ export default class FalcorController extends BaseComponent {
       }
     })
     .catch((e) => {
-      if (process.env.NODE_ENV !== "production") {
+      if (process.env.NODE_ENV !== 'production') {
         console.error(e); // eslint-disable-line no-console
         if (e instanceof Error) {
           console.error(e.stack); // eslint-disable-line no-console
@@ -138,13 +138,13 @@ export default class FalcorController extends BaseComponent {
   // This will update the values in the database through falcor
   // and update the cache accordingly
   falcorUpdate(jsonGraphEnvelope, stateToSet = {}, callback) {
-    this.safeSetState({fetching: true});
+    this.safeSetState({ fetching: true });
     this.props.model.set(jsonGraphEnvelope).then(() => {
       // For now we'll just fetch every time after an update
       // This would be very bad for updating views, so maybe we'll do that differently
       // but at the moment we have no good way to merge updated data especially when
       // we're deleting
-      const pathSets = this.constructor.getFalcorPathSets(this.props.params, this.props.location.query)
+      const pathSets = this.constructor.getFalcorPathSets(this.props.params, this.props.location.query);
       this.falcorFetch(pathSets, stateToSet, callback);
       // if (x) {
       //   const newData = mergeUpdatedData(this.state.data, x.json, 10)
@@ -164,7 +164,7 @@ export default class FalcorController extends BaseComponent {
       // }
     })
     .catch((e) => {
-      if (process.env.NODE_ENV !== "production") {
+      if (process.env.NODE_ENV !== 'production') {
         console.error(e); // eslint-disable-line no-console
         if (e instanceof Error) {
           console.error(e.stack); // eslint-disable-line no-console
@@ -177,8 +177,8 @@ export default class FalcorController extends BaseComponent {
       else if (e.hasOwnProperty('0')) {
         error = e[0].value;
       }
-      const errorMessage = "There was an error while updating data, please contact the developers, and we recommend refreshing the page" +
-        (error !== null ? ". The error message was: " + error.message : "");
+      const errorMessage = 'There was an error while updating data, please contact the developers, and we recommend refreshing the page' +
+        (error !== null ? '. The error message was: ' + error.message : '');
       window.alert(errorMessage);
     });
   }
@@ -193,7 +193,7 @@ export default class FalcorController extends BaseComponent {
              stateToSet = {},
              callback
             ) {
-    this.safeSetState({fetching: true});
+    this.safeSetState({ fetching: true });
     // for some reason 'call' can't handle undefined arguments
     // so we use .apply on it
     this.props.model.call(functionPath, args, refSuffixes, thisPaths).then(() => {
@@ -201,7 +201,7 @@ export default class FalcorController extends BaseComponent {
       // This would be very bad for updating views, so maybe we'll do that differently
       // but at the moment we have no good way to merge updated data especially when
       // we're deleting
-      const pathSets = this.constructor.getFalcorPathSets(this.props.params, this.props.location.query)
+      const pathSets = this.constructor.getFalcorPathSets(this.props.params, this.props.location.query);
       this.falcorFetch(pathSets, stateToSet, callback);
       // if (x) {
       //   const newData = mergeUpdatedData(this.state.data, x.json, 10);
@@ -221,7 +221,7 @@ export default class FalcorController extends BaseComponent {
       // }
     })
     .catch((e) => {
-      if (process.env.NODE_ENV !== "production") {
+      if (process.env.NODE_ENV !== 'production') {
         console.error(e); // eslint-disable-line no-console
         if (e instanceof Error) {
           console.error(e.stack); // eslint-disable-line no-console
@@ -234,8 +234,8 @@ export default class FalcorController extends BaseComponent {
       else if (e.hasOwnProperty('0')) {
         error = e[0].value;
       }
-      const errorMessage = "There was an error while updating data, please contact the developers, and we recommend refreshing the page" +
-        (error !== null ? ". The error message was: " + error.message : "");
+      const errorMessage = 'There was an error while updating data, please contact the developers, and we recommend refreshing the page' +
+        (error !== null ? '. The error message was: ' + error.message : '');
       window.alert(errorMessage);
     });
   }
@@ -246,14 +246,14 @@ export default class FalcorController extends BaseComponent {
   // overwriting the function. This is so we don't have to copy the code and maintain
   // it several places
   componentWillReceiveProps(nextProps, nextContext, falcorCallback) {
-    const newPathSets = this.constructor.getFalcorPathSets(nextProps.params, nextProps.location.query)
-    const oldPathSets = this.constructor.getFalcorPathSets(this.props.params, this.props.location.query)
+    const newPathSets = this.constructor.getFalcorPathSets(nextProps.params, nextProps.location.query);
+    const oldPathSets = this.constructor.getFalcorPathSets(this.props.params, this.props.location.query);
     if (!_.isEqual(oldPathSets, newPathSets)) {
-      this.safeSetState({ready: false});
+      this.safeSetState({ ready: false });
       if (pathSetsInCache(this.props.model.getCache(), newPathSets)) {
         this.loadFalcorCache(newPathSets, falcorCallback);
       } else {
-        this.falcorFetch(newPathSets, undefined, falcorCallback)
+        this.falcorFetch(newPathSets, undefined, falcorCallback);
       }
     }
   }
@@ -267,18 +267,18 @@ export default class FalcorController extends BaseComponent {
   componentWillMount(falcorCallback) {
     const falcorPathSets = this.constructor.getFalcorPathSets(this.props.params, this.props.location.query);
     if (!isAppReady() || pathSetsInCache(this.props.model.getCache(), falcorPathSets)) {
-      this.loadFalcorCache(falcorPathSets, falcorCallback)
+      this.loadFalcorCache(falcorPathSets, falcorCallback);
     } else {
-      this.falcorFetch(falcorPathSets, undefined, falcorCallback)
+      this.falcorFetch(falcorPathSets, undefined, falcorCallback);
     }
   }
 
   componentWillAppear(cb) {
-    cb()
+    cb();
   }
 
   componentWillEnter(cb) {
-    cb()
+    cb();
   }
   componentWillLeave(cb) {
     signalLeaving(cb);

@@ -18,7 +18,7 @@ export default class EditorIssueCategoryController extends FalcorController {
 
   static getFalcorPathSets(params) {
     return [
-      ['issuesByNumber', params.issueNumber, 'categories', {length: 20}, ['name', 'id']],
+      ['issuesByNumber', params.issueNumber, 'categories', { length: 20 }, ['name', 'id']],
       ['issuesByNumber', params.issueNumber, 'name'],
     ];
   }
@@ -34,7 +34,7 @@ export default class EditorIssueCategoryController extends FalcorController {
       this.safeSetState({
         categories: categoriesArray,
       });
-    }
+    };
     super.componentWillMount(falcorCallBack);
   }
 
@@ -48,7 +48,7 @@ export default class EditorIssueCategoryController extends FalcorController {
       this.safeSetState({
         categories: categoriesArray,
       });
-    }
+    };
     super.componentWillReceiveProps(nextProps, undefined, falcorCallBack);
     this.safeSetState({
       changed: false,
@@ -63,15 +63,15 @@ export default class EditorIssueCategoryController extends FalcorController {
       return category.id !== oldCategories[index].id;
     });
     if (changed !== this.state.changed) {
-      this.safeSetState({changed: changed});
+      this.safeSetState({ changed });
     }
   }
 
   handleOrderChange(index, event) {
-    const newIndex = event.target.value-1;
+    const newIndex = event.target.value - 1;
     const categories = this.state.categories;
     const category = categories[index];
-    let newCategories = update(categories, {$splice: [[index, 1], [newIndex, 0, category]]});
+    let newCategories = update(categories, { $splice: [[index, 1], [newIndex, 0, category]] });
     this.handleChanges(newCategories);
     this.safeSetState({
       categories: newCategories,
@@ -84,27 +84,26 @@ export default class EditorIssueCategoryController extends FalcorController {
     const newCategories = this.state.categories;
     // Shallow validity check
     if (Object.keys(oldCategories).length !== newCategories.length) {
-      window.alert("There was an error, there has been added or removed a category" +
-        " mysteriously. Please contact developers");
+      window.alert('There was an error, there has been added or removed a category' +
+        ' mysteriously. Please contact developers');
       return;
     }
-    const idArray = newCategories.map((category) => {return category.id});
+    const idArray = newCategories.map((category) => { return category.id; });
 
     const callback = (data) => {
       const updatedCategories = _.map(data.issuesByNumber[issueNumber].categories,
-        (category) => {return category});
+        (category) => { return category; });
       this.safeSetState({
         changed: false,
         categories: updatedCategories,
       });
       setTimeout(() => {
-        this.safeSetState({saving: false});
+        this.safeSetState({ saving: false });
       }, 1000);
-    }
-    this.safeSetState({saving: true});
+    };
+    this.safeSetState({ saving: true });
     this.falcorCall(['issuesByNumber', issueNumber, 'updateIssueCategories'],
       [idArray], undefined, undefined, undefined, callback);
-
   }
 
   render() {
@@ -130,21 +129,21 @@ export default class EditorIssueCategoryController extends FalcorController {
       const changedStateStyle = {};
       if (!this.state.changed) {
         if (!this.state.saving) {
-          changedStateMessage = "No Changes";
+          changedStateMessage = 'No Changes';
         }
         else {
-          changedStateMessage = "Saved";
-          changedStateStyle.color = "green";
+          changedStateMessage = 'Saved';
+          changedStateStyle.color = 'green';
         }
       }
       else {
         if (!this.state.saving) {
-          changedStateMessage = "Unsaved Changes";
-          changedStateStyle.color = "red";
+          changedStateMessage = 'Unsaved Changes';
+          changedStateStyle.color = 'red';
         }
         else {
-          changedStateMessage = "Saving"
-          changedStateStyle.color = "#65e765";
+          changedStateMessage = 'Saving';
+          changedStateStyle.color = '#65e765';
         }
       }
 
@@ -166,18 +165,18 @@ export default class EditorIssueCategoryController extends FalcorController {
                 return (
                   <div
                     key={category.id.toString() + '-' + index.toString()}
-                    style={{marginBottom: "8px"}}
+                    style={{ marginBottom: '8px' }}
                   >
                     {/* eslint-disable react/jsx-no-bind*/}
                     <select
                       onChange={this.handleOrderChange.bind(this, index)}
-                      defaultValue={index+1}
-                      style={{marginRight: "10px"}}
+                      defaultValue={index + 1}
+                      style={{ marginRight: '10px' }}
                       disabled={this.state.saving}
                     >
                     {/* eslint-enable react/jsx-no-bind*/}
                       {
-                        _.range(1, categories.length+1).map((order) => {
+                        _.range(1, categories.length + 1).map((order) => {
                           return <option key={order} value={order}>{order}</option>;
                         })
                       }

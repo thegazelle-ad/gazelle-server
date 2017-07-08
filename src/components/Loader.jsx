@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import BaseComponent from 'lib/BaseComponent';
-import { registerLoaderCallback, isLoading } from  'lib/loader';
+import { registerLoaderCallback, isLoading } from 'lib/loader';
 
 export default class Loader extends BaseComponent {
   constructor(props) {
@@ -14,7 +14,7 @@ export default class Loader extends BaseComponent {
 
   loadingChange(loading) {
     this.safeSetState({
-      loading: loading,
+      loading,
       active: true,
     });
     // Coming down off a load, we need to unset active at end of animation

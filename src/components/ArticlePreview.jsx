@@ -7,11 +7,11 @@ import BaseComponent from 'lib/BaseComponent';
 import AuthorList from 'components/AuthorList';
 
 export default class ArticlePreview extends BaseComponent {
-  render () {
+  render() {
     let article = this.props.article;
     let url = '/issue/' + article.issueNumber.toString() + '/' + article.category + '/' + article.slug;
     if (!article.image) { // Article image default
-      article.image = "https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg";// Default featured image for articles
+      article.image = 'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';// Default featured image for articles
     }
     return (
       <div className="article-preview">
@@ -67,4 +67,4 @@ ArticlePreview.propTypes = {
     slug: React.PropTypes.string.isRequired,
     authors: React.PropTypes.object,
   }),
-}
+};

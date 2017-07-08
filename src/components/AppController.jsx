@@ -1,18 +1,18 @@
-import React from "react";
-import { setAppReady } from "lib/falcor/falcorUtils";
+import React from 'react';
+import { setAppReady } from 'lib/falcor/falcorUtils';
 import ReactTransitionGroup from 'react-addons-transition-group';
-import _ from "lodash";
-import { TransitionManager } from "lib/loader";
+import _ from 'lodash';
+import { TransitionManager } from 'lib/loader';
 import FalcorController from 'lib/falcor/FalcorController';
 import { mapLegacyIssueSlugsToIssueNumber } from 'lib/utilities';
 
 // Components
-import Header from "components/Header";
-import Navigation from "components/Navigation";
-import Footer from "components/Footer";
-import Loader from "components/Loader";
+import Header from 'components/Header';
+import Navigation from 'components/Navigation';
+import Footer from 'components/Footer';
+import Loader from 'components/Loader';
 
-import "styles/main.scss";
+import 'styles/main.scss';
 
 export default class AppController extends FalcorController {
   componentDidMount() {
@@ -25,21 +25,21 @@ export default class AppController extends FalcorController {
     if (params.issueNumber) { // User is on archived issue page
       const issueNumber = mapLegacyIssueSlugsToIssueNumber(params.issueNumber);
       return [
-        ["latestIssue", ["issueNumber"]], // Used for robustness when setting navigationData
-        ["issuesByNumber", issueNumber, ["published_at", "issueNumber"]],
+        ['latestIssue', ['issueNumber']], // Used for robustness when setting navigationData
+        ['issuesByNumber', issueNumber, ['published_at', 'issueNumber']],
       ];
     }
     else { // User is on home page
       return [
-        ["latestIssue", ["published_at", "issueNumber"]],
+        ['latestIssue', ['published_at', 'issueNumber']],
       ];
     }
   }
 
   render() {
     const transitionKey = _.reduce(this.props.params, (keyString, val, key) => {
-      return keyString + "&" + val + "=" + key;
-    }, "keystring");
+      return keyString + '&' + val + '=' + key;
+    }, 'keystring');
 
     let navigationData = null;
     if (this.state.ready) { // Maintains async enviornment
@@ -50,7 +50,7 @@ export default class AppController extends FalcorController {
       else { // User is on home page, categories, author page, info page, etc.
         if (this.props.params.issueNumber) { // User is on an article from current issue
           navigationData = this.state.data.issuesByNumber[this.state.data.latestIssue.issueNumber];
-        } else {  navigationData = this.state.data.latestIssue; }
+        } else { navigationData = this.state.data.latestIssue; }
       }
     }
 
@@ -68,7 +68,7 @@ export default class AppController extends FalcorController {
             transitionLeaveTimeout={3000}
             component={TransitionManager}
           >
-            {React.cloneElement(this.props.children, {key: transitionKey})}
+            {React.cloneElement(this.props.children, { key: transitionKey })}
           </ReactTransitionGroup>
         </div>
         <div className="app-container__footer">

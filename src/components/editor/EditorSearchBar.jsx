@@ -8,7 +8,7 @@ export default class EditorSearchBar extends BaseComponent {
     super(props);
     this.handleSearchChange = this.handleSearchChange.bind(this);
     this.safeSetState({
-      searchValue: "",
+      searchValue: '',
       searchSuggestions: [],
     });
 
@@ -24,13 +24,13 @@ export default class EditorSearchBar extends BaseComponent {
         query = this.state.searchValue;
       }
       if (!(query.trim())) {
-        this.safeSetState({searchSuggestions: []});
+        this.safeSetState({ searchSuggestions: [] });
         return;
       }
       let pathSets = [];
       let fields;
-      switch(this.props.mode) {
-        case "articles":
+      switch (this.props.mode) {
+        case 'articles':
           // Add required fields
           fields = this.props.fields.concat(['title', 'slug']);
           if (this.props.showPubDate) {
@@ -39,52 +39,52 @@ export default class EditorSearchBar extends BaseComponent {
           // Remove duplicates
           fields = _.uniq(fields);
 
-          pathSets.push(['search', 'posts', query, {length: this.props.length}, fields]);
+          pathSets.push(['search', 'posts', query, { length: this.props.length }, fields]);
           if (this.props.extraPathSets) {
             const extraPathSets = this.props.extraPathSets.map((pathSet) => {
-              return ['search', 'posts', query, {length: this.props.length}].concat(pathSet);
-            })
+              return ['search', 'posts', query, { length: this.props.length }].concat(pathSet);
+            });
             pathSets = pathSets.concat(extraPathSets);
           }
           break;
-        case "authors":
+        case 'authors':
           // Add required fields and remove duplicates
           fields = _.uniq(this.props.fields.concat(['name', 'slug']));
 
-          pathSets.push(['search', 'authors', query, {length: this.props.length}, fields]);
+          pathSets.push(['search', 'authors', query, { length: this.props.length }, fields]);
           if (this.props.extraPathSets) {
             const extraPathSets = this.props.extraPathSets.map((pathSet) => {
-              return ['search', 'authors', query, {length: this.props.length}].concat(pathSet);
-            })
+              return ['search', 'authors', query, { length: this.props.length }].concat(pathSet);
+            });
             pathSets = pathSets.concat(extraPathSets);
           }
           break;
         default:
-          throw new Error("Invalid mode was passed to EditorSearchBar");
+          throw new Error('Invalid mode was passed to EditorSearchBar');
       }
 
       this.props.model.get(...pathSets)
       .then((x) => {
         if (!x) {
-          this.safeSetState({searchSuggestions: []});
+          this.safeSetState({ searchSuggestions: [] });
           return;
         }
         let suggestions = x.json.search;
-        if (this.props.mode === "articles") {
+        if (this.props.mode === 'articles') {
           suggestions = suggestions.posts[query];
         }
         else {
           suggestions = suggestions.authors[query];
         }
-        const suggestionsArray = _.map(suggestions, (value) => {return value});
-        this.safeSetState({searchSuggestions: suggestionsArray});
-      })
+        const suggestionsArray = _.map(suggestions, (value) => { return value; });
+        this.safeSetState({ searchSuggestions: suggestionsArray });
+      });
     }, this.props.debounceTime || 250, true);
   }
 
   componentWillReceiveProps() {
     this.safeSetState({
-      searchValue: "",
+      searchValue: '',
       searchSuggestions: [],
     });
   }
@@ -98,15 +98,15 @@ export default class EditorSearchBar extends BaseComponent {
 
   handleClick(article) {
     this.safeSetState({
-      searchValue: "",
+      searchValue: '',
       searchSuggestions: [],
-    })
+    });
     this.props.handleClick(article);
   }
 
   render() {
     const style = this.props.style || {};
-    if (this.props.mode === "articles") {
+    if (this.props.mode === 'articles') {
       return (
         <div
           className="pure-form"
@@ -115,9 +115,9 @@ export default class EditorSearchBar extends BaseComponent {
           <input
             type="text"
             value={this.state.searchValue}
-            placeholder={this.props.placeholder || "Input Title"}
+            placeholder={this.props.placeholder || 'Input Title'}
             onChange={this.handleSearchChange}
-            style={{marginBottom: "5px"}}
+            style={{ marginBottom: '5px' }}
           />
           <div>
             {
@@ -129,7 +129,7 @@ export default class EditorSearchBar extends BaseComponent {
                     date = formatDate(new Date(article.published_at));
                   }
                   else {
-                    date = "Unpublished";
+                    date = 'Unpublished';
                   }
                   textShown += ' - ' + date;
                 }
@@ -151,7 +151,7 @@ export default class EditorSearchBar extends BaseComponent {
         </div>
       );
     }
-    else if (this.props.mode === "authors") {
+    else if (this.props.mode === 'authors') {
       return (
         <div
           className="pure-form"
@@ -160,9 +160,9 @@ export default class EditorSearchBar extends BaseComponent {
           <input
             type="text"
             value={this.state.searchValue}
-            placeholder={this.props.placeholder || "Input Name"}
+            placeholder={this.props.placeholder || 'Input Name'}
             onChange={this.handleSearchChange}
-            style={{marginBottom: "5px"}}
+            style={{ marginBottom: '5px' }}
           />
           <div>
             {
@@ -186,7 +186,7 @@ export default class EditorSearchBar extends BaseComponent {
       );
     }
     else {
-      return <div style={{color: "red"}}>Sorry, an error occured, please contact developers</div>;
+      return <div style={{ color: 'red' }}>Sorry, an error occured, please contact developers</div>;
     }
   }
 }
@@ -222,7 +222,7 @@ EditorSearchBar.propTypes = {
         if (!(value instanceof Array)) {
           return false;
         }
-        else if (value[0] === "search") {
+        else if (value[0] === 'search') {
           error = new Error(
           'Invalid prop `' + propName + '` supplied to' +
           ' `' + componentName + '`. Just add the extension, ' +
@@ -237,4 +237,4 @@ EditorSearchBar.propTypes = {
       }
     }
   },
-}
+};

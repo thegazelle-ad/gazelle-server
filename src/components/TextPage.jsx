@@ -2,11 +2,11 @@ import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
 
 export default class TextPage extends BaseComponent {
-  render () {
+  render() {
     return (
       <div className="text-page">
         <h2 className="text-page__title">{this.props.title}</h2>
-        <div className="text-page__html" dangerouslySetInnerHTML={{__html: this.props.html}} />
+        <div className="text-page__html" dangerouslySetInnerHTML={{ __html: this.props.html }} />
       </div>
     );
   }
@@ -15,4 +15,4 @@ export default class TextPage extends BaseComponent {
 TextPage.propTypes = {
   title: React.PropTypes.string,
   html: React.PropTypes.string,
-}
+};

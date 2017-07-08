@@ -15,7 +15,7 @@ export default class EditorImagePreviewList extends BaseComponent {
       return (
         <div className="imgPreviewList">
           <div className="previewText">
-            Please select image(s) for preview 
+            Please select image(s) for preview
           </div>
         </div>
       );

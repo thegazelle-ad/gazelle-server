@@ -23,10 +23,10 @@ clientModel.setCache(_initialCache); // eslint-disable-line no-undef
 ReactGA.initialize('UA-84302849-1');
 
 // Establish pageview tracking
-let logPageView = () =>{
+let logPageView = () => {
   ReactGA.set({ page: window.location.pathname });
   ReactGA.pageview(window.location.pathname);
-}
+};
 
 ReactDOM.render(
   <Router

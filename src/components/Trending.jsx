@@ -15,4 +15,4 @@ export default class Trending extends BaseComponent {
 
 Trending.propTypes = {
   articles: React.PropTypes.object,
-}
+};

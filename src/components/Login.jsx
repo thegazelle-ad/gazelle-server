@@ -9,7 +9,7 @@ export default class Login extends BaseComponent {
   constructor(props) {
     super(props);
     this.safeSetState({
-      passwordValue: "",
+      passwordValue: '',
     });
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -25,16 +25,16 @@ export default class Login extends BaseComponent {
     e.preventDefault();
     const pass = e.target.password.value;
     if (hash(pass) !== 2451962) {
-      window.alert("Incorrect password");
-      e.target.password.value = "";
+      window.alert('Incorrect password');
+      e.target.password.value = '';
     }
     else {
       // Otherwise it is correct and we let the site redirect the client
-      let url = this.props.location.query.url || "";
+      let url = this.props.location.query.url || '';
       if (url) {
         _.forEach(this.props.location.query, (q, name) => {
-          if (name != "url") {
-            url += "&" + name + "=" + q;
+          if (name != 'url') {
+            url += '&' + name + '=' + q;
           }
         });
       }
@@ -44,25 +44,25 @@ export default class Login extends BaseComponent {
 
   render() {
     const ENV = process.env.NODE_ENV;
-    if (ENV === "production") {
-      return <NotFound />
+    if (ENV === 'production') {
+      return <NotFound />;
     }
 
-    let url = this.props.location.query.url || "";
+    let url = this.props.location.query.url || '';
     if (url) {
       _.forEach(this.props.location.query, (q, name) => {
-        if (name != "url") {
-          url += "&" + name + "=" + q;
+        if (name != 'url') {
+          url += '&' + name + '=' + q;
         }
       });
     }
 
-    return(
+    return (
       <div className="login-container">
         <h2>Gazelle Beta Login Page</h2>
         <p>
           Welcome to the Gazelle Beta, if you were looking for the
-          main Gazelle webpage please follow <a href={"https://www.thegazelle.org" + url}>
+          main Gazelle webpage please follow <a href={'https://www.thegazelle.org' + url}>
           this link</a>. This page is only meant for The Gazelle Team to test
           out new features before we release them on the main page. <br /><br />
           If you on the other hand are part of The Gazelle and want to use the
