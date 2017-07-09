@@ -12,6 +12,7 @@ export default class EditorImagePreview extends BaseComponent {
     super();
     this.onDelete = this.onDelete.bind(this);
     this.onChangeName = this.onChangeName.bind(this);
+    this.onCopyToClipboard = this.onCopyToClipboard.bind(this);
   }
 
   onDelete() {
@@ -22,9 +23,9 @@ export default class EditorImagePreview extends BaseComponent {
     this.props.onChangeName(this.props.name);
   }
 
-  copyToClipboard(amazon_link) {
+  onCopyToClipboard() {
     var textField = document.createElement("textarea");
-    textField.innerText = amazon_link;
+    textField.innerText = this.props.amazonURL;
     document.body.appendChild(textField);
     textField.select();
     document.execCommand("copy");
@@ -52,9 +53,9 @@ export default class EditorImagePreview extends BaseComponent {
     if (amazonURL) {
       messageComponent = <div className="previewURL">URL: {amazonURL}</div>;
       if (document.queryCommandSupported("copy")){
-        copyComponent = <button type="button" onClick={()=>this.copyToClipboard(amazonURL)}>Copy link</button>;
+        copyComponent = <button type='button' onClick={this.onCopyToClipboard}>Copy link</button>;
       } else {
-        //Banner Alert: Copy Button is not compatible with your browser. Upgrade to newest version for full capabilities
+        copyComponent = <div>It seems that our copy button is not compatible with your browser. Please upgrade to the newest version for full Gazelle capabilities.</div>
       }
     }
     else if (error_message) {
