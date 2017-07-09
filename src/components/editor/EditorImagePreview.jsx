@@ -55,6 +55,7 @@ export default class EditorImagePreview extends BaseComponent {
       if (document.queryCommandSupported("copy")){
         copyComponent = <button type='button' onClick={this.onCopyToClipboard}>Copy link</button>;
       } else {
+        // TODO: After Material-UI is merged in we change this to a Material-UI Dialog or something similar
         copyComponent = <div>It seems that our copy button is not compatible with your web browser. Please upgrade to the newest version for full Gazelle capabilities.</div>
       }
     }
