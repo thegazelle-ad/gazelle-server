@@ -320,18 +320,34 @@ if (process.env.NODE_ENV === 'production') {
   PATH_NAME = `${__dirname}/scripts/restartServers.sh`;
 }
 
+var isrestarted = false;
+
 editorTools.get('/restartserver', (req, res) => {
+
+  isrestarted = true;
+
   if (!process.env.NODE_ENV) {
+<<<<<<< d3c8d13623aea3cbf13fcc99d1adbfcac89d2f09
     // in dev mode
     res.status(200).send('restarted');
+=======
+    //in dev mode
+    res.status(200).send("restarted");
+>>>>>>> Reset Server Button
     return;
   }
 
   const password = req.query.password;
+<<<<<<< d3c8d13623aea3cbf13fcc99d1adbfcac89d2f09
   if ((typeof password) !== 'string' || password.length < 1) {
+=======
+  
+  if ((typeof password) !== "string" || password.length < 1) {
+>>>>>>> Reset Server Button
     res.status(401).send('invalid');
   } else if (hash(password) === 8692053) {
     exec(PATH_NAME, (err, stdout, stderr) => {
+      res.status(200).send('start');
       if (err) {
         if (process.env.NODE_ENV !== 'production') {
           console.error(err); // eslint-disable-line no-console
@@ -342,7 +358,6 @@ editorTools.get('/restartserver', (req, res) => {
           console.log(stdout); // eslint-disable-line no-console
           console.log(stderr); // eslint-disable-line no-console
         }
-        res.status(200).send('restarted');
       }
     });
   } else {
@@ -350,7 +365,16 @@ editorTools.get('/restartserver', (req, res) => {
   }
 });
 
+<<<<<<< d3c8d13623aea3cbf13fcc99d1adbfcac89d2f09
 const uploadDir = path.join(__dirname, '../tmp');
+=======
+editorTools.get('/isrestarted', (req, res) => {
+  res.status(200).send(isrestarted);
+});
+
+
+const upload_dir = path.join(__dirname, '../tmp');
+>>>>>>> Reset Server Button
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
@@ -450,7 +474,12 @@ editorTools.listen(process.env.EDITOR_PORT ? process.env.EDITOR_PORT : 4000, err
     return;
   }
 
+<<<<<<< d3c8d13623aea3cbf13fcc99d1adbfcac89d2f09
   console.log( // eslint-disable-line no-console
     'Editor tools server started on port', process.env.EDITOR_PORT ? process.env.EDITOR_PORT : 4000
   );
 });
+=======
+  console.log('Editor tools server started on port', process.env.EDITOR_PORT ? process.env.EDITOR_PORT : 4000); // eslint-disable-line no-console
+  });
+>>>>>>> Reset Server Button

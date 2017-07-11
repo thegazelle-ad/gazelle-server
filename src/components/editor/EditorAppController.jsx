@@ -34,6 +34,8 @@ if (process.env.NODE_ENV === 'production') {
 export default class EditorAppController extends BaseComponent {
   constructor(props) {
     super(props);
+    this.restartServer = this.restartServer.bind(this);
+    this.isrestarted = this.isrestarted.bind(this);
     this.handleDisableLink = this.handleDisableLink.bind(this);
     this.resetGhostInfo = this.resetGhostInfo.bind(this);
     this.isLoggedIn = this.isLoggedIn.bind(this);
@@ -54,13 +56,42 @@ export default class EditorAppController extends BaseComponent {
     }
   }
 
+  isrestarted (){
+    http.get('/isrestarted', (response) => {
+      let signal = '';
+      response.on('data', (chunk) => {
+        signal += chunk;
+      });
+      response.on('end', () => {
+          if (signal === 'false'){
+              window.alert("Servers restarted successfully");
+            }
+          else if (signal === 'true'){
+              window.alert('Pinging Servers');
+              this.isrestarted();
+            }
+          else{
+              window.alert('error');
+              this.isrestarted();
+            }
+        })
+    })
+  }
+
   restartServer() {
     const password = window.prompt('Please input the password');
     const options = {
       hostname: HOSTNAME,
       port: PORT,
+<<<<<<< d3c8d13623aea3cbf13fcc99d1adbfcac89d2f09
       path: `/restartserver?password=${password}`,
     };
+=======
+      path: '/restartserver?password=' + password,
+    }
+    //this.isrestarted();
+
+>>>>>>> Reset Server Button
     http.get(options, (res) => {
       let reply = '';
 
@@ -69,6 +100,7 @@ export default class EditorAppController extends BaseComponent {
       });
 
       res.on('end', () => {
+<<<<<<< d3c8d13623aea3cbf13fcc99d1adbfcac89d2f09
         if (reply === 'restarted') {
           window.alert('Servers restarted successfully');
         } else if (reply === 'error') {
@@ -77,9 +109,26 @@ export default class EditorAppController extends BaseComponent {
           window.alert('invalid password');
         } else {
           window.alert('unknown error');
+=======
+        if (reply === "restarted") {
+          window.alert("Servers restarted successfully");
+        }
+        else if (reply === "start") {
+          window.alert("server is being restarted now");
+        }
+        else if (reply === "error") {
+          window.alert("there was an error restarting the servers");
+        }
+        else if (reply === "invalid") {
+          window.alert("invalid password");
+        }
+        else {
+          window.alert("unknown error");
+>>>>>>> Reset Server Button
         }
       });
     });
+    this.isrestarted();
   }
 
   resetGhostInfo() {
