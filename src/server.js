@@ -320,11 +320,9 @@ if (process.env.NODE_ENV === 'production') {
   PATH_NAME = `${__dirname}/scripts/restartServers.sh`;
 }
 
-var isrestarted = false;
+let isRestarted = false;
 
 editorTools.get('/restartserver', (req, res) => {
-
-  isrestarted = true;
 
   if (!process.env.NODE_ENV) {
 <<<<<<< d3c8d13623aea3cbf13fcc99d1adbfcac89d2f09
@@ -332,8 +330,12 @@ editorTools.get('/restartserver', (req, res) => {
     res.status(200).send('restarted');
 =======
     //in dev mode
+<<<<<<< 0af29e795f37b4b6774a801dfbb2d4c721535b7d
     res.status(200).send("restarted");
 >>>>>>> Reset Server Button
+=======
+    res.status(200).send("start");
+>>>>>>> Update server.js
     return;
   }
 
@@ -345,9 +347,15 @@ editorTools.get('/restartserver', (req, res) => {
   if ((typeof password) !== "string" || password.length < 1) {
 >>>>>>> Reset Server Button
     res.status(401).send('invalid');
+<<<<<<< 0af29e795f37b4b6774a801dfbb2d4c721535b7d
   } else if (hash(password) === 8692053) {
+=======
+  }
+  else if (hash(password) === 8692053) {
+    isRestarted = true;
+    res.status(200).send('start');
+>>>>>>> Update server.js
     exec(PATH_NAME, (err, stdout, stderr) => {
-      res.status(200).send('start');
       if (err) {
         if (process.env.NODE_ENV !== 'production') {
           console.error(err); // eslint-disable-line no-console
@@ -369,7 +377,7 @@ editorTools.get('/restartserver', (req, res) => {
 const uploadDir = path.join(__dirname, '../tmp');
 =======
 editorTools.get('/isrestarted', (req, res) => {
-  res.status(200).send(isrestarted);
+  res.status(200).send(isRestarted);
 });
 
 
@@ -481,5 +489,10 @@ editorTools.listen(process.env.EDITOR_PORT ? process.env.EDITOR_PORT : 4000, err
 });
 =======
   console.log('Editor tools server started on port', process.env.EDITOR_PORT ? process.env.EDITOR_PORT : 4000); // eslint-disable-line no-console
+<<<<<<< 0af29e795f37b4b6774a801dfbb2d4c721535b7d
   });
 >>>>>>> Reset Server Button
+=======
+
+});
+>>>>>>> Update server.js
