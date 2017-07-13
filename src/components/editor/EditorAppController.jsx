@@ -35,7 +35,7 @@ export default class EditorAppController extends BaseComponent {
   constructor(props) {
     super(props);
     this.restartServer = this.restartServer.bind(this);
-    this.isrestarted = this.isrestarted.bind(this);
+    this.isRestarted = this.isRestarted.bind(this);
     this.handleDisableLink = this.handleDisableLink.bind(this);
     this.resetGhostInfo = this.resetGhostInfo.bind(this);
     this.isLoggedIn = this.isLoggedIn.bind(this);
@@ -56,24 +56,29 @@ export default class EditorAppController extends BaseComponent {
     }
   }
 
-  isrestarted (){
+  isRestarted (){
     http.get('/isrestarted', (response) => {
       let signal = '';
+      let count = 0;
       response.on('data', (chunk) => {
         signal += chunk;
       });
       response.on('end', () => {
-          if (signal === 'false'){
-              window.alert("Servers restarted successfully");
+          if (signal === 'false') {
+            window.alert("Servers restarted successfully");
             }
-          else if (signal === 'true'){
-              window.alert('Pinging Servers');
-              this.isrestarted();
+          else if (signal === 'true') {
+            while (count < 5) {
+              setTimeout(this.isRestarted(),500);
+              count +=1;
             }
-          else{
-              window.alert('error');
-              this.isrestarted();
+          }
+          else {
+            if (count == 5) {
+              window.alert('Error');
+              setTimeout(this.isRestarted(),500);
             }
+          }
         })
     })
   }
@@ -89,7 +94,6 @@ export default class EditorAppController extends BaseComponent {
 =======
       path: '/restartserver?password=' + password,
     }
-    //this.isrestarted();
 
 >>>>>>> Reset Server Button
     http.get(options, (res) => {
@@ -100,6 +104,7 @@ export default class EditorAppController extends BaseComponent {
       });
 
       res.on('end', () => {
+<<<<<<< 53fc8f687b5c20a2315a5809a6aec3883cb882c9
 <<<<<<< d3c8d13623aea3cbf13fcc99d1adbfcac89d2f09
         if (reply === 'restarted') {
           window.alert('Servers restarted successfully');
@@ -115,20 +120,28 @@ export default class EditorAppController extends BaseComponent {
         }
         else if (reply === "start") {
           window.alert("server is being restarted now");
+=======
+        if (reply === "start") {
+          window.alert("Server is being restarted now");
+          this.isRestarted();
+>>>>>>> Update EditorAppController.jsx
         }
         else if (reply === "error") {
-          window.alert("there was an error restarting the servers");
+          window.alert("There was an error restarting the servers");
         }
         else if (reply === "invalid") {
-          window.alert("invalid password");
+          window.alert("Invalid password");
         }
         else {
+<<<<<<< 53fc8f687b5c20a2315a5809a6aec3883cb882c9
           window.alert("unknown error");
 >>>>>>> Reset Server Button
+=======
+          window.alert("Unknown error");
+>>>>>>> Update EditorAppController.jsx
         }
       });
     });
-    this.isrestarted();
   }
 
   resetGhostInfo() {
