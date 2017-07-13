@@ -36,16 +36,14 @@ export default class EditorArticleController extends FalcorController {
       const formNode = event.target.parentNode;
 
       // Gets all the input elements that we named
-      const children = _.map(formNode.children, (child) => {
-        return child.name;
-      });
-      const fields = children.filter((key) => {
-        return key && isNaN(parseInt(key)) && key !== 'length';
-      });
+      const children = _.map(formNode.children, child => child.name);
+      const fields = children.filter(key => (
+        key && isNaN(parseInt(key, 10)) && key !== 'length'
+      ));
 
       const falcorData = this.state.data.articlesBySlug[this.props.params.slug];
 
-      let changedFlag = fields.some((field) => {
+      const changedFlag = fields.some((field) => {
         const formValue = formNode[field].value;
         const falcorValue = falcorData[field];
 
@@ -55,8 +53,14 @@ export default class EditorArticleController extends FalcorController {
       });
 
       if (changedFlag !== this.state.changesObject.mainForm) {
-        const newChangesObject = update(this.state.changesObject, { mainForm: { $set: changedFlag } });
-        // this.setState is not a synchronous function, so we check with what will become the new changesObject
+        const newChangesObject = update(
+          this.state.changesObject,
+          { mainForm: { $set: changedFlag } }
+        );
+        /**
+         * this.setState is not a synchronous function,
+         * so we check with what will become the new changesObject
+         */
         this.checkFormChanges(newChangesObject);
         this.safeSetState({
           changesObject: newChangesObject,
@@ -67,7 +71,11 @@ export default class EditorArticleController extends FalcorController {
 
   static getFalcorPathSets(params) {
     return [
-      ['articlesBySlug', params.slug, ['title', 'category', 'teaser', 'image', 'id', 'published_at']],
+      [
+        'articlesBySlug',
+        params.slug,
+        ['title', 'category', 'teaser', 'image', 'id', 'publishedAt'],
+      ],
       ['articlesBySlug', params.slug, 'authors', { length: 10 }, ['id', 'name']],
       ['categoriesByIndex', { length: 30 }, ['name', 'slug']],
     ];
@@ -109,10 +117,7 @@ export default class EditorArticleController extends FalcorController {
   }
 
   checkFormChanges(changesObject) {
-    const changedFlag = _.some(changesObject, (flag) => {
-      // Check if any of the flags are true
-      return flag;
-    });
+    const changedFlag = _.some(changesObject, flag => flag);
     if (changedFlag !== this.state.changed) {
       this.safeSetState({
         changed: changedFlag,
@@ -125,12 +130,15 @@ export default class EditorArticleController extends FalcorController {
     const authorsDeleted = this.state.authorsDeleted;
 
     // Checks if any authors were added or any authors were deleted
-    let changedFlag = authorsAdded.length > 0 ||
-      _.some(authorsDeleted, (flag) => { return flag; });
+    const changedFlag = authorsAdded.length > 0 ||
+      _.some(authorsDeleted, flag => flag);
 
     if (changedFlag !== this.state.changesObject.authors) {
       const newChangesObject = update(this.state.changesObject, { authors: { $set: changedFlag } });
-      // this.setState is not a synchronous function, so we check with what will become the new changesObject
+      /**
+       * this.setState is not a synchronous function,
+       * so we check with what will become the new changesObject
+       */
       this.checkFormChanges(newChangesObject);
       this.safeSetState({
         changesObject: newChangesObject,
@@ -144,31 +152,27 @@ export default class EditorArticleController extends FalcorController {
     const formNode = event.target;
     const articleSlug = this.props.params.slug;
     const falcorData = this.state.data.articlesBySlug[articleSlug];
-    const children = _.map(formNode.children, (child) => {
-      return child.name;
-    });
-    const mainFormFields = children.filter((key) => {
-      return key && isNaN(parseInt(key)) && key !== 'length';
-    });
+    const children = _.map(formNode.children, child => child.name);
+    const mainFormFields = children.filter(key => (
+      key && isNaN(parseInt(key, 10)) && key !== 'length'
+    ));
 
     // Check if we are editing authors
     const authorsAdded = this.state.authorsAdded.length > 0;
-    const authorsDeleted = _.some(this.state.authorsDeleted, (flag) => {
-      return flag;
-    });
+    const authorsDeleted = _.some(this.state.authorsDeleted, flag => flag);
 
     let newAuthors = null;
     if (authorsAdded || authorsDeleted) {
       // Construct the new authors array
       const authorsDeletedDict = this.state.authorsDeleted;
-      newAuthors = _.filter((falcorData.authors), (author) => {
+      newAuthors = _.filter((falcorData.authors), (author) => (
         // Check that they were not deleted
-        return !authorsDeletedDict[author.id];
-      });
+        !authorsDeletedDict[author.id]
+      ));
       // Add the newly added authors
       newAuthors = newAuthors.concat(this.state.authorsAdded);
       // We only want the slugs
-      newAuthors = newAuthors.map((author) => { return author.id; });
+      newAuthors = newAuthors.map(author => author.id);
 
       // Check that all authors are unique
       if (_.uniq(newAuthors).length !== newAuthors.length) {
@@ -215,8 +219,8 @@ export default class EditorArticleController extends FalcorController {
     Number(newAuthors !== null);
 
     if (updatesToBeCalled === 0) {
-      throw new Error('Tried to save changes but there were no changes. \
-the save changes button is supposed to be disabled in this case');
+      throw new Error('Tried to save changes but there were no changes. ' +
+                      'the save changes button is supposed to be disabled in this case');
     }
 
     // Function to be called when all updates are done
@@ -283,36 +287,42 @@ the save changes button is supposed to be disabled in this case');
       });
     }
     if (newAuthors !== null) {
-      this.falcorCall(['articlesBySlug', articleSlug, 'authors', 'updateAuthors'], [falcorData.id, newAuthors],
-      [['name'], ['slug']], undefined, undefined, () => {
-        updatesDone++;
-        if (updatesDone === updatesToBeCalled) {
-          resetState();
-          /* We can get rid of this hacky solution as right now we just do a full falcor fetch */
-          // if (authorsToDelete.length > 0) {
-          //   // This is temporary until we find a good way to remove invalidated paths from the
-          //   // this.falcorCall function itself. It is very bad and should definitely be improved
-          //   setTimeout(() => {
-          //     const dataCopy = Object.assign({}, this.state.data);
-          //     authorsToDelete.forEach((slug) => {
-          //       let index = -1;
-          //       _.find(dataCopy.articlesBySlug[articleSlug].authors, (value, key) => {
-          //         if (value.slug === slug) {
-          //           index = parseInt(key);
-          //           return true;
-          //         }
-          //         return false;
-          //       });
-          //       if (index !== -1) {
-          //         // The author wasn't overwritten by the setState call
-          //         delete dataCopy.articlesBySlug[articleSlug].authors[index];
-          //       }
-          //     });
-          //     this.safeSetState({data: dataCopy});
-          //   }, 200);
-          // }
-        }
-      });
+      this.falcorCall(
+        ['articlesBySlug', articleSlug, 'authors', 'updateAuthors'],
+        [falcorData.id, newAuthors],
+        [['name'], ['slug']],
+        undefined,
+        undefined,
+        () => {
+          updatesDone++;
+          if (updatesDone === updatesToBeCalled) {
+            resetState();
+            /* We can get rid of this hacky solution as right now we just do a full falcor fetch */
+            // if (authorsToDelete.length > 0) {
+            //   // This is temporary until we find a good way to remove invalidated paths from the
+            //   // this.falcorCall function itself.
+            //   // It is very bad and should definitely be improved
+            //   setTimeout(() => {
+            //     const dataCopy = Object.assign({}, this.state.data);
+            //     authorsToDelete.forEach((slug) => {
+            //       let index = -1;
+            //       _.find(dataCopy.articlesBySlug[articleSlug].authors, (value, key) => {
+            //         if (value.slug === slug) {
+            //           index = parseInt(key);
+            //           return true;
+            //         }
+            //         return false;
+            //       });
+            //       if (index !== -1) {
+            //         // The author wasn't overwritten by the setState call
+            //         delete dataCopy.articlesBySlug[articleSlug].authors[index];
+            //       }
+            //     });
+            //     this.safeSetState({data: dataCopy});
+            //   }, 200);
+            // }
+          }
+        });
     }
   }
 
@@ -326,16 +336,11 @@ the save changes button is supposed to be disabled in this case');
       this.safeSetState({
         authorsDeleted: newAuthorsDeleted,
       });
-    }
-    else {
+    } else {
       const authors = this.state.data.articlesBySlug[this.props.params.slug].authors;
       // Is this author already added?
-      const inAuthorsAdded = this.state.authorsAdded.find((author) => {
-        return author.id === id;
-      }) !== undefined;
-      const inOriginalAuthors = _.find(authors, (author) => {
-        return author.id === id;
-      }) !== undefined;
+      const inAuthorsAdded = this.state.authorsAdded.find(author => author.id === id) !== undefined;
+      const inOriginalAuthors = _.find(authors, author => author.id === id) !== undefined;
       if (inAuthorsAdded || inOriginalAuthors) {
         window.alert('That author is already added');
         return;
@@ -351,17 +356,14 @@ the save changes button is supposed to be disabled in this case');
     // disabled this if saving
     if (this.state.saving) return;
     if (isOriginalAuthor) {
-      let newValue = {};
+      const newValue = {};
       newValue[id] = true;
-      let newAuthorsDeleted = Object.assign({}, this.state.authorsDeleted, newValue);
+      const newAuthorsDeleted = Object.assign({}, this.state.authorsDeleted, newValue);
       this.safeSetState({
         authorsDeleted: newAuthorsDeleted,
       });
-    }
-    else {
-      const index = this.state.authorsAdded.findIndex((author) => {
-        return author.id === id;
-      });
+    } else {
+      const index = this.state.authorsAdded.findIndex(author => author.id === id);
       if (index === -1) {
         throw new Error('The author you are trying to delete cannot be found');
       }
@@ -386,12 +388,12 @@ the save changes button is supposed to be disabled in this case');
     const slug = this.props.params.slug;
     const jsonGraphEnvelope = {
       paths: [
-        ['articlesBySlug', slug, 'published_at'],
+        ['articlesBySlug', slug, 'publishedAt'],
       ],
       jsonGraph: {
         articlesBySlug: {
           [slug]: {
-            published_at: null,
+            publishedAt: null,
           },
         },
       },
@@ -423,25 +425,22 @@ the save changes button is supposed to be disabled in this case');
         article.category = 'none';
       }
       const categories = this.state.data.categoriesByIndex;
-      categories['none'] = { name: 'none', slug: 'none' };
+      categories.none = { name: 'none', slug: 'none' };
 
       let changedStateMessage;
       const changedStateStyle = {};
       if (!this.state.changed) {
         if (!this.state.saving) {
           changedStateMessage = 'No Changes';
-        }
-        else {
+        } else {
           changedStateMessage = 'Saved';
           changedStateStyle.color = 'green';
         }
-      }
-      else {
+      } else {
         if (!this.state.saving) {
           changedStateMessage = 'Unsaved Changes';
           changedStateStyle.color = 'red';
-        }
-        else {
+        } else {
           changedStateMessage = 'Saving';
           changedStateStyle.color = '#65e765';
         }
@@ -451,7 +450,9 @@ the save changes button is supposed to be disabled in this case');
         <div>
           <h2 style={changedStateStyle}>{changedStateMessage}</h2>
           <h3>{article.title}</h3>
-          <p>Change the information for the article and press Save Changes to confirm the changes.</p>
+          <p>
+            Change the information for the article and press Save Changes to confirm the changes.
+          </p>
           <form
             className="pure-form pure-form-stacked"
             onChange={(e) => { e.persist(); this.debouncedHandleMainFormChanges(e); }}
@@ -463,9 +464,9 @@ the save changes button is supposed to be disabled in this case');
               name="category"
               disabled={this.state.saving}
             >
-              {_.map(categories, (category) => {
-                return <option value={category.slug} key={category.slug}>{category.name}</option>;
-              })}
+              {_.map(categories, category => (
+                <option value={category.slug} key={category.slug}>{category.name}</option>
+              ))}
             </select>
             Change Image URL (please use https:// for s3 links and any other appropriate sites):
             <input
@@ -498,11 +499,15 @@ the save changes button is supposed to be disabled in this case');
               model={this.props.model}
               disabled={this.state.saving}
             />
-            <input className="pure-button pure-button-primary" type="submit" value="Save Changes" disabled={!this.state.changed || this.state.saving} />
+            <input
+              className="pure-button pure-button-primary"
+              type="submit" value="Save Changes"
+              disabled={!this.state.changed || this.state.saving}
+            />
           </form>
           {
-            article.published_at ?
-            'The article was published at ' + new Date(article.published_at) :
+            article.publishedAt ?
+            `The article was published at ${new Date(article.publishedAt)}` :
             'The article has yet to be published. It will be published automatically' +
             ' when you publish the issue that contains it.'
           } <br />
@@ -510,13 +515,12 @@ the save changes button is supposed to be disabled in this case');
             type="button"
             className="pure-button"
             onClick={this.unpublish}
-            disabled={!article.published_at}
+            disabled={!article.publishedAt}
           >Unpublish</button>
         </div>
       );
     }
-    else {
-      return <div><p>loading...</p></div>;
-    }
+    // It would already have returned here
+    return <div><p>loading...</p></div>;
   }
 }

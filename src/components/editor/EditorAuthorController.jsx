@@ -51,7 +51,7 @@ export default class EditorAuthorController extends FalcorController {
   }
   static getFalcorPathSets(params) {
     return [
-      ['authorsBySlug', params.slug, ['name', 'image', 'biography', 'slug', 'job_title']],
+      ['authorsBySlug', params.slug, ['name', 'image', 'biography', 'slug', 'jobTitle']],
       // ['authorsBySlug', params.slug, 'articles', {length: 100}, 'title'],
     ];
   }
@@ -160,15 +160,13 @@ the save changes button is supposed to be disabled in this case');
           window.alert('The slug you chose is already taken, please change it');
           this.safeSetState({ saving: false });
           return;
-        }
-        else {
+        } else {
           // Nothing was found which means we can proceed with assigning this slug
           // without problems
           update();
         }
       });
-    }
-    else {
+    } else {
       // Slug isn't being updated so we can freely update
       // Start the saving
       this.safeSetState({ saving: true });
@@ -200,18 +198,15 @@ the save changes button is supposed to be disabled in this case');
       if (!this.state.changed) {
         if (!this.state.saving) {
           changedStateMessage = 'No Changes';
-        }
-        else {
+        } else {
           changedStateMessage = 'Saved';
           changedStateStyle.color = 'green';
         }
-      }
-      else {
+      } else {
         if (!this.state.saving) {
           changedStateMessage = 'Unsaved Changes';
           changedStateStyle.color = 'red';
-        }
-        else {
+        } else {
           changedStateMessage = 'Saving';
           changedStateStyle.color = '#65e765';
         }
@@ -244,8 +239,8 @@ the save changes button is supposed to be disabled in this case');
             Change Job Title:
             <input
               type="text"
-              defaultValue={author.job_title}
-              name="job_title"
+              defaultValue={author.jobTitle}
+              name="jobTitle"
               disabled={this.state.saving}
             />
             Change Image URL (please use https:// for s3 and other secure links):
@@ -276,8 +271,7 @@ the save changes button is supposed to be disabled in this case');
           </form>
         </div>
       );
-    }
-    else {
+    } else {
       return <div><p>loading...</p></div>;
     }
   }

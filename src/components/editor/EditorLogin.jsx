@@ -26,8 +26,7 @@ export default class Login extends BaseComponent {
     if (hash(pass) !== 8692053) {
       window.alert('Incorrect password');
       e.target.password.value = '';
-    }
-    else {
+    } else {
       // Otherwise it is correct and we let the site redirect the client
       let url = this.props.location.query.url || '';
       if (url) {

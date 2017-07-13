@@ -130,18 +130,15 @@ export default class EditorIssueCategoryController extends FalcorController {
       if (!this.state.changed) {
         if (!this.state.saving) {
           changedStateMessage = 'No Changes';
-        }
-        else {
+        } else {
           changedStateMessage = 'Saved';
           changedStateStyle.color = 'green';
         }
-      }
-      else {
+      } else {
         if (!this.state.saving) {
           changedStateMessage = 'Unsaved Changes';
           changedStateStyle.color = 'red';
-        }
-        else {
+        } else {
           changedStateMessage = 'Saving';
           changedStateStyle.color = '#65e765';
         }
@@ -195,8 +192,7 @@ export default class EditorIssueCategoryController extends FalcorController {
           >Save Changes</button>
         </div>
       );
-    }
-    else {
+    } else {
       return <div>loading...</div>;
     }
   }

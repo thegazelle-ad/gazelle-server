@@ -59,7 +59,7 @@ export default class FalcorController extends BaseComponent {
         data,
       });
     } else {
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODEENV !== 'production') {
         console.warn('Serverside render of component: ' + this.constructor.name + // eslint-disable-line no-console
           ' failed. Data not in cache. Falcor Path attempted fetched was: ' + JSON.stringify(falcorPathSets));
       }
@@ -108,10 +108,9 @@ export default class FalcorController extends BaseComponent {
           data: x.json,
         });
         this.safeSetState(stateToSet);
-      }
-      else {
+      } else {
         const err = new Error('FalcorPathSets: ' + JSON.stringify(falcorPathSets) + ' returned no data.');
-        if (process.env.NODE_ENV !== 'production') {
+        if (process.env.NODEENV !== 'production') {
           console.error(err); // eslint-disable-line no-console
         }
         Object.assign(stateToSet, {
@@ -126,7 +125,7 @@ export default class FalcorController extends BaseComponent {
       }
     })
     .catch((e) => {
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODEENV !== 'production') {
         console.error(e); // eslint-disable-line no-console
         if (e instanceof Error) {
           console.error(e.stack); // eslint-disable-line no-console
@@ -164,7 +163,7 @@ export default class FalcorController extends BaseComponent {
       // }
     })
     .catch((e) => {
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODEENV !== 'production') {
         console.error(e); // eslint-disable-line no-console
         if (e instanceof Error) {
           console.error(e.stack); // eslint-disable-line no-console
@@ -173,8 +172,7 @@ export default class FalcorController extends BaseComponent {
       let error = null;
       if (e instanceof Error) {
         error = e;
-      }
-      else if (e.hasOwnProperty('0')) {
+      } else if (e.hasOwnProperty('0')) {
         error = e[0].value;
       }
       const errorMessage = 'There was an error while updating data, please contact the developers, and we recommend refreshing the page' +
@@ -221,7 +219,7 @@ export default class FalcorController extends BaseComponent {
       // }
     })
     .catch((e) => {
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODEENV !== 'production') {
         console.error(e); // eslint-disable-line no-console
         if (e instanceof Error) {
           console.error(e.stack); // eslint-disable-line no-console
@@ -230,8 +228,7 @@ export default class FalcorController extends BaseComponent {
       let error = null;
       if (e instanceof Error) {
         error = e;
-      }
-      else if (e.hasOwnProperty('0')) {
+      } else if (e.hasOwnProperty('0')) {
         error = e[0].value;
       }
       const errorMessage = 'There was an error while updating data, please contact the developers, and we recommend refreshing the page' +

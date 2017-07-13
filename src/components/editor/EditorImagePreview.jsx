@@ -1,7 +1,7 @@
 import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
 
-/* upload_status prop is encoded as such:
+/* uploadStatus prop is encoded as such:
   1: Upload in progress,
   2: Upload complete,
   3: Upload error / failed,
@@ -33,36 +33,31 @@ export default class EditorImagePreview extends BaseComponent {
   }
 
   render() {
-    const { url, name, upload_status, amazonURL, error_message } = this.props;
-    let uploading_component;
-    if (upload_status === 1) {
-      uploading_component = <div>Uploading...</div>;
-    }
-    else if (upload_status === 2) {
-      uploading_component = <div>Upload Complete</div>;
-    }
-    else if (upload_status === 3) {
-      uploading_component = <div>Upload Failed</div>;
-    }
-    else {
-      uploading_component = null;
+    const { url, name, uploadStatus, amazonURL, errorMessage } = this.props;
+    let uploadingComponent;
+    if (uploadStatus === 1) {
+      uploadingComponent = <div>Uploading...</div>;
+    } else if (uploadStatus === 2) {
+      uploadingComponent = <div>Upload Complete</div>;
+    } else if (uploadStatus === 3) {
+      uploadingComponent = <div>Upload Failed</div>;
+    } else {
+      uploadingComponent = null;
     }
 
     let messageComponent;
     let copyComponent = null;
     if (amazonURL) {
       messageComponent = <div className="previewURL">URL: {amazonURL}</div>;
-      if (document.queryCommandSupported("copy")){
+      if (document.queryCommandSupported("copy")) {
         copyComponent = <button type='button' onClick={this.onCopyToClipboard}>Copy link</button>;
       } else {
         // TODO: After Material-UI is merged in we change this to a Material-UI Dialog or something similar
         copyComponent = <div>It seems that our copy button is not compatible with your web browser. Please upgrade to the newest version for full Gazelle capabilities.</div>
       }
-    }
-    else if (error_message) {
+    } else if (error_message) {
       messageComponent = <div className="preview_error">Error: {error_message}</div>;
-    }
-    else {
+    } else {
       messageComponent = null;
     }
 
@@ -78,13 +73,12 @@ export default class EditorImagePreview extends BaseComponent {
           <br />
           <button type="button" onClick={this.onChangeName}>Change name</button>
           <br />
-          {uploading_component}
+          {uploadingComponent}
           {messageComponent}
           {copyComponent}
         </div>
       );
-    }
-    else {
+    } else {
       component = (
         <div className="imagePreview">
           <div className="imagePreviewLoading">
@@ -94,7 +88,7 @@ export default class EditorImagePreview extends BaseComponent {
           </div>
           {name}
           <br />
-          {uploading_component}
+          {uploadingComponent}
           {messageComponent}
           {copyComponent}
         </div>
@@ -108,9 +102,9 @@ export default class EditorImagePreview extends BaseComponent {
 EditorImagePreview.propTypes = {
   url: React.PropTypes.string,
   name: React.PropTypes.string.isRequired,
-  upload_status: React.PropTypes.number,
+  uploadStatus: React.PropTypes.number,
   amazonURL: React.PropTypes.string,
-  error_message: React.PropTypes.string,
+  errorMessage: React.PropTypes.string,
   onDelete: React.PropTypes.func.isRequired,
   onChangeName: React.PropTypes.func.isRequired,
 };

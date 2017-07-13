@@ -9,9 +9,9 @@ const $ref = falcor.Model.ref;
 export const mapGhostNames = (falcorName) => {
   switch (falcorName) {
     case 'teaser':
-      return 'meta_description';
+      return 'metaDescription';
     case 'issueNumber':
-      return 'issue_order';
+      return 'issueOrder';
     default:
       return falcorName;
   }
@@ -35,8 +35,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
             requestedFields.forEach((key) => {
               if (!row.hasOwnProperty(key)) {
                 throw new Error("missing data in infoPages, it is not even null, simply doesn't return");
-              }
-              else {
+              } else {
                 results.push({
                   path: ['infoPages', row.slug, key],
                   value: row[key],
@@ -50,7 +49,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
     },
   },
   {
-    route: "authorsBySlug[{keys:slugs}]['id', 'name', 'image', 'biography', 'slug', 'job_title']",
+    route: "authorsBySlug[{keys:slugs}]['id', 'name', 'image', 'biography', 'slug', 'jobTitle']",
     get: (pathSet) => {
       return new Promise((resolve) => {
         const requestedFields = pathSet[2];
@@ -228,15 +227,15 @@ export default class FalcorRouter extends BaseRouter.createClass([
   },
   {
     // Get custom article data from MariaDB
-    route: "articlesBySlug[{keys:slugs}]['category', 'published_at', 'views']",
+    route: "articlesBySlug[{keys:slugs}]['category', 'publishedAt', 'views']",
     get: (pathSet) => {
       return new Promise((resolve) => {
         const requestedFields = pathSet[2];
         db.articleQuery(pathSet.slugs, requestedFields).then((data) => {
           const results = [];
           data.forEach((article) => {
-            if (article.hasOwnProperty('published_at') && (article.published_at instanceof Date)) {
-              article.published_at = article.published_at.getTime();
+            if (article.hasOwnProperty('publishedAt') && (article.publishedAt instanceof Date)) {
+              article.publishedAt = article.publishedAt.getTime();
             }
             requestedFields.forEach((field) => {
               results.push({
@@ -400,11 +399,9 @@ export default class FalcorRouter extends BaseRouter.createClass([
           if (views === false) {
             // Means the article wasn't found
             resolve([]);
-          }
-          else if (!views || (typeof views) !== 'number') {
+          } else if (!views || (typeof views) !== 'number') {
             throw new Error('addView for slug ' + slug + ' returned unexpected value');
-          }
-          else {
+          } else {
             resolve([{
               path: ['articlesBySlug', slug, 'views'],
               value: views,
@@ -545,7 +542,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
           const results = [];
           data.forEach((row) => {
             results.push({
-              path: ['issuesByNumber', row.issue_order, 'featured'],
+              path: ['issuesByNumber', row.issueOrder, 'featured'],
               value: $ref(['articlesBySlug', row.slug]),
             });
           });
@@ -643,12 +640,12 @@ export default class FalcorRouter extends BaseRouter.createClass([
   },
   {
     // Get issue data
-    route: "issuesByNumber[{integers:issueNumbers}]['id', 'published_at', 'name', 'issueNumber']",
+    route: "issuesByNumber[{integers:issueNumbers}]['id', 'publishedAt', 'name', 'issueNumber']",
     get: (pathSet) => {
       const mapFields = (field) => {
         switch (field) {
           case 'issueNumber':
-            return 'issue_order';
+            return 'issueOrder';
           default:
             return field;
         }
@@ -660,12 +657,12 @@ export default class FalcorRouter extends BaseRouter.createClass([
           const results = [];
           data.forEach((issue) => {
             // Convert Date object to time integer
-            if (issue.hasOwnProperty('published_at') && (issue.published_at instanceof Date)) {
-              issue.published_at = issue.published_at.getTime();
+            if (issue.hasOwnProperty('publishedAt') && (issue.publishedAt instanceof Date)) {
+              issue.publishedAt = issue.publishedAt.getTime();
             }
             requestedFields.forEach((field) => {
               results.push({
-                path: ['issuesByNumber', issue.issue_order, field],
+                path: ['issuesByNumber', issue.issueOrder, field],
                 value: issue[mapFields(field)],
               });
             });
@@ -683,8 +680,8 @@ export default class FalcorRouter extends BaseRouter.createClass([
             throw new Error('Error while updating issue data');
           }
           resolve([{
-            path: ['issuesByNumber', parseInt(issueNumber), 'published_at'],
-            value: issueObject.published_at,
+            path: ['issuesByNumber', parseInt(issueNumber), 'publishedAt'],
+            value: issueObject.publishedAt,
           }, {
             path: ['latestIssue'],
             invalidated: true,
@@ -773,12 +770,12 @@ export default class FalcorRouter extends BaseRouter.createClass([
           const results = [];
           const publishTime = data.date.getTime();
           results.push({
-            path: ['issuesByNumber', issueNumber, 'published_at'],
+            path: ['issuesByNumber', issueNumber, 'publishedAt'],
             value: publishTime,
           });
           data.publishedArticles.forEach((slug) => {
             results.push({
-              path: ['articlesBySlug', slug, 'published_at'],
+              path: ['articlesBySlug', slug, 'publishedAt'],
               value: publishTime,
             });
           });
@@ -858,7 +855,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
         db.latestIssueQuery().then((row) => {
           resolve([{
             path: ['latestIssue'],
-            value: $ref(['issuesByNumber', row[0].issue_order]),
+            value: $ref(['issuesByNumber', row[0].issueOrder]),
           }]);
         });
       });

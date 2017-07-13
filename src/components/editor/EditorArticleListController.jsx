@@ -102,8 +102,7 @@ export default class EditorArticleListController extends FalcorController {
           </div>
         </div>
       );
-    }
-    else {
+    } else {
       return (
         <div className="pure-g">
           <div className="pure-u-3-8">

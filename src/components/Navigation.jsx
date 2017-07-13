@@ -44,7 +44,7 @@ export default class Navigation extends BaseComponent {
       return (
         <div>
           <div className="navigation">
-            <p className="navigation__publication-date">{moment(data.published_at).format('MMM DD, YYYY').toString()}</p>
+            <p className="navigation__publication-date">{moment(data.publishedAt).format('MMM DD, YYYY').toString()}</p>
             <nav role="navigation">
               <ul className="navigation__categories">
                 {renderCategories}
@@ -62,12 +62,12 @@ export default class Navigation extends BaseComponent {
         </div>
       );
     }
-	                    }
+	                                        }
 }
 
 Navigation.propTypes = {
   navigationData: React.PropTypes.shape({
-    published_at: React.PropTypes.number,
+    publishedAt: React.PropTypes.number,
     issueNumber: React.PropTypes.number,
     categories: React.PropTypes.object,
   }),

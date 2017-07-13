@@ -20,8 +20,7 @@ export function debounce(func, timeout, addInstantFlag = false) {
         args.push(true);
       }
       func.apply(this, args);
-    }
-    else if (!scheduled) {
+    } else if (!scheduled) {
       scheduled = true;
       setTimeout(() => {
         func.apply(this, arguments);
@@ -58,8 +57,7 @@ export function mapLegacyIssueSlugsToIssueNumber(slug) {
   const match = slug.match(/issue-(\d\d)/);
   if (match) {
     return match[1];
-  }
-  else {
+  } else {
     switch (slug) {
       case 'the-identity-issue':
         return '76';
@@ -179,8 +177,7 @@ export function markdownLength(str) {
   array.forEach((element) => {
     if ((typeof element) === 'string') {
       length += element.length;
-    }
-    else {
+    } else {
       // assume it is a link
       length += element.props.children.length;
     }
@@ -190,14 +187,14 @@ export function markdownLength(str) {
 
 const H1PRIME = 4189793;
 const H2PRIME = 3296731;
-const BIG_PRIME = 5003943032159437;
+const BIGPRIME = 5003943032159437;
 
 export function hash(password) {
   let num = password.charCodeAt(0);
   for (let i = 1; i < password.length; i++) {
-    num = ((num * 256) % BIG_PRIME + password.charCodeAt(i)) % BIG_PRIME;
+    num = ((num * 256) % BIGPRIME + password.charCodeAt(i)) % BIGPRIME;
   }
-  const hash = ((num % H1PRIME) + 5 * (num % H2PRIME) + 1 + 25) % BIG_PRIME;
+  const hash = ((num % H1PRIME) + 5 * (num % H2PRIME) + 1 + 25) % BIGPRIME;
   return hash;
 }
 
