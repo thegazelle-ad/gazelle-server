@@ -6,7 +6,7 @@ import _ from 'lodash';
 import update from 'react-addons-update';
 import { formatDate } from 'lib/utilities';
 
-const ARTICLE_FIELDS = ['id', 'title', 'slug', 'category', 'published_at', 'html'];
+const ARTICLEFIELDS = ['id', 'title', 'slug', 'category', 'publishedAt', 'html'];
 const ARTICLE_LIST_LENGTH = 100;
 
 export default class EditorIssueArticleController extends FalcorController {
@@ -27,17 +27,17 @@ export default class EditorIssueArticleController extends FalcorController {
 
   static getFalcorPathSets(params) {
     return [
-      ['issuesByNumber', params.issueNumber, ['name', 'published_at']],
-      ['issuesByNumber', params.issueNumber, 'categories', { length: 20 }, 'articles', { length: 50 }, ARTICLE_FIELDS],
-      ['issuesByNumber', params.issueNumber, 'featured', ARTICLE_FIELDS],
-      ['issuesByNumber', params.issueNumber, 'picks', { length: 10 }, ARTICLE_FIELDS],
+      ['issuesByNumber', params.issueNumber, ['name', 'publishedAt']],
+      ['issuesByNumber', params.issueNumber, 'categories', { length: 20 }, 'articles', { length: 50 }, ARTICLEFIELDS],
+      ['issuesByNumber', params.issueNumber, 'featured', ARTICLEFIELDS],
+      ['issuesByNumber', params.issueNumber, 'picks', { length: 10 }, ARTICLEFIELDS],
       /* The following three calls are simply calling the first author to check if any author has been assigned
         this is used for validiy checking */
       ['issuesByNumber', params.issueNumber, 'categories', { length: 20 }, 'articles', { length: 50 }, 'authors', 0, 'slug'],
       ['issuesByNumber', params.issueNumber, 'featured', 'authors', 0, 'slug'],
       ['issuesByNumber', params.issueNumber, 'picks', { length: 10 }, 'authors', 0, 'slug'],
       // This is for the articleList
-      ['articlesByPage', ARTICLE_LIST_LENGTH, 1, { length: ARTICLE_LIST_LENGTH }, ARTICLE_FIELDS],
+      ['articlesByPage', ARTICLE_LIST_LENGTH, 1, { length: ARTICLE_LIST_LENGTH }, ARTICLEFIELDS],
       ['articlesByPage', ARTICLE_LIST_LENGTH, 1, { length: ARTICLE_LIST_LENGTH }, 'authors', 0, 'slug'],
     ];
   }
@@ -269,7 +269,7 @@ export default class EditorIssueArticleController extends FalcorController {
     const picks = this.state.picks;
     const mainArticles = this.state.mainArticles;
     const data = this.state.data.issuesByNumber[issueNumber];
-    const isPublished = data.published_at;
+    const isPublished = data.publishedAt;
 
     const allArticles = this.state.mainArticles.concat(this.state.picks, this.state.featuredArticles);
     const allSlugs = allArticles.map((article) => { return article.slug; });
@@ -290,8 +290,8 @@ export default class EditorIssueArticleController extends FalcorController {
     }
     if (isPublished) {
       // Check that all articles are valid since issue is already published
-      const fields = ARTICLE_FIELDS.filter((field) => {
-        return field !== 'published_at';
+      const fields = ARTICLEFIELDS.filter((field) => {
+        return field !== 'publishedAt';
       });
       const valid = allArticles.every((article) => {
         const slug = article.slug;
@@ -350,7 +350,7 @@ export default class EditorIssueArticleController extends FalcorController {
       }, 1000);
     };
 
-    const refPaths = ARTICLE_FIELDS.map((field) => {
+    const refPaths = ARTICLEFIELDS.map((field) => {
       return [field];
     });
     this.safeSetState({ saving: true });
@@ -367,8 +367,7 @@ export default class EditorIssueArticleController extends FalcorController {
     featuredArticles = featuredArticles.filter((article) => {
       if (seen[article.slug]) {
         return false;
-      }
-      else {
+      } else {
         seen[article.slug] = true;
         return true;
       }
@@ -376,8 +375,7 @@ export default class EditorIssueArticleController extends FalcorController {
     picks = picks.filter((article) => {
       if (seen[article.slug]) {
         return false;
-      }
-      else {
+      } else {
         seen[article.slug] = true;
         return true;
       }
@@ -388,8 +386,7 @@ export default class EditorIssueArticleController extends FalcorController {
     mainArticles = mainArticles.filter((article) => {
       if (seen[article.slug]) {
         return false;
-      }
-      else {
+      } else {
         seen[article.slug] = true;
         return true;
       }
@@ -404,10 +401,9 @@ export default class EditorIssueArticleController extends FalcorController {
 
   createArticleListElement(mode, article) {
     let date;
-    if (article.published_at) {
-      date = formatDate(new Date(article.published_at));
-    }
-    else {
+    if (article.publishedAt) {
+      date = formatDate(new Date(article.publishedAt));
+    } else {
       date = 'Unpublished';
     }
     return (
@@ -457,8 +453,7 @@ export default class EditorIssueArticleController extends FalcorController {
             >Back</button>
           </div>
         );
-      }
-      else {
+      } else {
         const issueNumber = this.props.params.issueNumber;
         const data = this.state.data.issuesByNumber[issueNumber];
         const mainArticles = this.state.mainArticles;
@@ -470,18 +465,15 @@ export default class EditorIssueArticleController extends FalcorController {
         if (!this.state.changed) {
           if (!this.state.saving) {
             changedStateMessage = 'No Changes';
-          }
-          else {
+          } else {
             changedStateMessage = 'Saved';
             changedStateStyle.color = 'green';
           }
-        }
-        else {
+        } else {
           if (!this.state.saving) {
             changedStateMessage = 'Unsaved Changes';
             changedStateStyle.color = 'red';
-          }
-          else {
+          } else {
             changedStateMessage = 'Saving';
             changedStateStyle.color = '#65e765';
           }
@@ -512,7 +504,7 @@ export default class EditorIssueArticleController extends FalcorController {
                 model={this.props.model}
                 handleClick={this.addArticle.bind(this, 'featured')}
                 length={3}
-                fields={ARTICLE_FIELDS}
+                fields={ARTICLEFIELDS}
                 disabled={this.state.saving}
                 mode="articles"
                 extraPathSets={[['authors', 0, 'slug']]}
@@ -546,7 +538,7 @@ export default class EditorIssueArticleController extends FalcorController {
                 model={this.props.model}
                 handleClick={this.addArticle.bind(this, 'picks')}
                 length={3}
-                fields={ARTICLE_FIELDS}
+                fields={ARTICLEFIELDS}
                 disabled={this.state.saving}
                 mode="articles"
                 extraPathSets={[['authors', 0, 'slug']]}
@@ -580,7 +572,7 @@ export default class EditorIssueArticleController extends FalcorController {
                 model={this.props.model}
                 handleClick={this.addArticle.bind(this, 'main')}
                 length={3}
-                fields={ARTICLE_FIELDS}
+                fields={ARTICLEFIELDS}
                 disabled={this.state.saving}
                 mode="articles"
                 extraPathSets={[['authors', 0, 'slug']]}
@@ -619,8 +611,7 @@ export default class EditorIssueArticleController extends FalcorController {
           </div>
         );
       }
-    }
-    else {
+    } else {
       return <div>loading...</div>;
     }
   }

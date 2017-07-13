@@ -5,7 +5,7 @@ import _ from 'lodash';
 import update from 'react-addons-update';
 import { Link } from 'react-router';
 
-const UPLOAD_URL = process.env.NODE_ENV ? (process.env.NODE_ENV === 'production' ? 'https://admin.thegazelle.org/upload' : 'https://adminbeta.thegazelle.org/upload') : 'http://localhost:4000/upload';
+const UPLOADURL = process.env.NODEENV ? (process.env.NODEENV === 'production' ? 'https://admin.thegazelle.org/upload' : 'https://adminbeta.thegazelle.org/upload') : 'http://localhost:4000/upload';
 
 export default class EditorImageUploader extends BaseComponent {
   constructor() {
@@ -33,7 +33,7 @@ export default class EditorImageUploader extends BaseComponent {
       this.uploadFile(fileObject);
       // Configure mergeObject to set it as loading
       mergeObject[index] = {
-        meta_data: { $merge: { upload_status: 1 } },
+        metaData: { $merge: { uploadStatus: 1 } },
       };
     });
     const newFiles = update(this.state.files, mergeObject);
@@ -51,57 +51,54 @@ export default class EditorImageUploader extends BaseComponent {
       const response = xhr.response;
       if (response.split(' ')[0] === 'success') {
         const amazonURL = response.split(' ')[1];
-        this.handleUploadTerminated(fileObject.meta_data.name, 2, amazonURL);
-      }
-      else {
+        this.handleUploadTerminated(fileObject.metaData.name, 2, amazonURL);
+      } else {
         let errorMessage;
         if (response === 'Error uploading') {
           errorMessage = 'The server had an error while trying to upload the image to s3';
-        }
-        else if (response.split(',')[0] === 'object already exists') {
+        } else if (response.split(',')[0] === 'object already exists') {
           errorMessage = 'An object already exists with the key: ' + response.split(',')[1];
-        }
-        else {
+        } else {
           errorMessage = 'An unexpected error occured: ' + response;
         }
-        this.handleUploadTerminated(fileObject.meta_data.name, 3, undefined, errorMessage);
+        this.handleUploadTerminated(fileObject.metaData.name, 3, undefined, errorMessage);
       }
     };
     xhr.onerror = (err) => {
       // Set upload status to failed
       console.error(err); // eslint-disable-line no-console
-      const error_message = 'An unknown error occured contacting the server, error logged in developer console';
-      this.handleUploadTerminated(fileObject.meta_data.name, 3, undefined, error_message);
+      const errorMessage = 'An unknown error occured contacting the server, error logged in developer console';
+      this.handleUploadTerminated(fileObject.metaData.name, 3, undefined, errorMessage);
     };
-    xhr.open('POST', UPLOAD_URL, true);
+    xhr.open('POST', UPLOADURL, true);
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     // Put file in request and assign user-defined name
-    formData.set('image', file, fileObject.meta_data.name);
+    formData.set('image', file, fileObject.metaData.name);
     // Send data
     xhr.send(formData);
   }
 
-  handleUploadTerminated(fileName, upload_status, amazonURL, error_message) {
+  handleUploadTerminated(fileName, uploadStatus, amazonURL, errorMessage) {
     const newChanged = this.state.files.some((storedFileObject) => {
-      if (storedFileObject.meta_data.name === fileName) {
+      if (storedFileObject.metaData.name === fileName) {
         return false;
       }
-      const up_stat = storedFileObject.meta_data.upload_status;
+      const upStat = storedFileObject.metaData.uploadStatus;
 
-      return !(up_stat === 2 || up_stat === 3);
+      return !(upStat === 2 || upStat === 3);
     });
     const index = this.state.files.findIndex((storedFileObject) => {
-      return storedFileObject.meta_data.name === fileName;
+      return storedFileObject.metaData.name === fileName;
     });
     if (index !== -1) {
       const newFiles = update(this.state.files,
         {
           [index]: {
-            meta_data: {
+            metaData: {
               $merge: {
-                upload_status,
+                uploadStatus,
                 amazonURL,
-                error_message,
+                errorMessage,
               },
             },
           },
@@ -110,8 +107,7 @@ export default class EditorImageUploader extends BaseComponent {
         files: newFiles,
         changed: newChanged,
       });
-    }
-    else {
+    } else {
       console.error("Unexpected error, couldn't find file"); // eslint-disable-line no-console
     }
     if (!newChanged) {
@@ -127,12 +123,12 @@ export default class EditorImageUploader extends BaseComponent {
     const fileArray = _.map(files, (file) => {
       return {
         file,
-        meta_data: { name: file.name },
+        metaData: { name: file.name },
       };
     });
     let newFiles = this.state.files.concat(fileArray);
     newFiles = _.uniqBy(newFiles, (fileObject) => {
-      return fileObject.meta_data.name;
+      return fileObject.metaData.name;
     });
     this.safeSetState({
       files: newFiles,
@@ -154,8 +150,7 @@ export default class EditorImageUploader extends BaseComponent {
       this.safeSetState({
         changed: true,
       });
-    }
-    else if ((!this.state.files || this.state.files.length === 0) && this.state.changed) {
+    } else if ((!this.state.files || this.state.files.length === 0) && this.state.changed) {
       this.safeSetState({
         changed: false,
       });
@@ -164,7 +159,7 @@ export default class EditorImageUploader extends BaseComponent {
 
   deleteImagePreview(name) {
     const index = this.state.files.findIndex((fileObject) => {
-      return fileObject.meta_data.name === name;
+      return fileObject.metaData.name === name;
     });
     if (index !== -1) {
       const newFiles = update(this.state.files, { $splice: [[index, 1]] });
@@ -178,12 +173,12 @@ export default class EditorImageUploader extends BaseComponent {
     const reader = new FileReader();
     reader.onload = () => {
       const index = this.state.files.findIndex((storedFileObject) => {
-        return storedFileObject.meta_data.name === fileObject.meta_data.name;
+        return storedFileObject.metaData.name === fileObject.metaData.name;
       });
       if (index !== -1) {
         const newFiles = update(this.state.files, {
           [index]: {
-            meta_data: { $merge: { url: reader.result } },
+            metaData: { $merge: { url: reader.result } },
           },
         });
         this.safeSetState({
@@ -204,12 +199,12 @@ export default class EditorImageUploader extends BaseComponent {
       return;
     }
     const index = this.state.files.findIndex((fileObject) => {
-      return fileObject.meta_data.name === name;
+      return fileObject.metaData.name === name;
     });
     if (index !== -1) {
       const newFiles = update(this.state.files, {
         [index]: {
-          meta_data: { $merge: { name: newName } },
+          metaData: { $merge: { name: newName } },
         },
       });
       this.safeSetState({
@@ -231,35 +226,32 @@ export default class EditorImageUploader extends BaseComponent {
     if (!this.state.changed) {
       if (!this.state.uploading) {
         changedStateMessage = 'No Changes';
-      }
-      else {
+      } else {
         changedStateMessage = 'Succesfully uploaded';
         changedStateStyle.color = 'green';
       }
-    }
-    else {
+    } else {
       if (!this.state.uploading) {
         changedStateMessage = 'Images awaiting upload';
         changedStateStyle.color = 'red';
-      }
-      else {
+      } else {
         changedStateMessage = 'Uploading';
         changedStateStyle.color = '#65e765';
       }
     }
 
     const imagePreviews = this.state.files ? this.state.files.map((fileObject) => {
-      const { name, url, upload_status, amazonURL, error_message } = fileObject.meta_data;
+      const { name, url, uploadStatus, amazonURL, errorMessage } = fileObject.metaData;
       return (
         <EditorImagePreview
           url={url}
           name={name}
-          upload_status={upload_status}
+          uploadStatus={uploadStatus}
           key={name}
           onDelete={this.deleteImagePreview}
           onChangeName={this.changeImageName}
           amazonURL={amazonURL}
-          error_message={error_message}
+          errorMessage={errorMessage}
         />);
     }) : null;
 

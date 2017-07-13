@@ -34,7 +34,7 @@ export default class EditorSearchBar extends BaseComponent {
           // Add required fields
           fields = this.props.fields.concat(['title', 'slug']);
           if (this.props.showPubDate) {
-            fields.push('published_at');
+            fields.push('publishedAt');
           }
           // Remove duplicates
           fields = _.uniq(fields);
@@ -72,8 +72,7 @@ export default class EditorSearchBar extends BaseComponent {
         let suggestions = x.json.search;
         if (this.props.mode === 'articles') {
           suggestions = suggestions.posts[query];
-        }
-        else {
+        } else {
           suggestions = suggestions.authors[query];
         }
         const suggestionsArray = _.map(suggestions, (value) => { return value; });
@@ -125,10 +124,9 @@ export default class EditorSearchBar extends BaseComponent {
                 let textShown = article.title;
                 if (this.props.showPubDate) {
                   let date;
-                  if (article.published_at) {
-                    date = formatDate(new Date(article.published_at));
-                  }
-                  else {
+                  if (article.publishedAt) {
+                    date = formatDate(new Date(article.publishedAt));
+                  } else {
                     date = 'Unpublished';
                   }
                   textShown += ' - ' + date;
@@ -150,8 +148,7 @@ export default class EditorSearchBar extends BaseComponent {
           </div>
         </div>
       );
-    }
-    else if (this.props.mode === 'authors') {
+    } else if (this.props.mode === 'authors') {
       return (
         <div
           className="pure-form"
@@ -184,8 +181,7 @@ export default class EditorSearchBar extends BaseComponent {
           </div>
         </div>
       );
-    }
-    else {
+    } else {
       return <div style={{ color: 'red' }}>Sorry, an error occured, please contact developers</div>;
     }
   }
@@ -216,13 +212,11 @@ EditorSearchBar.propTypes = {
     );
     if (!(prop instanceof Array)) {
       return error;
-    }
-    else {
+    } else {
       const valid = prop.every((value) => {
         if (!(value instanceof Array)) {
           return false;
-        }
-        else if (value[0] === 'search') {
+        } else if (value[0] === 'search') {
           error = new Error(
           'Invalid prop `' + propName + '` supplied to' +
           ' `' + componentName + '`. Just add the extension, ' +

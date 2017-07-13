@@ -27,7 +27,7 @@ export default class IssueController extends FalcorController {
     if (params.issueNumber) { // If not on home page grab specificed issue
       const issueNumber = mapLegacyIssueSlugsToIssueNumber(params.issueNumber);
       return [
-        ['issuesByNumber', issueNumber, ['issueNumber', 'published_at']],
+        ['issuesByNumber', issueNumber, ['issueNumber', 'publishedAt']],
 
         // Request the featured article
         ['issuesByNumber', issueNumber, 'featured', ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image']],
@@ -50,10 +50,9 @@ export default class IssueController extends FalcorController {
         // Request author name and slug for each article (max 10 authors)
         ['issuesByNumber', issueNumber, 'categories', { length: 10 }, 'articles', { length: 30 }, 'authors', { length: 10 }, ['name', 'slug']],
       ];
-    }
-    else { // User is on home page
+    } else { // User is on home page
       return [
-        ['latestIssue', ['issueNumber', 'published_at']],
+        ['latestIssue', ['issueNumber', 'publishedAt']],
 
         // Request the featured article
         ['latestIssue', 'featured', ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image']],
@@ -161,7 +160,7 @@ export default class IssueController extends FalcorController {
 
 IssueController.propTypes = {
   issue: React.PropTypes.shape({
-    published_at: React.PropTypes.string,
+    publishedAt: React.PropTypes.string,
     articles: React.PropTypes.object,
   }),
 };

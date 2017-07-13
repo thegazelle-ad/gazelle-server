@@ -12,7 +12,7 @@ export default class Author extends BaseComponent {
           <img className="author__header__author-image" alt="author" src={author.image} />
           <div className="author__header__author-info">
             <h1 className="author__header__author-info__name">{author.name}</h1>
-            <h2 className="author__header__author-info__role">{author.job_title}</h2>
+            <h2 className="author__header__author-info__role">{author.jobTitle}</h2>
             <p className="author__header__author-info__biography">{parseMarkdown(author.biography)}</p>
           </div>
         </div>

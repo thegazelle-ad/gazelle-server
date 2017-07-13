@@ -27,8 +27,7 @@ export default class Login extends BaseComponent {
     if (hash(pass) !== 2451962) {
       window.alert('Incorrect password');
       e.target.password.value = '';
-    }
-    else {
+    } else {
       // Otherwise it is correct and we let the site redirect the client
       let url = this.props.location.query.url || '';
       if (url) {
@@ -43,7 +42,7 @@ export default class Login extends BaseComponent {
   }
 
   render() {
-    const ENV = process.env.NODE_ENV;
+    const ENV = process.env.NODEENV;
     if (ENV === 'production') {
       return <NotFound />;
     }

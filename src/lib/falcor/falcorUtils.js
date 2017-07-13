@@ -91,8 +91,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
     */
     if (!curObject.hasOwnProperty(key)) {
       return false;
-    }
-    else {
+    } else {
       const val = curObject[key];
       if (val.$type) {
         switch (val.$type) {
@@ -104,8 +103,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
           default:
             throw new Error('pathSetsInCache encountered unexpected type. Type found was: ' + val.$type);
         }
-      }
-      else {
+      } else {
         return checkSinglePathSetInCache(val, nextRemainingKeySets);
       }
     }
@@ -145,7 +143,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
         // It is also needed in the software development to know how many
         // items you will actually receive when overfetching.
         if (!curObject.hasOwnProperty('length')) {
-          if (process.env.NODE_ENV !== 'production') {
+          if (process.env.NODEENV !== 'production') {
             console.warn('No length property on object in cache. This might be a developer mistake.'); // eslint-disable-line no-console
             console.log('Current object in pathSetsInCache:'); // eslint-disable-line no-console
             console.log(curObject); // eslint-disable-line no-console
@@ -167,11 +165,9 @@ export function pathSetsInCache(cache, falcorPathSets) {
             throw new Error("Falcor Range cannot have both 'to' and 'length' properties at falcor KeySet: " + JSON.stringify(keyOrRange));
           }
           end = keyOrRange.to;
-        }
-        else if (keyOrRange.hasOwnProperty('length')) {
+        } else if (keyOrRange.hasOwnProperty('length')) {
           end = start + keyOrRange.length - 1;
-        }
-        else {
+        } else {
           throw new Error("Falcor Range must have either 'to' or 'length' properties at falcor KeySet: " + JSON.stringify(keyOrRange));
         }
         // Don't check any keys beyond the end of the theoretical falcor array.
@@ -182,8 +178,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
           }
         }
         return true;
-      }
-      else {
+      } else {
         // keyOrRange is a simple key
         return handleCheckingSingleKey(curObject, nextRemainingKeySets, keyOrRange);
       }
@@ -259,8 +254,7 @@ export function expandCache(cache) {
             });
             paths = paths.substring(0, paths.length - 2) + ']';
             throw new Error('Neverending loop from ref to ref with no real values present in expandCache. It is made up of the following paths: ' + paths);
-          }
-          else {
+          } else {
             refPathsSet.add(path);
             path = val.value.join('.');
             val = followPath(val.value, cache);
@@ -296,8 +290,7 @@ export function expandCache(cache) {
     }
     if (!isObject(val)) {
       continue;
-    }
-    else if (val.$type) {
+    } else if (val.$type) {
       switch (val.$type) {
         case 'atom':
           assignByPath(pathArray, val.value);
@@ -311,8 +304,7 @@ export function expandCache(cache) {
         default:
           throw new Error('expandCache encountered a new type of name: ' + val.$type + '. And cannot read it at following path: ' + pathArray.join('.'));
       }
-    }
-    else {
+    } else {
       Object.keys(val).forEach((key) => {
         const next = pathArray.concat(key);
         stack.push(next);
@@ -350,12 +342,10 @@ export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
       if (correspondingOldObject.hasOwnProperty(key)) {
         if (isObject(value)) {
           recursivelyConvertObject(value, correspondingOldObject[key], depth + 1);
-        }
-        else {
+        } else {
           curObject[key] = { $set: value };
         }
-      }
-      else {
+      } else {
         curObject[key] = { $set: value };
       }
     });

@@ -3,11 +3,11 @@ import BaseComponent from 'lib/BaseComponent';
 import { Link, browserHistory } from 'react-router';
 import http from 'http';
 
-const HOSTNAME = process.env.NODE_ENV === 'production' ?
-  'admin.thegazelle.org' : process.env.NODE_ENV === 'beta' ?
+const HOSTNAME = process.env.NODEENV === 'production' ?
+  'admin.thegazelle.org' : process.env.NODEENV === 'beta' ?
   'adminbeta.thegazelle.org' : 'localhost';
-const PORT = process.env.NODE_ENV === 'production' ?
-  443 : process.env.NODE_ENV === 'beta' ?
+const PORT = process.env.NODEENV === 'production' ?
+  443 : process.env.NODEENV === 'beta' ?
   443 : 4000;
 
 export default class EditorAppController extends BaseComponent {
@@ -40,14 +40,11 @@ export default class EditorAppController extends BaseComponent {
       res.on('end', () => {
         if (reply === 'restarted') {
           window.alert('Servers restarted successfully');
-        }
-        else if (reply === 'error') {
+        } else if (reply === 'error') {
           window.alert('there was an error restarting the servers');
-        }
-        else if (reply === 'invalid') {
+        } else if (reply === 'invalid') {
           window.alert('invalid password');
-        }
-        else {
+        } else {
           window.alert('unknown error');
         }
       });

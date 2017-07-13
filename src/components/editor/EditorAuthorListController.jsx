@@ -79,8 +79,7 @@ export default class EditorAuthorListController extends FalcorController {
         // Something was found, which means the slug is taken
         window.alert('This slug is already taken, please change to another one');
         return;
-      }
-      else {
+      } else {
         // Create the author
         const callback = () => {
           window.alert('Author added successfully');
@@ -144,8 +143,7 @@ export default class EditorAuthorListController extends FalcorController {
           </div>
         </div>
       );
-    }
-    else {
+    } else {
       return (
         <div className="pure-g">
           <div className="pure-u-3-8">

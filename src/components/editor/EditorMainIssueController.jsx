@@ -12,7 +12,7 @@ export default class EditorMainIssueController extends FalcorController {
     });
   }
   static getFalcorPathSets(params) {
-    return ['issuesByNumber', params.issueNumber, 'published_at'];
+    return ['issuesByNumber', params.issueNumber, 'publishedAt'];
   }
 
   publishIssue() {
@@ -23,21 +23,20 @@ export default class EditorMainIssueController extends FalcorController {
     const falcorPathSets = [
       ['issuesByNumber', this.props.params.issueNumber, 'categories', { length: 20 }, 'articles', { length: 50 }, ['title', 'teaser', 'category', 'html']],
       ['issuesByNumber', this.props.params.issueNumber, 'categories', { length: 20 }, 'articles', { length: 50 }, 'authors', 0],
-      ['issuesByNumber', this.props.params.issueNumber, ['id', 'published_at', 'name']],
+      ['issuesByNumber', this.props.params.issueNumber, ['id', 'publishedAt', 'name']],
     ];
     this.props.model.get(...falcorPathSets).then((x) => {
       if (!x) {
         window.alert('There was an error getting the issue data from the database ' +
           'please contact the developers');
-      }
-      else {
+      } else {
         // Check validity of the issue before publishing it
         const issueNumber = this.props.params.issueNumber;
         const issue = x.json.issuesByNumber[issueNumber];
         const fields = falcorPathSets[0][falcorPathSets[0].length - 1].filter((field) => {
           return field !== 'title';
         });
-        if (issue.published_at) {
+        if (issue.publishedAt) {
           if (!window.confirm('This article is already published, do you want to republish it?')) {
             return;
           }
@@ -91,11 +90,11 @@ export default class EditorMainIssueController extends FalcorController {
     };
     this.safeSetState({ publishing: true });
     this.falcorUpdate({
-      paths: [['issuesByNumber', this.props.params.issueNumber, 'published_at']],
+      paths: [['issuesByNumber', this.props.params.issueNumber, 'publishedAt']],
       jsonGraph: {
         issuesByNumber: {
           [this.props.params.issueNumber]: {
-            published_at: null,
+            publishedAt: null,
           },
         },
       },
@@ -107,7 +106,7 @@ export default class EditorMainIssueController extends FalcorController {
       if (!this.state.data) {
         return <p>This issue does not exist</p>;
       }
-      const published = this.state.data.issuesByNumber[this.props.params.issueNumber].published_at;
+      const published = this.state.data.issuesByNumber[this.props.params.issueNumber].publishedAt;
       return (
         <div>
           {
@@ -141,8 +140,7 @@ export default class EditorMainIssueController extends FalcorController {
           }
         </div>
       );
-    }
-    else {
+    } else {
       return <div>loading...</div>;
     }
   }

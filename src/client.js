@@ -16,8 +16,8 @@ let clientModel = new falcor.Model({
   source: new HttpDataSource('/model.json'),
 });
 
-// _initialCache is a global exposed by the first server side render
-clientModel.setCache(_initialCache); // eslint-disable-line no-undef
+// InitialCache is a global exposed by the first server side render
+clientModel.setCache(InitialCache); // eslint-disable-line no-undef
 
 // Initialize Google Analytics tracking
 ReactGA.initialize('UA-84302849-1');

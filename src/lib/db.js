@@ -23,13 +23,14 @@ export default class db {
     // and the other one the columns to retrieve from the authors
     return new Promise((resolve) => {
       // So the Falcor Router knows which author we're talking about
-      if (!columns.some((col) => { return col === 'slug'; })) {
+      let processedColumns = columns;
+      if (!processedColumns.some(col => col === 'slug')) {
         // Use concat to make a copy, if you just push
         // it will change pathSet in the falcorPath
         // as objects are passed by reference
-        columns = columns.concat(['slug']);
+        processedColumns = processedColumns.concat(['slug']);
       }
-      database.select(...columns)
+      database.select(...processedColumns)
       .from('authors')
       .whereIn('slug', slugs)
       .then((rows) => {
@@ -48,20 +49,19 @@ export default class db {
     // Returns: an object with author slugs (keys), each mapped
     // to an array of team slugs (values).
     return new Promise((resolve) => {
-      database.select('teams.slug as team_slug', 'authors.slug as author_slug')
+      database.select('teams.slug as teamSlug', 'authors.slug as authorSlug')
       .from('authors')
-      .innerJoin('teams_authors', 'authors.id', '=', 'author_id')
-      .innerJoin('teams', 'teams.id', '=', 'team_id')
+      .innerJoin('teamsAuthors', 'authors.id', '=', 'authorId')
+      .innerJoin('teams', 'teams.id', '=', 'teamId')
       .whereIn('authors.slug', slugs)
       .then((rows) => {
-        // `rows`: array of objects with keys `author_slug` and `team_slug`
+        // `rows`: array of objects with keys `authorSlug` and `teamSlug`
         const data = {};
         rows.forEach((row) => {
-          if (!data.hasOwnProperty(row.author_slug)) {
-            data[row.author_slug] = [row.team_slug];
-          }
-          else {
-            data[row.author_slug].push(row.team_slug);
+          if (!data.hasOwnProperty(row.authorSlug)) {
+            data[row.authorSlug] = [row.teamSlug];
+          } else {
+            data[row.authorSlug].push(row.teamSlug);
           }
         });
         resolve(data);
@@ -79,24 +79,24 @@ export default class db {
     // as keys and values being arrays of article slugs
     // sorted by most recent article first.
     return new Promise((resolve) => {
-      database.select('posts.slug as post_slug', 'authors.slug as author_slug')
+      database.select('posts.slug as postSlug', 'authors.slug as authorSlug')
       .from('authors')
-      .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
-      .innerJoin('posts', 'posts.id', '=', 'post_id')
-      .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
+      .innerJoin('authorsPosts', 'authors.id', '=', 'authorId')
+      .innerJoin('posts', 'posts.id', '=', 'postId')
+      .innerJoin('postsMeta', 'posts.id', '=', 'postsMeta.id')
       .whereNotNull('gazelle_published_at')
-      .whereIn('authors.slug', slugs).orderBy('gazelle_published_at', 'desc')
+      .whereIn('authors.slug', slugs)
+      .orderBy('gazelle_published_at', 'desc')
       .then((rows) => {
-        // rows is an array of objects with keys author_slug and post_slug
+        // rows is an array of objects with keys authorSlug and postSlug
         const data = {};
         rows.forEach((row) => {
           // This will input them in chronological order as
           // the query was structured as so.
-          if (!data.hasOwnProperty(row.author_slug)) {
-            data[row.author_slug] = [row.post_slug];
-          }
-          else {
-            data[row.author_slug].push(row.post_slug);
+          if (!data.hasOwnProperty(row.authorSlug)) {
+            data[row.authorSlug] = [row.postSlug];
+          } else {
+            data[row.authorSlug].push(row.postSlug);
           }
         });
         // database.destroy();
@@ -115,14 +115,15 @@ export default class db {
     // second one which columns to fetch from the db
     return new Promise((resolve) => {
       // So the Falcor Router knows which author we're talking about
-      if (columns.find((col) => { return col === 'slug'; }) === undefined) {
+      let processedColumns = columns;
+      if (processedColumns.find(col => col === 'slug') === undefined) {
         // Use concat to make a copy, if you just push
         // it will change pathSet in the falcorPath
         // as objects are passed by reference
-        columns = columns.concat(['slug']);
+        processedColumns = processedColumns.concat(['slug']);
       }
-      database.select(...columns)
-      .from('info_pages')
+      database.select(...processedColumns)
+      .from('infoPages')
       .whereIn('slug', slugs)
       .then((rows) => {
         // database.destroy();
@@ -138,30 +139,27 @@ export default class db {
   articleQuery(slugs, columns) {
     // parameters are both expected to be arrays
     // first one with article slugs to fetch
-    // second one which columns to fetch from the posts_meta table
+    // second one which columns to fetch from the postsMeta table
     return new Promise((resolve) => {
       // we join with posts table to find slug, and always return slug
-      columns = columns.map((col) => {
+      let processedColumns = columns.map((col) => {
         // make it compatible for the sql query
         if (col === 'category') {
           return 'categories.slug as category';
+        } if (col === 'publishedAt') {
+          return 'gazelle_published_at as publishedAt';
         }
-        else if (col === 'published_at') {
-          return 'gazelle_published_at as published_at';
-        }
-        else {
-          return col;
-        }
+        return col;
       });
       // Put slug there so we know what we fetched
       // Use concat to make a copy, if you just push
       // it will change pathSet in the falcorPath
       // as objects are passed by reference
-      columns = columns.concat(['posts.slug as slug']);
-      database.select(...columns)
+      processedColumns = processedColumns.concat(['posts.slug as slug']);
+      database.select(...processedColumns)
       .from('posts')
-      .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
-      .innerJoin('categories', 'posts_meta.category_id', '=', 'categories.id')
+      .innerJoin('postsMeta', 'posts.id', '=', 'postsMeta.id')
+      .innerJoin('categories', 'postsMeta.categoryId', '=', 'categories.id')
       .whereIn('posts.slug', slugs)
       .then((rows) => {
         // database.destroy();
@@ -177,10 +175,10 @@ export default class db {
   articleIssueQuery(slugs) {
     // the parameter is the slugs the issueNumber is being requested from
     return new Promise((resolve) => {
-      database.select('issue_order as issueNumber', 'posts.slug as slug')
+      database.select('issueOrder as issueNumber', 'posts.slug as slug')
       .from('posts')
-      .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
-      .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issue_id')
+      .innerJoin('issues_posts_order', 'issues_posts_order.postId', '=', 'posts.id')
+      .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issueId')
       .whereIn('posts.slug', slugs)
       .orderBy('posts.slug')
       .then((rows) => {
@@ -188,17 +186,17 @@ export default class db {
         // and no more (currently we don't support falcor fetching all issues an
         // article was published in, if needed that's not a problem though)
         const toDelete = [];
-        let lastRow = null;
+        const lastRow = null;
         rows.forEach((row, index) => {
           if (lastRow && row.slug === lastRow.slug) {
             if (row.issueNumber < lastRow.issueNumber) {
               toDelete.push(index - 1);
-            }
-            else if (row.issueNumber > lastRow.issueNumber) {
+            } else if (row.issueNumber > lastRow.issueNumber) {
               toDelete.push(index);
-            }
-            else {
-              throw new Error('Data corrupted, article: ' + row.slug + ' occurs twice in issue ' + lastRow.issueNumber.toString());
+            } else {
+              throw new Error(
+  `Data corrupted, article: ${row.slug} occurs twice in issue ${lastRow.issueNumber}`
+              );
             }
           }
         });
@@ -219,24 +217,23 @@ export default class db {
     // The function returns an object with article slugs
     // as keys and values being arrays of author slugs.
     return new Promise((resolve) => {
-      database.select('posts.slug as post_slug', 'authors.slug as author_slug')
+      database.select('posts.slug as postSlug', 'authors.slug as authorSlug')
       .from('authors')
-      .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
-      .innerJoin('posts', 'posts.id', '=', 'post_id')
-      .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
+      .innerJoin('authorsPosts', 'authors.id', '=', 'authorId')
+      .innerJoin('posts', 'posts.id', '=', 'postId')
+      .innerJoin('postsMeta', 'posts.id', '=', 'postsMeta.id')
       .whereIn('posts.slug', slugs)
-      .orderBy('authors_posts.id', 'asc')
+      .orderBy('authorsPosts.id', 'asc')
       .then((rows) => {
-        // rows is an array of objects with keys author_slug and post_slug
+        // rows is an array of objects with keys authorSlug and postSlug
         const data = {};
         rows.forEach((row) => {
           // This will input them in ascending order by id (which represents time they were
           // inserted as author of that article) as the query was structured so.
-          if (!data.hasOwnProperty(row.post_slug)) {
-            data[row.post_slug] = [row.author_slug];
-          }
-          else {
-            data[row.post_slug].push(row.author_slug);
+          if (!data.hasOwnProperty(row.postSlug)) {
+            data[row.postSlug] = [row.authorSlug];
+          } else {
+            data[row.postSlug].push(row.authorSlug);
           }
         });
         // database.destroy();
@@ -252,10 +249,11 @@ export default class db {
   latestIssueQuery() {
     // returns the newest issue number
     return new Promise((resolve) => {
-      database.select('issue_order')
+      database.select('issueOrder')
       .from('issues')
-      .orderBy('issue_order', 'desc')
-      .whereNotNull('published_at').limit(1)
+      .orderBy('issueOrder', 'desc')
+      .whereNotNull('publishedAt')
+      .limit(1)
       .then((rows) => {
         resolve(rows);
       })
@@ -269,11 +267,12 @@ export default class db {
     // slugs parameter is an array of category slugs
     // to fetch the name of
     return new Promise((resolve) => {
-      if (columns.find((col) => { return col === 'slug'; }) === undefined) {
+      let processedColumns = columns;
+      if (processedColumns.find(col => col === 'slug') === undefined) {
         // Copy so as to not change pathSet
-        columns = columns.concat(['slug']);
+        processedColumns = processedColumns.concat(['slug']);
       }
-      database.select(...columns)
+      database.select(...processedColumns)
       .from('categories')
       .whereIn('slug', slugs)
       .then((rows) => {
@@ -292,10 +291,9 @@ export default class db {
       database.select('slug')
       .from('categories')
       .orderBy('id', 'desc')
-      .then((rows) => {
-        const result = _.map(rows, (row) => { return row.slug; });
-        resolve(result);
-      })
+      .then(rows => resolve(
+        _.map(rows, row => row.slug)
+      ))
       .catch((e) => {
         throw new Error(e);
       });
@@ -308,24 +306,23 @@ export default class db {
     // Will return object where keys are category slugs
     // and values are arrays of articles from newest to oldest
     return new Promise((resolve) => {
-      database.select('posts.slug as post_slug', 'categories.slug as cat_slug')
+      database.select('posts.slug as postSlug', 'categories.slug as catSlug')
       .from('posts')
-      .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
-      .innerJoin('categories', 'categories.id', '=', 'posts_meta.category_id')
+      .innerJoin('postsMeta', 'posts.id', '=', 'postsMeta.id')
+      .innerJoin('categories', 'categories.id', '=', 'postsMeta.categoryId')
       .whereIn('categories.slug', slugs)
       .whereNotNull('gazelle_published_at')
       .orderBy('gazelle_published_at', 'desc')
       .then((rows) => {
-        // rows is an array of objects with keys post_slug and cat_slug
+        // rows is an array of objects with keys postSlug and catSlug
         const data = {};
         rows.forEach((row) => {
           // This will input them in chronological order as
           // the query was structured as so.
-          if (!data.hasOwnProperty(row.cat_slug)) {
-            data[row.cat_slug] = [row.post_slug];
-          }
-          else {
-            data[row.cat_slug].push(row.post_slug);
+          if (!data.hasOwnProperty(row.catSlug)) {
+            data[row.catSlug] = [row.postSlug];
+          } else {
+            data[row.catSlug].push(row.postSlug);
           }
         });
         // database.destroy();
@@ -342,8 +339,8 @@ export default class db {
     return new Promise((resolve) => {
       database.select('slug')
       .from('teams')
-      .innerJoin('teams_authors', 'teams.id', '=', 'teams_authors.team_id')
-      .orderBy('teams_authors.team_order', 'asc')
+      .innerJoin('teamsAuthors', 'teams.id', '=', 'teamsAuthors.teamId')
+      .orderBy('teamsAuthors.teamOrder', 'asc')
       .then((rows) => {
         // The SQL is returning a copy of the team for each author.
         const result = [];
@@ -364,10 +361,11 @@ export default class db {
 
   teamQuery(slugs, columns) {
     return new Promise((resolve) => {
-      if (columns.find((col) => { return col === 'slug'; }) === undefined) {
-        columns = columns.concat(['slug']);
+      let processedColumns = columns;
+      if (processedColumns.find(col => col === 'slug') === undefined) {
+        processedColumns = processedColumns.concat(['slug']);
       }
-      database.select(...columns)
+      database.select(...processedColumns)
       .from('teams')
       .whereIn('slug', slugs)
       .then((rows) => {
@@ -384,21 +382,20 @@ export default class db {
     // Returns: an object with team slugs (keys), each mapped
     // to an array of author slugs (values).
     return new Promise((resolve) => {
-      database.select('teams.slug as team_slug', 'authors.slug as author_slug')
+      database.select('teams.slug as teamSlug', 'authors.slug as authorSlug')
       .from('authors')
-      .innerJoin('teams_authors', 'authors.id', '=', 'author_id')
-      .innerJoin('teams', 'teams.id', '=', 'teams_authors.team_id')
+      .innerJoin('teamsAuthors', 'authors.id', '=', 'authorId')
+      .innerJoin('teams', 'teams.id', '=', 'teamsAuthors.teamId')
       .whereIn('teams.slug', slugs)
-      .orderBy('teams_authors.author_order', 'asc')
+      .orderBy('teamsAuthors.authorOrder', 'asc')
       .then((rows) => {
-        // `rows`: array of objects with keys `author_slug` and `team_slug`
+        // `rows`: array of objects with keys `authorSlug` and `teamSlug`
         const data = {};
         rows.forEach((row) => {
-          if (!data.hasOwnProperty(row.team_slug)) {
-            data[row.team_slug] = [row.author_slug];
-          }
-          else {
-            data[row.team_slug].push(row.author_slug);
+          if (!data.hasOwnProperty(row.teamSlug)) {
+            data[row.teamSlug] = [row.authorSlug];
+          } else {
+            data[row.teamSlug].push(row.authorSlug);
           }
         });
         resolve(data);
@@ -412,11 +409,12 @@ export default class db {
   featuredArticleQuery(issueNumbers) {
     // Get the featured articles from all the issueNumbers
     return new Promise((resolve) => {
-      database.select('posts.slug', 'issue_order')
+      database.select('posts.slug', 'issueOrder')
       .from('posts')
-      .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
-      .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issue_id')
-      .whereIn('issues.issue_order', issueNumbers).andWhere('type', '=', 1)
+      .innerJoin('issues_posts_order', 'issues_posts_order.postId', '=', 'posts.id')
+      .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issueId')
+      .whereIn('issues.issueOrder', issueNumbers)
+      .andWhere('type', '=', 1)
       .then((rows) => {
         // database.destroy();
         resolve(rows);
@@ -431,19 +429,19 @@ export default class db {
   editorPickQuery(issueNumbers) {
     // Get the editor's picks from all the issueNumbers
     return new Promise((resolve) => {
-      database.select('posts.slug', 'issue_order')
+      database.select('posts.slug', 'issueOrder')
       .from('posts')
-      .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
-      .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issue_id')
-      .whereIn('issues.issue_order', issueNumbers).andWhere('type', '=', 2)
+      .innerJoin('issues_posts_order', 'issues_posts_order.postId', '=', 'posts.id')
+      .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issueId')
+      .whereIn('issues.issueOrder', issueNumbers)
+      .andWhere('type', '=', 2)
       .then((rows) => {
         const results = {};
         rows.forEach((row) => {
-          if (!results.hasOwnProperty(row.issue_order)) {
-            results[row.issue_order] = [row.slug];
-          }
-          else {
-            results[row.issue_order].push(row.slug);
+          if (!results.hasOwnProperty(row.issueOrder)) {
+            results[row.issueOrder] = [row.slug];
+          } else {
+            results[row.issueOrder].push(row.slug);
           }
         });
         // database.destroy();
@@ -460,7 +458,7 @@ export default class db {
     // get the categories from each issueNumber
     return new Promise((resolve) => {
       // rewrite the columns to proper format
-      let columns = fields.map((col) => {
+      const columns = fields.map((col) => {
         switch (col) {
           case 'slug':
             return 'categories.slug';
@@ -472,18 +470,19 @@ export default class db {
             throw new Error('Unexpected field passed to dbIssueCategoryQuery');
         }
       });
-      // Add issue_order as we need to know which issue the data belongs to
-      columns.push('issue_order', 'categories_order');
+      // Add issueOrder as we need to know which issue the data belongs to
+      columns.push('issueOrder', 'categoriesOrder');
       database.select(...columns)
       .from('issues')
-      .innerJoin('issues_categories_order', 'issues_categories_order.issue_id', '=', 'issues.id')
-      .innerJoin('categories', 'issues_categories_order.category_id', '=', 'categories.id')
-      .whereIn('issues.issue_order', issueNumbers).orderBy('categories_order', 'asc')
+      .innerJoin('issues_categories_order', 'issues_categories_order.issueId', '=', 'issues.id')
+      .innerJoin('categories', 'issues_categories_order.categoryId', '=', 'categories.id')
+      .whereIn('issues.issueOrder', issueNumbers)
+      .orderBy('categoriesOrder', 'asc')
       .then((rows) => {
         const results = {};
         rows.forEach((row) => {
-          const issueNumber = row.issue_order;
-          const categoryIndex = row.categories_order;
+          const issueNumber = row.issueOrder;
+          const categoryIndex = row.categoriesOrder;
           const categoryObject = {};
           fields.forEach((field) => {
             categoryObject[field] = row[field];
@@ -492,7 +491,8 @@ export default class db {
             results[issueNumber] = [];
           }
           if (results[issueNumber].length !== categoryIndex) {
-            throw new Error('Incorrect data returned from database regarding getting category order. Either missing category or not ordered correctly in dbIssueCategoryQuery');
+            throw new Error('Incorrect data returned from database regarding getting category ' +
+'order. Either missing category or not ordered correctly in dbIssueCategoryQuery');
           }
           results[issueNumber].push(categoryObject);
         });
@@ -509,33 +509,38 @@ export default class db {
   issueCategoryArticleQuery(issueNumbers) {
     // get the categories from each issueNumber
     return new Promise((resolve) => {
-      database.select('issue_order', 'posts.slug', 'posts_order', 'posts_meta.category_id')
+      database.select('issueOrder', 'posts.slug', 'postsOrder', 'postsMeta.categoryId')
       .from('issues')
-      .innerJoin('issues_posts_order', 'issues_posts_order.issue_id', '=', 'issues.id')
-      .innerJoin('posts', 'posts.id', '=', 'issues_posts_order.post_id')
-      .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
-      .whereIn('issues.issue_order', issueNumbers).andWhere('type', '=', 0).orderBy('posts_order', 'ASC')
+      .innerJoin('issues_posts_order', 'issues_posts_order.issueId', '=', 'issues.id')
+      .innerJoin('posts', 'posts.id', '=', 'issues_posts_order.postId')
+      .innerJoin('postsMeta', 'posts.id', '=', 'postsMeta.id')
+      .whereIn('issues.issueOrder', issueNumbers)
+      .andWhere('type', '=', 0)
+      .orderBy('postsOrder', 'ASC')
       .then((postRows) => {
-        database.select('issue_order', 'categories_order', 'issues_categories_order.category_id')
+        database.select('issueOrder', 'categoriesOrder', 'issues_categories_order.categoryId')
         .from('issues')
-        .innerJoin('issues_categories_order', 'issues.id', '=', 'issues_categories_order.issue_id')
-        .whereIn('issues.issue_order', issueNumbers).orderBy('categories_order', 'ASC')
+        .innerJoin('issues_categories_order', 'issues.id', '=', 'issues_categories_order.issueId')
+        .whereIn('issues.issueOrder', issueNumbers)
+        .orderBy('categoriesOrder', 'ASC')
         .then((categoryRows) => {
           const results = {};
           const categoriesHashMap = {};
           postRows.forEach((postRow) => {
             // I make a lot of assumptions about correctness of data returned here
-            const issueNumber = postRow.issue_order;
+            const issueNumber = postRow.issueOrder;
             // Here I handle finding the corresponding category row and thereby the order
             // this category should be in, and also use hashing as we will be looking this up often.
             let categoryIndex;
-            if (categoriesHashMap.hasOwnProperty(issueNumber) && categoriesHashMap[issueNumber].hasOwnProperty(postRow.category_id)) {
-              categoryIndex = categoriesHashMap[issueNumber][postRow.category_id];
-            }
-            else {
-              const correspondingCategoryRow = categoryRows.find((categoryRow) => {
-                return categoryRow.issue_order === issueNumber && categoryRow.category_id === postRow.category_id;
-              });
+            if (
+              categoriesHashMap.hasOwnProperty(issueNumber)
+              && categoriesHashMap[issueNumber].hasOwnProperty(postRow.categoryId)) {
+              categoryIndex = categoriesHashMap[issueNumber][postRow.categoryId];
+            } else {
+              const correspondingCategoryRow = categoryRows.find(categoryRow => (
+                categoryRow.issueOrder === issueNumber
+                  && categoryRow.categoryId === postRow.categoryId
+              ));
               if (correspondingCategoryRow === undefined) {
                 throw new Error("can't find order of the category of a post");
               }
@@ -543,13 +548,16 @@ export default class db {
                 categoriesHashMap[issueNumber] = {};
               }
               // Since we did the previous check it must not also have the posts key
-              if (categoriesHashMap[issueNumber].hasOwnProperty(postRow.category_id)) {
+              if (categoriesHashMap[issueNumber].hasOwnProperty(postRow.categoryId)) {
                 throw new Error('Problem with if else statement in dbIssueCategoryArticleQuery');
               }
-              categoryIndex = categoriesHashMap[issueNumber][postRow.category_id] = correspondingCategoryRow.categories_order;
+              categoryIndex
+                = categoriesHashMap[issueNumber][postRow.categoryId]
+                = correspondingCategoryRow.categoriesOrder
+              ;
             }
             // Continue with rest of constants
-            const postIndex = postRow.posts_order;
+            const postIndex = postRow.postsOrder;
             const postSlug = postRow.slug;
             if (!results.hasOwnProperty(issueNumber)) {
               results[issueNumber] = [];
@@ -558,7 +566,8 @@ export default class db {
               results[issueNumber][categoryIndex] = [];
             }
             if (results[issueNumber][categoryIndex].length !== postIndex) {
-              throw new Error('Incorrect data returned from database regarding getting articles in an issue. Articles either not existing or not ordered correctly');
+              throw new Error('Incorrect data returned from database regarding getting ' +
+'articles in an issue. Articles either not existing or not ordered correctly');
             }
             results[issueNumber][categoryIndex].push(postSlug);
           });
@@ -566,7 +575,8 @@ export default class db {
           _.forEach(results, (categoryArray, issueNumber) => {
             for (let i = 0; i < categoryArray.length; i++) {
               if (!categoryArray.hasOwnProperty(i)) {
-                throw new Error('Problem with category ordering data. Either wrong ordering or missing category at issue number ' + issueNumber.toString() + ' index ' + i.toString());
+                throw new Error(`Problem with category ordering data. Either wrong ordering \
+or missing category at issue number ${issueNumber} index ${i}`);
               }
             }
           });
@@ -587,15 +597,16 @@ export default class db {
 
   issueQuery(issueNumbers, columns) {
     return new Promise((resolve) => {
-      const hasIssueNumber = columns.find((col) => { col === 'issue_order'; }) !== undefined;
+      let processedColumns = columns;
+      const hasIssueNumber = processedColumns.find(col => col === 'issueOrder') !== undefined;
       if (!hasIssueNumber) {
         // use concat to do a copy instead of changing original pathSet
         // we push this so that we know which issue we are fetching data for
-        columns = columns.concat(['issue_order']);
+        processedColumns = processedColumns.concat(['issueOrder']);
       }
-      database.select(...columns)
+      database.select(...processedColumns)
       .from('issues')
-      .whereIn('issues.issue_order', issueNumbers)
+      .whereIn('issues.issueOrder', issueNumbers)
       .then((rows) => {
         // database.destroy();
         resolve(rows);
@@ -611,17 +622,18 @@ export default class db {
     return new Promise((resolve) => {
       database.select('id')
       .from('issues')
-      .orderBy('issue_order', 'desc')
-      .whereNotNull('published_at').limit(1)
+      .orderBy('issueOrder', 'desc')
+      .whereNotNull('publishedAt')
+      .limit(1)
       .then((issueRows) => {
         const latestIssueId = issueRows[0].id;
 
         database.select('slug')
         .from('posts')
-        .innerJoin('posts_meta', 'posts_meta.id', '=', 'posts.id')
-        .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
+        .innerJoin('postsMeta', 'postsMeta.id', '=', 'posts.id')
+        .innerJoin('issues_posts_order', 'issues_posts_order.postId', '=', 'posts.id')
         .whereNotNull('gazelle_published_at')
-        .where('issue_id', '=', latestIssueId)
+        .where('issueId', '=', latestIssueId)
         .orderBy('views', 'DESC')
         .limit(10)
         .then((postRows) => {
@@ -641,21 +653,24 @@ export default class db {
     return new Promise((resolve) => {
       database.select('id')
       .from('issues')
-      .orderBy('issue_order', 'desc')
-      .whereNotNull('published_at').limit(1)
+      .orderBy('issueOrder', 'desc')
+      .whereNotNull('publishedAt')
+      .limit(1)
       .then((issueRows) => {
         const latestIssueId = issueRows[0].id;
-        database.select('tag_id', 'posts.slug',
-          'issues_posts_order.issue_id', 'category_id')
+        database.select('tagId', 'posts.slug',
+          'issues_posts_order.issueId', 'categoryId')
         .from('posts')
-        .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
-        .leftJoin('posts_tags', 'posts_tags.post_id', '=', 'posts.id')
-        .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
+        .innerJoin('postsMeta', 'posts.id', '=', 'postsMeta.id')
+        .leftJoin('postsTags', 'postsTags.postId', '=', 'posts.id')
+        .innerJoin('issues_posts_order', 'issues_posts_order.postId', '=', 'posts.id')
         .whereNotNull('gazelle_published_at')
-        .where(function () {
-          this.where('issues_posts_order.issue_id', '=', latestIssueId).orWhereIn('slug', slugs);
-        }).then((postRows) => {
-          const posts = {};
+        // We need the non-arrow function here to have the `this` object passed
+        .where(function () { // eslint-disable-line
+          this.where('issues_posts_order.issueId', '=', latestIssueId).orWhereIn('slug', slugs);
+        })
+        .then((postRows) => {
+          let posts = {};
           postRows.forEach((post) => {
             const slug = post.slug;
             if (!posts[slug]) {
@@ -666,8 +681,8 @@ export default class db {
             // exists in different issues, but it would only be relevant for the
             // target articles and therefore it's not a problem as we never iterate
             // through the target articles' tags.
-            if (post.tag_id) {
-              posts[slug].tags.push(post.tag_id);
+            if (post.tagId) {
+              posts[slug].tags.push(post.tagId);
             }
           });
 
@@ -676,27 +691,30 @@ export default class db {
             const post = posts[slug];
             if (post === undefined) {
               // Most likely this means a garbage URL was accessed
-              if (process.env.NODE_ENV !== 'production') {
-                console.warn('Article ' + slug + " couldn't be found in related articles query"); // eslint-disable-line no-console
+              if (process.env.NODEENV !== 'production') {
+                // eslint-disable-next-line no-console
+                console.warn(`Article ${slug} couldn't be found in related articles query`);
               }
-            }
-            else {
+            } else {
               // update amount of tags in common with current post
               // and whether the category is the same
-              _.forEach(posts, (currentPost) => {
+              posts = _.map(posts, (currentPost) => {
                 let cnt = 0;
                 currentPost.tags.forEach((currentTag) => {
-                  if (post.tags.find((postTag) => { return postTag === currentTag; })) {
+                  if (post.tags.find(postTag => postTag === currentTag)) {
                     cnt++;
                   }
                 });
-                currentPost.tagsInCommon = cnt;
-                currentPost.categoryInCommon = currentPost.category_id === post.category_id;
+                return {
+                  ...currentPost,
+                  tagsInCommon: cnt,
+                  categoryInCommon: currentPost.categoryId === post.categoryId,
+                };
               });
 
-              const ranking = Object.keys(posts).filter((currentSlug) => {
-                return posts[currentSlug].issue_id === latestIssueId && currentSlug !== post.slug;
-              });
+              const ranking = Object.keys(posts).filter(currentSlug => (
+                posts[currentSlug].issueId === latestIssueId && currentSlug !== post.slug
+              ));
               if (ranking.length < 3) {
                 throw new Error('Less than three posts to qualify as related posts');
               }
@@ -735,11 +753,12 @@ export default class db {
       queries.forEach((query) => {
         database.select('slug')
         .from('authors')
-        .where('name', 'like', '%' + query + '%')
-        .limit(max - min + 1).offset(min)
+        .where('name', 'like', `%${query}%`)
+        .limit(max - min + 1)
+        .offset(min)
         .then((rows) => {
           queriesReturned++;
-          results[query] = _.map(rows, (row) => { return row.slug; });
+          results[query] = _.map(rows, row => row.slug);
           if (queriesReturned >= queries.length) {
             resolve(results);
           }
@@ -755,13 +774,14 @@ export default class db {
       queries.forEach((query) => {
         database.select('slug')
         .from('posts')
-        .leftJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
-        .where('title', 'like', '%' + query + '%')
+        .leftJoin('postsMeta', 'posts.id', '=', 'postsMeta.id')
+        .where('title', 'like', `%${query}%`)
         .orderByRaw('ISNULL(gazelle_published_at) DESC, gazelle_published_at DESC')
-        .limit(max - min + 1).offset(min)
+        .limit(max - min + 1)
+        .offset(min)
         .then((rows) => {
           queriesReturned++;
-          results[query] = _.map(rows, (row) => { return row.slug; });
+          results[query] = _.map(rows, row => row.slug);
           if (queriesReturned >= queries.length) {
             resolve(results);
           }
@@ -777,11 +797,12 @@ export default class db {
       queries.forEach((query) => {
         database.select('slug')
         .from('teams')
-        .where('name', 'like', '%' + query + '%')
-        .limit(max - min + 1).offset(min)
+        .where('name', 'like', `%${query}%`)
+        .limit(max - min + 1)
+        .offset(min)
         .then((rows) => {
           queriesReturned++;
-          results[query] = _.map(rows, (row) => { return row.slug; });
+          results[query] = _.map(rows, row => row.slug);
           if (queriesReturned >= queries.length) {
             resolve(results);
           }
@@ -793,22 +814,18 @@ export default class db {
   // Suggestion: rename to updateArticleAuthors
   updateAuthors(articleId, newAuthors) {
     return new Promise((resolve) => {
-      database('authors_posts').where('post_id', '=', articleId).del()
+      database('authorsPosts').where('postId', '=', articleId).del()
       .then(() => {
-        const insertArray = _.map(newAuthors, (authorId) => {
-          return {
-            post_id: articleId,
-            author_id: authorId,
-          };
-        });
-        database('authors_posts').insert(insertArray).then(() => {
+        const insertArray = _.map(newAuthors, authorId => ({
+          postId: articleId,
+          authorId,
+        }));
+        database('authorsPosts').insert(insertArray).then(() => {
           database.select('slug')
-          .from('authors_posts')
-          .innerJoin('authors', 'authors.id', '=', 'authors_posts.author_id')
-          .where('post_id', '=', articleId)
-          .then((rows) => {
-            resolve(rows.map((row) => { return row.slug; }));
-          });
+          .from('authorsPosts')
+          .innerJoin('authors', 'authors.id', '=', 'authorsPosts.authorId')
+          .where('postId', '=', articleId)
+          .then(rows => resolve(rows.map(row => row.slug)));
         });
       });
     });
@@ -826,13 +843,16 @@ export default class db {
         const updateObject = {};
         _.forEach(article, (value, field) => {
           if (!acceptedFields[field]) {
-            throw new Error('updateGhostFields is only configured to update image or teaser, you cannot update', field);
-          }
-          else {
+            throw new Error('updateGhostFields is only configured to update image or teaser, ' +
+'you cannot update', field);
+          } else {
             updateObject[mapGhostNames(field)] = value;
           }
         });
-        database('posts').where('slug', '=', slug).update(updateObject).then((data) => {
+        database('posts')
+        .where('slug', '=', slug)
+        .update(updateObject)
+        .then((data) => {
           if (data !== 1) {
             throw new Error('error updating ghost field of article with slug:', slug);
           }
@@ -873,69 +893,62 @@ export default class db {
             const updateObject = {};
             _.forEach(article, (value, field) => {
               if (field === 'category') {
-                const category = categoryRows.find((row) => {
-                  return row.slug === value;
-                });
+                const category = categoryRows.find(row => row.slug === value);
                 if (!category) {
-                  throw new Error("Can't find " + value + ' as a category to add');
+                  throw new Error(`Can't find ${value} as a category to add`);
                 }
-                updateObject.category_id = category.id;
-              }
-              else if (field === 'published_at') {
+                updateObject.categoryId = category.id;
+              } else if (field === 'publishedAt') {
                 updateObject.gazelle_published_at = value;
-              }
-              else {
+              } else {
                 updateObject[field] = value;
               }
             });
 
-            const articleObject = articleRows.find((row) => {
-              return row.slug === slug;
-            });
+            const articleObject = articleRows.find(row => row.slug === slug);
             if (!articleObject) {
-              throw new Error("Can't find " + slug + 'as an article to update');
+              throw new Error(`Can't find ${slug} as an article to update`);
             }
 
             // We default to insert, with a conditional statement to update
             // if that id already exists to handle the case where we haven't yet
             // created a meta data row for that post
             const insertObject = Object.assign({}, updateObject, { id: articleObject.id });
-            const insertQuery = database('posts_meta').insert(insertObject).toString();
+            const insertQuery = database('postsMeta').insert(insertObject).toString();
             // Using a fixed array of keys to make sure we have the same order every time
             const fields = Object.keys(updateObject);
             let rawUpdateQuery = '';
             fields.forEach((field) => {
-              rawUpdateQuery += ' ' + field + ' = :' + field;
+              rawUpdateQuery += ` ${field} = :${field}`;
             });
-            const query = insertQuery + ' ON DUPLICATE KEY UPDATE' + database.raw(rawUpdateQuery, updateObject);
+            const query = `${insertQuery} ON DUPLICATE KEY UPDATE\
+${database.raw(rawUpdateQuery, updateObject)}`;
 
             database.raw(query)
             .then((data) => {
               if (data.length < 1 || data[0].constructor.name !== 'OkPacket') {
-                throw new Error('Problems updating meta data of article: ' + slug);
+                throw new Error(`Problems updating meta data of article: ${slug}`);
               }
               updatesReturned++;
               if (updatesReturned >= updatesCalled) {
                 // If categories changed make sure issue data is still consistent
                 if (articlesWithChangedCategory.length > 0) {
-                  database.distinct('issue_id').select()
+                  database.distinct('issueId').select()
                   .from('issues_posts_order')
-                  .innerJoin('posts', 'posts.id', '=', 'issues_posts_order.post_id')
+                  .innerJoin('posts', 'posts.id', '=', 'issues_posts_order.postId')
                   .whereIn('posts.slug', articlesWithChangedCategory)
                   .then((issueRows) => {
-                    const issuesToUpdate = issueRows.map((row) => {
-                      return row.issue_id;
-                    });
+                    const issuesToUpdate = issueRows.map(row => row.issueId);
                     // If the articles were actually published in any issues
                     if (issuesToUpdate.length > 0) {
                       this.orderArticlesInIssues(issuesToUpdate).then((flag) => {
                         if (flag !== true) {
-                          throw new Error('error while reordering articles in issues: ' + JSON.stringify(issuesToUpdate));
+                          throw new Error(`error while reordering articles in issues: \
+${JSON.stringify(issuesToUpdate)}`);
                         }
                         resolve(true);
                       });
-                    }
-                    else {
+                    } else {
                       // Nothing to fix
                       resolve(true);
                     }
@@ -958,34 +971,34 @@ export default class db {
       issues.forEach((issueId) => {
         // Get the current categories so we know if we have to add new ones
         // or delete old ones
-        database.select('category_id', 'categories_order')
+        database.select('categoryId', 'categoriesOrder')
         .from('issues_categories_order')
-        .where('issue_id', '=', issueId)
-        .orderBy('categories_order', 'ASC')
+        .where('issueId', '=', issueId)
+        .orderBy('categoriesOrder', 'ASC')
         .then((categoryRows) => {
-          database.select('issues_posts_order.id as id', 'category_id', 'posts_order')
+          database.select('issues_posts_order.id as id', 'categoryId', 'postsOrder')
           .from('issues_posts_order')
-          .innerJoin('posts_meta', 'posts_meta.id', '=', 'issues_posts_order.post_id')
+          .innerJoin('postsMeta', 'postsMeta.id', '=', 'issues_posts_order.postId')
           .where('type', '=', 0)
-          .where('issue_id', '=', issueId)
-          .orderBy('category_id', 'ASC')
-          .orderBy('issues_posts_order.posts_order', 'ASC')
+          .where('issueId', '=', issueId)
+          .orderBy('categoryId', 'ASC')
+          .orderBy('issues_posts_order.postsOrder', 'ASC')
           .then((postRows) => {
             let lastCategory = null;
             let order = 0;
             const toUpdate = [];
             const newCategories = [];
             postRows.forEach((row) => {
-              if (lastCategory !== row.category_id) {
-                lastCategory = row.category_id;
+              if (lastCategory !== row.categoryId) {
+                lastCategory = row.categoryId;
                 order = 0;
-                newCategories.push(row.category_id);
+                newCategories.push(row.categoryId);
               }
-              if (order !== row.posts_order) {
+              if (order !== row.postsOrder) {
                 toUpdate.push({
                   id: row.id,
                   update: {
-                    posts_order: order,
+                    postsOrder: order,
                   },
                 });
               }
@@ -1004,39 +1017,47 @@ export default class db {
               });
             });
             // Check if categories are still consistent
-            const newCategoriesWithOrder = [];
+            let newCategoriesWithOrder = [];
             let consistent = true;
             categoryRows.forEach((category) => {
-              if (newCategories.find((cat) => { return cat === category.category_id; }) !== undefined) {
+              if (newCategories.find(
+                cat => cat === category.categoryId) !== undefined) {
                 newCategoriesWithOrder.push(category);
-              }
-              else {
+              } else {
                 consistent = false;
               }
             });
             newCategories.forEach((categoryId) => {
-              if (newCategoriesWithOrder.find((cat) => { return cat.category_id === categoryId; }) === undefined) {
+              if (newCategoriesWithOrder.find(
+                cat => cat.categoryId === categoryId) === undefined) {
                 consistent = false;
                 const foundHole = newCategoriesWithOrder.some((cat, index) => {
-                  if (index !== cat.categories_order) {
-                    newCategoriesWithOrder.splice(index, 0, { category_id: categoryId, categories_order: index });
+                  if (index !== cat.categoriesOrder) {
+                    newCategoriesWithOrder.splice(index, 0, {
+                      categoryId,
+                      categoriesOrder: index,
+                    });
                     return true;
                   }
                   return false;
                 });
                 if (!foundHole) {
-                  newCategoriesWithOrder.push({ category_id: categoryId, categories_order: newCategoriesWithOrder.length });
+                  newCategoriesWithOrder.push({
+                    categoryId,
+                    categoriesOrder: newCategoriesWithOrder.length,
+                  });
                 }
               }
             });
             if (!consistent) {
-              newCategoriesWithOrder.forEach((cat, index) => {
-                cat.categories_order = index;
-                cat.issue_id = issueId;
-              });
+              newCategoriesWithOrder = newCategoriesWithOrder.map((cat, index) => ({
+                ...cat,
+                categoriesOrder: index,
+                issueId,
+              }));
               updatesCalled++;
               // Delete the current categories order and insert the new one
-              database('issues_categories_order').where('issue_id', '=', issueId).del()
+              database('issues_categories_order').where('issueId', '=', issueId).del()
               .then(() => {
                 database('issues_categories_order').insert(newCategoriesWithOrder)
                 .then(() => {
@@ -1046,8 +1067,7 @@ export default class db {
                   }
                 });
               });
-            }
-            else if (updatesCalled === 0) {
+            } else if (updatesCalled === 0) {
               resolve(true);
             }
           });
@@ -1065,7 +1085,7 @@ export default class db {
         .update(authorObject)
         .then((data) => {
           if (data !== 1) {
-            throw new Error('Problems updating main author data of: ' + slug);
+            throw new Error(`Problems updating main author data of: ${slug}`);
           }
           updatesReturned++;
           if (updatesReturned >= updatesCalled) {
@@ -1098,77 +1118,74 @@ export default class db {
     // don't have to be exceedingly efficient either as they are called
     // very rarely, and the user expects a wait time on saving changes
     return new Promise((resolve) => {
-      database.select('id', 'published_at')
+      database.select('id', 'publishedAt')
       .from('issues')
-      .where('issue_order', '=', issueNumber)
+      .where('issueOrder', '=', issueNumber)
       .then((issues) => {
         if (issues.length !== 1) {
-          throw new Error('issue_order should be unique');
+          throw new Error('issueOrder should be unique');
         }
         const issueId = issues[0].id;
-        const issuePublished = issues[0].published_at instanceof Date;
+        const issuePublished = issues[0].publishedAt instanceof Date;
         database('issues_posts_order')
-        .where('issue_id', '=', issueId)
+        .where('issueId', '=', issueId)
         .del()
         .then(() => {
           database('issues_categories_order')
-          .where('issue_id', '=', issueId)
+          .where('issueId', '=', issueId)
           .del()
           .then(() => {
             // Now we can start inserting from scratch
             const articlesInsert = [];
             featuredArticles.forEach((article, index) => {
               articlesInsert.push({
-                issue_id: issueId,
+                issueId,
                 type: 1,
-                post_id: article.id,
-                posts_order: index,
+                postId: article.id,
+                postsOrder: index,
               });
             });
 
             picks.forEach((article, index) => {
               articlesInsert.push({
-                issue_id: issueId,
+                issueId,
                 type: 2,
-                post_id: article.id,
-                posts_order: index,
+                postId: article.id,
+                postsOrder: index,
               });
             });
 
             // We sort them by category so we can keep track of
             // the order within each category
             mainArticles.sort((a, b) => {
-              a = a.category;
-              b = b.category;
-              if (!a || !b) {
+              const categoryA = a.category;
+              const categoryB = b.category;
+              if (!categoryA || !categoryB) {
                 throw new Error('all articles should have a category' +
                   ' when being inserted into an issue');
               }
-              if (a > b) {
+              if (categoryA > categoryB) {
                 return 1;
-              }
-              else if (a === b) {
+              } if (categoryA === categoryB) {
                 return 0;
               }
-              else {
-                return -1;
-              }
+              return -1;
             });
 
-            let order = 0;
+            let articleIssueOrder = 0;
             mainArticles.forEach((article, index) => {
               if (index > 0) {
                 if (mainArticles[index].category !== mainArticles[index - 1].category) {
-                  order = 0;
+                  articleIssueOrder = 0;
                 }
               }
               articlesInsert.push({
-                issue_id: issueId,
+                issueId,
                 type: 0,
-                post_id: article.id,
-                posts_order: order,
+                postId: article.id,
+                postsOrder: articleIssueOrder,
               });
-              order++;
+              articleIssueOrder++;
             });
 
             database('issues_posts_order').insert(articlesInsert)
@@ -1195,9 +1212,9 @@ export default class db {
                 });
                 categories.forEach((category, index) => {
                   categoriesInsert.push({
-                    issue_id: issueId,
-                    category_id: slugToObject[category].id,
-                    categories_order: index,
+                    issueId,
+                    categoryId: slugToObject[category].id,
+                    categoriesOrder: index,
                   });
                 });
                 database('issues_categories_order')
@@ -1252,7 +1269,7 @@ export default class db {
                     });
                   });
 
-                  let order = 0;
+                  let articleIndex = 0;
                   // add order to the category objects
                   categories.forEach((category, index) => {
                     slugToObject[category].index = index;
@@ -1266,36 +1283,55 @@ export default class db {
                           name: category.name,
                           slug: category.slug,
                           articles: [{
-                            path: ['issuesByNumber', issueNumber, 'categories', category.index, 'articles', order],
+                            path: [
+                              'issuesByNumber',
+                              issueNumber,
+                              'categories',
+                              category.index,
+                              'articles',
+                              articleIndex,
+                            ],
                             value: { $type: 'ref', value: ['articlesBySlug', article.slug] },
                           }],
                         },
                       };
-                    }
-                    // index > 0
-                    else if (mainArticles[index].category !== mainArticles[index - 1].category) {
+                    } else if (mainArticles[index].category !== mainArticles[index - 1].category) {
+                      // index > 0
                       // It's a new category
-                      order = 0;
+                      articleIndex = 0;
                       const category = slugToObject[article.category];
                       data.categories[category.index] = {
                         name: category.name,
                         slug: category.slug,
                         articles: [{
-                          path: ['issuesByNumber', issueNumber, 'categories', category.index, 'articles', order],
+                          path: [
+                            'issuesByNumber',
+                            issueNumber,
+                            'categories',
+                            category.index,
+                            'articles',
+                            articleIndex,
+                          ],
                           value: { $type: 'ref', value: ['articlesBySlug', article.slug] },
                         }],
                       };
-                    }
-                    else {
+                    } else {
                       // We're just adding to the old category
                       const category = slugToObject[article.category];
                       data.categories[category.index].articles.push({
-                        path: ['issuesByNumber', issueNumber, 'categories', category.index, 'articles', order],
+                        path: [
+                          'issuesByNumber',
+                          issueNumber,
+                          'categories',
+                          category.index,
+                          'articles',
+                          articleIndex,
+                        ],
                         value: { $type: 'ref', value: ['articlesBySlug', article.slug] },
                       });
                     }
                     // Increment the order
-                    order++;
+                    articleIndex++;
                   });
                   // If the issue is already published we want to publish
                   // the articles that are being added to the issue as well
@@ -1304,24 +1340,22 @@ export default class db {
                     data.published = [];
                     const date = new Date();
                     const toPublish = allArticles.filter((article) => {
-                      if (!article.published_at) {
+                      if (!article.publishedAt) {
                         data.published.push({
-                          path: ['articlesBySlug', article.slug, 'published_at'],
+                          path: ['articlesBySlug', article.slug, 'publishedAt'],
                           value: date.getTime(),
                         });
                         return true;
                       }
                       return false;
-                    }).map((article) => {
-                      return article.id;
-                    });
-                    database('posts_meta').whereIn('id', toPublish)
+                    }).map(article => article.id);
+
+                    database('postsMeta').whereIn('id', toPublish)
                     .update('gazelle_published_at', formatDateTime(date))
                     .then(() => {
                       resolve(results);
                     });
-                  }
-                  else {
+                  } else {
                     // Otherwise we simply resolve the results
                     resolve(results);
                   }
@@ -1337,9 +1371,10 @@ export default class db {
   updateIssueData(jsonGraphArg) {
     return new Promise((resolve) => {
       const issueNumber = Object.keys(jsonGraphArg.issuesByNumber)[0];
-      const value = jsonGraphArg.issuesByNumber[issueNumber].published_at;
-      database('issues').where('issue_order', '=', issueNumber)
-      .update('published_at', value).then(() => {
+      const value = jsonGraphArg.issuesByNumber[issueNumber].publishedAt;
+      database('issues').where('issueOrder', '=', issueNumber)
+      .update('publishedAt', value)
+      .then(() => {
         resolve(true);
       });
     });
@@ -1350,9 +1385,9 @@ export default class db {
       // We first find all unpublished articles in the issue
       database.select('posts.id', 'slug', 'gazelle_published_at')
       .from('posts')
-      .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
-      .innerJoin('issues_posts_order', 'posts.id', '=', 'issues_posts_order.post_id')
-      .where('issue_id', '=', issueId)
+      .innerJoin('postsMeta', 'posts.id', '=', 'postsMeta.id')
+      .innerJoin('issues_posts_order', 'posts.id', '=', 'issues_posts_order.postId')
+      .where('issueId', '=', issueId)
       .then((articles) => {
         const dateObject = new Date();
         const results = {
@@ -1365,14 +1400,14 @@ export default class db {
         // be caught otherwise
         const toPublish = [];
         articles.forEach((article) => {
-          if (!(article.published_at instanceof Date)) {
+          if (!(article.publishedAt instanceof Date)) {
             // This is not published
             toPublish.push(article.id);
             results.publishedArticles.push(article.slug);
           }
         });
         const currentTime = formatDateTime(dateObject);
-        database('posts_meta')
+        database('postsMeta')
         .whereIn('id', toPublish)
         .update({ gazelle_published_at: currentTime })
         .then(() => {
@@ -1380,7 +1415,7 @@ export default class db {
           const currentDate = formatDate(dateObject);
           database('issues')
           .where('id', '=', issueId)
-          .update({ published_at: currentDate })
+          .update({ publishedAt: currentDate })
           .then(() => {
             resolve(results);
           });
@@ -1406,23 +1441,22 @@ export default class db {
       // First delete old categories order and get issue id
       database.select('id')
       .from('issues')
-      .where('issue_order', '=', issueNumber)
+      .where('issueOrder', '=', issueNumber)
       .then((rows) => {
         if (!rows || !rows.length || !rows[0].id) {
           throw new Error('Invalid issue number passed to updateIssueCategories');
         }
         const issueId = rows[0].id;
         database('issues_categories_order')
-        .where('issue_id', '=', issueId)
-        .del().then(() => {
+        .where('issueId', '=', issueId)
+        .del()
+        .then(() => {
           // Insert the new categories
-          const toInsert = idArray.map((id, index) => {
-            return {
-              category_id: id,
-              issue_id: issueId,
-              categories_order: index,
-            };
-          });
+          const toInsert = idArray.map((id, index) => ({
+            categoryId: id,
+            issueId,
+            categoriesOrder: index,
+          }));
           database('issues_categories_order').insert(toInsert)
           .then(() => {
             // The easiest way for now to handle this is to just
@@ -1441,17 +1475,16 @@ export default class db {
     return new Promise((resolve) => {
       database.select('posts.id', 'views')
       .from('posts')
-      .innerJoin('posts_meta', 'posts_meta.id', '=', 'posts.id')
+      .innerJoin('postsMeta', 'postsMeta.id', '=', 'posts.id')
       .where('slug', '=', slug)
       .then((rows) => {
         if (rows.length === 0) {
           resolve(false);
-        }
-        else {
+        } else {
           const row = rows[0];
           const views = row.views + 1;
           const id = row.id;
-          database('posts_meta')
+          database('postsMeta')
           .where('id', '=', id)
           .update('views', views)
           .then(() => {
@@ -1483,7 +1516,7 @@ export default class db {
         .update(teamObject)
         .then((data) => {
           if (data !== 1) {
-            throw new Error('Problems updating team data of: ' + slug);
+            throw new Error(`Problems updating team data of: ${slug}`);
           }
           updatesReturned++;
           if (updatesReturned >= updatesCalled) {
