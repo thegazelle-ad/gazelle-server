@@ -1,3 +1,11 @@
+import os, errno
+# Create build folder if it doesn't exist
+try:
+    os.makedirs('build')
+except OSError as e:
+    if e.errno != errno.EEXIST:
+        raise
+
 template = open('./5xx.template.html', 'r')
 templateString = template.read()
 template.close()
