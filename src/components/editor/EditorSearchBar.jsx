@@ -41,7 +41,7 @@ export default class EditorSearchBar extends BaseComponent {
 
           pathSets.push(['search', 'posts', query, { length: this.props.length }, fields]);
           if (this.props.extraPathSets) {
-            const extraPathSets = this.props.extraPathSets.map((pathSet) => {
+            const extraPathSets = this.props.extraPathSets.map(function f(pathSet) {
               return ['search', 'posts', query, { length: this.props.length }].concat(pathSet);
             });
             pathSets = pathSets.concat(extraPathSets);
@@ -53,7 +53,7 @@ export default class EditorSearchBar extends BaseComponent {
 
           pathSets.push(['search', 'authors', query, { length: this.props.length }, fields]);
           if (this.props.extraPathSets) {
-            const extraPathSets = this.props.extraPathSets.map((pathSet) => {
+            const extraPathSets = this.props.extraPathSets.map(function f(pathSet) {
               return ['search', 'authors', query, { length: this.props.length }].concat(pathSet);
             });
             pathSets = pathSets.concat(extraPathSets);
@@ -129,7 +129,7 @@ export default class EditorSearchBar extends BaseComponent {
                   } else {
                     date = 'Unpublished';
                   }
-                  textShown += ' - ' + date;
+                  textShown = `${textShown} - ${date}`;
                 }
                 return (
                   <div key={article.slug}>
@@ -163,7 +163,7 @@ export default class EditorSearchBar extends BaseComponent {
           />
           <div>
             {
-              this.state.searchSuggestions.map((author) => {
+              this.state.searchSuggestions.map(function f(author) {
                 return (
                   <div key={author.slug}>
                     {/* eslint-disable react/jsx-no-bind */}
@@ -181,9 +181,8 @@ export default class EditorSearchBar extends BaseComponent {
           </div>
         </div>
       );
-    } else {
-      return <div style={{ color: 'red' }}>Sorry, an error occured, please contact developers</div>;
     }
+    return <div style={{ color: 'red' }}>Sorry, an error occured, please contact developers</div>;
   }
 }
 
@@ -207,8 +206,8 @@ EditorSearchBar.propTypes = {
       return;
     }
     let error = new Error(
-      'Invalid prop `' + propName + '` supplied to' +
-      ' `' + componentName + '`. It must be an array of pathSets'
+      `Invalid prop ${propName} supplied to ${componentName}.
+      It must be an array of pathSets.`
     );
     if (!(prop instanceof Array)) {
       return error;
@@ -218,9 +217,8 @@ EditorSearchBar.propTypes = {
           return false;
         } else if (value[0] === 'search') {
           error = new Error(
-          'Invalid prop `' + propName + '` supplied to' +
-          ' `' + componentName + '`. Just add the extension, ' +
-          'do not add "search"... as this is already considered'
+            `Invalid prop ${propName} supplied to ${componentName}.
+            Just add the extension, do not add "search"... as this is already considered.`
           );
           return false;
         }

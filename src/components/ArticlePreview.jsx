@@ -8,30 +8,26 @@ import AuthorList from 'components/AuthorList';
 
 export default class ArticlePreview extends BaseComponent {
   render() {
-    let article = this.props.article;
-    let url = '/issue/' + article.issueNumber.toString() + '/' + article.category + '/' + article.slug;
+    const article = this.props.article;
+    let url = `/issue/${article.issueNumber.toString()}/${article.category}/${article.slug}`;
     if (!article.image) { // Article image default
-      article.image = 'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';// Default featured image for articles
+      article.image = 'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
     }
     return (
       <div className="article-preview">
-        {/*
-          Featured image
-          TODO: undo hardcode before release
-        */}
-        <Link to={'/issue/' + article.issueNumber.toString() + '/' + article.category + '/' + article.slug}>
+        <Link to={`/issue/${article.issueNumber.toString()}/${article.category}/${article.slug}`}>
           <img
             className="article-preview__featured-image"
             src={article.image}
             alt="featured"
           />
         </Link>
-        {/*
-          Article title with link to article
-        */}
+        {/* Article title with link to article */}
         <div className="article-preview__content">
-          <Link to={'/category/' + article.category}>
-            <p className="article-preview__content__category-header">{article.category.replace('-', ' ')}</p>
+          <Link to={`/category/${article.category}`}>
+            <p className="article-preview__content__category-header">
+              {article.category.replace('-', ' ')}
+            </p>
           </Link>
 
           <Link to={url}>
@@ -46,7 +42,7 @@ export default class ArticlePreview extends BaseComponent {
           <p className="article-preview__content__teaser">{article.teaser}</p>
           <SharingButtons
             title={article.title}
-            url={'thegazelle.org' + url}
+            url={`thegazelle.org${url}`}
             teaser={article.teaser}
           />
         </div>

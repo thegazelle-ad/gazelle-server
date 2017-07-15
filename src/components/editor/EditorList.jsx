@@ -13,9 +13,8 @@ export default class EditorArticleList extends BaseComponent {
           }
         </div>
       );
-    } else {
-      return <div>This page does not exist</div>;
     }
+    return <div>This page does not exist</div>;
   }
 }
 

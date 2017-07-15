@@ -10,15 +10,14 @@ export default class EditorImagePreviewList extends BaseComponent {
     const { images } = this.props;
     if (images && images.length) {
       return <div className="imgPreviewList">{images}</div>;
-    } else {
-      return (
-        <div className="imgPreviewList">
-          <div className="previewText">
-            Please select image(s) for preview
-          </div>
-        </div>
-      );
     }
+    return (
+      <div className="imgPreviewList">
+        <div className="previewText">
+          Please select image(s) for preview
+        </div>
+      </div>
+    );
   }
 }
 
