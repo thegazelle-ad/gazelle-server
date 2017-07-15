@@ -33,7 +33,7 @@ export default class EditAuthorsForm extends BaseComponent {
             // Striked will correctly evaluate to false if there is no key
             // with that slug yet, which means it has neither been striked nor unstriked yet
             // It will return undefined which is a falsy value
-            let striked = this.props.authorsDeleted[author.id];
+            const striked = this.props.authorsDeleted[author.id];
             let authorNameStyle = { marginLeft: '1em' };
             if (striked) {
               authorNameStyle.textDecoration = 'line-through';
@@ -65,7 +65,7 @@ export default class EditAuthorsForm extends BaseComponent {
           })
         }
         {
-          this.props.authorsAdded.map((author) => {
+          this.props.authorsAdded.map(function f(author) {
             return (
               <div key={author.id}>
                 <button

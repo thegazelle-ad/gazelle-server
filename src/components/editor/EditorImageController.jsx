@@ -57,9 +57,9 @@ export default class EditorImageUploader extends BaseComponent {
         if (response === 'Error uploading') {
           errorMessage = 'The server had an error while trying to upload the image to s3';
         } else if (response.split(',')[0] === 'object already exists') {
-          errorMessage = 'An object already exists with the key: ' + response.split(',')[1];
+          errorMessage = `An object already exists with the key: ${response.split(',')[1]}`;
         } else {
-          errorMessage = 'An unexpected error occured: ' + response;
+          errorMessage = `An unexpected error occured: ${response}`;
         }
         this.handleUploadTerminated(fileObject.metaData.name, 3, undefined, errorMessage);
       }
@@ -67,7 +67,8 @@ export default class EditorImageUploader extends BaseComponent {
     xhr.onerror = (err) => {
       // Set upload status to failed
       console.error(err); // eslint-disable-line no-console
-      const errorMessage = 'An unknown error occured contacting the server, error logged in developer console';
+      const errorMessage = `An unknown error occured contacting the server,
+                            error logged in developer console`;
       this.handleUploadTerminated(fileObject.metaData.name, 3, undefined, errorMessage);
     };
     xhr.open('POST', UPLOADURL, true);
@@ -194,7 +195,8 @@ export default class EditorImageUploader extends BaseComponent {
   }
 
   changeImageName(name) {
-    const newName = window.prompt('Please enter new name (and remember to keep the extension) for ' + name + ':');
+    const newName = window.prompt(`Please enter new name (and remember to keep
+                                  the extension) for ${name}:`);
     if (!newName) {
       return;
     }

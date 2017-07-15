@@ -25,14 +25,14 @@ export default class Login extends BaseComponent {
     const pass = e.target.password.value;
     if (hash(pass) !== 8692053) {
       window.alert('Incorrect password');
-      e.target.password.value = '';
+      e.target.password.value = ''; // eslint-disable-line no-param-reassign
     } else {
       // Otherwise it is correct and we let the site redirect the client
       let url = this.props.location.query.url || '';
       if (url) {
         _.forEach(this.props.location.query, (q, name) => {
-          if (name != 'url') {
-            url += '&' + name + '=' + q;
+          if (name !== 'url') {
+            url = `${url} & ${name} = ${q}`;
           }
         });
       }
