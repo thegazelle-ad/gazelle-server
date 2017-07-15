@@ -74,7 +74,7 @@ export default [
   },
   {
     // Get custom article data from MariaDB
-    route: "articles['bySlug'][{keys:slugs}]['category', 'published_at', 'views']",
+    route: "articles['bySlug'][{keys:slugs}]['category', 'published_at', 'views', 'is_interactive']", // eslint-disable-line max-len
     get: (pathSet) => (
       new Promise((resolve) => {
         const requestedFields = pathSet[3];
@@ -172,6 +172,27 @@ export default [
                   value: $ref(['authors', 'bySlug', authorSlugArray[index]]),
                 });
               }
+            });
+          });
+          resolve(results);
+        });
+      })
+    ),
+  },
+  {
+    route: "articles['bySlug'][{keys:slugs}]['interactiveData']['html', 'js', 'css']",
+    // Get interactive article meta data
+    get: (pathSet) => (
+      new Promise((resolve) => {
+        const fields = pathSet[3];
+        db.interactiveArticleQuery(pathSet.slugs, fields).then((data) => {
+          const results = [];
+          data.forEach((article) => {
+            fields.forEach((field) => {
+              results.push({
+                path: ['articles', 'bySlug', article.slug, 'interactiveData', field],
+                value: article[field],
+              });
             });
           });
           resolve(results);

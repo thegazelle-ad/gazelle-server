@@ -1,5 +1,7 @@
 import { Route, IndexRoute } from 'react-router';
 import React from 'react';
+
+import InteractiveArticle from 'components/InteractiveArticle';
 import AppController from 'components/AppController';
 import ArticleController from 'components/ArticleController';
 import ArchivesController from 'components/ArchivesController';
@@ -12,7 +14,8 @@ import NotFoundController from 'components/NotFoundController';
 import SearchController from 'components/SearchController';
 import Login from 'components/Login';
 
-export default (
+export default [
+  <Route path="/interactive/:articleSlug" component={InteractiveArticle} />,
   <Route path="/" component={AppController}>
     <Route path="login" component={Login} />
     <Route path="issue/:issueNumber/:articleCategory/:articleSlug" component={ArticleController} />
@@ -25,5 +28,5 @@ export default (
     <Route path=":slug" component={TextPageController} />
     <Route path="*" component={NotFoundController} />
     <IndexRoute component={IssueController} />
-  </Route>
-);
+  </Route>,
+];
