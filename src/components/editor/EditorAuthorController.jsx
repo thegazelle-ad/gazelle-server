@@ -16,19 +16,15 @@ export default class EditorAuthorController extends FalcorController {
       biography: '',
     });
 
-    this.debouncedHandleFormChanges = debounce((event) => {
+    this.debouncedHandleFormChanges = debounce(event => {
       // We don't want the debounced event to happen if we're saving
       if (this.state.saving) return;
 
       const formNode = event.target.parentNode;
 
       // Gets all the input elements that we named
-      const children = _.map(formNode.children, (child) => {
-        return child.name;
-      });
-      const fields = children.filter((key) => {
-        return key && isNaN(parseInt(key)) && key !== 'length';
-      });
+      const children = _.map(formNode.children, child => child.name);
+      const fields = children.filter(key => key && isNaN(parseInt(key, 10)) && key !== 'length');
 
       const falcorData = this.state.data.authorsBySlug[this.props.params.slug];
 
@@ -93,12 +89,8 @@ export default class EditorAuthorController extends FalcorController {
     const authorSlug = this.props.params.slug;
 
     // Gets all the input elements that we named
-    const children = _.map(formNode.children, (child) => {
-      return child.name;
-    });
-    const fields = children.filter((key) => {
-      return key && isNaN(parseInt(key)) && key !== 'length';
-    });
+    const children = _.map(formNode.children, child => child.name);
+    const fields = children.filter(key => key && isNaN(parseInt(key, 10)) && key !== 'length');
 
     const falcorData = this.state.data.authorsBySlug[authorSlug];
     const filteredFields = fields.filter((field) => {
@@ -109,8 +101,8 @@ export default class EditorAuthorController extends FalcorController {
     });
 
     if (filteredFields.length === 0) {
-      throw new Error('Tried to save changes but there were no changes. \
-the save changes button is supposed to be disabled in this case');
+      throw new Error('Tried to save changes but there were no changes. \n' +
+'the save changes button is supposed to be disabled in this case');
     }
 
     // Modularize the code since we'll be reusing it for checking the slug
@@ -144,7 +136,7 @@ the save changes button is supposed to be disabled in this case');
       this.falcorUpdate(jsonGraphEnvelope, undefined, resetState);
     };
 
-    if (filteredFields.find((field) => { return field === 'slug'; })) {
+    if (filteredFields.find(field => field === 'slug')) {
       if (!window.confirm('You are about to change the slug of an author, this means' +
         ' that the url to their webpage will change among other things, it is recommended' +
         " not to change the slug unless it's very crucial. Are you sure you want to proceed?")) {
@@ -160,11 +152,10 @@ the save changes button is supposed to be disabled in this case');
           window.alert('The slug you chose is already taken, please change it');
           this.safeSetState({ saving: false });
           return;
-        } else {
+        }
           // Nothing was found which means we can proceed with assigning this slug
           // without problems
-          update();
-        }
+        update();
       });
     } else {
       // Slug isn't being updated so we can freely update
@@ -216,7 +207,8 @@ the save changes button is supposed to be disabled in this case');
         <div>
           <h2 style={changedStateStyle}>{changedStateMessage}</h2>
           <h3>{author.name}</h3>
-          <p>Change the information for the author and press Save Changes to confirm the changes.</p>
+          <p>Change the information for the author and press Save Changes to confirm the changes.
+          </p>
           <form
             className="pure-form pure-form-stacked"
             onChange={(e) => { e.persist(); this.debouncedHandleFormChanges(e); }}
@@ -271,8 +263,7 @@ the save changes button is supposed to be disabled in this case');
           </form>
         </div>
       );
-    } else {
-      return <div><p>loading...</p></div>;
     }
+    return <div><p>loading...</p></div>;
   }
 }

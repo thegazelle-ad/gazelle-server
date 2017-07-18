@@ -28,21 +28,22 @@ export default class AppController extends FalcorController {
         ['latestIssue', ['issueNumber']], // Used for robustness when setting navigationData
         ['issuesByNumber', issueNumber, ['publishedAt', 'issueNumber']],
       ];
-    } else { // User is on home page
-      return [
-        ['latestIssue', ['publishedAt', 'issueNumber']],
-      ];
-    }
+    } // User is on home page
+    return [
+      ['latestIssue', ['publishedAt', 'issueNumber']],
+    ];
   }
 
   render() {
-    const transitionKey = _.reduce(this.props.params, (keyString, val, key) => {
-      return keyString + '&' + val + '=' + key;
-    }, 'keystring');
+    const transitionKey = _.reduce(this.props.params, (keyString, val, key) =>
+     `${keyString}&${val}=${key}`, 'keystring');
 
     let navigationData = null;
     if (this.state.ready) { // Maintains async enviornment
-      if ((this.props.params.issueNumber) && (this.props.params.issueNumber != this.state.data.latestIssue.issueNumber)) { // User is on an archived issuepage
+      if (
+        (this.props.params.issueNumber) &&
+         (this.props.params.issueNumber !== this.state.data.latestIssue.issueNumber)
+         ) { // User is on an archived issuepage
         const issueNumber = mapLegacyIssueSlugsToIssueNumber(this.props.params.issueNumber);
         navigationData = this.state.data.issuesByNumber[issueNumber];
       } else { // User is on home page, categories, author page, info page, etc.

@@ -13,8 +13,10 @@ export default class CategoryController extends FalcorController {
     return [
       ['categoriesBySlug', params.category, 'name'],
 
-      ['categoriesBySlug', params.category, 'articles', { length: 10 }, ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image']],
-      ['categoriesBySlug', params.category, 'articles', { length: 10 }, 'authors', { length: 10 }, ['name', 'slug']],
+      ['categoriesBySlug', params.category, 'articles', { length: 10 },
+       ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image']],
+      ['categoriesBySlug', params.category, 'articles', { length: 10 },
+       'authors', { length: 10 }, ['name', 'slug']],
     ];
   }
 
@@ -25,33 +27,37 @@ export default class CategoryController extends FalcorController {
         return (
           <NotFound />
         );
-      } else {
-        let category = this.props.params.category;
+      } {
+        const category = this.props.params.category;
         const categoryData = this.state.data.categoriesBySlug[category];
-        let uppercase = (str) => {
-          let array = str.split(' ');
-          let newArray = [];
+        const uppercase = (str) => {
+          const array = str.split(' ');
+          const newArray = [];
 
-          for (var x = 0; x < array.length; x++) {
+          for (let x = 0; x < array.length; x++) {
             newArray.push(array[x].charAt(0).toUpperCase() + array[x].slice(1));
           }
           return newArray.join(' ');
         };
         const meta = [
           // Search results
-          { name: 'description', content: 'The Gazelle is a weekly student publication, serving the NYU Abu Dhabi community and the greater Global Network University at NYU.' },
+          { name: 'description',
+           content: 'The Gazelle is a weekly student publication, serving the\n' +
+           ' NYU Abu Dhabi community and the greater Global Network University at NYU.' },
 
           // Social media
           { property: 'og:title', content: 'The Gazelle' },
           { property: 'og:type', content: 'website' },
-          { property: 'og:url', content: 'www.thegazelle.org/category/' + categoryData.slug },
-          { property: 'og:description', content: 'The Gazelle is a weekly student publication serving the NYU Abu Dhabi community.' },
+          { property: 'og:url', content: `www.thegazelle.org/category/ ${categoryData.slug}` },
+          { property: 'og:description',
+           content: 'The Gazelle is a weekly student publication \n' +
+           'serving the NYU Abu Dhabi community.' },
         ];
         return (
           <div className="category">
             <Helmet
               meta={meta}
-              title={uppercase(categoryData.name) + ' | The Gazelle'}
+              title={`${uppercase(categoryData.name)} | The Gazelle`}
             />
             <h2 className="category__header">{categoryData.name}</h2>
 

@@ -6,7 +6,7 @@ export function ghostArticleQuery(params) {
     http.get({
       host: ghostConfig.host,
       port: ghostConfig.port,
-      path: '/ghost/api/v0.1/posts/?clientId=' + ghostConfig.clientId + '&clientSecret=' + ghostConfig.clientSecret + (params ? '&' + params : ''),
+      path: `/ghost/api/v0.1/posts/?clientId=${ghostConfig.clientId}&clientSecret=${ghostConfig.clientSecret} + (${params} ? & ${params} : '')`,
     }, function (response) {
       let body = '';
       response.on('data', function (data) {

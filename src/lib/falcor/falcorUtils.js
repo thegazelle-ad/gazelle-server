@@ -80,35 +80,6 @@ export function pathSetsInCache(cache, falcorPathSets) {
   Checks if falcorPathSets in given cache
   */
 
-  function handleCheckingSingleKey(curObject, nextRemainingKeySets, key) {
-    /*
-    This function modularizes the checking of a single key.
-    It takes as arguments the current object level we are at,
-    the key we are checking and the remainingKeySets argument
-    for the next call of checkSinglePathSetsInCache.
-    It returns whether this key and all branches from the pathSet that follow
-    this key are in the cache as it continues recursively.
-    */
-    if (!curObject.hasOwnProperty(key)) {
-      return false;
-    } else {
-      const val = curObject[key];
-      if (val.$type) {
-        switch (val.$type) {
-          case 'error':
-          case 'atom':
-            return nextRemainingKeySets.length === 0;
-          case 'ref':
-            return checkSinglePathSetInCache(followPath(val.value, cache), nextRemainingKeySets);
-          default:
-            throw new Error('pathSetsInCache encountered unexpected type. Type found was: ' + val.$type);
-        }
-      } else {
-        return checkSinglePathSetInCache(val, nextRemainingKeySets);
-      }
-    }
-  }
-
   function checkSinglePathSetInCache(curObject, remainingKeySets) {
     /*
     Checks if a single pathSet is in the cache recursively.
@@ -185,6 +156,36 @@ export function pathSetsInCache(cache, falcorPathSets) {
     });
   }
 
+  function handleCheckingSingleKey(curObject, nextRemainingKeySets, key) {
+    /*
+    This function modularizes the checking of a single key.
+    It takes as arguments the current object level we are at,
+    the key we are checking and the remainingKeySets argument
+    for the next call of checkSinglePathSetsInCache.
+    It returns whether this key and all branches from the pathSet that follow
+    this key are in the cache as it continues recursively.
+    */
+    if (!curObject.hasOwnProperty(key)) {
+      return false;
+    }
+    const val = curObject[key];
+    if (val.$type) {
+      switch (val.$type) {
+        case 'error':
+        case 'atom':
+          return nextRemainingKeySets.length === 0;
+        case 'ref':
+          return checkSinglePathSetInCache(followPath(val.value, cache), nextRemainingKeySets);
+        default:
+          throw new Error(
+            `pathSetsInCache encountered unexpected type. Type found was: ${val.$type}`
+          );
+      }
+    } else {
+      return checkSinglePathSetInCache(val, nextRemainingKeySets);
+    }
+  }
+
   // Here function starts
   falcorPathSets = validateFalcorPathSets(falcorPathSets);
   if (falcorPathSets === undefined) {
@@ -250,7 +251,7 @@ export function expandCache(cache) {
           if (refPathsSet.has(path)) {
             let paths = '[';
             refPathsSet.forEach((pathFromSet) => {
-              paths += pathFromSet + ', ';
+              paths += `${pathFromSet},`;
             });
             paths = paths.substring(0, paths.length - 2) + ']';
             throw new Error('Neverending loop from ref to ref with no real values present in expandCache. It is made up of the following paths: ' + paths);

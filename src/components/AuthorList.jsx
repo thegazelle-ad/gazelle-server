@@ -8,15 +8,13 @@ export default class AuthorList extends BaseComponent {
     // Render all authors
     let renderAuthors =
       // Render nothing if props.authors is empty
-      _.map((this.props.authors || []), (author) => {
-        return (
-          <li key={author.slug} className="author-list__author">
-            <Link to={'/author/' + author.slug}>
+      _.map((this.props.authors || []), (author) =>
+        <li key={author.slug} className="author-list__author">
+          <Link to={`/author/ ${author.slug}`}>
               {author.name}
-            </Link>
-          </li>
-        );
-      });
+          </Link>
+        </li>
+          );
 
     return (
       <div className="author-list">

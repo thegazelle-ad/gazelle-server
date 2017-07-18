@@ -23,8 +23,7 @@ import s3Config from '../config/s3.config.js';
 import s3 from 's3';
 import AWS from 'aws-sdk';
 
-process.env.NODEENV === 'production' ?
-  console.log('PRODUCTION BUILD') : process.env.NODEENV === 'beta' ? console.log('BETA BUILD') : console.log('DEVELOPMENT BUILD'); // eslint-disable-line no-console
+process.env.NODEENV === 'production' ? console.log('PRODUCTION BUILD') : process.env.NODEENV === 'beta' ? console.log('BETA BUILD') : console.log('DEVELOPMENT BUILD'); // eslint-disable-line no-console
 
 // Allow node to use sourcemaps
 
@@ -34,7 +33,7 @@ if (process.env.NODEENV !== 'production') {
 
 // Create MD5 hash of static file for better cache performance
 function md5Hash(file) {
-  const hash = crypto.createHash('md5');
+  hash = crypto.createHash('md5');
   // readFileSync in the syncronous version of readFile
   file = fs.readFileSync(file, 'utf8');
   return (hash.update(file).digest('hex'));
@@ -151,7 +150,9 @@ const renderApp = (renderProps) => {
   const localModel = new falcor.Model({ source: serverModel.asDataSource() });
 
   // If the component doesn't want any data
-  if (!falcorPaths || falcorPaths.length === 0 || falcorPaths[0].length === 0 && falcorPaths.length === 1) {
+  if (
+    !falcorPaths || falcorPaths.length === 0
+     || falcorPaths[0].length === 0 && falcorPaths.length === 1) {
     return new Promise((resolve) => {
       resolve(
         buildMainHtmlString(
@@ -304,7 +305,7 @@ editorTools.use(allowCrossDomain);
 
 const PATHNAME = process.env.NODEENV === 'production' ?
   '~/gazelle-production/scripts/restartServers.sh' : process.env.NODEENV === 'beta' ?
-  '~/gazelle-beta/scripts/restartServers.sh' : __dirname + '/scripts/restartServers.sh';
+  '~/gazelle-beta/scripts/restartServers.sh' : `${__dirname}/scripts/restartServers.sh`;
 
 editorTools.get('/restartserver', (req, res) => {
   if (!process.env.NODEENV) {
@@ -353,12 +354,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-const aws_sdk_client = new AWS.S3(
+const awsSdkClient = new AWS.S3(
   Object.assign(s3Config, { apiVersion: '2006-03-01' })
 );
 
 const s3Client = s3.createClient({
-  s3Client: aws_sdk_client,
+  s3Client: awsSdkClient,
 });
 
 editorTools.post('/upload', upload.single('image'), (req, res) => {
@@ -388,30 +389,40 @@ editorTools.post('/upload', upload.single('image'), (req, res) => {
         Key,
       },
     };
-    const delete_tmp_file = () => {
+    const deleteTmpFile = () => {
       fs.unlink(filePath, (err) => {
         if (err) {
           console.error(err); // eslint-disable-line no-console
         }
       });
     };
-    aws_sdk_client.headObject({ Bucket, Key }, (err) => {
+    awsSdkClient.headObject({ Bucket, Key }, (err) => {
       if (err && err.code === 'NotFound') {
         const s3Uploader = s3Client.uploadFile(s3Params);
         s3Uploader.on('error', err => {
           console.error(err); // eslint-disable-line no-console
-          delete_tmp_file();
+          deleteTmpFile();
           return res.status(500).send('Error uploading');
         });
         s3Uploader.on('end', () => {
           const imageUrl = s3.getPublicUrl(Bucket, Key);
+<<<<<<< HEAD
           delete_tmp_file();
           return res.status(200).send('success ' + imageUrl);
+=======
+          deleteTmpFile();
+          return res.status(200).send(`success ${imageUrl}`);
+>>>>>>> e8c84a6... Linting errors: Minor changes to some files
         });
       } else {
         delete_tmp_file();
         return res.status(409).send('object already exists,' + Key);
       }
+<<<<<<< HEAD
+=======
+      deleteTmpFile();
+      return res.status(409).send(`object already exists, ${Key}`);
+>>>>>>> e8c84a6... Linting errors: Minor changes to some files
     });
   }
 });

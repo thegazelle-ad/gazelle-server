@@ -21,8 +21,11 @@ export default class EditorMainIssueController extends FalcorController {
       // window.alert("Issue successfully published");
     };
     const falcorPathSets = [
-      ['issuesByNumber', this.props.params.issueNumber, 'categories', { length: 20 }, 'articles', { length: 50 }, ['title', 'teaser', 'category', 'html']],
-      ['issuesByNumber', this.props.params.issueNumber, 'categories', { length: 20 }, 'articles', { length: 50 }, 'authors', 0],
+      ['issuesByNumber', this.props.params.issueNumber,
+       'categories', { length: 20 }, 'articles',
+        { length: 50 }, ['title', 'teaser', 'category', 'html']],
+      ['issuesByNumber', this.props.params.issueNumber,
+       'categories', { length: 20 }, 'articles', { length: 50 }, 'authors', 0],
       ['issuesByNumber', this.props.params.issueNumber, ['id', 'publishedAt', 'name']],
     ];
     this.props.model.get(...falcorPathSets).then((x) => {
@@ -33,40 +36,38 @@ export default class EditorMainIssueController extends FalcorController {
         // Check validity of the issue before publishing it
         const issueNumber = this.props.params.issueNumber;
         const issue = x.json.issuesByNumber[issueNumber];
-        const fields = falcorPathSets[0][falcorPathSets[0].length - 1].filter((field) => {
-          return field !== 'title';
-        });
+        const fields =
+         falcorPathSets[0][falcorPathSets[0].length - 1].filter((field) => field !== 'title');
         if (issue.publishedAt) {
           if (!window.confirm('This article is already published, do you want to republish it?')) {
             return;
           }
         }
-        const valid = _.every(issue.categories, (category) => {
-          return _.every(category.articles, (article) => {
-            const valid = fields.every((field) => {
-              if (!article[field]) {
-                window.alert(article.title + ' has no ' + field + '. Please correct this');
-                return false;
-              }
-              return true;
-            });
-            if (!valid) {
+        let valid = _.every(issue.categories, category =>
+        _.every(category.articles, (article) => {
+          valid = fields.every((field) => {
+            if (!article[field]) {
+              window.alert(`${article.title}has no${field}. Please correct this`);
               return false;
-            }
-            if (!article.hasOwnProperty('authors') || !article.authors[0]) {
-              window.alert(article.title + ' has no authors. Please correct this');
-              return false;
-            }
-            if (/http(?!s)/.test(article.html)) {
-              if (!window.confirm(article.title + " has a non https link in it's body. " +
-                ' please make sure this link is not an image/video etc. being loaded in. ' +
-                ' If you are sure of this press okay to continue, else cancel to check.')) {
-                return false;
-              }
             }
             return true;
           });
-        });
+          if (!valid) {
+            return false;
+          }
+          if (!article.hasOwnProperty('authors') || !article.authors[0]) {
+            window.alert(`${article.title}has no authors. Please correct this`);
+            return false;
+          }
+          if (/http(?!s)/.test(article.html)) {
+            if (!window.confirm(`${article.title}" has a non https link in it's body.
+                please make sure this link is not an image/video etc. being loaded in.
+                If you are sure of this press okay to continue, else cancel to check.`)) {
+              return false;
+            }
+          }
+          return true;
+        }));
         if (!valid) {
           return;
         }
@@ -140,8 +141,7 @@ export default class EditorMainIssueController extends FalcorController {
           }
         </div>
       );
-    } else {
-      return <div>loading...</div>;
     }
+    return <div>loading...</div>;
   }
 }

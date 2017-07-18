@@ -391,8 +391,8 @@ export default class FalcorRouter extends BaseRouter.createClass([
       return new Promise((resolve) => {
         // It's a function call so there should only be one slug
         if (callPath.slugs.length !== 1) {
-          throw new Error('addView route was called with ' + callPath.slugs.length.toString()
-            + ' slugs, there should only be 1');
+          throw new Error(`addView route was called with ${callPath.slugs.length.toString()}
+            slugs, there should only be 1`);
         }
         const slug = callPath.slugs[0];
         db.addView(slug).then((views) => {
@@ -435,7 +435,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
             if (pageNumber < 1) {
               throw new Error('Cannot pass nonpositive integer as the pageNumber parameter. You passed ' + pageNumber.toString() + ' as one of your page numbers.');
             }
-            const query = 'limit=' + pageLength.toString() + '&page=' + pageNumber.toString() + '&fields=slug';
+            const query = `limit= ${pageLength.toString()}&page=${pageNumber.toString()}&fields=slug`;
             ghostArticleQuery(query).then((data) => {
               if (data.hasOwnProperty('errors')) {
                 throw new Error('Errors in the Ghost API query with query parameter = ' + query + ': ' + JSON.stringify(data));
@@ -680,7 +680,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
             throw new Error('Error while updating issue data');
           }
           resolve([{
-            path: ['issuesByNumber', parseInt(issueNumber), 'publishedAt'],
+            path: ['issuesByNumber', parseInt(issueNumber, 10), 'publishedAt'],
             value: issueObject.publishedAt,
           }, {
             path: ['latestIssue'],

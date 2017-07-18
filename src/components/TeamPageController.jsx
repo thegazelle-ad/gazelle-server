@@ -14,7 +14,9 @@ export default class TeamPageController extends FalcorController {
   static getFalcorPathSets() {
     return [
       ['teamsByIndex', { length: 10 }, ['name']],
-      ['teamsByIndex', { length: 10 }, 'authors', { length: 50 }, ['name', 'slug', 'jobTitle', 'image']],
+      ['teamsByIndex',
+       { length: 10 }, 'authors',
+        { length: 50 }, ['name', 'slug', 'jobTitle', 'image']],
     ];
   }
 
@@ -24,7 +26,7 @@ export default class TeamPageController extends FalcorController {
         return (
           <NotFound />
         );
-      } else {
+      } {
         const teamData = this.state.data.teamsByIndex;
         const meta = [
           // Search results

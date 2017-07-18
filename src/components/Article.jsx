@@ -17,8 +17,11 @@ export default class Article extends BaseComponent {
           <h1 className="article__header__title">{this.props.title}</h1>
           <div className="article__header__teaser">{this.props.teaser}</div>
           <div className="article__header__subtitle">
-            <AuthorList className="article__header__subtitle__authors" authors={this.props.authors} />
-            <p className="article__header__subtitle__publication-date">{moment(this.props.publishedAt).format('MMM DD, YYYY')}</p>
+            <AuthorList
+              className="article__header__subtitle__authors" authors={this.props.authors}
+            />
+            <p className="article__header__subtitle__publication-date">
+              {moment(this.props.publishedAt).format('MMM DD, YYYY')}</p>
             <SharingButtons
               title={this.props.title}
               url={this.props.url}

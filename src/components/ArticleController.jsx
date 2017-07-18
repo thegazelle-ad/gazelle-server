@@ -14,13 +14,16 @@ export default class ArticleController extends FalcorController {
     // Multilevel request requires Falcor Path for each level of data requested
     return [
       // Fetch article data
-      ['articlesBySlug', params.articleSlug, ['title', 'teaser', 'html', 'publishedAt', 'issueNumber', 'category', 'slug', 'image']],
+      ['articlesBySlug', params.articleSlug,
+       ['title', 'teaser', 'html', 'publishedAt', 'issueNumber', 'category', 'slug', 'image']],
       ['articlesBySlug', params.articleSlug, 'authors', { length: 10 }, ['name', 'slug']],
 
       // Fetch two related articles
       // TODO: convert fetching by category to fetching by tag
-      ['articlesBySlug', params.articleSlug, 'related', { length: 2 }, ['title', 'teaser', 'image', 'issueNumber', 'category', 'slug']],
-      ['articlesBySlug', params.articleSlug, 'related', { length: 2 }, 'authors', { length: 10 }, ['name', 'slug']],
+      ['articlesBySlug', params.articleSlug,
+       'related', { length: 2 }, ['title', 'teaser', 'image', 'issueNumber', 'category', 'slug']],
+      ['articlesBySlug', params.articleSlug,
+       'related', { length: 2 }, 'authors', { length: 10 }, ['name', 'slug']],
 
       // Fetch first five Trending articles
       ['trending', { length: 6 }, ['title', 'issueNumber', 'category', 'slug', 'image']],
@@ -52,13 +55,16 @@ export default class ArticleController extends FalcorController {
 
   render() {
     if (this.state.ready) {
-      if (!this.state.data || !this.state.data.articlesBySlug || !this.state.data.articlesBySlug[this.props.params.articleSlug] ||
-        !this.state.data.articlesBySlug[this.props.params.articleSlug].title || !this.state.data.articlesBySlug[this.props.params.articleSlug].issueNumber) {
+      if (
+        !this.state.data || !this.state.data.articlesBySlug ||
+         !this.state.data.articlesBySlug[this.props.params.articleSlug] ||
+        !this.state.data.articlesBySlug[this.props.params.articleSlug].title
+         || !this.state.data.articlesBySlug[this.props.params.articleSlug].issueNumber) {
         return (
           <NotFound />
         );
-      } else {
-        let articleSlug = this.props.params.articleSlug;
+      } {
+        const articleSlug = this.props.params.articleSlug;
         // Access data fetched via Falcor
         const articleData = this.state.data.articlesBySlug[articleSlug];
         const trendingData = this.state.data.trending;
@@ -70,9 +76,11 @@ export default class ArticleController extends FalcorController {
           { name: 'description', content: this.props.teaser },
 
           // Social media sharing
-          { property: 'og:title', content: articleData.title + ' | The Gazelle' },
+          { property: 'og:title', content: `${articleData.title} | The Gazelle` },
           { property: 'og:type', content: 'article' },
-          { property: 'og:url', content: 'www.thegazelle.org/issue/' + articleData.issueNumber.toString() + '/' + articleData.category + '/' + articleData.slug },
+          { property: 'og:url',
+          content: `www.thegazelle.org/issue/ ${articleData.issueNumber.toString()}/
+           ${articleData.category}/ ${articleData.slug}` },
           { property: 'og:image', content: articleMetaImage },
           { property: 'og:image:width', content: '540' }, // 1.8:1 ratio
           { property: 'og:image:height', content: '300' },
@@ -83,7 +91,7 @@ export default class ArticleController extends FalcorController {
           <div>
             <Helmet
               meta={meta}
-              title={articleData.title + ' | The Gazelle'}
+              title={`${articleData.title} | The Gazelle`}
             />
             <Article
               title={articleData.title}
@@ -92,7 +100,8 @@ export default class ArticleController extends FalcorController {
               html={articleData.html}
               authors={articleData.authors}
               featuredImage={articleData.image}
-              url={'thegazelle.org/issue/' + articleData.issueNumber.toString() + '/' + articleData.category + '/' + articleData.slug}
+              url={`thegazelle.org/issue/ ${articleData.issueNumber.toString()}
+              / ${articleData.category}/ ${articleData.slug}`}
               trending={trendingData}
               relatedArticles={relatedArticlesData}
             />

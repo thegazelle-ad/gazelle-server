@@ -27,20 +27,22 @@ export default class ArchivesController extends FalcorController {
         return (
           <NotFound />
         );
-      } else {
-        const data = _.filter(this.state.data.issuesByNumber, (issue) => {
-          return issue.publishedAt;
-        });
+      } {
+        const data = _.filter(this.state.data.issuesByNumber, issue => issue.publishedAt);
         const meta = [
           // Search results
-          { name: 'description', content: 'The Gazelle is a weekly student publication, serving the NYU Abu Dhabi community and the greater Global Network University at NYU.' },
+          { name: 'description',
+           content: 'The Gazelle is a weekly student publication, serving the\n' +
+           'NYU Abu Dhabi community and the greater Global Network University at NYU.' },
 
           // Social media
           { property: 'og:title', content: 'Archives | The Gazelle' },
           { property: 'og:type', content: 'website' },
           { property: 'og:url', content: 'www.thegazelle.org/archives' },
           { property: 'og:image', content: 'https://www.thegazelle.org/wp-content/themes/gazelle/images/gazelleLogo.png' },
-          { property: 'og:description', content: 'The Gazelle is a weekly student publication serving the NYU Abu Dhabi community.' },
+          { property: 'og:description',
+           content: 'The Gazelle is a weekly student publication\n' +
+           'serving the NYU Abu Dhabi community.' },
         ];
         return (
           <div>

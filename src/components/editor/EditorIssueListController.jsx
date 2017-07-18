@@ -36,16 +36,12 @@ export default class EditorIssueListController extends FalcorController {
       window.alert('This issue has already been created, you cannot create it again');
       return;
     }
-    const children = _.map(formNode.children, (child) => {
-      return child.name;
-    });
-    const fields = children.filter((key) => {
-      return key && isNaN(parseInt(key)) && key !== 'length';
-    });
+    const children = _.map(formNode.children, (child) => child.name);
+    const fields = children.filter((key) => key && isNaN(parseInt(key, 10)) && key !== 'length');
     const issue = {};
     fields.forEach((field) => {
       const value = formNode[field].value;
-      issue[field] = field === 'issueNumber' ? parseInt(value) : value;
+      issue[field] = field === 'issueNumber' ? parseInt(value, 10) : value;
     });
 
     const callback = () => {
@@ -72,13 +68,13 @@ export default class EditorIssueListController extends FalcorController {
         );
       }
       const issueNumber = this.props.params.issueNumber;
-      if (issueNumber && isNaN(parseInt(issueNumber))) {
+      if (issueNumber && isNaN(parseInt(issueNumber, 10))) {
         return <div>Invalid URL</div>;
       }
       const data = this.state.data.issuesByNumber;
-      const baseUrl = '/issues/' + issueNumber;
+      const baseUrl = `/issues/${issueNumber}`;
 
-      const issues = Object.keys(data).map((key) => { return parseInt(key); });
+      const issues = Object.keys(data).map((key) => parseInt(key, 10));
       const nextIssue = Math.max(...issues) + 1;
       return (
         <div className="pure-g">
@@ -99,7 +95,7 @@ export default class EditorIssueListController extends FalcorController {
                 type="text"
                 name="name"
                 placeholder="Input Issue Name"
-                defaultValue={'Issue ' + nextIssue}
+                defaultValue={`Issue${nextIssue}`}
                 disabled={this.state.saving}
               />
               Issue Number:
@@ -132,9 +128,17 @@ export default class EditorIssueListController extends FalcorController {
             {
               this.props.params.issueNumber ?
                 <ul>
-                  <li><Link to={baseUrl + '/main'} activeClassName="active-link">Main</Link></li>
-                  <li><Link to={baseUrl + '/articles'} activeClassName="active-link">Articles</Link></li>
-                  <li><Link to={baseUrl + '/categories'} activeClassName="active-link">Categories</Link></li>
+                  <li><Link to={`${baseUrl}/main`} activeClassName="active-link">Main</Link></li>
+                  <li><Link
+                    to={`${baseUrl}/articles`}
+                    activeClassName="active-link"
+                  >Articles</Link>
+                  </li>
+                  <li><Link
+                    to={`${baseUrl}/categories`}
+                    activeClassName="active-link"
+                  >Categories</Link>
+                  </li>
                 </ul> :
                 null
             }
@@ -145,19 +149,18 @@ export default class EditorIssueListController extends FalcorController {
           </div>
         </div>
       );
-    } else {
-      return (
-        <div className="pure-g">
-          <div className="pure-u-3-8">
-            <h3>Issues</h3>
-            <p>loading...</p>
-          </div>
-          <div className="pure-u-1-8"></div>
-          <div className="pure-u-1-2">
-            {this.props.children}
-          </div>
-        </div>
-      );
     }
+    return (
+      <div className="pure-g">
+        <div className="pure-u-3-8">
+          <h3>Issues</h3>
+          <p>loading...</p>
+        </div>
+        <div className="pure-u-1-8"></div>
+        <div className="pure-u-1-2">
+          {this.props.children}
+        </div>
+      </div>
+      );
   }
 }

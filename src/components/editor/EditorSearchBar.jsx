@@ -75,7 +75,7 @@ export default class EditorSearchBar extends BaseComponent {
         } else {
           suggestions = suggestions.authors[query];
         }
-        const suggestionsArray = _.map(suggestions, (value) => { return value; });
+        const suggestionsArray = _.map(suggestions, value => value);
         this.safeSetState({ searchSuggestions: suggestionsArray });
       });
     }, this.props.debounceTime || 250, true);
@@ -211,7 +211,7 @@ EditorSearchBar.propTypes = {
     );
     if (!(prop instanceof Array)) {
       return error;
-    } else {
+    } {
       const valid = prop.every((value) => {
         if (!(value instanceof Array)) {
           return false;

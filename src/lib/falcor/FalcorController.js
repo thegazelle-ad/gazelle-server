@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { isAppReady, expandCache, pathSetsInCache, validateFalcorPathSets } from 'lib/falcor/falcorUtils';
+import { isAppReady, expandCache, pathSetsInCache, validateFalcorPathSets } from 'lib/falcor/falcorUtils'; // eslint-disable-line no-console
 import BaseComponent from 'lib/BaseComponent';
 import { setLoading, signalLeaving } from 'lib/loader';
 import { uuid } from 'lib/utilities';
@@ -60,8 +60,8 @@ export default class FalcorController extends BaseComponent {
       });
     } else {
       if (process.env.NODEENV !== 'production') {
-        console.warn('Serverside render of component: ' + this.constructor.name + // eslint-disable-line no-console
-          ' failed. Data not in cache. Falcor Path attempted fetched was: ' + JSON.stringify(falcorPathSets));
+        console.warn(`Serverside render of component: ${this.constructor.name} + // eslint-disable-line no-console
+           failed. Data not in cache. Falcor Path attempted fetched was:   ${JSON.stringify(falcorPathSets)}`);
       }
       this.safeSetState({
         ready: true,
@@ -143,7 +143,8 @@ export default class FalcorController extends BaseComponent {
       // This would be very bad for updating views, so maybe we'll do that differently
       // but at the moment we have no good way to merge updated data especially when
       // we're deleting
-      const pathSets = this.constructor.getFalcorPathSets(this.props.params, this.props.location.query);
+      const pathSets =
+       this.constructor.getFalcorPathSets(this.props.params, this.props.location.query);
       this.falcorFetch(pathSets, stateToSet, callback);
       // if (x) {
       //   const newData = mergeUpdatedData(this.state.data, x.json, 10)
@@ -159,7 +160,8 @@ export default class FalcorController extends BaseComponent {
       // }
       // else {
       //   // No data was returned, this is exceptional behaviour from an update operation
-      //   throw new Error("Falcor update on the following paths: " + JSON.stringify(jsonGraphEnvelope.paths) + " returned no data.")
+      //   throw new Error("Falcor update on the following paths: "
+      // + JSON.stringify(jsonGraphEnvelope.paths) + " returned no data.")
       // }
     })
     .catch((e) => {
