@@ -68,13 +68,13 @@ export default class EditorAppController extends BaseComponent {
             window.alert("Servers restarted successfully");
             }
           else if (signal === 'true') {
-            while (count < 5) {
+            count +=1;
+            if (count <= 5) {
               setTimeout(this.isRestarted(),500);
-              count +=1;
             }
           }
           else {
-            if (count == 5) {
+            if (count > 5) {
               window.alert('Error');
               setTimeout(this.isRestarted(),500);
             }
