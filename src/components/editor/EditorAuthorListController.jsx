@@ -37,7 +37,7 @@ export default class EditorAuthorListController extends FalcorController {
           return;
         }
         const suggestions = x.json.search.authors[query];
-        const suggestionsArray = _.map(suggestions, (value) => { return value; });
+        const suggestionsArray = _.map(suggestions, value => value);
         this.safeSetState({ searchSuggestions: suggestionsArray });
       });
     }, 250, true);
@@ -68,8 +68,9 @@ export default class EditorAuthorListController extends FalcorController {
     const name = formNode.name.value;
 
     if (slug !== slugifyAuthor(slug)) {
-      window.alert('Your slug is not in the right format. Our programatically suggested' +
-        ' substitute is: ' + slugifyAuthor(slug) + '. Feel free to use it or change it to something else');
+      window.alert(`Your slug is not in the right format. Our programatically suggested'
+        substitute is:  ${slugifyAuthor(slug)} .
+         Feel free to use it or change it to something else`);
       return;
     }
 
@@ -79,7 +80,7 @@ export default class EditorAuthorListController extends FalcorController {
         // Something was found, which means the slug is taken
         window.alert('This slug is already taken, please change to another one');
         return;
-      } else {
+      } {
         // Create the author
         const callback = () => {
           window.alert('Author added successfully');
@@ -97,13 +98,22 @@ export default class EditorAuthorListController extends FalcorController {
             <h3>Authors</h3>
             <p>You can search for authors by name to edit here</p>
             <form className="pure-form" onSubmit={(e) => { e.preventDefault(); }}>
-              <input type="text" value={this.state.slugSearchValue} placeholder="Input Name" onChange={this.handleSearchChange} />
+              <input
+                type="text"
+                value={this.state.slugSearchValue}
+                placeholder="Input Name" onChange={this.handleSearchChange}
+              />
               {
                 this.state.searchSuggestions.map((author) => {
-                  const link = '/authors/' + author.slug;
+                  const link = `/authors/${author.slug}`;
                   return (
                     <div key={author.slug}>
-                      <Link to={link} onClick={() => { this.safeSetState({ slugSearchValue: '', searchSuggestions: [] }); }}>
+                      <Link
+                        to={link}
+                        onClick={() => {
+                          this.safeSetState({ slugSearchValue: '',
+                         searchSuggestions: [] }); }}
+                      >
                         <button type="button" className="pure-button">{author.name}</button>
                       </Link>
                     </div>
@@ -143,19 +153,18 @@ export default class EditorAuthorListController extends FalcorController {
           </div>
         </div>
       );
-    } else {
-      return (
-        <div className="pure-g">
-          <div className="pure-u-3-8">
-            <h3>Authors</h3>
-            <p>loading...</p>
-          </div>
-          <div className="pure-u-1-8"></div>
-          <div className="pure-u-1-2">
-            {this.props.children}
-          </div>
-        </div>
-      );
     }
+    return (
+      <div className="pure-g">
+        <div className="pure-u-3-8">
+          <h3>Authors</h3>
+          <p>loading...</p>
+        </div>
+        <div className="pure-u-1-8"></div>
+        <div className="pure-u-1-2">
+          {this.props.children}
+        </div>
+      </div>
+      );
   }
 }

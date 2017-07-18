@@ -88,9 +88,8 @@ export default class EditorImageUploader extends BaseComponent {
 
       return !(upStat === 2 || upStat === 3);
     });
-    const index = this.state.files.findIndex((storedFileObject) => {
-      return storedFileObject.metaData.name === fileName;
-    });
+    const index = this.state.files.findIndex(storedFileObject =>
+     storedFileObject.metaData.name === fileName);
     if (index !== -1) {
       const newFiles = update(this.state.files,
         {
@@ -121,16 +120,13 @@ export default class EditorImageUploader extends BaseComponent {
   handleInputChange(e) {
     e.preventDefault();
     const files = e.target.files;
-    const fileArray = _.map(files, (file) => {
+    const fileArray = _.map(files, file => {
       return {
-        file,
-        metaData: { name: file.name },
+        file, metaData: { name: file.name },
       };
     });
     let newFiles = this.state.files.concat(fileArray);
-    newFiles = _.uniqBy(newFiles, (fileObject) => {
-      return fileObject.metaData.name;
-    });
+    newFiles = _.uniqBy(newFiles, fileObject => fileObject.metaData.name);
     this.safeSetState({
       files: newFiles,
     });
@@ -159,9 +155,7 @@ export default class EditorImageUploader extends BaseComponent {
   }
 
   deleteImagePreview(name) {
-    const index = this.state.files.findIndex((fileObject) => {
-      return fileObject.metaData.name === name;
-    });
+    const index = this.state.files.findIndex((fileObject) => fileObject.metaData.name === name);
     if (index !== -1) {
       const newFiles = update(this.state.files, { $splice: [[index, 1]] });
       this.safeSetState({
@@ -173,9 +167,8 @@ export default class EditorImageUploader extends BaseComponent {
   addImagePreviewUrl(fileObject) {
     const reader = new FileReader();
     reader.onload = () => {
-      const index = this.state.files.findIndex((storedFileObject) => {
-        return storedFileObject.metaData.name === fileObject.metaData.name;
-      });
+      const index = this.state.files.findIndex(storedFileObject =>
+       storedFileObject.metaData.name === fileObject.metaData.name);
       if (index !== -1) {
         const newFiles = update(this.state.files, {
           [index]: {
@@ -200,9 +193,7 @@ export default class EditorImageUploader extends BaseComponent {
     if (!newName) {
       return;
     }
-    const index = this.state.files.findIndex((fileObject) => {
-      return fileObject.metaData.name === name;
-    });
+    const index = this.state.files.findIndex(fileObject => fileObject.metaData.name === name);
     if (index !== -1) {
       const newFiles = update(this.state.files, {
         [index]: {

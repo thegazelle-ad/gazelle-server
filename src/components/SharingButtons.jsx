@@ -4,18 +4,22 @@ import BaseComponent from 'lib/BaseComponent';
 export default class SharingButtons extends BaseComponent {
 
   render() {
-    let renderButtons = () => {
-      let nodes = [];
-      let { url, title, teaser } = this.props;
+    const renderButtons = () => {
+      const nodes = [];
+      const { url, title, teaser } = this.props;
 
-      { /* Facebook Sharing Button */ }
+       /* Facebook Sharing Button */
       if (this.props.facebook) {
         nodes.push(
-          <a key={"facebook"} className="sharing-buttons__item__link" href={'https://facebook.com/sharer/sharer.php?u=https://www.' + url} target="Blank" aria-label="">
+          <a key={"facebook"} className="sharing-buttons__item__link" href={`https://facebook.com/sharer/sharer.php?u=https://www.${url}`} target="Blank" aria-label="">
             <div className="sharing-buttons__item sharing-buttons__item--facebook">
               <div aria-hidden="true" className="sharing-buttons__item__icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 25 25">
-                  <path strokeWidth="1px" strokeLinejoin="round" strokeMiterlimit="10" d="M18.768 7.5h-4.268v-1.905c0-.896.594-1.105 1.012-1.105h2.988v-3.942l-4.329-.013c-3.927 0-4.671 2.938-4.671 4.82v2.145h-3v4h3v12h5v-12h3.851l.417-4z" />
+                  <path
+                    strokeWidth="1px"
+                    strokeLinejoin="round"
+                    strokeMiterlimit="10" d="M18.768 7.5h-4.268v-1.905c0-.896.594-1.105 1.012-1.105h2.988v-3.942l-4.329-.013c-3.927 0-4.671 2.938-4.671 4.82v2.145h-3v4h3v12h5v-12h3.851l.417-4z"
+                  />
                 </svg>
               </div>
             </div>
@@ -23,10 +27,10 @@ export default class SharingButtons extends BaseComponent {
         );
       }
 
-      { /* Twitter Sharing Button */ }
+      /* Twitter Sharing Button */
       if (this.props.twitter) {
         nodes.push(
-          <a key={"twitter"} className="sharing-buttons__item__link" href={'https://twitter.com/intent/tweet/?text=%27' + title + '%27%20via%20%40TheGazelleAD%0A' + url + '&url=' + url} target="Blank" aria-label="">
+          <a key={"twitter"} className="sharing-buttons__item__link" href={`https://twitter.com/intent/tweet/?text=%27 ${title}%27%20via%20%40TheGazelleAD%0A ${url}&url= ${url}`} target="Blank" aria-label="">
             <div className="sharing-buttons__item sharing-buttons__item--twitter">
               <div aria-hidden="true" className="sharing-buttons__item__icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -38,14 +42,19 @@ export default class SharingButtons extends BaseComponent {
         );
       }
 
-      { /* linkedIn Sharing Button */ }
+     /* linkedIn Sharing Button */
       if (this.props.linkedin) {
         nodes.push(
-          <a key={"linkedin"} className="sharing-buttons__item__link" href={'https://www.linkedin.com/shareArticle?mini=true&amp;url=https://www.' + url + '&amp;title=' + title + '&amp;summary=' + teaser + '&amp;source=' + url} target="Blank" aria-label="">
+          <a key={"linkedin"} className="sharing-buttons__item__link" href={`https://www.linkedin.com/shareArticle?mini=true&amp;url=https://www. ${url}&amp;title= ${title}&amp;summary= ${teaser}&amp;source= ${url}`} target="Blank" aria-label="">
             <div className="sharing-buttons__item sharing-buttons__item--linkedin">
               <div aria-hidden="true" className="sharing-buttons__item__icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                  <path strokeWidth="1px" strokeLinejoin="round" strokeMiterlimit="10" d="M6.5 21.5h-5v-13h5v13zm-2.51-15h-.029c-1.511 0-2.488-1.182-2.488-2.481 0-1.329 1.008-2.412 2.547-2.412 1.541 0 2.488 1.118 2.519 2.447-.001 1.3-.978 2.446-2.549 2.446zm11.51 6c-1.105 0-2 .896-2 2v7h-5s.059-12 0-13h5v1.485s1.548-1.443 3.938-1.443c2.962 0 5.062 2.144 5.062 6.304v6.654h-5v-7c0-1.104-.896-2-2-2z" />
+                  <path
+                    strokeWidth="1px"
+                    strokeLinejoin="round"
+                    strokeMiterlimit="10"
+                    d="M6.5 21.5h-5v-13h5v13zm-2.51-15h-.029c-1.511 0-2.488-1.182-2.488-2.481 0-1.329 1.008-2.412 2.547-2.412 1.541 0 2.488 1.118 2.519 2.447-.001 1.3-.978 2.446-2.549 2.446zm11.51 6c-1.105 0-2 .896-2 2v7h-5s.059-12 0-13h5v1.485s1.548-1.443 3.938-1.443c2.962 0 5.062 2.144 5.062 6.304v6.654h-5v-7c0-1.104-.896-2-2-2z"
+                  />
                 </svg>
               </div>
             </div>
@@ -53,14 +62,25 @@ export default class SharingButtons extends BaseComponent {
         );
       }
 
-      { /* Email Sharing Button */ }
+      /* Email Sharing Button */
       if (this.props.email) {
         nodes.push(
-          <a key={"email"} className="sharing-buttons__items__item__link" href={'mailto:?subject=The%20Gazelle%20%7C%20' + title + '&body=' + url} aria-label="">
+          <a
+            key={"email"}
+            className="sharing-buttons__items__item__link"
+            href={`mailto:?subject=The%20Gazelle%20%7C%20
+            ${title}&body= ${url}`} aria-label=""
+          >
             <div className="sharing-buttons__item sharing-buttons__item--email">
               <div aria-hidden="true" className="sharing-buttons__item__icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                  <path strokeWidth="1px" strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" d="M23.5 18c0 .828-.672 1.5-1.5 1.5h-20c-.828 0-1.5-.672-1.5-1.5v-12c0-.829.672-1.5 1.5-1.5h20c.828 0 1.5.671 1.5 1.5v12zM20.5 8.5l-8.5 5.5-8.5-5.5M3.5 16l3.5-2M20.5 16l-3.5-2" />
+                  <path
+                    strokeWidth="1px"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeMiterlimit="10"
+                    d="M23.5 18c0 .828-.672 1.5-1.5 1.5h-20c-.828 0-1.5-.672-1.5-1.5v-12c0-.829.672-1.5 1.5-1.5h20c.828 0 1.5.671 1.5 1.5v12zM20.5 8.5l-8.5 5.5-8.5-5.5M3.5 16l3.5-2M20.5 16l-3.5-2"
+                  />
                 </svg>
               </div>
             </div>
@@ -98,5 +118,6 @@ SharingButtons.defaultProps = {
   email: true,
   url: 'www.thegazelle.org',
   title: "The Gazelle | NYUAD's Independent Student News Publication",
-  teaser: 'The Gazelle is a weekly student publication serving the NYU Abu Dhabi community and the greater Global Network Universtiy at NYU.',
+  teaser: 'The Gazelle is a weekly student publication serving the \n' +
+  'NYU Abu Dhabi community and the greater Global Network Universtiy at NYU.',
 };

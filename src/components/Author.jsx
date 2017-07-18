@@ -5,7 +5,7 @@ import { parseMarkdown } from 'lib/utilities';
 
 export default class Author extends BaseComponent {
   render() {
-    let author = this.props.author;
+    const author = this.props.author;
     return (
       <div key={author.slug} className="author">
         <div className="author__header">
@@ -13,7 +13,9 @@ export default class Author extends BaseComponent {
           <div className="author__header__author-info">
             <h1 className="author__header__author-info__name">{author.name}</h1>
             <h2 className="author__header__author-info__role">{author.jobTitle}</h2>
-            <p className="author__header__author-info__biography">{parseMarkdown(author.biography)}</p>
+            <p
+              className="author__header__author-info__biography"
+            >{parseMarkdown(author.biography)}</p>
           </div>
         </div>
         <ArticleList articles={author.articles} />

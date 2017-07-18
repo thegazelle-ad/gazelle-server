@@ -34,7 +34,10 @@ export default class Navigation extends BaseComponent {
               key={category.slug}
               className="navigation__categories__item"
             >
-              <Link to={'/category/' + category.slug} activeClassName="navigation__categories__item--active">
+              <Link
+                to={`/category/ ${category.slug}`}
+                activeClassName="navigation__categories__item--active"
+              >
                 {category.name}
               </Link>
             </li>
@@ -44,25 +47,29 @@ export default class Navigation extends BaseComponent {
       return (
         <div>
           <div className="navigation">
-            <p className="navigation__publication-date">{moment(data.publishedAt).format('MMM DD, YYYY').toString()}</p>
+            <p
+              className="navigation__publication-date"
+            >{moment(data.publishedAt).format('MMM DD, YYYY').toString()}</p>
             <nav role="navigation">
               <ul className="navigation__categories">
                 {renderCategories}
               </ul>
             </nav>
             {/* TODO: change link to archives list */}
-            <Link to="/archives" className="navigation__issueNumber">{'Issue ' + data.issueNumber}</Link>
+            <Link
+              to="/archives"
+              className="navigation__issueNumber"
+            >{`Issue ${data.issueNumber}`}</Link>
           </div>
         </div>
       );
-    } else {
-      return (
-        <div>
-
-        </div>
-      );
     }
-	                                        }
+    return (
+      <div>
+
+      </div>
+      );
+  }
 }
 
 Navigation.propTypes = {

@@ -27,9 +27,7 @@ export default class EditorIssueCategoryController extends FalcorController {
     const falcorCallBack = (data) => {
       const issueNumber = this.props.params.issueNumber;
       const categories = data.issuesByNumber[issueNumber].categories;
-      const categoriesArray = _.map(categories, (category) => {
-        return category;
-      });
+      const categoriesArray = _.map(categories, (category) => category);
 
       this.safeSetState({
         categories: categoriesArray,
@@ -42,9 +40,7 @@ export default class EditorIssueCategoryController extends FalcorController {
     const falcorCallBack = (data) => {
       const issueNumber = this.props.params.issueNumber;
       const categories = data.issuesByNumber[issueNumber].categories;
-      const categoriesArray = _.map(categories, (category) => {
-        return category;
-      });
+      const categoriesArray = _.map(categories, (category) => category);
       this.safeSetState({
         categories: categoriesArray,
       });
@@ -59,9 +55,8 @@ export default class EditorIssueCategoryController extends FalcorController {
   handleChanges(newCategories) {
     const issueNumber = this.props.params.issueNumber;
     const oldCategories = this.state.data.issuesByNumber[issueNumber].categories;
-    const changed = newCategories.some((category, index) => {
-      return category.id !== oldCategories[index].id;
-    });
+    const changed = newCategories.some((category, index) =>
+     category.id !== oldCategories[index].id);
     if (changed !== this.state.changed) {
       this.safeSetState({ changed });
     }
@@ -71,7 +66,7 @@ export default class EditorIssueCategoryController extends FalcorController {
     const newIndex = event.target.value - 1;
     const categories = this.state.categories;
     const category = categories[index];
-    let newCategories = update(categories, { $splice: [[index, 1], [newIndex, 0, category]] });
+    const newCategories = update(categories, { $splice: [[index, 1], [newIndex, 0, category]] });
     this.handleChanges(newCategories);
     this.safeSetState({
       categories: newCategories,
@@ -88,11 +83,11 @@ export default class EditorIssueCategoryController extends FalcorController {
         ' mysteriously. Please contact developers');
       return;
     }
-    const idArray = newCategories.map((category) => { return category.id; });
+    const idArray = newCategories.map(category => category.id);
 
     const callback = (data) => {
       const updatedCategories = _.map(data.issuesByNumber[issueNumber].categories,
-        (category) => { return category; });
+        category => category);
       this.safeSetState({
         changed: false,
         categories: updatedCategories,
@@ -158,30 +153,28 @@ export default class EditorIssueCategoryController extends FalcorController {
           <h4>Categories</h4>
           <div>
             {
-              categories.map((category, index) => {
-                return (
-                  <div
-                    key={category.id.toString() + '-' + index.toString()}
-                    style={{ marginBottom: '8px' }}
+              categories.map((category, index) =>
+                <div
+                  key={`${category.id.toString()}'-'${index.toString()}`}
+                  style={{ marginBottom: '8px' }}
+                >
+                  {/* eslint-disable react/jsx-no-bind*/}
+                  <select
+                    onChange={this.handleOrderChange.bind(this, index)}
+                    defaultValue={index + 1}
+                    style={{ marginRight: '10px' }}
+                    disabled={this.state.saving}
                   >
-                    {/* eslint-disable react/jsx-no-bind*/}
-                    <select
-                      onChange={this.handleOrderChange.bind(this, index)}
-                      defaultValue={index + 1}
-                      style={{ marginRight: '10px' }}
-                      disabled={this.state.saving}
-                    >
                     {/* eslint-enable react/jsx-no-bind*/}
                       {
-                        _.range(1, categories.length + 1).map((order) => {
-                          return <option key={order} value={order}>{order}</option>;
-                        })
+                        _.range(1, categories.length + 1).map((order) =>
+                          <option key={order} value={order}>{order}</option>
+                        )
                       }
-                    </select>
+                  </select>
                     {category.name}
-                  </div>
-                );
-              })
+                </div>
+              )
             }
           </div>
           <button
@@ -192,8 +185,7 @@ export default class EditorIssueCategoryController extends FalcorController {
           >Save Changes</button>
         </div>
       );
-    } else {
-      return <div>loading...</div>;
     }
+    return <div>loading...</div>;
   }
 }

@@ -22,12 +22,11 @@ export default class NotFoundController extends FalcorController {
           <NotFound />
         </div>
       );
-    } else {
-      return (
-        <div>
-          Loading
-        </div>
-      );
     }
+    return (
+      <div>
+        Loading
+      </div>
+      );
   }
 }

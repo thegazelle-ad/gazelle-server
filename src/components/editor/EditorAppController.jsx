@@ -28,7 +28,7 @@ export default class EditorAppController extends BaseComponent {
     const options = {
       hostname: HOSTNAME,
       port: PORT,
-      path: '/restartserver?password=' + password,
+      path: `/restartserver?password= ${password}`,
     };
     http.get(options, (res) => {
       let reply = '';

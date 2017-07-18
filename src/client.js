@@ -12,7 +12,7 @@ import ReactGA from 'react-ga';
 // global client tracking.
 setIsClient(true);
 
-let clientModel = new falcor.Model({
+const clientModel = new falcor.Model({
   source: new HttpDataSource('/model.json'),
 });
 

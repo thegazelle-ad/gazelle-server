@@ -9,7 +9,7 @@ import HttpDataSource from 'falcor-http-datasource';
 // Set app ready so falcor doesn't try to load from cache
 setAppReady();
 
-let clientModel = new falcor.Model({
+const clientModel = new falcor.Model({
   source: new HttpDataSource('/model.json'),
 });
 

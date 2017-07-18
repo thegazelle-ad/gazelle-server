@@ -162,7 +162,7 @@ export function parseMarkdown(str) {
   let end = 0;
   while (result = exp.exec(str)) { // eslint-disable-line no-cond-assign
     output.push(str.substring(end, result.index));
-    output.push(<a href={result[2]} key={result[1] + '-' + result[2]}>{result[1]}</a>);
+    output.push(<a href={result[2]} key={`${result[1]}-${result[2]}`}>{result[1]}</a>);
     end = exp.lastIndex;
   }
   output.push(str.substring(end));
