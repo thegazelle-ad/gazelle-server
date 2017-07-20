@@ -16,11 +16,9 @@ export default class ArticleList extends BaseComponent {
     // Returns list of <ArticlePreview/> components with their respective posts
     let renderArticlePreviews =
       // Render nothing if this.props.articles is empty
-      _.map((this.props.articles || []), (article) => {
-        return (
-          <ArticlePreview key={article.slug} article={article} />
-        );
-      });
+      _.map((this.props.articles || []), (article) =>
+        <ArticlePreview key={article.slug} article={article} />
+      );
 
     return (
       <div className="article-list">

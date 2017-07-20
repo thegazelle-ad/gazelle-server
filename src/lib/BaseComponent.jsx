@@ -10,17 +10,15 @@ const shallowEquals = (objA, objB) => {
     return false;
   }
 
-  let keysA = Object.keys(objA);
-  let keysB = Object.keys(objB);
+  const keysA = Object.keys(objA);
+  const keysB = Object.keys(objB);
 
   if (keysA.length !== keysB.length) {
     return false;
   }
 
   // Test for A's keys different from B.
-  return keysA.every((key) => {
-    return (objB.hasOwnProperty(key) && objA[key] === objB[key]);
-  });
+  return keysA.every((key) => objB.hasOwnProperty(key) && objA[key] === objB[key]);
 };
 
 // Abstract class with utility functions
