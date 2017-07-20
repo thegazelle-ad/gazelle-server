@@ -22,11 +22,12 @@ export default class Login extends BaseComponent {
   }
 
   handleSubmit(e) {
-    e.preventDefault();
-    const pass = e.target.password.value;
+    const eInstance = e;
+    eInstance.preventDefault();
+    const pass = eInstance.target.password.value;
     if (hash(pass) !== 2451962) {
       window.alert('Incorrect password');
-      e.target.password.value = '';
+      eInstance.target.password.value = '';
     } else {
       // Otherwise it is correct and we let the site redirect the client
       let url = this.props.location.query.url || '';

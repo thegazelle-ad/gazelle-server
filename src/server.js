@@ -23,7 +23,13 @@ import s3Config from '../config/s3.config.js';
 import s3 from 's3';
 import AWS from 'aws-sdk';
 
-process.env.NODEENV === 'production' ? console.log('PRODUCTION BUILD') : process.env.NODEENV === 'beta' ? console.log('BETA BUILD') : console.log('DEVELOPMENT BUILD'); // eslint-disable-line no-console
+if (process.env.NODEENV === 'production') {
+  console.log('PRODUCTION BUILD'); // eslint-disable-line no-console
+} else if (process.env.NODEENV === 'beta') {
+  console.log('BETA BUILD'); // eslint-disable-line no-console
+} else {
+  console.log('DEVELOPMENT BUILD'); // eslint-disable-line no-console
+}
 
 // Allow node to use sourcemaps
 
@@ -33,24 +39,26 @@ if (process.env.NODEENV !== 'production') {
 
 // Create MD5 hash of static file for better cache performance
 function md5Hash(file) {
-  hash = crypto.createHash('md5');
+  const hashInstance = crypto.createHash('md5');
   // readFileSync in the syncronous version of readFile
-  file = fs.readFileSync(file, 'utf8');
-  return (hash.update(file).digest('hex'));
+  let fileInstance = file;
+  fileInstance = fs.readFileSync(fileInstance, 'utf8');
+  return (hashInstance.update(fileInstance).digest('hex'));
 }
 
 const mainClientHash = md5Hash('./static/build/client.js');
 const mainCssHash = md5Hash('./static/build/main.css');
 
 const buildMainHtmlString = (body, cache) => {
-  let head = Helmet.rewind();
+  const head = Helmet.rewind();
 
   return (
     `<!DOCTYPE html>
       <html>
         <head>
           ` + head.title + `
-          <link rel="stylesheet" type="text/css" href="/static/build/main.css?h=` + mainCssHash + `">
+          <link rel="stylesheet" 
+            type="text/css" href="/static/build/main.css?h=` + mainCssHash + `">
           <link rel="icon" type="image/x-icon" href="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/favicon.ico">
           <link rel="apple-touch-icon" sizes="180x180" href="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/apple-touch-icon.png">
           <link rel="icon" type="image/png" href="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/favicon-32x32.png" sizes="32x32">
@@ -58,14 +66,13 @@ const buildMainHtmlString = (body, cache) => {
           <link rel="manifest" href="/favicons/manifest.json">
           <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#5bbad5">
           <meta name="theme-color" content="#ffffff">
-          <meta name="viewport" content="width=device-width, initial-scale=1">`
-            + head.meta +
-          `
-        </head>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          ` + head.meta + `
+        </head> 
         <body>
-          <div id="main">`
-            + body +
-          `</div>
+          <div id="main">
+          ` + body + `
+          </div>
           <script>
             var InitialCache =
             ` + JSON.stringify(cache) + `
@@ -122,7 +129,7 @@ const renderApp = (renderProps) => {
   let falcorPaths = _.compact(renderProps.routes.map((route) => {
     const component = route.component;
     if (component.prototype instanceof FalcorController) {
-      let pathSets = component.getFalcorPathSets(renderProps.params, renderProps.location.query);
+      const pathSets = component.getFalcorPathSets(renderProps.params, renderProps.location.query);
       if (!(pathSets instanceof Array) || pathSets.length === 0) {
         return null;
       }
@@ -135,10 +142,9 @@ const renderApp = (renderProps) => {
   falcorPaths = falcorPaths.reduce((currentPathSets, nextPathSet) => {
     if (nextPathSet[0] instanceof Array) {
       return currentPathSets.concat(nextPathSet);
-    } else {
-      currentPathSets.push(nextPathSet);
-      return currentPathSets;
     }
+    currentPathSets.push(nextPathSet);
+    return currentPathSets;
   }, []);
 
   // create a new model for this specific request
@@ -169,16 +175,14 @@ const renderApp = (renderProps) => {
   }
 
   return localModel.preload(...falcorPaths).then(() => {
-    return (
-      buildMainHtmlString(
-        renderToString(
-          <RouterContext
-            createElement={injectModelCreateElement(localModel)}
-            {...renderProps}
-          />
-        ),
-        localModel.getCache()
-      )
+    buildMainHtmlString(
+      renderToString(
+        <RouterContext
+          createElement={injectModelCreateElement(localModel)}
+          {...renderProps}
+        />
+      ),
+      localModel.getCache()
     );
   });
 };
@@ -191,7 +195,7 @@ const mainApp = express();
 mainApp.use(bodyParser.urlencoded({ extended: true }));
 
 mainApp.use('/model.json', FalcorServer.dataSourceRoute(() => {
-  return serverModel.asDataSource();
+  serverModel.asDataSource();
 }));
 
 mainApp.use('/static', express.static('static'));
@@ -231,7 +235,7 @@ if (process.env.NODEENV === 'beta') {
     );
   });
   mainApp.get(/(?!\/login)/, (req, res) => {
-    res.redirect(307, '/login?url=' + req.url);
+    res.redirect(`307,/login?url=${req.url}`);
   });
 } else {
   mainApp.get('*', (req, res) => {
@@ -273,7 +277,9 @@ mainApp.listen(process.env.MAINPORT ? process.env.MAINPORT : 3000, err => {
     console.error(err); // eslint-disable-line no-console
     return;
   }
-  console.log('The Gazelle Website started on port ' + (process.env.MAINPORT ? process.env.MAINPORT : 3000)); // eslint-disable-line no-console
+  console.log( // eslint-disable-line no-console
+    `The Gazelle Website started on port ${process.env.MAINPORT ? process.env.MAINPORT : 3000}`
+  );
 });
 
 
@@ -285,16 +291,17 @@ const editorTools = express();
 editorTools.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 // For connecting the client to our falcor server
 editorTools.use('/model.json', FalcorServer.dataSourceRoute(() => {
-  return serverModel.asDataSource();
+  serverModel.asDataSource();
 }));
 // serving static files
 editorTools.use(express.static('static'));
 
-var allowCrossDomain = function (req, res, next) {
-  if ('OPTIONS' === req.method) {
+const allowCrossDomain = function (req, res, next) { // eslint-disable-line func-names
+  if (req.method === 'OPTIONS') {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, ' +
+      'Content-Length, X-Requested-With');
     res.send(200);
   } else {
     next();
@@ -303,9 +310,15 @@ var allowCrossDomain = function (req, res, next) {
 
 editorTools.use(allowCrossDomain);
 
-const PATHNAME = process.env.NODEENV === 'production' ?
-  '~/gazelle-production/scripts/restartServers.sh' : process.env.NODEENV === 'beta' ?
-  '~/gazelle-beta/scripts/restartServers.sh' : `${__dirname}/scripts/restartServers.sh`;
+let PATHNAME = '';
+
+if (process.env.NODEENV === 'production') {
+  PATHNAME = '~/gazelle-production/scripts/restartServers.sh';
+} else if (process.env.NODEENV === 'beta') {
+  PATHNAME = '~/gazelle-beta/scripts/restartServers.sh';
+} else {
+  PATHNAME = `${__dirname}/scripts/restartServers.sh`;
+}
 
 editorTools.get('/restartserver', (req, res) => {
   if (!process.env.NODEENV) {
@@ -375,13 +388,13 @@ editorTools.post('/upload', upload.single('image'), (req, res) => {
     const year = new Date().getFullYear().toString();
     let month = new Date().getMonth() + 1;
     if (month < 10) {
-      month = '0' + month.toString();
+      month = `0${month.toString()}`;
     } else {
       month = month.toString();
     }
 
     const Bucket = 'thegazelle';
-    const Key = 'gazelle/' + year + '/' + month + '/' + req.file.originalname;
+    const Key = `gazelle/${year}/${month}/${req.file.originalname}`;
     const s3Params = {
       localFile: filePath,
       s3Params: {
@@ -399,30 +412,19 @@ editorTools.post('/upload', upload.single('image'), (req, res) => {
     awsSdkClient.headObject({ Bucket, Key }, (err) => {
       if (err && err.code === 'NotFound') {
         const s3Uploader = s3Client.uploadFile(s3Params);
-        s3Uploader.on('error', err => {
-          console.error(err); // eslint-disable-line no-console
+        s3Uploader.on('error', errInstance => {
+          console.error(errInstance); // eslint-disable-line no-console
           deleteTmpFile();
           return res.status(500).send('Error uploading');
         });
         s3Uploader.on('end', () => {
           const imageUrl = s3.getPublicUrl(Bucket, Key);
-<<<<<<< HEAD
-          delete_tmp_file();
-          return res.status(200).send('success ' + imageUrl);
-=======
           deleteTmpFile();
           return res.status(200).send(`success ${imageUrl}`);
->>>>>>> e8c84a6... Linting errors: Minor changes to some files
         });
-      } else {
-        delete_tmp_file();
-        return res.status(409).send('object already exists,' + Key);
       }
-<<<<<<< HEAD
-=======
       deleteTmpFile();
       return res.status(409).send(`object already exists, ${Key}`);
->>>>>>> e8c84a6... Linting errors: Minor changes to some files
     });
   }
 });
@@ -433,7 +435,7 @@ if (process.env.NODEENV === 'production' || process.env.NODEENV === 'beta') {
   });
 
   editorTools.get(/(?!\/restartserver|\/login|\/upload).*/, (req, res) => {
-    res.redirect(307, '/login?url=' + req.url);
+    res.redirect(`307,/login?url=${req.url}`);
   });
 } else {
   editorTools.get(/(?!\/restartserver|\/upload).*/, (req, res) => {
@@ -448,5 +450,7 @@ editorTools.listen(process.env.EDITORPORT ? process.env.EDITORPORT : 4000, err =
     return;
   }
 
-  console.log('Editor tools server started on port', process.env.EDITORPORT ? process.env.EDITORPORT : 4000); // eslint-disable-line no-console
+  console.log( // eslint-disable-line no-console
+    'Editor tools server started on port', process.env.EDITORPORT ? process.env.EDITORPORT : 4000
+  );
 });

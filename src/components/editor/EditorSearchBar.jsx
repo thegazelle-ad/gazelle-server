@@ -17,13 +17,14 @@ export default class EditorSearchBar extends BaseComponent {
       always to provide the query parameter to the function, or the debounce function will
       append true as the query value as it always just appends the argument to the back of the
       provided arguments */
+      let queryInstance = query;
       if (!wasCalledInstantly) {
         // If it wasn't called instantly we get the value from state
         // otherwise we want it directly as setState is asynchronous and
         // won't give the most updated value
-        query = this.state.searchValue;
+        queryInstance = this.state.searchValue;
       }
-      if (!(query.trim())) {
+      if (!(queryInstance.trim())) {
         this.safeSetState({ searchSuggestions: [] });
         return;
       }
@@ -39,10 +40,13 @@ export default class EditorSearchBar extends BaseComponent {
           // Remove duplicates
           fields = _.uniq(fields);
 
-          pathSets.push(['search', 'posts', query, { length: this.props.length }, fields]);
+          pathSets.push(
+            ['search', 'posts', queryInstance, { length: this.props.length }, fields]
+          );
           if (this.props.extraPathSets) {
             const extraPathSets = this.props.extraPathSets.map(function f(pathSet) {
-              return ['search', 'posts', query, { length: this.props.length }].concat(pathSet);
+              return ['search', 'posts', queryInstance,
+                { length: this.props.length }].concat(pathSet);
             });
             pathSets = pathSets.concat(extraPathSets);
           }
@@ -51,10 +55,13 @@ export default class EditorSearchBar extends BaseComponent {
           // Add required fields and remove duplicates
           fields = _.uniq(this.props.fields.concat(['name', 'slug']));
 
-          pathSets.push(['search', 'authors', query, { length: this.props.length }, fields]);
+          pathSets.push(
+            ['search', 'authors', queryInstance, { length: this.props.length }, fields]
+          );
           if (this.props.extraPathSets) {
             const extraPathSets = this.props.extraPathSets.map(function f(pathSet) {
-              return ['search', 'authors', query, { length: this.props.length }].concat(pathSet);
+              return ['search', 'authors', queryInstance,
+                { length: this.props.length }].concat(pathSet);
             });
             pathSets = pathSets.concat(extraPathSets);
           }
@@ -71,9 +78,9 @@ export default class EditorSearchBar extends BaseComponent {
         }
         let suggestions = x.json.search;
         if (this.props.mode === 'articles') {
-          suggestions = suggestions.posts[query];
+          suggestions = suggestions.posts[queryInstance];
         } else {
-          suggestions = suggestions.authors[query];
+          suggestions = suggestions.authors[queryInstance];
         }
         const suggestionsArray = _.map(suggestions, value => value);
         this.safeSetState({ searchSuggestions: suggestionsArray });

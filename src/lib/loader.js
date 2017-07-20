@@ -97,7 +97,6 @@ export function isLoading() {
   if (!isClient()) {
     return;
   }
-  return Object.keys(loading).length !== 0;
 }
 
 export class TransitionManager extends BaseComponent {
@@ -148,7 +147,7 @@ export class TransitionManager extends BaseComponent {
 
   delayedModeChange(fromMode, toMode, delay) {
     setTimeout(() => {
-      if (this.mode == fromMode) {
+      if (this.mode === fromMode) {
         this.changeMode(toMode);
       }
     }, delay);
@@ -192,9 +191,9 @@ export class TransitionManager extends BaseComponent {
 
   render() {
     const classes = classnames('transition-manager', {
-      'loading': this.state.mode == 'loading',
-      'load-ending': this.state.mode == 'loadEnding',
-      'fading-start': this.state.mode == 'fadingStart',
+      'loading-instance': this.state.mode === 'loading',
+      'load-ending': this.state.mode === 'loadEnding',
+      'fading-start': this.state.mode === 'fadingStart',
     });
     return (
       <div className={classes}>

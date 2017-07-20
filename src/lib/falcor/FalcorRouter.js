@@ -1,6 +1,6 @@
 import BaseRouter from 'falcor-router';
 import { ghostArticleQuery } from 'lib/ghostAPI';
-import dbFunctions from 'lib/db';
+import DbFunctions from 'lib/db';
 import falcor from 'falcor';
 import _ from 'lodash';
 
@@ -19,22 +19,24 @@ export const mapGhostNames = (falcorName) => {
 
 // This is just a cleaner way to import all the functions from db.js
 // compared to listing all the 20+ functions exported from there
-const db = new dbFunctions();
+const db = new DbFunctions();
 
 export default class FalcorRouter extends BaseRouter.createClass([
   {
     route: "infoPages[{keys:slugs}]['title', 'html', 'slug']",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         const requestedFields = pathSet[2];
         db.infoPagesQuery(pathSet.slugs, requestedFields).then((data) => {
-          // data function parameter is an array of objects with keys equal to the columns requested.
+          // data function parameter is an array of objects with keys equal to requested columns
           // Always returns the slug so we know which one we got
           const results = [];
           data.forEach((row) => {
             requestedFields.forEach((key) => {
               if (!row.hasOwnProperty(key)) {
-                throw new Error("missing data in infoPages, it is not even null, simply doesn't return");
+                throw new Error(
+                  "missing data in infoPages, it is not even null, simply doesn't return"
+                );
               } else {
                 results.push({
                   path: ['infoPages', row.slug, key],
@@ -45,13 +47,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     route: "authorsBySlug[{keys:slugs}]['id', 'name', 'image', 'biography', 'slug', 'jobTitle']",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         const requestedFields = pathSet[2];
         db.authorQuery(pathSet.slugs, requestedFields).then((data) => {
           // always returns slug in the object no matter what.
@@ -66,10 +68,10 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
-    set: (jsonGraphArg) => {
-      return new Promise((resolve, reject) => {
+      })
+    ),
+    set: (jsonGraphArg) => (
+      new Promise((resolve, reject) => {
         const authorsBySlug = jsonGraphArg.authorsBySlug;
         db.updateMainAuthorData(authorsBySlug).then((flag) => {
           if (!flag) {
@@ -89,13 +91,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
         .catch((e) => {
           reject(e);
         });
-      });
-    },
+      })
+    ),
   },
   {
     route: "authorsBySlug[{keys:slugs}]['teams'][{integers:indices}]",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         db.authorTeamQuery(pathSet.slugs).then((data) => {
           const results = [];
           _.forEach(data, (teamSlugArray, authorSlug) => {
@@ -110,15 +112,15 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     route: "authorsBySlug[{keys:slugs}]['articles'][{integers:indices}]",
     // This could be a bit vulnerable as it fetches all articles written by an author
     // no matter what indices are called, but I think in reality it shouldn't be a problem
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         db.authorArticleQuery(pathSet.slugs).then((data) => {
           // We receive the data as an object with keys equalling author slugs
           // and values being an array of article slugs where the most recent is first
@@ -135,13 +137,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     route: "authorsBySlug['createAuthor']",
-    call: (callPath, args) => {
-      return new Promise((resolve) => {
+    call: (callPath, args) => (
+      new Promise((resolve) => {
         const authorObject = args[0];
         if (!(authorObject.hasOwnProperty('slug') && authorObject.hasOwnProperty('name'))) {
           throw new Error('When creating an author you must provide both name and slug');
@@ -160,14 +162,14 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // Get article data from Ghost API
     route: "articlesBySlug[{keys:slugs}]['id', 'image', 'slug', 'title', 'markdown', 'html', 'teaser']",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         const requestedFields = pathSet[2];
         let query = 'filter=';
         pathSet.slugs.forEach((slug, index) => {
@@ -176,16 +178,17 @@ export default class FalcorRouter extends BaseRouter.createClass([
         query += '&fields=slug';
         requestedFields.forEach((field) => {
           if (field !== 'slug') {
-            query += ',' + mapGhostNames(field);
+            query += `,${mapGhostNames(field)}`;
           }
         });
-        query += '&limit=' + pathSet.slugs.length.toString();
+        query += `&limit=${pathSet.slugs.length.toString()}`;
         ghostArticleQuery(query).then((data) => {
-          data = data.posts;
+          let dataInstance = data;
+          dataInstance = data.posts;
           const results = [];
-          data.forEach((article) => {
+          dataInstance.forEach((article) => {
             requestedFields.forEach((field) => {
-              let ghostField = mapGhostNames(field);
+              const ghostField = mapGhostNames(field);
               results.push({
                 path: ['articlesBySlug', article.slug, field],
                 value: article[ghostField],
@@ -200,10 +203,10 @@ export default class FalcorRouter extends BaseRouter.createClass([
           console.error(e); // eslint-disable-line no-console
           resolve([]);
         });
-      });
-    },
-    set: (jsonGraphArg) => {
-      return new Promise((resolve) => {
+      })
+    ),
+    set: (jsonGraphArg) => (
+      new Promise((resolve) => {
         const articlesBySlug = jsonGraphArg.articlesBySlug;
         const slugs = Object.keys(articlesBySlug);
         db.updateGhostFields(articlesBySlug).then((flag) => {
@@ -222,14 +225,14 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // Get custom article data from MariaDB
     route: "articlesBySlug[{keys:slugs}]['category', 'publishedAt', 'views']",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         const requestedFields = pathSet[2];
         db.articleQuery(pathSet.slugs, requestedFields).then((data) => {
           const results = [];
@@ -246,10 +249,10 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
-    set: (jsonGraphArg) => {
-      return new Promise((resolve) => {
+      })
+    ),
+    set: (jsonGraphArg) => (
+      new Promise((resolve) => {
         const articlesBySlug = jsonGraphArg.articlesBySlug;
         const slugs = Object.keys(articlesBySlug);
         const results = [];
@@ -269,14 +272,14 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // Get issueNumber from database
     route: "articlesBySlug[{keys:slugs}]['issueNumber']",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         db.articleIssueQuery(pathSet.slugs).then((data) => {
           const results = [];
           data.forEach((row) => {
@@ -287,10 +290,10 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
-    set: (jsonGraphArg) => {
-      return new Promise((resolve) => {
+      })
+    ),
+    set: (jsonGraphArg) => (
+      new Promise((resolve) => {
         const articlesBySlug = jsonGraphArg.articlesBySlug;
         const slugs = Object.keys(articlesBySlug);
         const results = [];
@@ -301,14 +304,14 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
         });
         resolve(results);
-      });
-    },
+      })
+    ),
   },
   {
     // Get author information from article
     route: "articlesBySlug[{keys:slugs}]['authors'][{integers:indices}]",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         db.articleAuthorQuery(pathSet.slugs).then((data) => {
           // We receive the data as an object with keys equalling article slugs
           // and values being an array of author slugs in no particular order
@@ -325,8 +328,8 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // Add authors to an article
@@ -336,7 +339,9 @@ export default class FalcorRouter extends BaseRouter.createClass([
       // so it is not possible to call this function for more
       // than 1 article at a time, therefore we know keys:slugs is length 1
       if (callPath.slugs > 1) {
-        throw new Error('updateAuthors falcor function was called illegally with more than 1 article slug');
+        throw new Error(
+          'updateAuthors falcor function was called illegally with more than 1 article slug'
+        );
       }
       return new Promise((resolve) => {
         const articleId = args[0];
@@ -363,8 +368,8 @@ export default class FalcorRouter extends BaseRouter.createClass([
   {
     // Get related articles
     route: "articlesBySlug[{keys:slugs}]['related'][{integers:indices}]",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         // The dbRelatedArticleQuery function will only return 3 related articles
         // per article queried right now (as you shouldn't need more),
         // so you cannot request an index higher than 2
@@ -382,13 +387,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     route: "articlesBySlug[{keys:slugs}]['addView']",
-    call: (callPath) => {
-      return new Promise((resolve) => {
+    call: (callPath) => (
+      new Promise((resolve) => {
         // It's a function call so there should only be one slug
         if (callPath.slugs.length !== 1) {
           throw new Error(`addView route was called with ${callPath.slugs.length.toString()}
@@ -400,7 +405,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
             // Means the article wasn't found
             resolve([]);
           } else if (!views || (typeof views) !== 'number') {
-            throw new Error('addView for slug ' + slug + ' returned unexpected value');
+            throw new Error(`addView for slug ${slug} returned unexpected value`);
           } else {
             resolve([{
               path: ['articlesBySlug', slug, 'views'],
@@ -408,42 +413,55 @@ export default class FalcorRouter extends BaseRouter.createClass([
             }]);
           }
         });
-      });
-    },
+      })
+    ),
   },
   {
     /*
     Get articles by page (they are also in chronological order, articlesByPage[pageLength][1][0]
     is the latest published article to the Ghost database). Only use positive integer page lengths
-    and page numbers, and non-negative page indices. [{integers:indicesOnPage}] is logically redundant
-    but needed for working properly with falcor. Normal falcorPath syntax would be:
+    and page numbers, and non-negative page indices. [{integers:indicesOnPage}] is logically
+    redundant but needed for working properly with falcor. Normal falcorPath syntax would be:
     articlesByPage[pageLength][pageNumber][{length: pageLength}]
     where {length: pageLength} makes use of falcor's range object.
     */
     route: 'articlesByPage[{integers:pageLengths}][{integers:pageNumbers}][{integers:indicesOnPage}]',
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         const results = [];
         const numberOfQueryCalls = pathSet.pageLengths.length * pathSet.pageNumbers.length;
         if (numberOfQueryCalls === 0) return [];
         let queriesResolved = 0;
         pathSet.pageLengths.forEach((pageLength) => {
           if (pageLength < 1) {
-            throw new Error('Cannot pass nonpositive integer as the pageLength parameter. You passed ' + pageLength.toString() + ' as one of your page lengths.');
+            throw new Error(
+              `Cannot pass nonpositive integer as the pageLength parameter.
+              You passed ${pageLength.toString()} as one of your page lengths.`
+            );
           }
           pathSet.pageNumbers.forEach((pageNumber) => {
             if (pageNumber < 1) {
-              throw new Error('Cannot pass nonpositive integer as the pageNumber parameter. You passed ' + pageNumber.toString() + ' as one of your page numbers.');
+              throw new Error(
+                `Cannot pass nonpositive integer as the pageNumber parameter.
+                You passed ${pageNumber.toString()} as one of your page numbers.`
+              );
             }
-            const query = `limit= ${pageLength.toString()}&page=${pageNumber.toString()}&fields=slug`;
+            const query =
+              `limit= ${pageLength.toString()}&page=${pageNumber.toString()}&fields=slug`;
             ghostArticleQuery(query).then((data) => {
               if (data.hasOwnProperty('errors')) {
-                throw new Error('Errors in the Ghost API query with query parameter = ' + query + ': ' + JSON.stringify(data));
+                throw new Error(
+                  `Errors in the Ghost API query with query parameter = ${query}:
+                  ${JSON.stringify(data)}`
+                );
               }
               const articles = data.posts;
               pathSet.indicesOnPage.forEach((index) => {
                 if (index < 0) {
-                  throw new Error('You cannot pass negative indices to the indexOnPage parameter. You passed ' + index.toString() + ' as one of your indices.');
+                  throw new Error(
+                    `You cannot pass negative indices to the indexOnPage parameter.
+                    You passed ${index.toString()} as one of your indices.`
+                  );
                 }
                 if (index < articles.length) {
                   results.push({
@@ -462,14 +480,14 @@ export default class FalcorRouter extends BaseRouter.createClass([
             });
           });
         });
-      });
-    },
+      })
+    ),
   },
   {
     // get categories name
     route: "categoriesBySlug[{keys:slugs}]['name', 'slug']",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         const requestedFields = pathSet[2];
         db.categoryQuery(pathSet.slugs, requestedFields).then((data) => {
           const results = [];
@@ -483,14 +501,14 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // get articles in a category
     route: "categoriesBySlug[{keys:slugs}]['articles'][{integers:indices}]",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         db.categoryArticleQuery(pathSet.slugs).then((data) => {
           // We receive the data as an object with keys equalling category slugs
           // and values being an array of article slugs where the most recent is first
@@ -507,14 +525,14 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // get categories by index
     route: 'categoriesByIndex[{integers:indices}]',
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         // This will fetch every single category at this time which shouldn't
         // at all be a problem at this capacity
         db.categoryArrayQuery().then((data) => {
@@ -530,14 +548,14 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // get featured article
     route: "issuesByNumber[{integers:issueNumbers}]['featured']",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         db.featuredArticleQuery(pathSet.issueNumbers).then((data) => {
           const results = [];
           data.forEach((row) => {
@@ -548,14 +566,14 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // get editor's picks
     route: "issuesByNumber[{integers:issueNumbers}]['picks'][{integers:indices}]",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         db.editorPickQuery(pathSet.issueNumbers).then((data) => {
           const results = [];
           _.forEach(data, (postSlugArray, issueNumber) => {
@@ -570,18 +588,19 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // Get articles category information from articles.
     /* This is a special case as it actually makes us store a bit of information twice
       But we can't just give a ref here since because the articles of a category is different
       depending on whether it is fetched directly from categories which is ordered chronologically
-      and all articles from that category are fetched or from an issue where it is ordered by editor tools */
+      and all articles from that category are fetched or from an issue where it is ordered by
+      editor tools */
     route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers:indices}]['id', 'name', 'slug']",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         const requestedFields = pathSet[4];
         db.issueCategoryQuery(pathSet.issueNumbers, requestedFields).then((data) => {
           // data is an object with keys of issue numbers and values
@@ -601,18 +620,18 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // Get articles within issue categories
     route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers:categoryIndices}]['articles'][{integers:articleIndices}]",
-    get: (pathSet) => {
+    get: (pathSet) => (
       // This will currently fetch every single article from the issue
       // every time, and then just only return the ones asked for
       // which shouldn't at all be a problem at current capacity of
       // 10-20 articles an issue.
-      return new Promise((resolve) => {
+      new Promise((resolve) => {
         db.issueCategoryArticleQuery(pathSet.issueNumbers).then((data) => {
           // data is an object with keys equal to issueNumbers and values
           // being an array of arrays, the upper array being the categories
@@ -625,7 +644,10 @@ export default class FalcorRouter extends BaseRouter.createClass([
                 pathSet.articleIndices.forEach((articleIndex) => {
                   if (articleIndex < categoryArray[categoryIndex].length) {
                     results.push({
-                      path: ['issuesByNumber', issueNumber, 'categories', categoryIndex, 'articles', articleIndex],
+                      path:
+                        ['issuesByNumber', issueNumber,
+                        'categories', categoryIndex,
+                        'articles', articleIndex],
                       value: $ref(['articlesBySlug', categoryArray[categoryIndex][articleIndex]]),
                     });
                   }
@@ -635,8 +657,8 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // Get issue data
@@ -671,8 +693,8 @@ export default class FalcorRouter extends BaseRouter.createClass([
         });
       });
     },
-    set: (jsonGraphArg) => {
-      return new Promise((resolve) => {
+    set: (jsonGraphArg) => (
+      new Promise((resolve) => {
         const issueNumber = Object.keys(jsonGraphArg.issuesByNumber)[0];
         const issueObject = jsonGraphArg.issuesByNumber[issueNumber];
         db.updateIssueData(jsonGraphArg).then((flag) => {
@@ -687,13 +709,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
             invalidated: true,
           }]);
         });
-      });
-    },
+      })
+    ),
   },
   {
     route: "issuesByNumber['updateIssueArticles']",
-    call: (callPath, args) => {
-      return new Promise((resolve) => {
+    call: (callPath, args) => (
+      new Promise((resolve) => {
         const issueNumber = args[0];
         const featuredArticles = args[1];
         const picks = args[2];
@@ -732,13 +754,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
           }
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     route: "issuesByNumber[{integers:issueNumbers}]['updateIssueCategories']",
-    call: (callPath, args) => {
-      return new Promise((resolve) => {
+    call: (callPath, args) => (
+      new Promise((resolve) => {
         const issueNumber = callPath.issueNumbers[0];
         const idArray = args[0];
         db.updateIssueCategories(issueNumber, idArray).then((flag) => {
@@ -757,13 +779,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
           ];
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     route: "issuesByNumber[{integers:issueNumbers}]['publishIssue']",
-    call: (callPath, args) => {
-      return new Promise((resolve) => {
+    call: (callPath, args) => (
+      new Promise((resolve) => {
         const issueId = args[0];
         const issueNumber = callPath.issueNumbers[0];
         db.publishIssue(issueId).then((data) => {
@@ -781,13 +803,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     route: "issuesByNumber['addIssue']",
-    call: (callPath, args) => {
-      return new Promise((resolve) => {
+    call: (callPath, args) => (
+      new Promise((resolve) => {
         const issue = args[0];
         const fields = Object.keys(issue);
         db.addIssue(issue).then((flag) => {
@@ -807,15 +829,15 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // Get trending articles
     // THIS IS TEMPORARY
     route: 'trending[{integers:indices}]',
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         // This function will at the moment only return 10 trending articles
         // so you cannot request anything above index 9
         db.trendingQuery().then((data) => {
@@ -830,42 +852,42 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // Get total amount of articles
     route: 'totalAmountOfArticles',
-    get: () => {
-      return new Promise((resolve) => {
+    get: () => (
+      new Promise((resolve) => {
         ghostArticleQuery('limit=1&fields=slug').then((data) => {
           resolve([{
             path: ['totalAmountOfArticles'],
             value: data.meta.pagination.total,
           }]);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // Get latest issue
     route: 'latestIssue',
-    get: () => {
-      return new Promise((resolve) => {
+    get: () => (
+      new Promise((resolve) => {
         db.latestIssueQuery().then((row) => {
           resolve([{
             path: ['latestIssue'],
             value: $ref(['issuesByNumber', row[0].issueOrder]),
           }]);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // Search for posts
     route: "search['posts'][{keys:queries}][{integers:indices}]",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         let minIndex = pathSet.indices[0];
         let maxIndex = pathSet.indices[0];
         pathSet.indices.forEach((index) => {
@@ -878,7 +900,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
         });
         db.searchPostsQuery(pathSet.queries, minIndex, maxIndex).then((data) => {
           // Map all the indices down to fit the indices returned by the db call
-          pathSet.indices = pathSet.indices.map((index) => { return index - minIndex; });
+          pathSet.indices = pathSet.indices.map((index) => index - minIndex);
           const results = [];
           _.forEach(data, (queryResults, query) => {
             pathSet.indices.forEach((index) => {
@@ -892,14 +914,14 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // Search for authors by name
     route: "search['authors'][{keys:queries}][{integers:indices}]",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         let minIndex = pathSet.indices[0];
         let maxIndex = pathSet.indices[0];
         pathSet.indices.forEach((index) => {
@@ -912,7 +934,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
         });
         db.searchAuthorsQuery(pathSet.queries, minIndex, maxIndex).then((data) => {
           // Map all the indices down to fit the indices returned by the db call
-          pathSet.indices = pathSet.indices.map((index) => { return index - minIndex; });
+          pathSet.indices = pathSet.indices.map((index) => index - minIndex);
           const results = [];
           _.forEach(data, (queryResults, query) => {
             pathSet.indices.forEach((index) => {
@@ -926,13 +948,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     route: "search['teams'][{keys:queries}][{integers:indices}]",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         let minIndex = pathSet.indices[0];
         let maxIndex = pathSet.indices[0];
         pathSet.indices.forEach((index) => {
@@ -945,7 +967,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
         });
         db.searchTeamsQuery(pathSet.queries, minIndex, maxIndex).then((data) => {
           // Map all the indices down to fit the indices returned by the db call
-          pathSet.indices = pathSet.indices.map((index) => { return index - minIndex; });
+          pathSet.indices = pathSet.indices.map((index) => index - minIndex);
           const results = [];
           _.forEach(data, (queryResults, query) => {
             pathSet.indices.forEach((index) => {
@@ -959,13 +981,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     route: "teamsBySlug[{keys:slugs}]['slug', 'id', 'name', 'description']",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         const requestedFields = pathSet[2];
         db.teamQuery(pathSet.slugs, requestedFields).then((data) => {
           const results = [];
@@ -979,10 +1001,10 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
-    set: (jsonGraphArg) => {
-      return new Promise((resolve, reject) => {
+      })
+    ),
+    set: (jsonGraphArg) => (
+      new Promise((resolve, reject) => {
         const teamsBySlug = jsonGraphArg.teamsBySlug;
         db.updateTeams(teamsBySlug).then((flag) => {
           if (!flag) {
@@ -1002,13 +1024,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
         .catch((e) => {
           reject(e);
         });
-      });
-    },
+      })
+    ),
   },
   {
     route: "teamsBySlug[{keys:slugs}]['authors'][{integers:indices}]",
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         db.teamAuthorQuery(pathSet.slugs).then((data) => {
           const results = [];
           _.forEach(data, (authorSlugArray, teamSlug) => {
@@ -1023,13 +1045,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     route: "teamsBySlug['createTeam']",
-    call: (callPath, args) => {
-      return new Promise((resolve) => {
+    call: (callPath, args) => (
+      new Promise((resolve) => {
         const teamObject = args[0];
         if (!(teamObject.hasOwnProperty('slug') && teamObject.hasOwnProperty('name'))) {
           throw new Error('When creating an team you must provide both name and slug');
@@ -1047,13 +1069,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     route: 'teamsByIndex[{integers:indices}]',
-    get: (pathSet) => {
-      return new Promise((resolve) => {
+    get: (pathSet) => (
+      new Promise((resolve) => {
         db.teamArrayQuery().then((data) => {
           const results = [];
           pathSet.indices.forEach((index) => {
@@ -1066,18 +1088,18 @@ export default class FalcorRouter extends BaseRouter.createClass([
           });
           resolve(results);
         });
-      });
-    },
+      })
+    ),
   },
   {
     // A placeholder so we can do empty calls that just invalidate
     route: 'placeholder',
-    get: () => {
-      return [{
+    get: () => (
+      [{
         path: ['placeholder'],
         value: 'placeholder',
-      }];
-    },
+      }]
+    ),
   },
 ])
 // Begin actual class methods below

@@ -7,11 +7,10 @@ export function debounce(func, timeout, addInstantFlag = false) {
   than intended, and this might cause unexpected results */
   let scheduled = false;
   let lastCalled = null;
-  let debouncedFunction = function () {
-    let now = new Date();
+  const debouncedFunction = function (...args) { // eslint-disable-line func-names
+    const now = new Date();
     if (lastCalled === null || (!scheduled && now - lastCalled >= timeout)) {
       lastCalled = now;
-      const args = Array.from(arguments);
       if (addInstantFlag) {
         // add a flag that says this function was called instantly,
         // and didn't wait for the debounce, in case you want a different
@@ -23,7 +22,7 @@ export function debounce(func, timeout, addInstantFlag = false) {
     } else if (!scheduled) {
       scheduled = true;
       setTimeout(() => {
-        func.apply(this, arguments);
+        func.apply(this, args);
         scheduled = false;
       }, timeout - (now - lastCalled));
     }
@@ -49,25 +48,23 @@ export function uuid() {
       .toString(16)
       .substring(1);
   }
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-    s4() + '-' + s4() + s4() + s4();
+  return `${s4()}${s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
 }
 
 export function mapLegacyIssueSlugsToIssueNumber(slug) {
   const match = slug.match(/issue-(\d\d)/);
   if (match) {
     return match[1];
-  } else {
-    switch (slug) {
-      case 'the-identity-issue':
-        return '76';
-      case 'the-love-issue':
-        return '78';
-      case 'the-food-issue':
-        return '82';
-      default:
-        return slug;
-    }
+  }
+  switch (slug) {
+    case 'the-identity-issue':
+      return '76';
+    case 'the-love-issue':
+      return '78';
+    case 'the-food-issue':
+      return '82';
+    default:
+      return slug;
   }
 }
 
@@ -82,7 +79,7 @@ export function slugifyPost(postSlug) {
   while (slug.charAt(slug.length - 1) === '-') {
     slug = slug.substr(0, slug.length - 1);
   }
-  slug = /^(ghost|ghost\-admin|admin|wp\-admin|wp\-login|dashboard|logout|login|signin|signup|signout|register|archive|archives|category|categories|tag|tags|page|pages|post|posts|user|users|rss)$/g
+  slug = /^(ghost|ghost\-admin|admin|wp\-admin|wp\-login|dashboard|logout|login|signin|signup|signout|register|archive|archives|category|categories|tag|tags|page|pages|post|posts|user|users|rss)$/g // eslint-disable-line max-len
          .test(slug) ? slug + '-post' : slug;
   return slug;
 }
@@ -106,11 +103,11 @@ export function formatDate(date) {
   const mm = date.getMonth() + 1; // getMonth() is zero-based
   const dd = date.getDate();
 
-  let dateString = yyyy.toString() + '-';
+  let dateString = `${yyyy.toString()}-`;
   if (mm < 10) {
     dateString += '0';
   }
-  dateString += mm.toString() + '-';
+  dateString += `${mm.toString()}-`;
   if (dd < 10) {
     dateString += '0';
   }
@@ -126,24 +123,24 @@ export function formatDateTime(date) {
   const mins = date.getMinutes();
   const ss = date.getSeconds();
 
-  let dateTimeString = yyyy.toString() + '-';
+  let dateTimeString = `${yyyy.toString()}-`;
   if (mm < 10) {
     dateTimeString += '0';
   }
-  dateTimeString += mm.toString() + '-';
+  dateTimeString += `${mm.toString()}-`;
   if (dd < 10) {
     dateTimeString += '0';
   }
-  dateTimeString += dd.toString() + ' ';
+  dateTimeString += `${dd.toString()} `;
 
   if (hh < 10) {
     dateTimeString += '0';
   }
-  dateTimeString += hh.toString() + ':';
+  dateTimeString += `${hh.toString()}:`;
   if (mins < 10) {
     dateTimeString += '0';
   }
-  dateTimeString += mins.toString() + ':';
+  dateTimeString += `${mins.toString()}:`;
   if (ss < 10) {
     dateTimeString += '0';
   }
@@ -194,8 +191,8 @@ export function hash(password) {
   for (let i = 1; i < password.length; i++) {
     num = ((num * 256) % BIGPRIME + password.charCodeAt(i)) % BIGPRIME;
   }
-  const hash = ((num % H1PRIME) + 5 * (num % H2PRIME) + 1 + 25) % BIGPRIME;
-  return hash;
+  const hashInstance = ((num % H1PRIME) + 5 * (num % H2PRIME) + 1 + 25) % BIGPRIME;
+  return hashInstance;
 }
 
 // For tracking the articles visited in that particular session
