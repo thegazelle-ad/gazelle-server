@@ -29,11 +29,7 @@ export default class EditorAppController extends BaseComponent {
     super(props);
     this.handleDisableLink = this.handleDisableLink.bind(this);
     this.resetGhostInfo = this.resetGhostInfo.bind(this);
-    this.state = {
-      isLoggedIn: true, // TODO: change to false when log in works
-      isRestartedSnackBarOpen: false,
-      isGhostResetSnackBarOpen: false,
-    };
+    this.isLoggedIn = this.isLoggedIn.bind(this);
   }
 
   componentWillMount() {
@@ -41,8 +37,12 @@ export default class EditorAppController extends BaseComponent {
     injectTapEventPlugin(); // Will be removed when React supports onTouchTap() soon
   }
 
+  isLoggedIn() {
+    return this.props.location.pathname.substr(0, 6) !== '/login';
+  }
+
   handleDisableLink(e) {
-    if (this.props.location.pathname === "/login") {
+    if (!this.isLoggedIn()) {
       e.preventDefault();
     }
   }
@@ -86,10 +86,7 @@ export default class EditorAppController extends BaseComponent {
   render() {
     const navItems = ["Articles", "Authors", "Issues", "Images"];
     const bodyStyle = { transition: 'margin-left 450ms cubic-bezier(0.23, 1, 0.32, 1)' };
-    if (this.state.isLoggedIn) { bodyStyle.marginLeft = 256; }
-
-    this.props.location.pathname === "/login" ?
-      this.state.isLoggedIn == false : this.state.isLoggedIn == true;
+    if (this.isLoggedIn()) { bodyStyle.marginLeft = 256; }
 
     const LoggedIn = () => {
       return (
@@ -119,17 +116,16 @@ export default class EditorAppController extends BaseComponent {
     return (
       <MuiThemeProvider>
         <div className="mainContainer">
-          {/* TODO: Make isLoggedIn work */}
           <AppBar
             title={"Editor Tools"}
-            iconElementRight={this.state.isLoggedIn ?
+            iconElementRight={this.isLoggedIn() ?
               <LoggedIn /> :
               <FlatButton label="Sign In" />}
             showMenuIconButton={false}
           />
 
-          {/* Only show nav on login */}
-          <EditorNavigation navItems={navItems} isNavOpen={this.state.isLoggedIn} />
+          {/* Only show nav if logged in */}
+          <EditorNavigation navItems={navItems} isNavOpen={this.isLoggedIn()} />
           <div style={bodyStyle} className="editor-body">
             <div className="editor-items">
               {this.props.children}
