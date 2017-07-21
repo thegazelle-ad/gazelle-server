@@ -16,6 +16,30 @@ import MenuItem from 'material-ui/MenuItem';
 import PersonAdd from 'material-ui/svg-icons/social/person-add';
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
 
+const styles = {
+  paper: {
+    height: '100%',
+    width: '100%',
+    marginTop: 20,
+    marginBottom: 20,
+    textAlign: 'left',
+    display: 'inline-block',
+  },
+  tabs: {
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingBottom: 15,
+  },
+  buttons: {
+    marginTop: 24,
+    marginBottom: 12,
+  },
+  authorMenu: {
+    display: 'inline-block',
+    margin: 0,
+  },
+};
+
 export default class EditorAuthorListController extends FalcorController {
   constructor(props) {
     super(props);
@@ -109,30 +133,6 @@ export default class EditorAuthorListController extends FalcorController {
   }
 
   render() {
-    const styles = {
-      paper: {
-        height: '100%',
-        width: '100%',
-        marginTop: 20,
-        marginBottom: 20,
-        textAlign: 'left',
-        display: 'inline-block',
-      },
-      tabs: {
-        paddingLeft: 30,
-        paddingRight: 30,
-        paddingBottom: 15,
-      },
-      buttons: {
-        marginTop: 24,
-        marginBottom: 12,
-      },
-      authorMenu: {
-        display: 'inline-block',
-        margin: 0,
-      },
-    };
-
     if (this.state.ready) {
       return (
         <div>
