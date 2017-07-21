@@ -4,6 +4,8 @@ import { debounce } from 'lib/utilities';
 import _ from 'lodash';
 import moment from 'moment';
 
+import { updateFieldValue } from 'components/editor/lib/form-field-updaters';
+
 // material-ui
 import TextField from 'material-ui/TextField';
 import Menu from 'material-ui/Menu';
@@ -12,26 +14,18 @@ import MenuItem from 'material-ui/MenuItem';
 export default class EditorSearchBar extends BaseComponent {
   constructor(props) {
     super(props);
-    this.handleSearchChange = this.handleSearchChange.bind(this);
+    this.fieldUpdaters = {
+      searchValue: updateFieldValue.bind(this, 'searchValue', undefined),
+    };
     this.safeSetState({
       searchValue: '',
       searchSuggestions: [],
     });
 
-    this.debouncedGetSuggestions = debounce((query, wasCalledInstantly = false) => {
-      /* Since we provided the instantFlag to the debounced function we have to be careful
-      always to provide the query parameter to the function, or the debounce function will
-      append true as the query value as it always just appends the argument to the back of the
-      provided arguments */
-      let processedQuery = query;
-      if (!wasCalledInstantly) {
-        // If it wasn't called instantly we get the value from state
-        // otherwise we want it directly as setState is asynchronous and
-        // won't give the most updated value
-        processedQuery = this.state.searchValue;
-      }
-      if (!(processedQuery.trim())) {
-        this.safeSetState({ searchSuggestions: [] });
+    this.debouncedGetSuggestions = debounce(() => {
+      const query = this.state.searchValue;
+      if (!(query.trim())) {
+        this.safeSetState({searchSuggestions: []});
         return;
       }
       let pathSets = [];
@@ -86,23 +80,23 @@ export default class EditorSearchBar extends BaseComponent {
         } else {
           suggestions = suggestions.authors[processedQuery];
         }
-        const suggestionsArray = _.map(suggestions, value => value);
-        this.safeSetState({ searchSuggestions: suggestionsArray });
-      });
-    }, this.props.debounceTime || 250, true);
+        else {
+          suggestions = suggestions.authors[query];
+        }
+        const suggestionsArray = _.map(suggestions, (value) => {return value});
+        this.safeSetState({searchSuggestions: suggestionsArray});
+      })
+    }, this.props.debounceTime || 250);
+  }
+
+  componentDidUpdate() {
+    this.debouncedGetSuggestions();
   }
 
   componentWillReceiveProps() {
     this.safeSetState({
       searchValue: '',
       searchSuggestions: [],
-    });
-  }
-
-  handleSearchChange(e) {
-    this.debouncedGetSuggestions(e.target.value);
-    this.safeSetState({
-      searchValue: e.target.value,
     });
   }
 
@@ -123,7 +117,7 @@ export default class EditorSearchBar extends BaseComponent {
             hintText="Article"
             fullWidth
             value={this.state.searchValue}
-            onChange={this.handleSearchChange}
+            onChange={this.fieldUpdaters.searchValue}
           />
           <div>
             <Menu>
@@ -235,10 +229,3 @@ EditorSearchBar.propTypes = {
     }
   },
 }
-
-// <button
-//   type="button"
-//   className="pure-button"
-//   onClick={this.handleClick.bind(this, article)}
-//   disabled={this.props.disabled}
-// >{textShown}</button>
