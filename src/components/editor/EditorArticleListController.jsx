@@ -13,6 +13,25 @@ import Divider from 'material-ui/Divider';
 import {darkBlack} from 'material-ui/styles/colors';
 import RaisedButton from 'material-ui/RaisedButton';
 
+const styles = {
+  paper: {
+    height: '100%',
+    width: '100%',
+    marginTop: 20,
+    marginBottom: 20,
+    textAlign: 'left',
+    display: 'inline-block',
+  },
+  tabs: {
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingBottom: 15,
+  },
+  buttons: {
+    margin: 12,
+    marginBottom: 24,
+  },
+};
 
 const NUM_ARTICLES_IN_PAGE = 50;
 
@@ -65,26 +84,6 @@ export default class EditorArticleListController extends FalcorController {
   }
 
   render() {
-    const styles = {
-      paper: {
-        height: '100%',
-        width: '100%',
-        marginTop: 20,
-        marginBottom: 20,
-        textAlign: 'left',
-        display: 'inline-block',
-      },
-      tabs: {
-        paddingLeft: 30,
-        paddingRight: 30,
-        paddingBottom: 15,
-      },
-      buttons: {
-        margin: 12,
-        marginBottom: 24,
-      },
-    }
-
     if (this.state.ready) {
       // If trying to access inacessible page, redirect to page 1
       if (!this.state.data.articlesByPage) {
