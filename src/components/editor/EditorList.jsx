@@ -7,20 +7,19 @@ import List from 'material-ui/List/List';
 import Subheader from 'material-ui/Subheader';
 import Paper from 'material-ui/Paper';
 
+const styles = {
+  paper: {
+    height: '100%',
+    width: '100%',
+    marginTop: 20,
+    marginBottom: 20,
+    textAlign: 'left',
+    display: 'inline-block',
+  },
+}
 
 export default class EditorArticleList extends BaseComponent {
   render() {
-    const styles = {
-      paper: {
-        height: '100%',
-        width: '100%',
-        marginTop: 20,
-        marginBottom: 20,
-        textAlign: 'left',
-        display: 'inline-block',
-      },
-    }
-
     if (this.props.elements) {
       const elements = this.props.elements;
       return (

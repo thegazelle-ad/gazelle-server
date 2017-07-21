@@ -21,6 +21,7 @@ export default class EditorArticleListController extends FalcorController {
     super(props);
     this.getNewPagePath = this.getNewPagePath.bind(this);
     this.clickSearchSuggestion = this.clickSearchSuggestion.bind(this);
+    this.createListElement = this.createListElement.bind(this);
   }
 
   static getFalcorPathSets(params) {
@@ -49,7 +50,8 @@ export default class EditorArticleListController extends FalcorController {
     browserHistory.push(path);
   }
 
-  createListElement(page, article) {
+  createListElement(article) {
+    const page = this.props.params.page;
     return (
       <Link to={"/articles/page/" + page + "/slug/"+article.slug} key={article.slug}>
         <ListItem
@@ -89,11 +91,6 @@ export default class EditorArticleListController extends FalcorController {
       },
     }
 
-    let data;
-    let page;
-    let maxPage;
-    let length;
-
     if (this.state.ready) {
       // If trying to access inacessible page, redirect to page 1
       if (!this.state.data.articlesByPage) {
@@ -107,13 +104,11 @@ export default class EditorArticleListController extends FalcorController {
         );
       }
 
-      page = this.props.params.page;
-      data = this.state.data.articlesByPage[NUM_ARTICLES_IN_PAGE][page];
-      length = this.state.data.totalAmountOfArticles;
-      maxPage = Math.ceil(length / NUM_ARTICLES_IN_PAGE);
-    }
+      let page = this.props.params.page;
+      let data = this.state.data.articlesByPage[NUM_ARTICLES_IN_PAGE][page];
+      let length = this.state.data.totalAmountOfArticles;
+      let maxPage = Math.ceil(length/NUM_ARTICLES_IN_PAGE);
 
-    if (this.state.ready) {
       return (
         <div>
           <h1>Articles</h1>
@@ -134,7 +129,7 @@ export default class EditorArticleListController extends FalcorController {
               {/* eslint-disable react/jsx-no-bind */}
               <EditorList
                 elements={data}
-                createElement={this.createListElement.bind(null, page)}
+                createElement={this.createListElement}
               />
               {/* eslint-enable react/jsx-no-bind */}
               <RaisedButton
