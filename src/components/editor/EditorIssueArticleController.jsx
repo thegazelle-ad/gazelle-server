@@ -49,15 +49,16 @@ export default class EditorIssueArticleController extends FalcorController {
   componentWillMount() {
     const falcorCallBack = (data) => {
       const issueNumber = this.props.params.issueNumber;
-      data = data.issuesByNumber[issueNumber];
+      let dataInstance = data;
+      dataInstance = dataInstance.issuesByNumber[issueNumber];
       const mainArticles = [];
-      _.forEach(data.categories, (category) => {
+      _.forEach(dataInstance.categories, (category) => {
         _.forEach(category.articles, (article) => {
           mainArticles.push(article);
         });
       });
-      const featuredArticles = data.featured ? [data.featured] : [];
-      const picks = data.picks ? _.map(data.picks, (val) => val) : [];
+      const featuredArticles = dataInstance.featured ? [dataInstance.featured] : [];
+      const picks = dataInstance.picks ? _.map(dataInstance.picks, (val) => val) : [];
       this.safeSetState({
         mainArticles,
         featuredArticles,
@@ -70,15 +71,15 @@ export default class EditorIssueArticleController extends FalcorController {
   componentWillReceiveProps(nextProps) {
     const falcorCallBack = (data) => {
       const issueNumber = this.props.params.issueNumber;
-      data = data.issuesByNumber[issueNumber];
+      const dataInstance = data.issuesByNumber[issueNumber];
       const mainArticles = [];
-      _.forEach(data.categories, (category) => {
+      _.forEach(dataInstance.categories, (category) => {
         _.forEach(category.articles, (article) => {
           mainArticles.push(article);
         });
       });
-      const featuredArticles = data.featured ? [data.featured] : [];
-      const picks = data.picks ? _.map(data.picks, (val) => val) : [];
+      const featuredArticles = dataInstance.featured ? [dataInstance.featured] : [];
+      const picks = dataInstance.picks ? _.map(dataInstance.picks, (val) => val) : [];
       this.safeSetState({
         mainArticles,
         featuredArticles,

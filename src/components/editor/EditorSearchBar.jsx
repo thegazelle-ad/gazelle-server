@@ -193,6 +193,7 @@ export default class EditorSearchBar extends BaseComponent {
   }
 }
 
+/* eslint-disable consistent-return */
 EditorSearchBar.propTypes = {
   model: React.PropTypes.object.isRequired,
   fields: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,

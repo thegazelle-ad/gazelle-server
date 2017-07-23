@@ -20,23 +20,24 @@ export default class EditorAuthorListController extends FalcorController {
       always to provide the query parameter to the function, or the debounce function will
       append true as the query value as it always just appends the argument to the back of the
       provided arguments */
+      let queryInstance = query;
       if (!wasCalledInstantly) {
         // If it wasn't called instantly we get the value from state
         // otherwise we want it directly as setState is asynchronous and
         // won't give the most updated value
-        query = this.state.slugSearchValue;
+        queryInstance = this.state.slugSearchValue;
       }
-      if (!(query.trim())) {
+      if (!(queryInstance.trim())) {
         this.safeSetState({ searchSuggestions: [] });
         return;
       }
-      this.props.model.get(['search', 'authors', query, { length: 3 }, ['name', 'slug']])
+      this.props.model.get(['search', 'authors', queryInstance, { length: 3 }, ['name', 'slug']])
       .then((x) => {
         if (!x) {
           this.safeSetState({ searchSuggestions: [] });
           return;
         }
-        const suggestions = x.json.search.authors[query];
+        const suggestions = x.json.search.authors[queryInstance];
         const suggestionsArray = _.map(suggestions, value => value);
         this.safeSetState({ searchSuggestions: suggestionsArray });
       });
