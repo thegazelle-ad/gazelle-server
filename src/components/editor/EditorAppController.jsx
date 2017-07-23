@@ -3,12 +3,21 @@ import BaseComponent from 'lib/BaseComponent';
 import { Link, browserHistory } from 'react-router';
 import http from 'http';
 
-const HOSTNAME = process.env.NODEENV === 'production' ?
-  'admin.thegazelle.org' : process.env.NODEENV === 'beta' ?
-  'adminbeta.thegazelle.org' : 'localhost';
-const PORT = process.env.NODEENV === 'production' ?
-  443 : process.env.NODEENV === 'beta' ?
-  443 : 4000;
+let HOSTNAME = '';
+let PORT = '';
+
+if (process.env.NODEENV === 'production') {
+  HOSTNAME = 'admin.thegazelle.org';
+} else if (process.env.NODEENV === 'beta') {
+  HOSTNAME = 'adminbeta.thegazelle.org';
+} else {
+  HOSTNAME = 'localhost';
+}
+if (process.env.NODEENV === 'production' || process.env.NODEENV === 'beta') {
+  PORT = 443;
+} else {
+  PORT = 4000;
+}
 
 export default class EditorAppController extends BaseComponent {
   constructor(props) {
@@ -64,10 +73,34 @@ export default class EditorAppController extends BaseComponent {
             <h2>Gazelle Editor Tools</h2>
             <p>Please choose what you would like to edit</p>
             <ul>
-              <li><Link to="/articles" activeClassName="active-link" onClick={this.handleDisableLink}>Articles</Link></li>
-              <li><Link to="/authors" activeClassName="active-link" onClick={this.handleDisableLink}>Authors</Link></li>
-              <li><Link to="/issues" activeClassName="active-link" onClick={this.handleDisableLink}>Issues</Link></li>
-              <li><Link to="/images" activeClassName="active-link" onClick={this.handleDisableLink}>Images</Link></li>
+              <li>
+                <Link
+                  to="/articles" activeClassName="active-link"
+                  onClick={this.handleDisableLink}
+                >Articles
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/authors" activeClassName="active-link"
+                  onClick={this.handleDisableLink}
+                >Authors
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/issues" activeClassName="active-link"
+                  onClick={this.handleDisableLink}
+                >Issues
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/images" activeClassName="active-link"
+                  onClick={this.handleDisableLink}
+                >Images
+                </Link>
+              </li>
             </ul>
           </div>
           <div className="pure-u-1-2">

@@ -116,7 +116,7 @@ export default class EditorIssueListController extends FalcorController {
             </form>
             <p>Choose the issue you want to edit in the dropdown here
             and pick which type of editing you would like to do in the list below</p>
-            <select defaultValue={issueNumber ? issueNumber : 'none'} onChange={this.handleChange}>
+            <select defaultValue={issueNumber || 'none'} onChange={this.handleChange}>
               <option value="none" key="none">None Chosen</option>
               {
                 _.map(data, (issue, number) => {

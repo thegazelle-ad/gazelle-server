@@ -167,14 +167,16 @@ export default class FalcorRouter extends BaseRouter.createClass([
   },
   {
     // Get article data from Ghost API
-    route: "articlesBySlug[{keys:slugs}]['id', 'image', 'slug', 'title', 'markdown', 'html', 'teaser']",
+    route: "articlesBySlug[{keys:slugs}]['id', 'image', 'slug', 'title', 'markdown', 'html', 'teaser']", // eslint-disable-line max-len
     get: (pathSet) => (
       new Promise((resolve) => {
         const requestedFields = pathSet[2];
         let query = 'filter=';
+        /* eslint-disable prefer-template*/
         pathSet.slugs.forEach((slug, index) => {
           query += (index > 0 ? ',' : '') + `slug:'${slug}'`;
         });
+         /* eslint-enable prefer-template*/
         query += '&fields=slug';
         requestedFields.forEach((field) => {
           if (field !== 'slug') {
@@ -198,7 +200,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
           resolve(results);
         })
         .catch((e) => {
-          console.error('Error was found in Ghost query for slugs:'); // eslint-disable-line no-console
+          console.error('Error was found in Ghost query for slugs:'); // eslint-disable-line no-console,max-len
           console.error(pathSet.slugs); // eslint-disable-line no-console
           console.error(e); // eslint-disable-line no-console
           resolve([]);
@@ -237,13 +239,14 @@ export default class FalcorRouter extends BaseRouter.createClass([
         db.articleQuery(pathSet.slugs, requestedFields).then((data) => {
           const results = [];
           data.forEach((article) => {
-            if (article.hasOwnProperty('publishedAt') && (article.publishedAt instanceof Date)) {
-              article.publishedAt = article.publishedAt.getTime();
+            const articleInstance = article;
+            if (articleInstance.hasOwnProperty('publishedAt') && (articleInstance.publishedAt instanceof Date)) { // eslint-disable-line max-len
+              articleInstance.publishedAt = articleInstance.publishedAt.getTime();
             }
             requestedFields.forEach((field) => {
               results.push({
-                path: ['articlesBySlug', article.slug, field],
-                value: article[field],
+                path: ['articlesBySlug', articleInstance.slug, field],
+                value: articleInstance[field],
               });
             });
           });
@@ -425,7 +428,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
     articlesByPage[pageLength][pageNumber][{length: pageLength}]
     where {length: pageLength} makes use of falcor's range object.
     */
-    route: 'articlesByPage[{integers:pageLengths}][{integers:pageNumbers}][{integers:indicesOnPage}]',
+    route: 'articlesByPage[{integers:pageLengths}][{integers:pageNumbers}][{integers:indicesOnPage}]', // eslint-disable-line max-len
     get: (pathSet) => (
       new Promise((resolve) => {
         const results = [];
@@ -480,6 +483,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
             });
           });
         });
+        return null;
       })
     ),
   },
@@ -598,7 +602,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
       depending on whether it is fetched directly from categories which is ordered chronologically
       and all articles from that category are fetched or from an issue where it is ordered by
       editor tools */
-    route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers:indices}]['id', 'name', 'slug']",
+    route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers:indices}]['id', 'name', 'slug']", // eslint-disable-line max-len
     get: (pathSet) => (
       new Promise((resolve) => {
         const requestedFields = pathSet[4];
@@ -625,7 +629,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
   },
   {
     // Get articles within issue categories
-    route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers:categoryIndices}]['articles'][{integers:articleIndices}]",
+    route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers:categoryIndices}]['articles'][{integers:articleIndices}]", // eslint-disable-line max-len
     get: (pathSet) => (
       // This will currently fetch every single article from the issue
       // every time, and then just only return the ones asked for
@@ -679,13 +683,14 @@ export default class FalcorRouter extends BaseRouter.createClass([
           const results = [];
           data.forEach((issue) => {
             // Convert Date object to time integer
-            if (issue.hasOwnProperty('publishedAt') && (issue.publishedAt instanceof Date)) {
-              issue.publishedAt = issue.publishedAt.getTime();
+            const issueInstance = issue;
+            if (issueInstance.hasOwnProperty('publishedAt') && (issueInstance.publishedAt instanceof Date)) { // eslint-disable-line max-len
+              issueInstance.publishedAt = issueInstance.publishedAt.getTime();
             }
             requestedFields.forEach((field) => {
               results.push({
-                path: ['issuesByNumber', issue.issueOrder, field],
-                value: issue[mapFields(field)],
+                path: ['issuesByNumber', issueInstance.issueOrder, field],
+                value: issueInstance[mapFields(field)],
               });
             });
           });
@@ -900,10 +905,11 @@ export default class FalcorRouter extends BaseRouter.createClass([
         });
         db.searchPostsQuery(pathSet.queries, minIndex, maxIndex).then((data) => {
           // Map all the indices down to fit the indices returned by the db call
-          pathSet.indices = pathSet.indices.map((index) => index - minIndex);
+          const pathSetInstance = pathSet;
+          pathSetInstance.indices = pathSetInstance.indices.map((index) => index - minIndex);
           const results = [];
           _.forEach(data, (queryResults, query) => {
-            pathSet.indices.forEach((index) => {
+            pathSetInstance.indices.forEach((index) => {
               if (index < queryResults.length) {
                 results.push({
                   path: ['search', 'posts', query, index],
@@ -934,10 +940,11 @@ export default class FalcorRouter extends BaseRouter.createClass([
         });
         db.searchAuthorsQuery(pathSet.queries, minIndex, maxIndex).then((data) => {
           // Map all the indices down to fit the indices returned by the db call
-          pathSet.indices = pathSet.indices.map((index) => index - minIndex);
+          const pathSetInstance = pathSet;
+          pathSetInstance.indices = pathSetInstance.indices.map((index) => index - minIndex);
           const results = [];
           _.forEach(data, (queryResults, query) => {
-            pathSet.indices.forEach((index) => {
+            pathSetInstance.indices.forEach((index) => {
               if (index < queryResults.length) {
                 results.push({
                   path: ['search', 'authors', query, index],
@@ -967,10 +974,11 @@ export default class FalcorRouter extends BaseRouter.createClass([
         });
         db.searchTeamsQuery(pathSet.queries, minIndex, maxIndex).then((data) => {
           // Map all the indices down to fit the indices returned by the db call
-          pathSet.indices = pathSet.indices.map((index) => index - minIndex);
+          const pathSetInstance = pathSet;
+          pathSetInstance.indices = pathSetInstance.indices.map((index) => index - minIndex);
           const results = [];
           _.forEach(data, (queryResults, query) => {
-            pathSet.indices.forEach((index) => {
+            pathSetInstance.indices.forEach((index) => {
               if (index < queryResults.length) {
                 results.push({
                   path: ['search', 'teams', query, index],
@@ -1103,6 +1111,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
   },
 ])
 // Begin actual class methods below
+/* eslint-disable no-useless-constructor */
 {
   constructor() {
     super();

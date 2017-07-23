@@ -5,11 +5,13 @@ import _ from 'lodash';
 import update from 'react-addons-update';
 import { Link } from 'react-router';
 
+/* eslint-disable no-nested-ternary */
 const UPLOADURL = process.env.NODE_ENV
   ? (process.env.NODE_ENV === 'production'
     ? 'https://admin.thegazelle.org/upload'
   : 'https://adminbeta.thegazelle.org/upload')
 : 'http://localhost:4000/upload';
+/* eslint-enable no-nested-ternary */
 
 export default class EditorImageUploader extends BaseComponent {
   constructor() {
