@@ -60,10 +60,10 @@ export default class FalcorController extends BaseComponent {
         data,
       });
     } else {
-      if (process.env.NODEENV !== 'production') {
+      if (process.env.NODE_ENV !== 'production') {
         console.warn( // eslint-disable-line no-console
-          `Serverside render of component: ${this.constructor.name} + 
-           failed. Data not in cache. Falcor Path attempted fetched was: 
+          `Serverside render of component: ${this.constructor.name} +
+           failed. Data not in cache. Falcor Path attempted fetched was:
            ${JSON.stringify(falcorPathSetsInstance)}`);
       }
       this.safeSetState({
@@ -113,9 +113,9 @@ export default class FalcorController extends BaseComponent {
         });
         this.safeSetState(stateToSet);
       } else {
-        const err = new Error(`FalcorPathSets: 
+        const err = new Error(`FalcorPathSets:
           ${JSON.stringify(falcorPathSetsInstance)} returned no data.`);
-        if (process.env.NODEENV !== 'production') {
+        if (process.env.NODE_ENV !== 'production') {
           console.error(err); // eslint-disable-line no-console
         }
         Object.assign(stateToSet, {
@@ -130,7 +130,7 @@ export default class FalcorController extends BaseComponent {
       }
     })
     .catch((e) => {
-      if (process.env.NODEENV !== 'production') {
+      if (process.env.NODE_ENV !== 'production') {
         console.error(e); // eslint-disable-line no-console
         if (e instanceof Error) {
           console.error(e.stack); // eslint-disable-line no-console
@@ -170,7 +170,7 @@ export default class FalcorController extends BaseComponent {
       // }
     })
     .catch((e) => {
-      if (process.env.NODEENV !== 'production') {
+      if (process.env.NODE_ENV !== 'production') {
         console.error(e); // eslint-disable-line no-console
         if (e instanceof Error) {
           console.error(e.stack); // eslint-disable-line no-console
@@ -183,8 +183,8 @@ export default class FalcorController extends BaseComponent {
         error = e[0].value;
       }
       const ternaryError = 'The error message was:';
-      const errorMessage = `There was an error while updating data, please contact the developers, 
-        and we recommend refreshing the page. 
+      const errorMessage = `There was an error while updating data, please contact the developers,
+        and we recommend refreshing the page.
           ${error} !== null ? ${ternaryError} ${error.message} : ""`;
       window.alert(errorMessage);
     });
@@ -231,7 +231,7 @@ export default class FalcorController extends BaseComponent {
       // }
     })
     .catch((e) => {
-      if (process.env.NODEENV !== 'production') {
+      if (process.env.NODE_ENV !== 'production') {
         console.error(e); // eslint-disable-line no-console
         if (e instanceof Error) {
           console.error(e.stack); // eslint-disable-line no-console
@@ -244,8 +244,8 @@ export default class FalcorController extends BaseComponent {
         error = e[0].value;
       }
       const ternaryError = 'The error message was:';
-      const errorMessage = `There was an error while updating data, please contact the developers, 
-        and we recommend refreshing the page. 
+      const errorMessage = `There was an error while updating data, please contact the developers,
+        and we recommend refreshing the page.
           ${error} !== null ? ${ternaryError} ${error.message} : ""`;
       window.alert(errorMessage);
     });

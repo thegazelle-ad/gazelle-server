@@ -9,9 +9,9 @@ const $ref = falcor.Model.ref;
 export const mapGhostNames = (falcorName) => {
   switch (falcorName) {
     case 'teaser':
-      return 'metaDescription';
+      return 'meta_description';
     case 'issueNumber':
-      return 'issueOrder';
+      return 'issue_order';
     default:
       return falcorName;
   }
@@ -51,7 +51,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
     ),
   },
   {
-    route: "authorsBySlug[{keys:slugs}]['id', 'name', 'image', 'biography', 'slug', 'jobTitle']",
+    route: "authorsBySlug[{keys:slugs}]['id', 'name', 'image', 'biography', 'slug', 'job_title']",
     get: (pathSet) => (
       new Promise((resolve) => {
         const requestedFields = pathSet[2];
@@ -232,7 +232,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
   },
   {
     // Get custom article data from MariaDB
-    route: "articlesBySlug[{keys:slugs}]['category', 'publishedAt', 'views']",
+    route: "articlesBySlug[{keys:slugs}]['category', 'published_at', 'views']",
     get: (pathSet) => (
       new Promise((resolve) => {
         const requestedFields = pathSet[2];
@@ -240,8 +240,8 @@ export default class FalcorRouter extends BaseRouter.createClass([
           const results = [];
           data.forEach((article) => {
             const articleInstance = article;
-            if (articleInstance.hasOwnProperty('publishedAt') && (articleInstance.publishedAt instanceof Date)) { // eslint-disable-line max-len
-              articleInstance.publishedAt = articleInstance.publishedAt.getTime();
+            if (articleInstance.hasOwnProperty('published_at') && (articleInstance.published_at instanceof Date)) { // eslint-disable-line max-len
+              articleInstance.published_at = articleInstance.published_at.getTime();
             }
             requestedFields.forEach((field) => {
               results.push({
@@ -564,7 +564,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
           const results = [];
           data.forEach((row) => {
             results.push({
-              path: ['issuesByNumber', row.issueOrder, 'featured'],
+              path: ['issuesByNumber', row.issue_order, 'featured'],
               value: $ref(['articlesBySlug', row.slug]),
             });
           });
@@ -666,12 +666,12 @@ export default class FalcorRouter extends BaseRouter.createClass([
   },
   {
     // Get issue data
-    route: "issuesByNumber[{integers:issueNumbers}]['id', 'publishedAt', 'name', 'issueNumber']",
+    route: "issuesByNumber[{integers:issueNumbers}]['id', 'published_at', 'name', 'issueNumber']",
     get: (pathSet) => {
       const mapFields = (field) => {
         switch (field) {
           case 'issueNumber':
-            return 'issueOrder';
+            return 'issue_order';
           default:
             return field;
         }
@@ -684,12 +684,12 @@ export default class FalcorRouter extends BaseRouter.createClass([
           data.forEach((issue) => {
             // Convert Date object to time integer
             const issueInstance = issue;
-            if (issueInstance.hasOwnProperty('publishedAt') && (issueInstance.publishedAt instanceof Date)) { // eslint-disable-line max-len
-              issueInstance.publishedAt = issueInstance.publishedAt.getTime();
+            if (issueInstance.hasOwnProperty('published_at') && (issueInstance.published_at instanceof Date)) { // eslint-disable-line max-len
+              issueInstance.published_at = issueInstance.published_at.getTime();
             }
             requestedFields.forEach((field) => {
               results.push({
-                path: ['issuesByNumber', issueInstance.issueOrder, field],
+                path: ['issuesByNumber', issueInstance.issue_order, field],
                 value: issueInstance[mapFields(field)],
               });
             });
@@ -707,8 +707,8 @@ export default class FalcorRouter extends BaseRouter.createClass([
             throw new Error('Error while updating issue data');
           }
           resolve([{
-            path: ['issuesByNumber', parseInt(issueNumber, 10), 'publishedAt'],
-            value: issueObject.publishedAt,
+            path: ['issuesByNumber', parseInt(issueNumber, 10), 'published_at'],
+            value: issueObject.published_at,
           }, {
             path: ['latestIssue'],
             invalidated: true,
@@ -797,12 +797,12 @@ export default class FalcorRouter extends BaseRouter.createClass([
           const results = [];
           const publishTime = data.date.getTime();
           results.push({
-            path: ['issuesByNumber', issueNumber, 'publishedAt'],
+            path: ['issuesByNumber', issueNumber, 'published_at'],
             value: publishTime,
           });
           data.publishedArticles.forEach((slug) => {
             results.push({
-              path: ['articlesBySlug', slug, 'publishedAt'],
+              path: ['articlesBySlug', slug, 'published_at'],
               value: publishTime,
             });
           });
@@ -882,7 +882,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
         db.latestIssueQuery().then((row) => {
           resolve([{
             path: ['latestIssue'],
-            value: $ref(['issuesByNumber', row[0].issueOrder]),
+            value: $ref(['issuesByNumber', row[0].issue_order]),
           }]);
         });
       })

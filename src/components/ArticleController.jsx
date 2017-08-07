@@ -15,7 +15,7 @@ export default class ArticleController extends FalcorController {
     return [
       // Fetch article data
       ['articlesBySlug', params.articleSlug,
-       ['title', 'teaser', 'html', 'publishedAt', 'issueNumber', 'category', 'slug', 'image']],
+       ['title', 'teaser', 'html', 'published_at', 'issueNumber', 'category', 'slug', 'image']],
       ['articlesBySlug', params.articleSlug, 'authors', { length: 10 }, ['name', 'slug']],
 
       // Fetch two related articles
@@ -38,7 +38,7 @@ export default class ArticleController extends FalcorController {
     // We don't want beta views to count towards the total view count
     // and we only want to count each view once per session (might use cookies
     // later to make this consistent for a user in general?)
-    if (process.env.NODEENV !== 'beta' && !isArticleViewed(slug)) {
+    if (process.env.NODE_ENV !== 'beta' && !isArticleViewed(slug)) {
       viewArticle(slug);
       this.props.model.call(['articlesBySlug', slug, 'addView'], [], [], []).then(() => {});
     }
@@ -47,7 +47,7 @@ export default class ArticleController extends FalcorController {
   componentWillReceiveProps(nextProps, nextContext) {
     super.componentWillReceiveProps(nextProps, nextContext);
     const slug = this.props.params.articleSlug;
-    if (process.env.NODEENV !== 'beta' && !isArticleViewed(slug)) {
+    if (process.env.NODE_ENV !== 'beta' && !isArticleViewed(slug)) {
       viewArticle(slug);
       this.props.model.call(['articlesBySlug', slug, 'addView'], [], [], []).then(() => {});
     }
@@ -85,7 +85,7 @@ export default class ArticleController extends FalcorController {
           { property: 'og:image:width', content: '540' }, // 1.8:1 ratio
           { property: 'og:image:height', content: '300' },
           { property: 'og:description', content: articleData.teaser },
-          { property: 'og:siteName', content: 'The Gazelle' },
+          { property: 'og:site_name', content: 'The Gazelle' },
         ];
         return (
           <div>
@@ -96,7 +96,7 @@ export default class ArticleController extends FalcorController {
             <Article
               title={articleData.title}
               teaser={articleData.teaser}
-              publishedAt={articleData.publishedAt}
+              published_at={articleData.published_at}
               html={articleData.html}
               authors={articleData.authors}
               featuredImage={articleData.image}

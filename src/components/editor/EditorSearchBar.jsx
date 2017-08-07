@@ -35,7 +35,7 @@ export default class EditorSearchBar extends BaseComponent {
           // Add required fields
           fields = this.props.fields.concat(['title', 'slug']);
           if (this.props.showPubDate) {
-            fields.push('publishedAt');
+            fields.push('published_at');
           }
           // Remove duplicates
           fields = _.uniq(fields);
@@ -131,8 +131,8 @@ export default class EditorSearchBar extends BaseComponent {
                 let textShown = article.title;
                 if (this.props.showPubDate) {
                   let date;
-                  if (article.publishedAt) {
-                    date = formatDate(new Date(article.publishedAt));
+                  if (article.published_at) {
+                    date = formatDate(new Date(article.published_at));
                   } else {
                     date = 'Unpublished';
                   }

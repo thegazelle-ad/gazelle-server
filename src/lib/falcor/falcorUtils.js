@@ -146,7 +146,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
         // It is also needed in the software development to know how many
         // items you will actually receive when overfetching.
         if (!curObject.hasOwnProperty('length')) {
-          if (process.env.NODEENV !== 'production') {
+          if (process.env.NODE_ENV !== 'production') {
             console.warn('No length property on object in cache. This might be a developer mistake.'); // eslint-disable-line no-console, max-len
             console.log('Current object in pathSetsInCache:'); // eslint-disable-line no-console
             console.log(curObject); // eslint-disable-line no-console

@@ -184,14 +184,14 @@ export function markdownLength(str) {
 
 const H1PRIME = 4189793;
 const H2PRIME = 3296731;
-const BIGPRIME = 5003943032159437;
+const BIG_PRIME = 5003943032159437;
 
 export function hash(password) {
   let num = password.charCodeAt(0);
   for (let i = 1; i < password.length; i++) {
-    num = ((num * 256) % BIGPRIME + password.charCodeAt(i)) % BIGPRIME;
+    num = ((num * 256) % BIG_PRIME + password.charCodeAt(i)) % BIG_PRIME;
   }
-  const hashInstance = ((num % H1PRIME) + 5 * (num % H2PRIME) + 1 + 25) % BIGPRIME;
+  const hashInstance = ((num % H1PRIME) + 5 * (num % H2PRIME) + 1 + 25) % BIG_PRIME;
   return hashInstance;
 }
 

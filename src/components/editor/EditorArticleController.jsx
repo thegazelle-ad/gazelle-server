@@ -74,7 +74,7 @@ export default class EditorArticleController extends FalcorController {
       [
         'articlesBySlug',
         params.slug,
-        ['title', 'category', 'teaser', 'image', 'id', 'publishedAt'],
+        ['title', 'category', 'teaser', 'image', 'id', 'published_at'],
       ],
       ['articlesBySlug', params.slug, 'authors', { length: 10 }, ['id', 'name']],
       ['categoriesByIndex', { length: 30 }, ['name', 'slug']],
@@ -388,12 +388,12 @@ export default class EditorArticleController extends FalcorController {
     const slug = this.props.params.slug;
     const jsonGraphEnvelope = {
       paths: [
-        ['articlesBySlug', slug, 'publishedAt'],
+        ['articlesBySlug', slug, 'published_at'],
       ],
       jsonGraph: {
         articlesBySlug: {
           [slug]: {
-            publishedAt: null,
+            published_at: null,
           },
         },
       },
@@ -506,8 +506,8 @@ export default class EditorArticleController extends FalcorController {
             />
           </form>
           {
-            article.publishedAt ?
-            `The article was published at ${new Date(article.publishedAt)}` :
+            article.published_at ?
+            `The article was published at ${new Date(article.published_at)}` :
             'The article has yet to be published. It will be published automatically' +
             ' when you publish the issue that contains it.'
           } <br />
@@ -515,7 +515,7 @@ export default class EditorArticleController extends FalcorController {
             type="button"
             className="pure-button"
             onClick={this.unpublish}
-            disabled={!article.publishedAt}
+            disabled={!article.published_at}
           >Unpublish</button>
         </div>
       );

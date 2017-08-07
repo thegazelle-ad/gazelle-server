@@ -47,7 +47,7 @@ export default class EditorAuthorController extends FalcorController {
   }
   static getFalcorPathSets(params) {
     return [
-      ['authorsBySlug', params.slug, ['name', 'image', 'biography', 'slug', 'jobTitle']],
+      ['authorsBySlug', params.slug, ['name', 'image', 'biography', 'slug', 'job_title']],
       // ['authorsBySlug', params.slug, 'articles', {length: 100}, 'title'],
     ];
   }
@@ -231,8 +231,8 @@ export default class EditorAuthorController extends FalcorController {
             Change Job Title:
             <input
               type="text"
-              defaultValue={author.jobTitle}
-              name="jobTitle"
+              defaultValue={author.job_title}
+              name="job_title"
               disabled={this.state.saving}
             />
             Change Image URL (please use https:// for s3 and other secure links):

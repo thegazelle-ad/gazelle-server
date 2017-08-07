@@ -43,7 +43,7 @@ export default class Login extends BaseComponent {
   }
 
   render() {
-    const ENV = process.env.NODEENV;
+    const ENV = process.env.NODE_ENV;
     if (ENV === 'production') {
       return <NotFound />;
     }
