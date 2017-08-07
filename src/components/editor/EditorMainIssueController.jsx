@@ -12,7 +12,7 @@ export default class EditorMainIssueController extends FalcorController {
     });
   }
   static getFalcorPathSets(params) {
-    return ['issuesByNumber', params.issueNumber, 'publishedAt'];
+    return ['issuesByNumber', params.issueNumber, 'published_at'];
   }
 
   publishIssue() {
@@ -26,7 +26,7 @@ export default class EditorMainIssueController extends FalcorController {
         { length: 50 }, ['title', 'teaser', 'category', 'html']],
       ['issuesByNumber', this.props.params.issueNumber,
        'categories', { length: 20 }, 'articles', { length: 50 }, 'authors', 0],
-      ['issuesByNumber', this.props.params.issueNumber, ['id', 'publishedAt', 'name']],
+      ['issuesByNumber', this.props.params.issueNumber, ['id', 'published_at', 'name']],
     ];
     this.props.model.get(...falcorPathSets).then((x) => {
       if (!x) {
@@ -38,7 +38,7 @@ export default class EditorMainIssueController extends FalcorController {
         const issue = x.json.issuesByNumber[issueNumber];
         const fields =
          falcorPathSets[0][falcorPathSets[0].length - 1].filter((field) => field !== 'title');
-        if (issue.publishedAt) {
+        if (issue.published_at) {
           if (!window.confirm('This article is already published, do you want to republish it?')) {
             return;
           }
@@ -91,11 +91,11 @@ export default class EditorMainIssueController extends FalcorController {
     };
     this.safeSetState({ publishing: true });
     this.falcorUpdate({
-      paths: [['issuesByNumber', this.props.params.issueNumber, 'publishedAt']],
+      paths: [['issuesByNumber', this.props.params.issueNumber, 'published_at']],
       jsonGraph: {
         issuesByNumber: {
           [this.props.params.issueNumber]: {
-            publishedAt: null,
+            published_at: null,
           },
         },
       },
@@ -107,7 +107,7 @@ export default class EditorMainIssueController extends FalcorController {
       if (!this.state.data) {
         return <p>This issue does not exist</p>;
       }
-      const published = this.state.data.issuesByNumber[this.props.params.issueNumber].publishedAt;
+      const published = this.state.data.issuesByNumber[this.props.params.issueNumber].published_at;
       return (
         <div>
           {

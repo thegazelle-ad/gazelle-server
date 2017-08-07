@@ -12,7 +12,7 @@ export default class Archives extends BaseComponent {
           <Link to={`/issue/ ${issue.issueNumber}`}>
             <h1 className="archives__issue-item__issue-number">{`Issue ${issue.issueNumber}`}</h1>
             <p className="archives__issue-item__publication-date">
-                {moment(issue.publishedAt).format('MMM DD, YYYY')}
+                {moment(issue.published_at).format('MMM DD, YYYY')}
             </p>
           </Link>
         </div>

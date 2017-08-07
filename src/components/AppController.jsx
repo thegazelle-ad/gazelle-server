@@ -26,11 +26,11 @@ export default class AppController extends FalcorController {
       const issueNumber = mapLegacyIssueSlugsToIssueNumber(params.issueNumber);
       return [
         ['latestIssue', ['issueNumber']], // Used for robustness when setting navigationData
-        ['issuesByNumber', issueNumber, ['publishedAt', 'issueNumber']],
+        ['issuesByNumber', issueNumber, ['published_at', 'issueNumber']],
       ];
     } // User is on home page
     return [
-      ['latestIssue', ['publishedAt', 'issueNumber']],
+      ['latestIssue', ['published_at', 'issueNumber']],
     ];
   }
 

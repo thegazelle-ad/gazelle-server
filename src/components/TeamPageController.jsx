@@ -16,7 +16,7 @@ export default class TeamPageController extends FalcorController {
       ['teamsByIndex', { length: 10 }, ['name']],
       ['teamsByIndex',
        { length: 10 }, 'authors',
-        { length: 50 }, ['name', 'slug', 'jobTitle', 'image']],
+        { length: 50 }, ['name', 'slug', 'job_title', 'image']],
     ];
   }
 

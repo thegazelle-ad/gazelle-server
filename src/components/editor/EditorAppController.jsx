@@ -6,14 +6,14 @@ import http from 'http';
 let HOSTNAME = '';
 let PORT = '';
 
-if (process.env.NODEENV === 'production') {
+if (process.env.NODE_ENV === 'production') {
   HOSTNAME = 'admin.thegazelle.org';
-} else if (process.env.NODEENV === 'beta') {
+} else if (process.env.NODE_ENV === 'beta') {
   HOSTNAME = 'adminbeta.thegazelle.org';
 } else {
   HOSTNAME = 'localhost';
 }
-if (process.env.NODEENV === 'production' || process.env.NODEENV === 'beta') {
+if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'beta') {
   PORT = 443;
 } else {
   PORT = 4000;

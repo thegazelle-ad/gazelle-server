@@ -6,7 +6,7 @@ import update from 'react-addons-update';
 import { Link } from 'react-router';
 
 /* eslint-disable no-nested-ternary */
-const UPLOADURL = process.env.NODE_ENV
+const UPLOAD_URL = process.env.NODE_ENV
   ? (process.env.NODE_ENV === 'production'
     ? 'https://admin.thegazelle.org/upload'
   : 'https://adminbeta.thegazelle.org/upload')
@@ -77,7 +77,7 @@ export default class EditorImageUploader extends BaseComponent {
                             error logged in developer console`;
       this.handleUploadTerminated(fileObject.metaData.name, 3, undefined, errorMessage);
     };
-    xhr.open('POST', UPLOADURL, true);
+    xhr.open('POST', UPLOAD_URL, true);
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     // Put file in request and assign user-defined name
     formData.set('image', file, fileObject.metaData.name);

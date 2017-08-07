@@ -66,7 +66,7 @@ export default class Header extends BaseComponent {
                 />
               </svg>
             </a>
-            <a href="https://www.instagram.com/thegazelleAd/" className="header__social--instagram">
+            <a href="https://www.instagram.com/thegazelle_ad/" className="header__social--instagram">
               <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
                 <path
                   className="header__social--instagram--bg"

@@ -23,9 +23,9 @@ import s3Config from '../config/s3.config.js';
 import s3 from 's3';
 import AWS from 'aws-sdk';
 
-if (process.env.NODEENV === 'production') {
+if (process.env.NODE_ENV === 'production') {
   console.log('PRODUCTION BUILD'); // eslint-disable-line no-console
-} else if (process.env.NODEENV === 'beta') {
+} else if (process.env.NODE_ENV === 'beta') {
   console.log('BETA BUILD'); // eslint-disable-line no-console
 } else {
   console.log('DEVELOPMENT BUILD'); // eslint-disable-line no-console
@@ -33,7 +33,7 @@ if (process.env.NODEENV === 'production') {
 
 // Allow node to use sourcemaps
 
-if (process.env.NODEENV !== 'production') {
+if (process.env.NODE_ENV !== 'production') {
   sourcemap.install();
 }
 
@@ -74,7 +74,7 @@ const buildMainHtmlString = (body, cache) => {
           ${body}
           </div>
           <script>
-            var InitialCache = ${JSON.stringify(cache)};
+            var _initialCache = ${JSON.stringify(cache)};
           </script>
           <script src="/static/build/client.js?h=${mainClientHash}"></script>
         </body>
@@ -108,7 +108,7 @@ const editorHtmlString = (
 const serverModel = new falcor.Model({
   source: new FalcorRouter(),
   // maxSize is 400 MB in production and 80 MB when in development or beta mode
-  maxSize: process.env.NODEENV === 'production' ? 400 * 1000 * 1000 : 80 * 1000 * 1000,
+  maxSize: process.env.NODE_ENV === 'production' ? 400 * 1000 * 1000 : 80 * 1000 * 1000,
   collectRatio: 0.75,
 }).batch();
 
@@ -204,7 +204,7 @@ mainApp.use('/static', express.static('static'));
 
 mainApp.use(compression());
 
-if (process.env.NODEENV === 'beta') {
+if (process.env.NODE_ENV === 'beta') {
   mainApp.get('/login', (req, res) => {
     match({ routes: mainRoutes, location: req.url },
       (error, redirectLocation, renderProps) => {
@@ -216,7 +216,7 @@ if (process.env.NODEENV === 'beta') {
           renderApp(renderProps, true).then((html) => {
             res.status(200).send(html);
           }).catch((err) => {
-            if (process.env.NODEENV !== 'production') {
+            if (process.env.NODE_ENV !== 'production') {
               console.error('Failed to render: ', req.url); // eslint-disable-line no-console
               console.error(err.stack || err); // eslint-disable-line no-console
               res.status(500).send(err.stack || err);
@@ -249,7 +249,7 @@ if (process.env.NODEENV === 'beta') {
           }).catch((err) => {
             console.error('Failed to render: ', req.url); // eslint-disable-line no-console
             console.error(err.stack || err); // eslint-disable-line no-console
-            if (process.env.NODEENV !== 'production') {
+            if (process.env.NODE_ENV !== 'production') {
               res.status(500).send(err.stack || err);
             } else {
               res.status(500).send('There was an error while serving you this webpage.' +
@@ -270,13 +270,13 @@ if (process.env.NODEENV === 'beta') {
 // To run on port 80:
 //    Development build: run `sudo PORT=80 npm start`
 //    Production build: run `sudo npm start`
-mainApp.listen(process.env.MAINPORT ? process.env.MAINPORT : 3000, err => {
+mainApp.listen(process.env.MAIN_PORT ? process.env.MAIN_PORT : 3000, err => {
   if (err) {
     console.error(err); // eslint-disable-line no-console
     return;
   }
   console.log( // eslint-disable-line no-console
-    `The Gazelle Website started on port ${process.env.MAINPORT ? process.env.MAINPORT : 3000}`
+    `The Gazelle Website started on port ${process.env.MAIN_PORT ? process.env.MAIN_PORT : 3000}`
   );
 });
 
@@ -308,18 +308,18 @@ const allowCrossDomain = function (req, res, next) { // eslint-disable-line func
 
 editorTools.use(allowCrossDomain);
 
-let PATHNAME = '';
+let PATH_NAME = '';
 
-if (process.env.NODEENV === 'production') {
-  PATHNAME = '~/gazelle-production/scripts/restartServers.sh';
-} else if (process.env.NODEENV === 'beta') {
-  PATHNAME = '~/gazelle-beta/scripts/restartServers.sh';
+if (process.env.NODE_ENV === 'production') {
+  PATH_NAME = '~/gazelle-production/scripts/restartServers.sh';
+} else if (process.env.NODE_ENV === 'beta') {
+  PATH_NAME = '~/gazelle-beta/scripts/restartServers.sh';
 } else {
-  PATHNAME = `${__dirname}/scripts/restartServers.sh`;
+  PATH_NAME = `${__dirname}/scripts/restartServers.sh`;
 }
 
 editorTools.get('/restartserver', (req, res) => {
-  if (!process.env.NODEENV) {
+  if (!process.env.NODE_ENV) {
     // in dev mode
     res.status(200).send('restarted');
     return;
@@ -329,14 +329,14 @@ editorTools.get('/restartserver', (req, res) => {
   if ((typeof password) !== 'string' || password.length < 1) {
     res.status(401).send('invalid');
   } else if (hash(password) === 8692053) {
-    exec(PATHNAME, (err, stdout, stderr) => {
+    exec(PATH_NAME, (err, stdout, stderr) => {
       if (err) {
-        if (process.env.NODEENV !== 'production') {
+        if (process.env.NODE_ENV !== 'production') {
           console.error(err); // eslint-disable-line no-console
         }
         res.status(500).send('error');
       } else {
-        if (process.env.NODEENV !== 'production') {
+        if (process.env.NODE_ENV !== 'production') {
           console.log(stdout); // eslint-disable-line no-console
           console.log(stderr); // eslint-disable-line no-console
         }
@@ -374,12 +374,12 @@ const s3Client = s3.createClient({
 });
 
 editorTools.post('/upload', upload.single('image'), (req, res) => {
-  if (!process.env.NODEENV) {
+  if (!process.env.NODE_ENV) {
     // We are in dev-mode, we don't actually want to upload to s3
     // you can either compile with production mode or remove this
     // temporarily if extra s3 tests are needed at some point
     setTimeout(() => {
-      res.status(200).send('success testUrl');
+      res.status(200).send('success on test url');
     }, 2000);
   } else {
     const filePath = req.file.path;
@@ -427,7 +427,7 @@ editorTools.post('/upload', upload.single('image'), (req, res) => {
   }
 });
 
-if (process.env.NODEENV === 'production' || process.env.NODEENV === 'beta') {
+if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'beta') {
   editorTools.get('/login', (req, res) => {
     res.status(200).send(editorHtmlString);
   });
@@ -442,13 +442,13 @@ if (process.env.NODEENV === 'production' || process.env.NODEENV === 'beta') {
 }
 
 
-editorTools.listen(process.env.EDITORPORT ? process.env.EDITORPORT : 4000, err => {
+editorTools.listen(process.env.EDITOR_PORT ? process.env.EDITOR_PORT : 4000, err => {
   if (err) {
     console.error(err); // eslint-disable-line no-console
     return;
   }
 
   console.log( // eslint-disable-line no-console
-    'Editor tools server started on port', process.env.EDITORPORT ? process.env.EDITORPORT : 4000
+    'Editor tools server started on port', process.env.EDITOR_PORT ? process.env.EDITOR_PORT : 4000
   );
 });

@@ -21,7 +21,7 @@ export default class Article extends BaseComponent {
               className="article__header__subtitle__authors" authors={this.props.authors}
             />
             <p className="article__header__subtitle__publication-date">
-              {moment(this.props.publishedAt).format('MMM DD, YYYY')}</p>
+              {moment(this.props.published_at).format('MMM DD, YYYY')}</p>
             <SharingButtons
               title={this.props.title}
               url={this.props.url}
@@ -59,7 +59,7 @@ Article.propTypes = {
   html: React.PropTypes.string.isRequired,
   authors: React.PropTypes.object.isRequired,
   url: React.PropTypes.string,
-  publishedAt: React.PropTypes.number,
+  published_at: React.PropTypes.number,
   trending: React.PropTypes.object,
   relatedArticles: React.PropTypes.object,
 };
