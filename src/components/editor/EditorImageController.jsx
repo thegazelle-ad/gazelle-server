@@ -73,8 +73,8 @@ export default class EditorImageUploader extends BaseComponent {
     xhr.onerror = (err) => {
       // Set upload status to failed
       console.error(err); // eslint-disable-line no-console
-      const errorMessage = `An unknown error occured contacting the server,
-                            error logged in developer console`;
+      const errorMessage = 'An unknown error occured contacting the server, ' +
+                           'error logged in developer console';
       this.handleUploadTerminated(fileObject.metaData.name, 3, undefined, errorMessage);
     };
     xhr.open('POST', UPLOAD_URL, true);
@@ -190,8 +190,8 @@ export default class EditorImageUploader extends BaseComponent {
   }
 
   changeImageName(name) {
-    const newName = window.prompt(`Please enter new name (and remember to keep
-                                  the extension) for ${name}:`);
+    const newName = window.prompt('Please enter new name (and remember to keep ' +
+                                  `the extension) for ${name}:`);
     if (!newName) {
       return;
     }

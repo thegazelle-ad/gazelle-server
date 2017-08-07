@@ -32,7 +32,7 @@ export default class Login extends BaseComponent {
       if (url) {
         _.forEach(this.props.location.query, (q, name) => {
           if (name !== 'url') {
-            url = `${url} & ${name} = ${q}`;
+            url = `${url}&${name}=${q}`;
           }
         });
       }

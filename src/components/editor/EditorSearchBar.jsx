@@ -44,10 +44,9 @@ export default class EditorSearchBar extends BaseComponent {
             ['search', 'posts', queryInstance, { length: this.props.length }, fields]
           );
           if (this.props.extraPathSets) {
-            const extraPathSets = this.props.extraPathSets.map(function f(pathSet) {
-              return ['search', 'posts', queryInstance,
-                { length: this.props.length }].concat(pathSet);
-            });
+            const extraPathSets = this.props.extraPathSets.map(pathSet => (
+              ['search', 'posts', queryInstance, { length: this.props.length }].concat(pathSet)
+            ));
             pathSets = pathSets.concat(extraPathSets);
           }
           break;
@@ -59,10 +58,9 @@ export default class EditorSearchBar extends BaseComponent {
             ['search', 'authors', queryInstance, { length: this.props.length }, fields]
           );
           if (this.props.extraPathSets) {
-            const extraPathSets = this.props.extraPathSets.map(function f(pathSet) {
-              return ['search', 'authors', queryInstance,
-                { length: this.props.length }].concat(pathSet);
-            });
+            const extraPathSets = this.props.extraPathSets.map(pathSet => (
+              ['search', 'authors', queryInstance, { length: this.props.length }].concat(pathSet)
+            ));
             pathSets = pathSets.concat(extraPathSets);
           }
           break;
@@ -170,20 +168,18 @@ export default class EditorSearchBar extends BaseComponent {
           />
           <div>
             {
-              this.state.searchSuggestions.map(function f(author) {
-                return (
-                  <div key={author.slug}>
-                    {/* eslint-disable react/jsx-no-bind */}
-                    <button
-                      type="button"
-                      className="pure-button"
-                      onClick={this.handleClick.bind(this, author)}
-                      disabled={this.props.disabled}
-                    >{author.name}</button>
-                    {/* eslint-enable react/jsx-no-bind */}
-                  </div>
-                );
-              })
+              this.state.searchSuggestions.map(author => (
+                <div key={author.slug}>
+                  {/* eslint-disable react/jsx-no-bind */}
+                  <button
+                    type="button"
+                    className="pure-button"
+                    onClick={this.handleClick.bind(this, author)}
+                    disabled={this.props.disabled}
+                  >{author.name}</button>
+                  {/* eslint-enable react/jsx-no-bind */}
+                </div>
+              ))
             }
           </div>
         </div>
@@ -214,8 +210,7 @@ EditorSearchBar.propTypes = {
       return;
     }
     let error = new Error(
-      `Invalid prop ${propName} supplied to ${componentName}.
-      It must be an array of pathSets.`
+      `Invalid prop ${propName} supplied to ${componentName}. It must be an array of pathSets.`
     );
     if (!(prop instanceof Array)) {
       return error;
@@ -225,8 +220,8 @@ EditorSearchBar.propTypes = {
           return false;
         } else if (value[0] === 'search') {
           error = new Error(
-            `Invalid prop ${propName} supplied to ${componentName}.
-            Just add the extension, do not add "search"... as this is already considered.`
+            `Invalid prop ${propName} supplied to ${componentName}. ` +
+            'Just add the extension, do not add "search"... as this is already considered.'
           );
           return false;
         }
