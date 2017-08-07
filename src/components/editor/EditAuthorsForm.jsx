@@ -65,19 +65,17 @@ export default class EditAuthorsForm extends BaseComponent {
           })
         }
         {
-          this.props.authorsAdded.map(function f(author) {
-            return (
-              <div key={author.id}>
-                <button
-                  type="button"
-                  className="toggle-button"
-                  aria-label="Remove Author Button"
-                  onClick={this.props.handleDeleteAuthor.bind(null, author.id, false)}
-                >&times;&nbsp;</button>
-                <div>{author.name}</div>
-              </div>
-            );
-          })
+          this.props.authorsAdded.map(author => (
+            <div key={author.id}>
+              <button
+                type="button"
+                className="toggle-button"
+                aria-label="Remove Author Button"
+                onClick={this.props.handleDeleteAuthor.bind(null, author.id, false)}
+              >&times;&nbsp;</button>
+              <div>{author.name}</div>
+            </div>
+          ))
         }
         <EditorSearchBar
           model={this.props.model}
