@@ -34,7 +34,7 @@ export default class Navigation extends BaseComponent {
             className="navigation__categories__item"
           >
             <Link
-              to={`/category/ ${category.slug}`}
+              to={`/category/${category.slug}`}
               activeClassName="navigation__categories__item--active"
             >
               {category.name}
@@ -45,9 +45,9 @@ export default class Navigation extends BaseComponent {
       return (
         <div>
           <div className="navigation">
-            <p
-              className="navigation__publication-date"
-            >{moment(data.published_at).format('MMM DD, YYYY').toString()}</p>
+            <p className="navigation__publication-date">
+              {moment(data.published_at).format('MMM DD, YYYY')}
+            </p>
             <nav role="navigation">
               <ul className="navigation__categories">
                 {renderCategories}
@@ -62,11 +62,7 @@ export default class Navigation extends BaseComponent {
         </div>
       );
     }
-    return (
-      <div>
-
-      </div>
-      );
+    return <div></div>;
   }
 }
 

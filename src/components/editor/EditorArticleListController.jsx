@@ -15,9 +15,12 @@ export default class EditorArticleListController extends FalcorController {
 
   static getFalcorPathSets(params) {
     return [
-      ['articlesByPage',
-      NUM_ARTICLES_IN_PAGE, parseInt(params.page, 10),
-       { length: NUM_ARTICLES_IN_PAGE }, ['title', 'slug']],
+      [
+        'articlesByPage',
+        NUM_ARTICLES_IN_PAGE, parseInt(params.page, 10),
+        { length: NUM_ARTICLES_IN_PAGE },
+        ['title', 'slug'],
+      ],
       ['totalAmountOfArticles'],
     ];
   }
@@ -31,7 +34,7 @@ export default class EditorArticleListController extends FalcorController {
 
   clickSearchSuggestion(article) {
     const page = this.props.params.page;
-    const path = `/articles/page/ ${page}/slug/ ${article.slug}`;
+    const path = `/articles/page/${page}/slug/${article.slug}`;
     browserHistory.push(path);
   }
 
@@ -39,7 +42,7 @@ export default class EditorArticleListController extends FalcorController {
     return (
       <div key={article.slug}>
         <Link to={`/articles/page/${page}/slug/${article.slug}`} activeClassName="active-link">
-        {article.title}
+          {article.title}
         </Link>
       </div>
     );
@@ -54,10 +57,11 @@ export default class EditorArticleListController extends FalcorController {
       // If trying to access inacessible page, redirect to page 1
       if (!this.state.data.articlesByPage) {
         return (
-          <p>You have tried accessing a page that doesn't exist. Please press
+          <p>
+            You have tried accessing a page that doesn't exist. Please press
             <Link to="/articles/page/1">this link</Link> to return to page 1.
-          If you believe this was unintended and there is an error with the
-          website please contact the web development team of The Gazelle.
+            If you believe this was unintended and there is an error with the
+            website please contact the web development team of The Gazelle.
           </p>
         );
       }
@@ -75,9 +79,11 @@ export default class EditorArticleListController extends FalcorController {
         <div className="pure-g">
           <div className="pure-u-3-8">
             <h3>Articles</h3>
-            <p>Here the 50 most recent articles are shown in the list,
-               if you have an older article in mind,
-            you can search for it here by entering the title of the article</p>
+            <p>
+              Here the 50 most recent articles are shown in the list,
+              if you have an older article in mind,
+              you can search for it here by entering the title of the article
+            </p>
             <EditorSearchBar
               model={this.props.model}
               mode="articles"
@@ -96,7 +102,8 @@ export default class EditorArticleListController extends FalcorController {
             <div className="pure-g">
               <div className="pure-u-1-3">
                 <Link to={this.getNewPagePath(-1)}>
-                  <button type="button" className="pure-button" disabled={page <= 1}>Previous Page
+                  <button type="button" className="pure-button" disabled={page <= 1}>
+                    Previous Page
                   </button>
                 </Link>
               </div>
@@ -107,7 +114,8 @@ export default class EditorArticleListController extends FalcorController {
               </div>
               <div className="pure-u-1-3">
                 <Link to={this.getNewPagePath(1)}>
-                  <button type="button" className="pure-button" disabled={page >= maxPage}>Next Page
+                  <button type="button" className="pure-button" disabled={page >= maxPage}>
+                    Next Page
                   </button>
                 </Link>
               </div>
@@ -124,8 +132,9 @@ export default class EditorArticleListController extends FalcorController {
       <div className="pure-g">
         <div className="pure-u-3-8">
           <h3>Articles</h3>
-          <p>Here the 50 most recent articles are shown in the list,
-             if you have an older article in mind,
+          <p>
+            Here the 50 most recent articles are shown in the list,
+            if you have an older article in mind,
             you can search for it here by entering the title of the article
           </p>
           <p>loading...</p>
@@ -135,6 +144,6 @@ export default class EditorArticleListController extends FalcorController {
           {this.props.children}
         </div>
       </div>
-      );
+    );
   }
 }

@@ -16,7 +16,7 @@ export default class EditorAuthorController extends FalcorController {
       biography: '',
     });
 
-    this.debouncedHandleFormChanges = debounce(event => {
+    this.debouncedHandleFormChanges = debounce((event) => {
       // We don't want the debounced event to happen if we're saving
       if (this.state.saving) return;
 
@@ -101,8 +101,10 @@ export default class EditorAuthorController extends FalcorController {
     });
 
     if (filteredFields.length === 0) {
-      throw new Error('Tried to save changes but there were no changes. \n' +
-'the save changes button is supposed to be disabled in this case');
+      throw new Error(
+        'Tried to save changes but there were no changes. ' +
+        'the save changes button is supposed to be disabled in this case'
+      );
     }
 
     // Modularize the code since we'll be reusing it for checking the slug
@@ -153,8 +155,8 @@ export default class EditorAuthorController extends FalcorController {
           this.safeSetState({ saving: false });
           return;
         }
-          // Nothing was found which means we can proceed with assigning this slug
-          // without problems
+        // Nothing was found which means we can proceed with assigning this slug
+        // without problems
         update();
       });
     } else {
@@ -207,7 +209,8 @@ export default class EditorAuthorController extends FalcorController {
         <div>
           <h2 style={changedStateStyle}>{changedStateMessage}</h2>
           <h3>{author.name}</h3>
-          <p>Change the information for the author and press Save Changes to confirm the changes.
+          <p>
+            Change the information for the author and press Save Changes to confirm the changes.
           </p>
           <form
             className="pure-form pure-form-stacked"

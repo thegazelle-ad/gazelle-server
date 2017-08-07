@@ -94,8 +94,9 @@ export default class EditorImageUploader extends BaseComponent {
 
       return !(upStat === 2 || upStat === 3);
     });
-    const index = this.state.files.findIndex(storedFileObject =>
-     storedFileObject.metaData.name === fileName);
+    const index = this.state.files.findIndex(
+      storedFileObject => storedFileObject.metaData.name === fileName
+    );
     if (index !== -1) {
       const newFiles = update(this.state.files,
         {
@@ -157,7 +158,7 @@ export default class EditorImageUploader extends BaseComponent {
   }
 
   deleteImagePreview(name) {
-    const index = this.state.files.findIndex((fileObject) => fileObject.metaData.name === name);
+    const index = this.state.files.findIndex(fileObject => fileObject.metaData.name === name);
     if (index !== -1) {
       const newFiles = update(this.state.files, { $splice: [[index, 1]] });
       this.safeSetState({
@@ -169,8 +170,9 @@ export default class EditorImageUploader extends BaseComponent {
   addImagePreviewUrl(fileObject) {
     const reader = new FileReader();
     reader.onload = () => {
-      const index = this.state.files.findIndex(storedFileObject =>
-       storedFileObject.metaData.name === fileObject.metaData.name);
+      const index = this.state.files.findIndex(
+        storedFileObject => storedFileObject.metaData.name === fileObject.metaData.name
+      );
       if (index !== -1) {
         const newFiles = update(this.state.files, {
           [index]: {

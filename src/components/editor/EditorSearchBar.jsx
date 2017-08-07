@@ -214,22 +214,21 @@ EditorSearchBar.propTypes = {
     );
     if (!(prop instanceof Array)) {
       return error;
-    } {
-      const valid = prop.every((value) => {
-        if (!(value instanceof Array)) {
-          return false;
-        } else if (value[0] === 'search') {
-          error = new Error(
-            `Invalid prop ${propName} supplied to ${componentName}. ` +
-            'Just add the extension, do not add "search"... as this is already considered.'
-          );
-          return false;
-        }
-        return true;
-      });
-      if (!valid) {
-        return error;
+    }
+    const valid = prop.every((value) => {
+      if (!(value instanceof Array)) {
+        return false;
+      } else if (value[0] === 'search') {
+        error = new Error(
+          `Invalid prop ${propName} supplied to ${componentName}. ` +
+          'Just add the extension, do not add "search"... as this is already considered.'
+        );
+        return false;
       }
+      return true;
+    });
+    if (!valid) {
+      return error;
     }
   },
 };

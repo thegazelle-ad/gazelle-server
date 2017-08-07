@@ -28,21 +28,44 @@ export default class EditorIssueArticleController extends FalcorController {
   static getFalcorPathSets(params) {
     return [
       ['issuesByNumber', params.issueNumber, ['name', 'published_at']],
-      ['issuesByNumber', params.issueNumber, 'categories', { length: 20 },
-       'articles', { length: 50 }, ARTICLE_FIELDS],
+      [
+        'issuesByNumber',
+        params.issueNumber,
+        'categories',
+        { length: 20 },
+        'articles',
+        { length: 50 },
+        ARTICLE_FIELDS,
+      ],
       ['issuesByNumber', params.issueNumber, 'featured', ARTICLE_FIELDS],
       ['issuesByNumber', params.issueNumber, 'picks', { length: 10 }, ARTICLE_FIELDS],
       /* The following three calls are simply calling the first author to check
        *if any author has been assigned
         this is used for validiy checking */
-      ['issuesByNumber', params.issueNumber, 'categories', { length: 20 },
-       'articles', { length: 50 }, 'authors', 0, 'slug'],
+      [
+        'issuesByNumber',
+        params.issueNumber,
+        'categories',
+        { length: 20 },
+        'articles',
+        { length: 50 },
+        'authors',
+        0,
+        'slug',
+      ],
       ['issuesByNumber', params.issueNumber, 'featured', 'authors', 0, 'slug'],
       ['issuesByNumber', params.issueNumber, 'picks', { length: 10 }, 'authors', 0, 'slug'],
       // This is for the articleList
       ['articlesByPage', ARTICLE_LIST_LENGTH, 1, { length: ARTICLE_LIST_LENGTH }, ARTICLE_FIELDS],
-      ['articlesByPage', ARTICLE_LIST_LENGTH, 1, { length: ARTICLE_LIST_LENGTH },
-       'authors', 0, 'slug'],
+      [
+        'articlesByPage',
+        ARTICLE_LIST_LENGTH,
+        1,
+        { length: ARTICLE_LIST_LENGTH },
+        'authors',
+        0,
+        'slug',
+      ],
     ];
   }
 
@@ -150,8 +173,9 @@ export default class EditorIssueArticleController extends FalcorController {
     // because of short circuiting
     let changedFlag = (newArticles.length !== originalArticles.length ||
       // The two arrays must be same size, and therefore this check is valid
-      newArticles.some((article) => originalArticles.find((post) =>
-       post.slug === article.slug) === undefined)
+      newArticles.some(article => (
+        originalArticles.find(post => post.slug === article.slug) === undefined
+      ))
     );
 
     // If the changedFlag of this one set of articles
@@ -166,8 +190,10 @@ export default class EditorIssueArticleController extends FalcorController {
         // so we double check the other fields don't have changes
         changedFlag = (changedFlag ||
           field1.length !== old1.length ||
-          field1.some((article) =>
-            old1.find((post) => article.slug === post.slug) === undefined));
+          field1.some((article) => (
+            old1.find((post) => article.slug === post.slug) === undefined
+          ))
+        );
         if (changedFlag === true) {
           // It was a false alarm
           return;
@@ -210,7 +236,7 @@ export default class EditorIssueArticleController extends FalcorController {
 
     // Check if it is already picked in the issue
     const allArticles =
-     this.state.mainArticles.concat(this.state.picks, this.state.featuredArticles);
+      this.state.mainArticles.concat(this.state.picks, this.state.featuredArticles);
     if (allArticles.some(article => article.slug === post.slug)) {
       window.alert('That post is already in the issue');
       this.safeSetState({
@@ -272,7 +298,7 @@ export default class EditorIssueArticleController extends FalcorController {
     const isPublished = data.published_at;
 
     const allArticles =
-     this.state.mainArticles.concat(this.state.picks, this.state.featuredArticles);
+      this.state.mainArticles.concat(this.state.picks, this.state.featuredArticles);
     const allSlugs = allArticles.map((article) => article.slug);
     // check for uniqueness
     if (_.uniq(allSlugs).length !== allSlugs.length) {
@@ -292,42 +318,53 @@ export default class EditorIssueArticleController extends FalcorController {
     if (isPublished) {
       // Check that all articles are valid since issue is already published
       const fields = ARTICLE_FIELDS.filter((field) => field !== 'published_at');
-      let valid = allArticles.every((article) => {
+      const articlesValid = allArticles.every((article) => {
         const slug = article.slug;
-        const isOldArticle =
-         _.some(data.categories, (category) =>
-          _.some(category.articles, (post) => slug === post.slug)) ||
+        const isOldArticle = (
+           _.some(data.categories, (category) => (
+             _.some(category.articles, (post) => slug === post.slug)
+          )) ||
+
           data.featured.slug === slug ||
-          _.some(data.picks, (post) => post.slug === slug);
+
+          _.some(data.picks, (post) => post.slug === slug)
+        );
         if (isOldArticle) {
           return true;
         }
-        valid = fields.every((field) => {
+        const fieldsValid = fields.every((field) => {
           if (!article[field]) {
-            window.alert(`${article.title}has no${field}'. Please correct this
-              before adding the article to an already published issue`);
+            window.alert(
+              `${article.title} has no ${field}. Please correct this ` +
+              'before adding the article to an already published issue'
+            );
             return false;
           }
           return true;
         });
-        if (!valid) {
+        if (!fieldsValid) {
           return false;
         }
         if (!article.hasOwnProperty('authors') || !article.authors[0]) {
-          window.alert(`${article.title} ' has no authors assigned. Please correct this'
-            ' before adding the article to an already published issue`);
+          window.alert(
+            `${article.title} has no authors assigned. Please correct this ` +
+            'before adding the article to an already published issue'
+          );
           return false;
         }
         if (/http(?!s)/.test(article.html)) {
-          if (!window.confirm(`${article.title} has a non https link in it's body.
-            ' please make sure this link is not an image/video etc. being loaded in. ' +
-            ' If you are sure of this press okay to continue, else cancel to check.`)) {
+          if (!window.confirm(
+              `${article.title} has a non https link in it's body. ` +
+              ' please make sure this link is not an image/video etc. being loaded in. ' +
+              ' If you are sure of this press okay to continue, else cancel to check.'
+            )
+          ) {
             return false;
           }
         }
         return true;
       });
-      if (!valid) {
+      if (!articlesValid) {
         return;
       }
     }
@@ -403,7 +440,7 @@ export default class EditorIssueArticleController extends FalcorController {
           type="button"
           className="pure-button"
           onClick={this.addArticle.bind(this, mode, article)}
-        >{`${article.title}' - '${date}`}</button>
+        >{`${article.title} - ${date}`}</button>
         {/* eslint-enable react/jsx-no-bind */}
       </div>
     );
@@ -431,8 +468,10 @@ export default class EditorIssueArticleController extends FalcorController {
             <EditorList
               elements={articles}
               maxHeight="50vh"
-              createElement={this.createArticleListElement.
-              bind(this, this.state.showArticleListMode)}
+              createElement={this.createArticleListElement.bind(
+                this,
+                this.state.showArticleListMode
+              )}
             />
             {/* eslint-enable react/jsx-no-bind */}
             <button
@@ -442,168 +481,164 @@ export default class EditorIssueArticleController extends FalcorController {
             >Back</button>
           </div>
         );
-      } {
-        const issueNumber = this.props.params.issueNumber;
-        const data = this.state.data.issuesByNumber[issueNumber];
-        const mainArticles = this.state.mainArticles;
-        const featuredArticles = this.state.featuredArticles;
-        const picks = this.state.picks;
+      }
+      const issueNumber = this.props.params.issueNumber;
+      const data = this.state.data.issuesByNumber[issueNumber];
+      const mainArticles = this.state.mainArticles;
+      const featuredArticles = this.state.featuredArticles;
+      const picks = this.state.picks;
 
-        let changedStateMessage;
-        const changedStateStyle = {};
-        if (!this.state.changed) {
-          if (!this.state.saving) {
-            changedStateMessage = 'No Changes';
-          } else {
-            changedStateMessage = 'Saved';
-            changedStateStyle.color = 'green';
-          }
+      let changedStateMessage;
+      const changedStateStyle = {};
+      if (!this.state.changed) {
+        if (!this.state.saving) {
+          changedStateMessage = 'No Changes';
         } else {
-          if (!this.state.saving) {
-            changedStateMessage = 'Unsaved Changes';
-            changedStateStyle.color = 'red';
-          } else {
-            changedStateMessage = 'Saving';
-            changedStateStyle.color = '#65e765';
-          }
+          changedStateMessage = 'Saved';
+          changedStateStyle.color = 'green';
         }
-        return (
+      } else {
+        if (!this.state.saving) {
+          changedStateMessage = 'Unsaved Changes';
+          changedStateStyle.color = 'red';
+        } else {
+          changedStateMessage = 'Saving';
+          changedStateStyle.color = '#65e765';
+        }
+      }
+      return (
+        <div>
+          <button
+            type="button"
+            className="pure-button"
+            onClick={this.makeUnique}
+          >Remove duplicates</button>
+          <h2 style={changedStateStyle}>{changedStateMessage}</h2>
+          <h3>{data.name}</h3>
+          <p>
+            Here you may decide which articles are going to be in the issue, and their roles.
+            <br />At this moment in development please refresh the page after saving to see the
+            correct data.
+          </p>
+          <h4 style={{ marginBottom: '0px', marginTop: '0px' }}>
+            Featured Articles (please add exactly 1)
+          </h4>
           <div>
             <button
               type="button"
               className="pure-button"
-              onClick={this.makeUnique}
-            >Remove duplicates</button>
-            <h2 style={changedStateStyle}>{changedStateMessage}</h2>
-            <h3>{data.name}</h3>
-            <p>
-              Here you may decide which articles are going to be in the issue, and their roles.
-              <br />At this moment in development please refresh the page after saving to see the
-              correct data.
-            </p>
-            <h4
-              style={{ marginBottom: '0px', marginTop: '0px' }}
-            >Featured Articles (please add exactly 1)
-            </h4>
-            <div>
-              <button
-                type="button"
-                className="pure-button"
-                onClick={() => { this.safeSetState({ showArticleListMode: 'featured' }); }}
-              >Search By List</button>
-              {/* eslint-disable react/jsx-no-bind */}
-              <EditorSearchBar
-                model={this.props.model}
-                handleClick={this.addArticle.bind(this, 'featured')}
-                length={3}
-                fields={ARTICLE_FIELDS}
-                disabled={this.state.saving}
-                mode="articles"
-                extraPathSets={[['authors', 0, 'slug']]}
-                showPubDate
-              />
-              {
-                featuredArticles.map(article =>
-                  <div key={article.slug}>
-                    <button
-                      type="button"
-                      className="toggle-button"
-                      aria-label="Remove post from featured"
-                      onClick={this.deleteArticle.bind(this, 'featured', article)}
-                      disabled={this.state.saving}
-                    >&times;&nbsp;</button>
-                    <div style={{ marginLeft: '1em' }}>{article.title}</div>
-                  </div>
-                )
-              }
-            </div>
-            <h4
-              style={{ marginBottom: '0px', marginTop: '8px' }}
-            >Editor's Picks (please add exactly 2)</h4>
-            <div>
-              <button
-                type="button"
-                className="pure-button"
-                onClick={() => { this.safeSetState({ showArticleListMode: 'picks' }); }}
-              >Search By List</button>
-              <EditorSearchBar
-                model={this.props.model}
-                handleClick={this.addArticle.bind(this, 'picks')}
-                length={3}
-                fields={ARTICLE_FIELDS}
-                disabled={this.state.saving}
-                mode="articles"
-                extraPathSets={[['authors', 0, 'slug']]}
-                showPubDate
-              />
-              {
-                picks.map(article =>
-                  <div key={article.slug}>
-                    <button
-                      type="button"
-                      className="toggle-button"
-                      aria-label="Remove post from picks"
-                      onClick={this.deleteArticle.bind(this, 'picks', article)}
-                      disabled={this.state.saving}
-                    >&times;&nbsp;</button>
-                    <div style={{ marginLeft: '1em' }}>{article.title}</div>
-                  </div>
-                )
-              }
-            </div>
-            <h4
-              style={{ marginBottom: '0px', marginTop: '8px' }}
-            >Main articles (add as many as you like)
-            </h4>
-            <div>
-              <button
-                type="button"
-                className="pure-button"
-                onClick={() => { this.safeSetState({ showArticleListMode: 'main' }); }}
-              >Search By List</button>
-              <EditorSearchBar
-                model={this.props.model}
-                handleClick={this.addArticle.bind(this, 'main')}
-                length={3}
-                fields={ARTICLE_FIELDS}
-                disabled={this.state.saving}
-                mode="articles"
-                extraPathSets={[['authors', 0, 'slug']]}
-                showPubDate
-              />
-              <div style={{ overflow: 'auto', maxHeight: '20vh' }}>
-                {
-                  mainArticles.map(article =>
-                    <div key={article.slug}>
-                      <button
-                        type="button"
-                        className="toggle-button"
-                        aria-label="Remove post from issue"
-                        onClick={this.deleteArticle.bind(this, 'main', article)}
-                        disabled={this.state.saving}
-                      >&times;&nbsp;</button>
-                      <div style={{ marginLeft: '1em' }}>{article.title}</div>
-                    </div>
-                  )
-                }
-              </div>
-            </div>
-            {/* eslint-enable react/jsx-no-bind */}
-            <div style={{ fontSize: '1.2em' }}>
-              <b>{mainArticles.length} articles</b>
-            </div>
+              onClick={() => { this.safeSetState({ showArticleListMode: 'featured' }); }}
+            >Search By List</button>
+            {/* eslint-disable react/jsx-no-bind */}
+            <EditorSearchBar
+              model={this.props.model}
+              handleClick={this.addArticle.bind(this, 'featured')}
+              length={3}
+              fields={ARTICLE_FIELDS}
+              disabled={this.state.saving}
+              mode="articles"
+              extraPathSets={[['authors', 0, 'slug']]}
+              showPubDate
+            />
+            {
+              featuredArticles.map(article => (
+                <div key={article.slug}>
+                  <button
+                    type="button"
+                    className="toggle-button"
+                    aria-label="Remove post from featured"
+                    onClick={this.deleteArticle.bind(this, 'featured', article)}
+                    disabled={this.state.saving}
+                  >&times;&nbsp;</button>
+                  <div style={{ marginLeft: '1em' }}>{article.title}</div>
+                </div>
+              ))
+            }
+          </div>
+          <h4 style={{ marginBottom: '0px', marginTop: '8px' }}>
+            Editor's Picks (please add exactly 2)
+          </h4>
+          <div>
             <button
               type="button"
-              className="pure-button pure-button-primary"
-              aria-labet="Save changes"
-              onClick={this.saveChanges}
-              disabled={this.state.saving || !this.state.changed}
-            >Save Changes</button>
+              className="pure-button"
+              onClick={() => { this.safeSetState({ showArticleListMode: 'picks' }); }}
+            >Search By List</button>
+            <EditorSearchBar
+              model={this.props.model}
+              handleClick={this.addArticle.bind(this, 'picks')}
+              length={3}
+              fields={ARTICLE_FIELDS}
+              disabled={this.state.saving}
+              mode="articles"
+              extraPathSets={[['authors', 0, 'slug']]}
+              showPubDate
+            />
+            {
+              picks.map(article => (
+                <div key={article.slug}>
+                  <button
+                    type="button"
+                    className="toggle-button"
+                    aria-label="Remove post from picks"
+                    onClick={this.deleteArticle.bind(this, 'picks', article)}
+                    disabled={this.state.saving}
+                  >&times;&nbsp;</button>
+                  <div style={{ marginLeft: '1em' }}>{article.title}</div>
+                </div>
+              ))
+            }
           </div>
-        );
-      }
-    } else {
-      return <div>loading...</div>;
+          <h4 style={{ marginBottom: '0px', marginTop: '8px' }}>
+            Main articles (add as many as you like)
+          </h4>
+          <div>
+            <button
+              type="button"
+              className="pure-button"
+              onClick={() => { this.safeSetState({ showArticleListMode: 'main' }); }}
+            >Search By List</button>
+            <EditorSearchBar
+              model={this.props.model}
+              handleClick={this.addArticle.bind(this, 'main')}
+              length={3}
+              fields={ARTICLE_FIELDS}
+              disabled={this.state.saving}
+              mode="articles"
+              extraPathSets={[['authors', 0, 'slug']]}
+              showPubDate
+            />
+            <div style={{ overflow: 'auto', maxHeight: '20vh' }}>
+              {
+                mainArticles.map(article => (
+                  <div key={article.slug}>
+                    <button
+                      type="button"
+                      className="toggle-button"
+                      aria-label="Remove post from issue"
+                      onClick={this.deleteArticle.bind(this, 'main', article)}
+                      disabled={this.state.saving}
+                    >&times;&nbsp;</button>
+                    <div style={{ marginLeft: '1em' }}>{article.title}</div>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+          {/* eslint-enable react/jsx-no-bind */}
+          <div style={{ fontSize: '1.2em' }}>
+            <b>{mainArticles.length} articles</b>
+          </div>
+          <button
+            type="button"
+            className="pure-button pure-button-primary"
+            aria-labet="Save changes"
+            onClick={this.saveChanges}
+            disabled={this.state.saving || !this.state.changed}
+          >Save Changes</button>
+        </div>
+      );
     }
+    return <div>loading...</div>;
   }
 }

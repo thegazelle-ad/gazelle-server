@@ -1,5 +1,10 @@
 import _ from 'lodash';
-import { isAppReady, expandCache, pathSetsInCache, validateFalcorPathSets } from 'lib/falcor/falcorUtils'; // eslint-disable-line
+import {
+  isAppReady,
+  expandCache,
+  pathSetsInCache,
+  validateFalcorPathSets,
+} from 'lib/falcor/falcorUtils';
 import BaseComponent from 'lib/BaseComponent';
 import { setLoading, signalLeaving } from 'lib/loader';
 import { uuid } from 'lib/utilities';
@@ -62,9 +67,10 @@ export default class FalcorController extends BaseComponent {
     } else {
       if (process.env.NODE_ENV !== 'production') {
         console.warn( // eslint-disable-line no-console
-          `Serverside render of component: ${this.constructor.name} +
-           failed. Data not in cache. Falcor Path attempted fetched was:
-           ${JSON.stringify(falcorPathSetsInstance)}`);
+          `Serverside render of component: ${this.constructor.name} ` +
+          'failed. Data not in cache. Falcor Path attempted fetched was: ' +
+          `${JSON.stringify(falcorPathSetsInstance)}`
+        );
       }
       this.safeSetState({
         ready: true,
@@ -148,8 +154,10 @@ export default class FalcorController extends BaseComponent {
       // This would be very bad for updating views, so maybe we'll do that differently
       // but at the moment we have no good way to merge updated data especially when
       // we're deleting
-      const pathSets =
-       this.constructor.getFalcorPathSets(this.props.params, this.props.location.query);
+      const pathSets = this.constructor.getFalcorPathSets(
+        this.props.params,
+        this.props.location.query
+      );
       this.falcorFetch(pathSets, stateToSet, callback);
       // if (x) {
       //   const newData = mergeUpdatedData(this.state.data, x.json, 10)
