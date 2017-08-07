@@ -6,7 +6,7 @@ import classnames from 'classnames';
 // loading requests end up here for 100ms. If the time elapses, they make it
 // into the real loading queue. If is cleared before 100ms (maybe because data
 // is cached locally), it does not fire the loading callbacks at all.
-const loading = {};
+const loadingCache = {};
 // Called when loading is changed
 const loadingChangeCallbacks = [];
 // Called when it's time to transition something out
@@ -20,7 +20,7 @@ const TRANSITION_IN_TIME = 200;
 // loading.  Name can be any string. You can call setLoading(true) many times
 // idempotently, but setLoading(false) will globally clear all loading for the
 // named element.
-export function setLoading(name, isLoading) {
+export function setLoading(name, isLoadingBool) {
   if (!isClient()) {
     return;
   }
@@ -29,10 +29,10 @@ export function setLoading(name, isLoading) {
     throw new Error('setLoading must be called with a string name');
   }
 
-  if (isLoading) {
-    const loadingWasEmpty = Object.keys(loading).length === 0;
+  if (isLoadingBool) {
+    const loadingWasEmpty = Object.keys(loadingCache).length === 0;
     // Take it off the queue and put it onto real loading
-    loading[name] = true;
+    loadingCache[name] = true;
     // Check if we need to fire the callback
     if (loadingWasEmpty) {
       loadingChangeCallbacks.forEach((cb) => {
@@ -40,11 +40,11 @@ export function setLoading(name, isLoading) {
       });
     }
   } else {
-    const loadingWasEmpty = Object.keys(loading).length === 0;
-    if (loading.hasOwnProperty(name)) {
-      delete loading[name];
+    const loadingWasEmpty = Object.keys(loadingCache).length === 0;
+    if (loadingCache.hasOwnProperty(name)) {
+      delete loadingCache[name];
     }
-    const loadingIsEmpty = Object.keys(loading).length === 0;
+    const loadingIsEmpty = Object.keys(loadingCache).length === 0;
 
     if (!loadingWasEmpty && loadingIsEmpty) {
       loadingChangeCallbacks.forEach((cb) => {

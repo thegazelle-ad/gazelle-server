@@ -56,9 +56,9 @@ const buildMainHtmlString = (body, cache) => {
     `<!DOCTYPE html>
       <html>
         <head>
-          ` + head.title + `
-          <link rel="stylesheet" 
-            type="text/css" href="/static/build/main.css?h=` + mainCssHash + `">
+          ${head.title}
+          <link rel="stylesheet"
+            type="text/css" href="/static/build/main.css?h=${mainCssHash}">
           <link rel="icon" type="image/x-icon" href="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/favicon.ico">
           <link rel="apple-touch-icon" sizes="180x180" href="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/apple-touch-icon.png">
           <link rel="icon" type="image/png" href="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/favicon-32x32.png" sizes="32x32">
@@ -67,18 +67,16 @@ const buildMainHtmlString = (body, cache) => {
           <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#5bbad5">
           <meta name="theme-color" content="#ffffff">
           <meta name="viewport" content="width=device-width, initial-scale=1">
-          ` + head.meta + `
-        </head> 
+          ${head.meta}
+        </head>
         <body>
           <div id="main">
-          ` + body + `
+          ${body}
           </div>
           <script>
-            var InitialCache =
-            ` + JSON.stringify(cache) + `
-            ;
+            var InitialCache = ${JSON.stringify(cache)};
           </script>
-          <script src="/static/build/client.js?h=` + mainClientHash + `"></script>
+          <script src="/static/build/client.js?h=${mainClientHash}"></script>
         </body>
       </html>`
   );
@@ -93,14 +91,14 @@ const editorHtmlString = (
       <head>
         <title>Gazelle Editor Tools</title>
         <link rel="stylesheet" href="/pure-min.css">
-        <link rel="stylesheet" type="text/css" href="/editorStyles.css?h=` + editorCssHash + `">
+        <link rel="stylesheet" type="text/css" href="/editorStyles.css?h=${editorCssHash}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
       </head>
       <body>
         <div id="main">
           loading...
         </div>
-        <script src="/build/editor-client.js?h=` + editorClientHash + `"></script>
+        <script src="/build/editor-client.js?h=${editorClientHash}"></script>
       </body>
     </html>`
 );
