@@ -24,11 +24,11 @@ export default class EditorImagePreview extends BaseComponent {
   }
 
   onCopyToClipboard() {
-    var textField = document.createElement("textarea");
+    const textField = document.createElement('textarea');
     textField.innerText = this.props.amazonURL;
     document.body.appendChild(textField);
     textField.select();
-    document.execCommand("copy");
+    document.execCommand('copy');
     textField.remove();
   }
 
@@ -49,14 +49,20 @@ export default class EditorImagePreview extends BaseComponent {
     let copyComponent = null;
     if (amazonURL) {
       messageComponent = <div className="previewURL">URL: {amazonURL}</div>;
-      if (document.queryCommandSupported("copy")) {
-        copyComponent = <button type='button' onClick={this.onCopyToClipboard}>Copy link</button>;
+      if (document.queryCommandSupported('copy')) {
+        copyComponent = <button type="button" onClick={this.onCopyToClipboard}>Copy link</button>;
       } else {
-        // TODO: After Material-UI is merged in we change this to a Material-UI Dialog or something similar
-        copyComponent = <div>It seems that our copy button is not compatible with your web browser. Please upgrade to the newest version for full Gazelle capabilities.</div>
+        // TODO: After Material-UI is merged in we change this to a
+        // Material-UI Dialog or something similar
+        copyComponent = (
+          <div>
+            It seems that our copy button is not compatible with your web browser.
+            Please upgrade to the newest version for full Gazelle capabilities.
+          </div>
+        );
       }
-    } else if (error_message) {
-      messageComponent = <div className="preview_error">Error: {error_message}</div>;
+    } else if (errorMessage) {
+      messageComponent = <div className="preview_error">Error: {errorMessage}</div>;
     } else {
       messageComponent = null;
     }

@@ -80,7 +80,7 @@ export function slugifyPost(postSlug) {
     slug = slug.substr(0, slug.length - 1);
   }
   slug = /^(ghost|ghost\-admin|admin|wp\-admin|wp\-login|dashboard|logout|login|signin|signup|signout|register|archive|archives|category|categories|tag|tags|page|pages|post|posts|user|users|rss)$/g // eslint-disable-line max-len
-         .test(slug) ? slug + '-post' : slug;
+         .test(slug) ? `${slug}-post` : slug;
   return slug;
 }
 

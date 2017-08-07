@@ -80,6 +80,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
   Checks if falcorPathSets in given cache
   */
 
+  /* eslint-disable no-use-before-define */
   function handleCheckingSingleKey(curObject, nextRemainingKeySets, key) {
     /*
     This function modularizes the checking of a single key.
@@ -109,6 +110,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
       return checkSinglePathSetInCache(val, nextRemainingKeySets);
     }
   }
+  /* eslint-enable */
 
   function checkSinglePathSetInCache(curObject, remainingKeySets) {
     /*
@@ -265,7 +267,7 @@ export function expandCache(cache) {
             refPathsSet.forEach((pathFromSet) => {
               paths += `${pathFromSet},`;
             });
-            paths = paths.substring(0, paths.length - 2) + ']';
+            paths = `${paths.substring(0, paths.length - 2)}]`;
             throw new Error(
               `Neverending loop from ref to ref with no real values present in expandCache.
               It is made up of the following paths: ${paths}`);
