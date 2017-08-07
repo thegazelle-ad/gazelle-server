@@ -6,13 +6,14 @@ import TeamMembersList from 'components/TeamMembersList';
 
 export default class TeamPage extends BaseComponent {
   render() {
-    const renderTeams =
-      _.map((this.props.teamData || []), team =>
+    const renderTeams = (
+      _.map((this.props.teamData || []), team => (
         <div key={team.name} className="team-page__team">
           <h2 className="section-header">{team.name}</h2>
           <TeamMembersList members={team.authors} />
         </div>
-      );
+      ))
+    );
 
     // Top level elements can't have classes or it will break transitions
     return (

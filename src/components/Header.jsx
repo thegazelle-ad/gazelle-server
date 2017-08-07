@@ -6,7 +6,7 @@ export default class Header extends BaseComponent {
   // Allows user to navigate to populated search page on pressing 'Enter'
   handleSubmit(e) {
     e.preventDefault();
-    browserHistory.push(`/search?q= ${e.target['search-box'].value}`);
+    browserHistory.push(`/search?q=${e.target['search-box'].value}`);
   }
 
   // onKeyPress={this.handleKeyPress}

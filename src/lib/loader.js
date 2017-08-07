@@ -142,6 +142,7 @@ export class TransitionManager extends BaseComponent {
         this.delayedModeChange('fadingIn', 'rest', TRANSITION_IN_TIME);
         break;
       default:
+        // do nothing
     }
   }
 
@@ -185,6 +186,7 @@ export class TransitionManager extends BaseComponent {
           this.changeMode('loadEnding');
           break;
         default:
+          // do nothing
       }
     }
   }

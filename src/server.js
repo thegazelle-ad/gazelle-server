@@ -155,8 +155,11 @@ const renderApp = (renderProps) => {
 
   // If the component doesn't want any data
   if (
-    !falcorPaths || falcorPaths.length === 0
-     || falcorPaths[0].length === 0 && falcorPaths.length === 1) {
+    !falcorPaths ||
+    falcorPaths.length === 0 ||
+    falcorPaths[0].length === 0 &&
+    falcorPaths.length === 1
+  ) {
     return new Promise((resolve) => {
       resolve(
         buildMainHtmlString(

@@ -6,15 +6,16 @@ import BaseComponent from 'lib/BaseComponent';
 export default class AuthorList extends BaseComponent {
   render() {
     // Render all authors
-    let renderAuthors =
+    let renderAuthors = (
       // Render nothing if props.authors is empty
-      _.map((this.props.authors || []), (author) =>
+      _.map((this.props.authors || []), author => (
         <li key={author.slug} className="author-list__author">
           <Link to={`/author/ ${author.slug}`}>
-              {author.name}
+            {author.name}
           </Link>
         </li>
-          );
+      ))
+    );
 
     return (
       <div className="author-list">

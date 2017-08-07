@@ -95,7 +95,7 @@ export default class EditorIssueListController extends FalcorController {
                 type="text"
                 name="name"
                 placeholder="Input Issue Name"
-                defaultValue={`Issue${nextIssue}`}
+                defaultValue={`Issue ${nextIssue}`}
                 disabled={this.state.saving}
               />
               Issue Number:
@@ -128,16 +128,20 @@ export default class EditorIssueListController extends FalcorController {
             {
               this.props.params.issueNumber ?
                 <ul>
-                  <li><Link to={`${baseUrl}/main`} activeClassName="active-link">Main</Link></li>
-                  <li><Link
-                    to={`${baseUrl}/articles`}
-                    activeClassName="active-link"
-                  >Articles</Link>
+                  <li>
+                    <Link to={`${baseUrl}/main`} activeClassName="active-link">
+                      Main
+                    </Link>
                   </li>
-                  <li><Link
-                    to={`${baseUrl}/categories`}
-                    activeClassName="active-link"
-                  >Categories</Link>
+                  <li>
+                    <Link to={`${baseUrl}/articles`} activeClassName="active-link">
+                      Articles
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to={`${baseUrl}/categories`} activeClassName="active-link">
+                      Categories
+                    </Link>
                   </li>
                 </ul> :
                 null
@@ -161,6 +165,6 @@ export default class EditorIssueListController extends FalcorController {
           {this.props.children}
         </div>
       </div>
-      );
+    );
   }
 }

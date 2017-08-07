@@ -55,8 +55,9 @@ export default class EditorIssueCategoryController extends FalcorController {
   handleChanges(newCategories) {
     const issueNumber = this.props.params.issueNumber;
     const oldCategories = this.state.data.issuesByNumber[issueNumber].categories;
-    const changed = newCategories.some((category, index) =>
-     category.id !== oldCategories[index].id);
+    const changed = newCategories.some((category, index) => (
+      category.id !== oldCategories[index].id
+    ));
     if (changed !== this.state.changed) {
       this.safeSetState({ changed });
     }
@@ -86,8 +87,10 @@ export default class EditorIssueCategoryController extends FalcorController {
     const idArray = newCategories.map(category => category.id);
 
     const callback = (data) => {
-      const updatedCategories = _.map(data.issuesByNumber[issueNumber].categories,
-        category => category);
+      const updatedCategories = _.map(
+        data.issuesByNumber[issueNumber].categories,
+        category => category
+      );
       this.safeSetState({
         changed: false,
         categories: updatedCategories,
@@ -153,7 +156,7 @@ export default class EditorIssueCategoryController extends FalcorController {
           <h4>Categories</h4>
           <div>
             {
-              categories.map((category, index) =>
+              categories.map((category, index) => (
                 <div
                   key={`${category.id.toString()}'-'${index.toString()}`}
                   style={{ marginBottom: '8px' }}
@@ -165,16 +168,16 @@ export default class EditorIssueCategoryController extends FalcorController {
                     style={{ marginRight: '10px' }}
                     disabled={this.state.saving}
                   >
-                    {/* eslint-enable react/jsx-no-bind*/}
-                      {
-                        _.range(1, categories.length + 1).map((order) =>
-                          <option key={order} value={order}>{order}</option>
-                        )
-                      }
+                  {/* eslint-enable react/jsx-no-bind*/}
+                    {
+                      _.range(1, categories.length + 1).map((order) => (
+                        <option key={order} value={order}>{order}</option>
+                      ))
+                    }
                   </select>
                     {category.name}
                 </div>
-              )
+              ))
             }
           </div>
           <button

@@ -13,18 +13,29 @@ export default class SearchController extends FalcorController {
       return [];
     }
     return [
-      ['search', 'posts',
-       queryParams.q, { length: 20 },
-        ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image', 'published_at']],
-      ['search', 'posts',
-       queryParams.q, { length: 20 }, 'authors', { length: 10 }, ['name', 'slug']],
+      [
+        'search',
+        'posts',
+        queryParams.q,
+        { length: 20 },
+        ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image', 'published_at'],
+      ],
+      [
+        'search',
+        'posts',
+        queryParams.q,
+        { length: 20 },
+        'authors',
+        { length: 10 },
+        ['name', 'slug'],
+      ],
     ];
   }
 
   // Allows user to navigate to populated search page on pressing 'Enter'
   handleSubmit(e) {
     e.preventDefault();
-    browserHistory.push(`/search?q= ${e.target.search.value}`);
+    browserHistory.push(`/search?q=${e.target.search.value}`);
   }
 
   render() {
@@ -40,12 +51,13 @@ export default class SearchController extends FalcorController {
             Please try another query.
           </div>
         );
-      } {
-        const query = this.props.location.query.q;
-        const results = _.filter(this.state.data.search.posts[query],
-         article => article.published_at);
-        return <ArticleList className="search" articles={results} />;
       }
+      const query = this.props.location.query.q;
+      const results = _.filter(
+        this.state.data.search.posts[query],
+        article => article.published_at
+      );
+      return <ArticleList className="search" articles={results} />;
     };
     if (this.state.ready) {
       const query = this.props.location.query.q || '';

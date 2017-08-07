@@ -34,7 +34,7 @@ export default class Login extends BaseComponent {
       if (url) {
         _.forEach(this.props.location.query, (q, name) => {
           if (name !== 'url') {
-            url += `& ${name}= ${q}`;
+            url += `&${name}=${q}`;
           }
         });
       }
@@ -52,7 +52,7 @@ export default class Login extends BaseComponent {
     if (url) {
       _.forEach(this.props.location.query, (q, name) => {
         if (name !== 'url') {
-          url += `& ${name}= ${q}`;
+          url += `&${name}=${q}`;
         }
       });
     }
@@ -62,7 +62,7 @@ export default class Login extends BaseComponent {
         <h2>Gazelle Beta Login Page</h2>
         <p>
           Welcome to the Gazelle Beta, if you were looking for the
-          main Gazelle webpage please follow <a href={`https://www.thegazelle.org ${url}`}>
+          main Gazelle webpage please follow <a href={`https://www.thegazelle.org${url}`}>
           this link</a>. This page is only meant for The Gazelle Team to test
           out new features before we release them on the main page. <br /><br />
           If you on the other hand are part of The Gazelle and want to use the
@@ -72,7 +72,8 @@ export default class Login extends BaseComponent {
           <form className="form form--login" onSubmit={this.handleSubmit}>
             <div className="form__field">
               <label className="fontawesome-lock" htmlFor="login__password">
-                <span className="hidden">Password</span></label>
+                <span className="hidden">Password</span>
+              </label>
               <input
                 type="password"
                 name="password"
