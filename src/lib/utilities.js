@@ -191,8 +191,7 @@ export function hash(password) {
   for (let i = 1; i < password.length; i++) {
     num = ((num * 256) % BIG_PRIME + password.charCodeAt(i)) % BIG_PRIME;
   }
-  const hashInstance = ((num % H1PRIME) + 5 * (num % H2PRIME) + 1 + 25) % BIG_PRIME;
-  return hashInstance;
+  return ((num % H1PRIME) + 5 * (num % H2PRIME) + 1 + 25) % BIG_PRIME;
 }
 
 // For tracking the articles visited in that particular session

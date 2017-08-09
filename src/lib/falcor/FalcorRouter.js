@@ -439,31 +439,31 @@ export default class FalcorRouter extends BaseRouter.createClass([
         pathSet.pageLengths.forEach((pageLength) => {
           if (pageLength < 1) {
             throw new Error(
-              `Cannot pass nonpositive integer as the pageLength parameter.
-              You passed ${pageLength.toString()} as one of your page lengths.`
+              'Cannot pass nonpositive integer as the pageLength parameter. ' +
+              `You passed ${pageLength} as one of your page lengths.`
             );
           }
           pathSet.pageNumbers.forEach((pageNumber) => {
             if (pageNumber < 1) {
               throw new Error(
-                `Cannot pass nonpositive integer as the pageNumber parameter.
-                You passed ${pageNumber.toString()} as one of your page numbers.`
+                'Cannot pass nonpositive integer as the pageNumber parameter. ' +
+                `You passed ${pageNumber} as one of your page numbers.`
               );
             }
             const query = `limit=${pageLength}&page=${pageNumber}&fields=slug`;
             ghostArticleQuery(query).then((data) => {
               if (data.hasOwnProperty('errors')) {
                 throw new Error(
-                  `Errors in the Ghost API query with query parameter = ${query}:
-                  ${JSON.stringify(data)}`
+                  `Errors in the Ghost API query with query parameter = ${query}: ` +
+                  `${JSON.stringify(data)}`
                 );
               }
               const articles = data.posts;
               pathSet.indicesOnPage.forEach((index) => {
                 if (index < 0) {
                   throw new Error(
-                    `You cannot pass negative indices to the indexOnPage parameter.
-                    You passed ${index.toString()} as one of your indices.`
+                    'You cannot pass negative indices to the indexOnPage parameter. ' +
+                    `You passed ${index} as one of your indices.`
                   );
                 }
                 if (index < articles.length) {

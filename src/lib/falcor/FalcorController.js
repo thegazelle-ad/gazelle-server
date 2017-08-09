@@ -48,9 +48,8 @@ export default class FalcorController extends BaseComponent {
   // and store on state. Used for server side render and first client side render
   // this should always contain all the data the component needs
   loadFalcorCache(falcorPathSets, callback) {
-    let falcorPathSetsInstance = falcorPathSets;
-    falcorPathSetsInstance = validateFalcorPathSets(falcorPathSetsInstance);
-    if (falcorPathSetsInstance === undefined) {
+    const processedFalcorPathSets = validateFalcorPathSets(falcorPathSets);
+    if (processedFalcorPathSets === undefined) {
       this.safeSetState({
         ready: true,
         data: null,
@@ -58,7 +57,7 @@ export default class FalcorController extends BaseComponent {
       return;
     }
 
-    const data = expandCache(this.props.model.getCache(...falcorPathSetsInstance));
+    const data = expandCache(this.props.model.getCache(...processedFalcorPathSets));
     if (data) {
       this.safeSetState({
         ready: true,
@@ -69,7 +68,7 @@ export default class FalcorController extends BaseComponent {
         console.warn( // eslint-disable-line no-console
           `Serverside render of component: ${this.constructor.name} ` +
           'failed. Data not in cache. Falcor Path attempted fetched was: ' +
-          `${JSON.stringify(falcorPathSetsInstance)}`
+          `${JSON.stringify(processedFalcorPathSets)}`
         );
       }
       this.safeSetState({
@@ -84,9 +83,8 @@ export default class FalcorController extends BaseComponent {
 
   // Makes falcor fetch its paths
   falcorFetch(falcorPathSets, stateToSet = {}, callback) {
-    let falcorPathSetsInstance = falcorPathSets;
-    falcorPathSetsInstance = validateFalcorPathSets(falcorPathSetsInstance);
-    if (falcorPathSetsInstance === undefined) {
+    const processedFalcorPathSets = validateFalcorPathSets(falcorPathSets);
+    if (processedFalcorPathSets === undefined) {
       this.safeSetState({
         ready: true,
         data: null,
@@ -101,7 +99,7 @@ export default class FalcorController extends BaseComponent {
     setLoading(this.uuid, true);
     const requestId = uuid();
     this.lastRequestId = requestId;
-    this.props.model.get(...falcorPathSetsInstance).then((x) => {
+    this.props.model.get(...processedFalcorPathSets).then((x) => {
       if (this.lastRequestId !== requestId) {
         // stale request, no action to response
         if (callback) {
@@ -119,8 +117,9 @@ export default class FalcorController extends BaseComponent {
         });
         this.safeSetState(stateToSet);
       } else {
-        const err = new Error(`FalcorPathSets:
-          ${JSON.stringify(falcorPathSetsInstance)} returned no data.`);
+        const err = new Error(
+          `FalcorPathSets: ${JSON.stringify(processedFalcorPathSets)} returned no data.`
+        );
         if (process.env.NODE_ENV !== 'production') {
           console.error(err); // eslint-disable-line no-console
         }
@@ -190,10 +189,11 @@ export default class FalcorController extends BaseComponent {
       } else if (e.hasOwnProperty('0')) {
         error = e[0].value;
       }
-      const ternaryError = 'The error message was:';
-      const errorMessage = `There was an error while updating data, please contact the developers,
-        and we recommend refreshing the page.
-          ${error} !== null ? ${ternaryError} ${error.message} : ""`;
+      const errorMessage = (
+        'There was an error while updating data, please contact the developers, ' +
+        'and we recommend refreshing the page' +
+        `${error !== null ? `. The error message was: ${error.message}` : ''}`
+      );
       window.alert(errorMessage);
     });
   }
@@ -216,8 +216,10 @@ export default class FalcorController extends BaseComponent {
       // This would be very bad for updating views, so maybe we'll do that differently
       // but at the moment we have no good way to merge updated data especially when
       // we're deleting
-      const pathSets =
-        this.constructor.getFalcorPathSets(this.props.params, this.props.location.query);
+      const pathSets = this.constructor.getFalcorPathSets(
+        this.props.params,
+        this.props.location.query
+      );
       this.falcorFetch(pathSets, stateToSet, callback);
       // if (x) {
       //   const newData = mergeUpdatedData(this.state.data, x.json, 10);
@@ -251,10 +253,11 @@ export default class FalcorController extends BaseComponent {
       } else if (e.hasOwnProperty('0')) {
         error = e[0].value;
       }
-      const ternaryError = 'The error message was:';
-      const errorMessage = `There was an error while updating data, please contact the developers,
-        and we recommend refreshing the page.
-          ${error} !== null ? ${ternaryError} ${error.message} : ""`;
+      const errorMessage = (
+        'There was an error while updating data, please contact the developers, ' +
+        'and we recommend refreshing the page' +
+        `${error !== null ? `. The error message was: ${error.message}` : ''}`
+      );
       window.alert(errorMessage);
     });
   }
@@ -265,10 +268,14 @@ export default class FalcorController extends BaseComponent {
   // overwriting the function. This is so we don't have to copy the code and maintain
   // it several places
   componentWillReceiveProps(nextProps, nextContext, falcorCallback) {
-    const newPathSets =
-      this.constructor.getFalcorPathSets(nextProps.params, nextProps.location.query);
-    const oldPathSets =
-      this.constructor.getFalcorPathSets(this.props.params, this.props.location.query);
+    const newPathSets = this.constructor.getFalcorPathSets(
+      nextProps.params,
+      nextProps.location.query
+    );
+    const oldPathSets = this.constructor.getFalcorPathSets(
+      this.props.params,
+      this.props.location.query
+    );
     if (!_.isEqual(oldPathSets, newPathSets)) {
       this.safeSetState({ ready: false });
       if (pathSetsInCache(this.props.model.getCache(), newPathSets)) {
@@ -286,8 +293,10 @@ export default class FalcorController extends BaseComponent {
   // overwriting the function. This is so we don't have to copy the code and maintain
   // it several places
   componentWillMount(falcorCallback) {
-    const falcorPathSets =
-      this.constructor.getFalcorPathSets(this.props.params, this.props.location.query);
+    const falcorPathSets = this.constructor.getFalcorPathSets(
+      this.props.params,
+      this.props.location.query
+    );
     if (!isAppReady() || pathSetsInCache(this.props.model.getCache(), falcorPathSets)) {
       this.loadFalcorCache(falcorPathSets, falcorCallback);
     } else {

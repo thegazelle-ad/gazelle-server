@@ -17,14 +17,14 @@ export default class EditorSearchBar extends BaseComponent {
       always to provide the query parameter to the function, or the debounce function will
       append true as the query value as it always just appends the argument to the back of the
       provided arguments */
-      let queryInstance = query;
+      let processedQuery = query;
       if (!wasCalledInstantly) {
         // If it wasn't called instantly we get the value from state
         // otherwise we want it directly as setState is asynchronous and
         // won't give the most updated value
-        queryInstance = this.state.searchValue;
+        processedQuery = this.state.searchValue;
       }
-      if (!(queryInstance.trim())) {
+      if (!(processedQuery.trim())) {
         this.safeSetState({ searchSuggestions: [] });
         return;
       }
@@ -41,11 +41,11 @@ export default class EditorSearchBar extends BaseComponent {
           fields = _.uniq(fields);
 
           pathSets.push(
-            ['search', 'posts', queryInstance, { length: this.props.length }, fields]
+            ['search', 'posts', processedQuery, { length: this.props.length }, fields]
           );
           if (this.props.extraPathSets) {
             const extraPathSets = this.props.extraPathSets.map(pathSet => (
-              ['search', 'posts', queryInstance, { length: this.props.length }].concat(pathSet)
+              ['search', 'posts', processedQuery, { length: this.props.length }].concat(pathSet)
             ));
             pathSets = pathSets.concat(extraPathSets);
           }
@@ -55,11 +55,11 @@ export default class EditorSearchBar extends BaseComponent {
           fields = _.uniq(this.props.fields.concat(['name', 'slug']));
 
           pathSets.push(
-            ['search', 'authors', queryInstance, { length: this.props.length }, fields]
+            ['search', 'authors', processedQuery, { length: this.props.length }, fields]
           );
           if (this.props.extraPathSets) {
             const extraPathSets = this.props.extraPathSets.map(pathSet => (
-              ['search', 'authors', queryInstance, { length: this.props.length }].concat(pathSet)
+              ['search', 'authors', processedQuery, { length: this.props.length }].concat(pathSet)
             ));
             pathSets = pathSets.concat(extraPathSets);
           }
@@ -76,9 +76,9 @@ export default class EditorSearchBar extends BaseComponent {
         }
         let suggestions = x.json.search;
         if (this.props.mode === 'articles') {
-          suggestions = suggestions.posts[queryInstance];
+          suggestions = suggestions.posts[processedQuery];
         } else {
-          suggestions = suggestions.authors[queryInstance];
+          suggestions = suggestions.authors[processedQuery];
         }
         const suggestionsArray = _.map(suggestions, value => value);
         this.safeSetState({ searchSuggestions: suggestionsArray });

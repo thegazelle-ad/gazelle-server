@@ -95,8 +95,9 @@ export function registerTransitionOutCallback(newTransitionOutCallback) {
 // One time check to see if we are currently loading something in the app
 export function isLoading() {
   if (!isClient()) {
-    return;
+    return false;
   }
+  return Object.keys(loadingCache).length !== 0;
 }
 
 export class TransitionManager extends BaseComponent {
