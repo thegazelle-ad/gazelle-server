@@ -9,8 +9,8 @@ import { Link } from 'react-router';
 const UPLOAD_URL = process.env.NODE_ENV
   ? (process.env.NODE_ENV === 'production'
     ? 'https://admin.thegazelle.org/upload'
-  : 'https://adminbeta.thegazelle.org/upload')
-: 'http://localhost:4000/upload';
+    : 'https://adminbeta.thegazelle.org/upload')
+  : 'http://localhost:4000/upload';
 /* eslint-enable no-nested-ternary */
 
 export default class EditorImageUploader extends BaseComponent {
@@ -127,7 +127,7 @@ export default class EditorImageUploader extends BaseComponent {
   handleInputChange(e) {
     e.preventDefault();
     const files = e.target.files;
-    const fileArray = _.map(files, file => file.metaData.name);
+    const fileArray = _.map(files, file => ({ file, metaData: { name: file.name } }));
     let newFiles = this.state.files.concat(fileArray);
     newFiles = _.uniqBy(newFiles, fileObject => fileObject.metaData.name);
     this.safeSetState({

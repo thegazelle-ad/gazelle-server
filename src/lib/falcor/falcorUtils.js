@@ -62,11 +62,11 @@ function followPath(path, object) {
   */
 
   // If using dot notation obj.key.key.key
-  let pathInstance = path;
-  if (typeof pathInstance === 'string') {
-    pathInstance = pathInstance.split('.');
+  let processedPath = path;
+  if (typeof path === 'string') {
+    processedPath = path.split('.');
   }
-  return pathInstance.reduce((currentObject, nextChild) => {
+  return processedPath.reduce((currentObject, nextChild) => {
     if (currentObject !== undefined && currentObject.hasOwnProperty(nextChild)) {
       return currentObject[nextChild];
     }
@@ -166,8 +166,8 @@ export function pathSetsInCache(cache, falcorPathSets) {
         if (keyOrRange.hasOwnProperty('to')) {
           if (keyOrRange.hasOwnProperty('length')) {
             throw new Error(
-              `Falcor Range cannot have both 'to' and 'length' properties at falcor KeySet:
-              ${JSON.stringify(keyOrRange)}`
+              "Falcor Range cannot have both 'to' and 'length' properties at falcor KeySet: " +
+              `${JSON.stringify(keyOrRange)}`
             );
           }
           end = keyOrRange.to;
@@ -175,8 +175,8 @@ export function pathSetsInCache(cache, falcorPathSets) {
           end = start + keyOrRange.length - 1;
         } else {
           throw new Error(
-            `Falcor Range must have either 'to' or 'length' properties at falcor KeySet:
-            ${JSON.stringify(keyOrRange)}`
+            "Falcor Range must have either 'to' or 'length' properties at falcor KeySet: " +
+            `${JSON.stringify(keyOrRange)}`
           );
         }
         // Don't check any keys beyond the end of the theoretical falcor array.
@@ -194,15 +194,14 @@ export function pathSetsInCache(cache, falcorPathSets) {
   }
 
   // Here function starts
-  let falcorPathSetsInstance = falcorPathSets;
-  falcorPathSetsInstance = validateFalcorPathSets(falcorPathSetsInstance);
-  if (falcorPathSetsInstance === undefined) {
+  const processedFalcorPaths = validateFalcorPathSets(falcorPathSets);
+  if (processedFalcorPaths === undefined) {
     // If no data is being requested return true
     return true;
   }
   // Return if every pathSet in the array of pathSets
   // is located in the cache.
-  return falcorPathSetsInstance.every((pathSet) =>
+  return processedFalcorPaths.every((pathSet) =>
     checkSinglePathSetInCache(cache, pathSet)
   );
 }
@@ -210,14 +209,14 @@ export function pathSetsInCache(cache, falcorPathSets) {
 export function expandCache(cache) {
   function assignByPath(path, value) {
     // If using dot notation obj.key.key.key
-    let pathInstance = path;
-    if (typeof pathInstance === 'string') {
-      pathInstance = pathInstance.split('.');
+    let processedPath = path;
+    if (typeof path === 'string') {
+      processedPath = path.split('.');
     }
     // Parent also works for array length 1, aka initial keys
     // Parent and Key variables are used for assigning new values later
-    const parent = followPath(pathInstance.slice(0, pathInstance.length - 1), cache);
-    const key = pathInstance[pathInstance.length - 1];
+    const parent = followPath(processedPath.slice(0, processedPath.length - 1), cache);
+    const key = processedPath[processedPath.length - 1];
     // The following key exists as it was pushed on to stack as a valid key
     parent[key] = value;
   }
@@ -235,8 +234,8 @@ export function expandCache(cache) {
     // pathToRef is an array path
     if (!(pathToRef instanceof Array)) {
       throw new Error(
-        `pathToRef was passed as a non-array. The value passed was:
-        ${JSON.stringify(pathToRef)}`
+        'pathToRef was passed as a non-array. The value passed was: ' +
+        `${JSON.stringify(pathToRef)}`
       );
     }
     // So is refPath
@@ -269,8 +268,9 @@ export function expandCache(cache) {
             });
             paths = `${paths.substring(0, paths.length - 2)}]`;
             throw new Error(
-              `Neverending loop from ref to ref with no real values present in expandCache.
-              It is made up of the following paths: ${paths}`);
+              'Neverending loop from ref to ref with no real values present in expandCache. ' +
+              `It is made up of the following paths: ${paths}`
+            );
           } else {
             refPathsSet.add(path);
             path = val.value.join('.');
@@ -279,8 +279,8 @@ export function expandCache(cache) {
           break;
         default:
           throw new Error(
-            `expandCache encountered a new type of name: ${val.$type}.
-            And cannot read it at following path: ${path}`
+            `expandCache encountered a new type of name: ${val.$type}. ` +
+            `And cannot read it at following path: ${path}`
           );
       }
     }
@@ -303,8 +303,8 @@ export function expandCache(cache) {
     const pathArray = stack.pop();
     if (!(pathArray instanceof Array)) {
       throw new Error(
-        `non-array popped off stack in expandCache.
-        Item popped off was: ${JSON.stringify(pathArray)}`
+        'non-array popped off stack in expandCache. ' +
+        `Item popped off was: ${JSON.stringify(pathArray)}`
       );
     }
     const val = followPath(pathArray, cache);
@@ -328,8 +328,8 @@ export function expandCache(cache) {
           break;
         default:
           throw new Error(
-            `expandCache encountered a new type of name: ${val.$type}.
-            And cannot read it at following path: ${pathArray.join('.')}`
+            `expandCache encountered a new type of name: ${val.$type}. ` +
+            `And cannot read it at following path: ${pathArray.join('.')}`
           );
       }
     } else {
@@ -363,8 +363,8 @@ export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
 
     if (depth >= maxDepth) return;
 
-    const curObjectInstance = curObject;
-    _.forEach(curObjectInstance, (value, key) => {
+    /* eslint-disable no-param-reassign */
+    _.forEach(curObject, (value, key) => {
       if (value instanceof Error) {
         throw value;
       }
@@ -372,13 +372,14 @@ export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
         if (isObject(value)) {
           recursivelyConvertObject(value, correspondingOldObject[key], depth + 1);
         } else {
-          curObjectInstance[key] = { $set: value };
+          curObject[key] = { $set: value };
         }
       } else {
-        curObjectInstance[key] = { $set: value };
+        curObject[key] = { $set: value };
       }
     });
     return;
+    /* eslint-enable no-param-reassign */
   }
 
   // Function starts here

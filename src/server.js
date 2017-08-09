@@ -41,9 +41,8 @@ if (process.env.NODE_ENV !== 'production') {
 function md5Hash(file) {
   const hashInstance = crypto.createHash('md5');
   // readFileSync in the syncronous version of readFile
-  let fileInstance = file;
-  fileInstance = fs.readFileSync(fileInstance, 'utf8');
-  return (hashInstance.update(fileInstance).digest('hex'));
+  const fileContents = fs.readFileSync(file, 'utf8');
+  return hashInstance.update(fileContents).digest('hex');
 }
 
 const mainClientHash = md5Hash('./static/build/client.js');
@@ -175,7 +174,7 @@ const renderApp = (renderProps) => {
     });
   }
 
-  return localModel.preload(...falcorPaths).then(() => {
+  return localModel.preload(...falcorPaths).then(() => (
     buildMainHtmlString(
       renderToString(
         <RouterContext
@@ -184,8 +183,8 @@ const renderApp = (renderProps) => {
         />
       ),
       localModel.getCache()
-    );
-  });
+    )
+  ));
 };
 
 // The Gazelle website server
@@ -195,9 +194,9 @@ const mainApp = express();
 // For post requests to go through correctly
 mainApp.use(bodyParser.urlencoded({ extended: true }));
 
-mainApp.use('/model.json', FalcorServer.dataSourceRoute(() => {
-  serverModel.asDataSource();
-}));
+mainApp.use('/model.json', FalcorServer.dataSourceRoute(() => (
+  serverModel.asDataSource()
+)));
 
 mainApp.use('/static', express.static('static'));
 
@@ -291,9 +290,9 @@ const editorTools = express();
 // This is for parsing post requests
 editorTools.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 // For connecting the client to our falcor server
-editorTools.use('/model.json', FalcorServer.dataSourceRoute(() => {
-  serverModel.asDataSource();
-}));
+editorTools.use('/model.json', FalcorServer.dataSourceRoute(() => (
+  serverModel.asDataSource()
+)));
 // serving static files
 editorTools.use(express.static('static'));
 
@@ -311,7 +310,7 @@ const allowCrossDomain = function (req, res, next) { // eslint-disable-line func
 
 editorTools.use(allowCrossDomain);
 
-let PATH_NAME = '';
+let PATH_NAME;
 
 if (process.env.NODE_ENV === 'production') {
   PATH_NAME = '~/gazelle-production/scripts/restartServers.sh';
@@ -389,7 +388,7 @@ editorTools.post('/upload', upload.single('image'), (req, res) => {
     const year = new Date().getFullYear().toString();
     let month = new Date().getMonth() + 1;
     if (month < 10) {
-      month = `0${month.toString()}`;
+      month = `0${month}`;
     } else {
       month = month.toString();
     }
@@ -413,8 +412,8 @@ editorTools.post('/upload', upload.single('image'), (req, res) => {
     awsSdkClient.headObject({ Bucket, Key }, (err) => {
       if (err && err.code === 'NotFound') {
         const s3Uploader = s3Client.uploadFile(s3Params);
-        s3Uploader.on('error', errInstance => {
-          console.error(errInstance); // eslint-disable-line no-console
+        s3Uploader.on('error', s3Err => {
+          console.error(s3Err); // eslint-disable-line no-console
           deleteTmpFile();
           return res.status(500).send('Error uploading');
         });
@@ -436,7 +435,7 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'beta') {
   });
 
   editorTools.get(/(?!\/restartserver|\/login|\/upload).*/, (req, res) => {
-    res.redirect(`307,/login?url=${req.url}`);
+    res.redirect(307, `/login?url=${req.url}`);
   });
 } else {
   editorTools.get(/(?!\/restartserver|\/upload).*/, (req, res) => {
