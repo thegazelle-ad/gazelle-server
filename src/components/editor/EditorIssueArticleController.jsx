@@ -72,16 +72,15 @@ export default class EditorIssueArticleController extends FalcorController {
   componentWillMount() {
     const falcorCallBack = (data) => {
       const issueNumber = this.props.params.issueNumber;
-      let dataInstance = data;
-      dataInstance = dataInstance.issuesByNumber[issueNumber];
+      const issueData = data.issuesByNumber[issueNumber];
       const mainArticles = [];
-      _.forEach(dataInstance.categories, (category) => {
+      _.forEach(issueData.categories, (category) => {
         _.forEach(category.articles, (article) => {
           mainArticles.push(article);
         });
       });
-      const featuredArticles = dataInstance.featured ? [dataInstance.featured] : [];
-      const picks = dataInstance.picks ? _.map(dataInstance.picks, (val) => val) : [];
+      const featuredArticles = issueData.featured ? [issueData.featured] : [];
+      const picks = issueData.picks ? _.map(issueData.picks, (val) => val) : [];
       this.safeSetState({
         mainArticles,
         featuredArticles,
@@ -94,15 +93,15 @@ export default class EditorIssueArticleController extends FalcorController {
   componentWillReceiveProps(nextProps) {
     const falcorCallBack = (data) => {
       const issueNumber = this.props.params.issueNumber;
-      const dataInstance = data.issuesByNumber[issueNumber];
+      const issueData = data.issuesByNumber[issueNumber];
       const mainArticles = [];
-      _.forEach(dataInstance.categories, (category) => {
+      _.forEach(issueData.categories, (category) => {
         _.forEach(category.articles, (article) => {
           mainArticles.push(article);
         });
       });
-      const featuredArticles = dataInstance.featured ? [dataInstance.featured] : [];
-      const picks = dataInstance.picks ? _.map(dataInstance.picks, (val) => val) : [];
+      const featuredArticles = issueData.featured ? [issueData.featured] : [];
+      const picks = issueData.picks ? _.map(issueData.picks, (val) => val) : [];
       this.safeSetState({
         mainArticles,
         featuredArticles,
