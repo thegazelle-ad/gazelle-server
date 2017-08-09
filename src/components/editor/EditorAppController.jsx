@@ -8,14 +8,12 @@ let PORT = '';
 
 if (process.env.NODE_ENV === 'production') {
   HOSTNAME = 'admin.thegazelle.org';
+  PORT = 443;
 } else if (process.env.NODE_ENV === 'beta') {
   HOSTNAME = 'adminbeta.thegazelle.org';
-} else {
-  HOSTNAME = 'localhost';
-}
-if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'beta') {
   PORT = 443;
 } else {
+  HOSTNAME = 'localhost';
   PORT = 4000;
 }
 
@@ -77,29 +75,25 @@ export default class EditorAppController extends BaseComponent {
                 <Link
                   to="/articles" activeClassName="active-link"
                   onClick={this.handleDisableLink}
-                >Articles
-                </Link>
+                >Articles</Link>
               </li>
               <li>
                 <Link
                   to="/authors" activeClassName="active-link"
                   onClick={this.handleDisableLink}
-                >Authors
-                </Link>
+                >Authors</Link>
               </li>
               <li>
                 <Link
                   to="/issues" activeClassName="active-link"
                   onClick={this.handleDisableLink}
-                >Issues
-                </Link>
+                >Issues</Link>
               </li>
               <li>
                 <Link
                   to="/images" activeClassName="active-link"
                   onClick={this.handleDisableLink}
-                >Images
-                </Link>
+                >Images</Link>
               </li>
             </ul>
           </div>

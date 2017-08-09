@@ -172,11 +172,9 @@ export default class FalcorRouter extends BaseRouter.createClass([
       new Promise((resolve) => {
         const requestedFields = pathSet[2];
         let query = 'filter=';
-        /* eslint-disable prefer-template*/
         pathSet.slugs.forEach((slug, index) => {
-          query += (index > 0 ? ',' : '') + `slug:'${slug}'`;
+          query += `${index > 0 ? ',' : ''}slug:'${slug}'`;
         });
-         /* eslint-enable prefer-template*/
         query += '&fields=slug';
         requestedFields.forEach((field) => {
           if (field !== 'slug') {
@@ -200,7 +198,8 @@ export default class FalcorRouter extends BaseRouter.createClass([
           resolve(results);
         })
         .catch((e) => {
-          console.error('Error was found in Ghost query for slugs:'); // eslint-disable-line no-console,max-len
+          // eslint-disable-next-line no-console
+          console.error('Error was found in Ghost query for slugs:');
           console.error(pathSet.slugs); // eslint-disable-line no-console
           console.error(e); // eslint-disable-line no-console
           resolve([]);
@@ -239,14 +238,17 @@ export default class FalcorRouter extends BaseRouter.createClass([
         db.articleQuery(pathSet.slugs, requestedFields).then((data) => {
           const results = [];
           data.forEach((article) => {
-            const articleInstance = article;
-            if (articleInstance.hasOwnProperty('published_at') && (articleInstance.published_at instanceof Date)) { // eslint-disable-line max-len
-              articleInstance.published_at = articleInstance.published_at.getTime();
+            const processedArticle = { ...article };
+            if (
+              processedArticle.hasOwnProperty('published_at') &&
+              processedArticle.published_at instanceof Date
+            ) {
+              processedArticle.published_at = processedArticle.published_at.getTime();
             }
             requestedFields.forEach((field) => {
               results.push({
-                path: ['articlesBySlug', articleInstance.slug, field],
-                value: articleInstance[field],
+                path: ['articlesBySlug', processedArticle.slug, field],
+                value: processedArticle[field],
               });
             });
           });
@@ -434,7 +436,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
       new Promise((resolve) => {
         const results = [];
         const numberOfQueryCalls = pathSet.pageLengths.length * pathSet.pageNumbers.length;
-        if (numberOfQueryCalls === 0) return [];
+        if (numberOfQueryCalls === 0) return;
         let queriesResolved = 0;
         pathSet.pageLengths.forEach((pageLength) => {
           if (pageLength < 1) {
@@ -483,7 +485,6 @@ export default class FalcorRouter extends BaseRouter.createClass([
             });
           });
         });
-        return null;
       })
     ),
   },
@@ -683,14 +684,17 @@ export default class FalcorRouter extends BaseRouter.createClass([
           const results = [];
           data.forEach((issue) => {
             // Convert Date object to time integer
-            const issueInstance = issue;
-            if (issueInstance.hasOwnProperty('published_at') && (issueInstance.published_at instanceof Date)) { // eslint-disable-line max-len
-              issueInstance.published_at = issueInstance.published_at.getTime();
+            const processedIssue = { ...issue };
+            if (
+              processedIssue.hasOwnProperty('published_at') &&
+              processedIssue.published_at instanceof Date
+            ) {
+              processedIssue.published_at = processedIssue.published_at.getTime();
             }
             requestedFields.forEach((field) => {
               results.push({
-                path: ['issuesByNumber', issueInstance.issue_order, field],
-                value: issueInstance[mapFields(field)],
+                path: ['issuesByNumber', processedIssue.issue_order, field],
+                value: processedIssue[mapFields(field)],
               });
             });
           });
@@ -905,11 +909,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
         });
         db.searchPostsQuery(pathSet.queries, minIndex, maxIndex).then((data) => {
           // Map all the indices down to fit the indices returned by the db call
-          const pathSetInstance = pathSet;
-          pathSetInstance.indices = pathSetInstance.indices.map((index) => index - minIndex);
+          const processedPathSet = {
+            ...pathSet,
+            indices: pathSet.indicies.map(index => index - minIndex),
+          };
           const results = [];
           _.forEach(data, (queryResults, query) => {
-            pathSetInstance.indices.forEach((index) => {
+            processedPathSet.indices.forEach((index) => {
               if (index < queryResults.length) {
                 results.push({
                   path: ['search', 'posts', query, index],
@@ -940,11 +946,13 @@ export default class FalcorRouter extends BaseRouter.createClass([
         });
         db.searchAuthorsQuery(pathSet.queries, minIndex, maxIndex).then((data) => {
           // Map all the indices down to fit the indices returned by the db call
-          const pathSetInstance = pathSet;
-          pathSetInstance.indices = pathSetInstance.indices.map((index) => index - minIndex);
+          const processedPathSet = {
+            ...pathSet,
+            indices: pathSet.indicies.map(index => index - minIndex),
+          };
           const results = [];
           _.forEach(data, (queryResults, query) => {
-            pathSetInstance.indices.forEach((index) => {
+            processedPathSet.indices.forEach((index) => {
               if (index < queryResults.length) {
                 results.push({
                   path: ['search', 'authors', query, index],
