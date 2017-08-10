@@ -1,22 +1,69 @@
 .text-page-load {
   max-width: 590px;
+  height: 570px;
   display: block;
   margin: auto;
 }
 
-.text-page__title-load{
-  height: 32px;
-  margin: 0 0 0.5rem 0;
-  border-radius: 10px;
-  background-color: $light-grey;
-  @media (max-width: $small) {
-      margin: 0.75rem 0;
-    }
+.text-page__title-load:empty {
+  height: 30px;
+  margin: auto;
+  background-image: 
+    linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%),
+    linear-gradient($transition-grey 30px, transparent 0);
+  background-size: 
+    150px 30px,
+    320px 30px;   
+  background-position:
+    -150px 0px,
+    50% 0px;
+  background-repeat: repeat-y;
+  animation: title-transition 1.5s infinite linear;
+}
+ 
+@keyframes title-transition {
+  to {
+    background-position:
+      550px 0px,
+      50% 0px;
+  }
 }
 
-.text-page__html-load{
-  height: 700px;
-  border-radius: 15px;
-  background-color: $border-grey;
+.text-page__html-load:empty {
+  height: 540px; 
+  background-image: 
+    linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%),
+    linear-gradient($transition-grey 15px, transparent 0),
+    linear-gradient($transition-grey 15px, transparent 0),
+    linear-gradient($transition-grey 15px, transparent 0),
+    linear-gradient($transition-grey 15px, transparent 0),
+    linear-gradient($transition-grey 15px, transparent 0);
+  background-size:
+    150px 180px,
+    400px 180px,
+    500px 180px,
+    550px 180px,
+    350px 180px,
+    250px 180px;
+  background-position:
+    -150px 0px,
+    20px 30px,
+    20px 55px,
+    20px 80px,
+    20px 105px,
+    20px 130px;
+  background-repeat: repeat-y;
+  animation: text-transition 1.5s infinite linear;
 }
 
+@keyframes text-transition {
+  to {
+    background-position:
+      550px 0px,
+      20px 30px,
+      20px 55px,
+      20px 80px,
+      20px 105px,
+      20px 130px;
+  }
+}
