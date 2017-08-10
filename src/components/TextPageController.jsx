@@ -11,6 +11,7 @@ import Helmet from 'react-helmet'; // Add meta tags for pre-Ghost release
 // Components
 import TextPage from 'components/TextPage';
 import NotFound from 'components/NotFound';
+import TextPageLoad from 'transitions/TextPageLoad';
 
 export default class TextPageController extends FalcorController {
   static getFalcorPathSets(params) {
@@ -67,6 +68,6 @@ export default class TextPageController extends FalcorController {
         </div>
       );
     }
-    return <div>Loading</div>;
+    return <TextPageLoad />;
   }
 }
