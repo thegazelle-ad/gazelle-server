@@ -664,7 +664,7 @@ or missing category at issue number ${issueNumber} index ${i}`);
           'issues_posts_order.issue_id', 'category_id')
         .from('posts')
         .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
-        .leftJoin('postsTags', 'postsTags.post_id', '=', 'posts.id')
+        .leftJoin('posts_tags', 'posts_tags.post_id', '=', 'posts.id')
         .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
         .whereNotNull('gazelle_published_at')
         // We need the non-arrow function here to have the `this` object passed
