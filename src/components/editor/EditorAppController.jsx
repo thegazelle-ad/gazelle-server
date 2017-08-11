@@ -35,7 +35,7 @@ export default class EditorAppController extends BaseComponent {
   constructor(props) {
     super(props);
     this.restartServer = this.restartServer.bind(this);
-    this.isRestarted = this.isRestarted.bind(this);
+    this.pingServer = this.pingServer.bind(this);
     this.handleDisableLink = this.handleDisableLink.bind(this);
     this.resetGhostInfo = this.resetGhostInfo.bind(this);
     this.isLoggedIn = this.isLoggedIn.bind(this);
@@ -56,31 +56,31 @@ export default class EditorAppController extends BaseComponent {
     }
   }
 
-  isRestarted (){
-    http.get('/isrestarted', (response) => {
-      let signal = '';
-      let count = 0;
-      response.on('data', (chunk) => {
-        signal += chunk;
-      });
-      response.on('end', () => {
+  pingServer () {
+    let counter = 0;
+    function isRestarted () {
+      http.get('/isrestarted', (response) => {
+        let signal = '';
+        response.on('data', (chunk) => {
+          signal += chunk;
+        });
+        response.on('end', () => {
           if (signal === 'false') {
             window.alert("Servers restarted successfully");
-            }
+          }
           else if (signal === 'true') {
-            count +=1;
-            if (count <= 5) {
-              setTimeout(this.isRestarted(),500);
+            counter+=1;
+            if (counter <= 5) {
+              setTimeout(isRestarted, 500);
             }
           }
-          else {
-            if (count > 5) {
-              window.alert('Error');
-              setTimeout(this.isRestarted(),500);
-            }
+          if (counter > 5) {
+            window.alert('Error');
           }
         })
-    })
+      })
+    }
+    isRestarted();
   }
 
   restartServer() {
@@ -123,8 +123,12 @@ export default class EditorAppController extends BaseComponent {
 =======
         if (reply === "start") {
           window.alert("Server is being restarted now");
+<<<<<<< 9907f2f92e33d7e1a3d761b5263013b6637e3769
           this.isRestarted();
 >>>>>>> Update EditorAppController.jsx
+=======
+          this.pingServer();
+>>>>>>> Made corrections to EditorAppController as suggested
         }
         else if (reply === "error") {
           window.alert("There was an error restarting the servers");
