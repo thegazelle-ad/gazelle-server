@@ -1,6 +1,7 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import { debounce, markdownLength } from 'lib/utilities';
+import { updateFieldValue } from './lib/form-field-updaters';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -10,11 +11,32 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 const MAX_BIOGRAPHY_LENGTH = 400;
 
+const styles = {
+  authorProfile: {
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingBottom: 30,
+    paddingTop: 10,
+  },
+  buttons: {
+    marginTop: 12,
+    marginBottom: 12,
+  },
+}
+
 export default class EditorAuthorController extends FalcorController {
   constructor(props) {
     super(props);
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
-    this.handleBiographyChanges = this.handleBiographyChanges.bind(this);
+    this.fieldUpdaters = {
+      name: updateFieldValue.bind(this, 'name', undefined),
+      slug: updateFieldValue.bind(this, 'slug', undefined),
+      job_title: updateFieldValue.bind(this, 'job_title', undefined),
+      image: updateFieldValue.bind(this, 'image', undefined),
+      biography: updateFieldValue.bind(this, 'biography', {
+        trim: MAX_BIOGRAPHY_LENGTH,
+      }),
+    };
     this.safeSetState({
       changed: false,
       saving: false,
@@ -25,7 +47,7 @@ export default class EditorAuthorController extends FalcorController {
       biography: '',
     });
 
-    this.debouncedHandleFormStateChanges = debounce( () => {
+    this.debouncedHandleFormStateChanges = debounce(() => {
       // We don't want the debounced event to happen if we're saving
       if (this.state.saving) return;
 
@@ -34,40 +56,6 @@ export default class EditorAuthorController extends FalcorController {
         this.safeSetState({changed: changedFlag});
       }
     }, 500);
-
-  //   this.debouncedHandleFormChanges = debounce((event) => {
-  //     // We don't want the debounced event to happen if we're saving
-  //     if (this.state.saving) return;
-  //
-  //     const formNode = event.target.parentNode;
-  //
-  //     // Gets all the input elements that we named
-  //     const children = _.map(formNode.children, (child) => {
-  //       return child.name;
-  //     })
-  //     const fields = children.filter((key) => {
-  //       return key && isNaN(parseInt(key)) && key !== "length";
-  //     });
-  //
-  //     const falcorData = this.state.data.authorsBySlug[this.props.params.slug];
-  //
-  //     const changedFlag = fields.some((field) => {
-  //       const formValue = formNode[field].value;
-  //       const falcorValue = falcorData[field];
-  //
-  //       // The last boolean check here checks if both values are falsey
-  //       // like null and empty string, in that case we'll say there's no change
-  //       if ((formValue !== falcorValue) && !(!formValue && !falcorValue)) {
-  //         return true;
-  //       }
-  //       return false;
-  //     });
-  //
-  //     if (changedFlag !== this.state.changed) {
-  //       this.safeSetState({changed: changedFlag});
-  //     }
-  //   }, 0);
-
   }
 
   static getFalcorPathSets(params) {
@@ -78,24 +66,18 @@ export default class EditorAuthorController extends FalcorController {
 
   componentWillMount() {
     const falcorCallback = (data) => {
-      let name = data.authorsBySlug[this.props.params.slug].name;
-      let slug = data.authorsBySlug[this.props.params.slug].slug;
-      let image = data.authorsBySlug[this.props.params.slug].image;
-      let job_title = data.authorsBySlug[this.props.params.slug].job_title;
-      let biography = data.authorsBySlug[this.props.params.slug].biography;
-
-      if (!name) { name = ""; }
-      if (!slug) { slug = ""; }
-      if (!image) { image = ""; }
-      if (!job_title) { job_title = ""; }
-      if (!biography) { biography = ""; }
+      const name = data.authorsBySlug[this.props.params.slug].name || '';
+      const slug = data.authorsBySlug[this.props.params.slug].slug || '';
+      const image = data.authorsBySlug[this.props.params.slug].image || '';
+      const job_title = data.authorsBySlug[this.props.params.slug].job_title || '';
+      const biography = data.authorsBySlug[this.props.params.slug].biography || '';
 
       this.safeSetState({
-        name: name,
-        slug: slug,
-        image: image,
-        job_title: job_title,
-        biography: biography,
+        name,
+        slug,
+        image,
+        job_title,
+        biography,
       });
     };
     super.componentWillMount(falcorCallback);
@@ -103,25 +85,18 @@ export default class EditorAuthorController extends FalcorController {
 
   componentWillReceiveProps(nextProps) {
     const falcorCallback = (data) => {
-
-      let name = data.authorsBySlug[this.props.params.slug].name;
-      let slug = data.authorsBySlug[this.props.params.slug].slug;
-      let image = data.authorsBySlug[this.props.params.slug].image;
-      let job_title = data.authorsBySlug[this.props.params.slug].job_title;
-      let biography = data.authorsBySlug[this.props.params.slug].biography;
-
-      if (!name) { name = ""; }
-      if (!slug) { slug = ""; }
-      if (!image) { image = ""; }
-      if (!job_title) { job_title = ""; }
-      if (!biography) { biography = ""; }
+      const name = data.authorsBySlug[this.props.params.slug].name || '';
+      const slug = data.authorsBySlug[this.props.params.slug].slug || '';
+      const image = data.authorsBySlug[this.props.params.slug].image || '';
+      const job_title = data.authorsBySlug[this.props.params.slug].job_title || '';
+      const biography = data.authorsBySlug[this.props.params.slug].biography || '';
 
       this.safeSetState({
-        name: name,
-        slug: slug,
-        image: image,
-        job_title: job_title,
-        biography: biography,
+        name,
+        slug,
+        image,
+        job_title,
+        biography,
       });
     };
     super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
@@ -129,6 +104,29 @@ export default class EditorAuthorController extends FalcorController {
       changed: false,
       saving: false,
     });
+  }
+
+  isSameAuthor(prevProps, props) {
+    return prevProps.params.slug === props.params.slug;
+  }
+
+  formHasUpdated(prevState, state) {
+    return (
+      this.isFormFieldChanged(prevState.name, state.name) ||
+      this.isFormFieldChanged(prevState.slug, state.slug) ||
+      this.isFormFieldChanged(prevState.image, state.image) ||
+      this.isFormFieldChanged(prevState.job_title, state.job_title) ||
+      this.isFormFieldChanged(prevState.biography, state.biography)
+    );
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.isSameAuthor(prevProps, this.props) &&
+        this.formHasUpdated(prevState, this.state) &&
+        this.state.ready) {
+      // The update wasn't due to a change in article
+      this.debouncedHandleFormStateChanges();
+    }
   }
 
   handleSaveChanges(event) {
@@ -204,14 +202,6 @@ the save changes button is supposed to be disabled in this case");
     }
   }
 
-  handleBiographyChanges() {
-    let bio = this.state.biography;
-    if (markdownLength(bio) > MAX_BIOGRAPHY_LENGTH) {
-      bio = bio.substr(0, MAX_BIOGRAPHY_LENGTH); // Shorten to enforce length limits
-      this.safeSetState({ biography: bio });
-    }
-  }
-
   isFormFieldChanged (userInput, falcorData) {
     return ((userInput !== falcorData) && !(!userInput && !falcorData));
   }
@@ -228,18 +218,6 @@ the save changes button is supposed to be disabled in this case");
   }
 
   render() {
-    const styles = {
-      authorProfile: {
-        paddingLeft: 30,
-        paddingRight: 30,
-        paddingBottom: 30,
-        paddingTop: 10,
-      },
-      buttons: {
-        marginTop: 12,
-        marginBottom: 12,
-      },
-    }
     if (this.state.ready) {
       if (!this.state.data) {
         return <div><p>No authors match the slug given in the URL</p></div>;
@@ -274,34 +252,26 @@ the save changes button is supposed to be disabled in this case");
               value={this.state.name}
               floatingLabelText="Name"
               disabled={this.state.saving}
-              onChange={e =>
-                this.setState({ name: e.target.value }, () => {
-                    this.debouncedHandleFormStateChanges();})}
+              onChange={this.fieldUpdaters.name}
             /><br />
             <TextField
               value={this.state.slug}
               floatingLabelText="Slug"
               disabled={this.state.saving}
-              onChange={e =>
-                this.setState({ slug: e.target.value }, () => {
-                    this.debouncedHandleFormStateChanges();})}
+              onChange={this.fieldUpdaters.slug}
             /><br />
             <TextField
               value={this.state.job_title}
               floatingLabelText="Job Title"
               disabled={this.state.saving}
-              onChange={e =>
-                this.setState({ job_title: e.target.value }, () => {
-                    this.debouncedHandleFormStateChanges();})}
+              onChange={this.fieldUpdaters.job_title}
             /><br />
             <TextField
               name="image"
               value={this.state.image}
               floatingLabelText="Image (Remember to use https:// not http://)"
               disabled={this.state.saving}
-              onChange={e =>
-                this.setState({ image: e.target.value }, () => {
-                    this.debouncedHandleFormStateChanges();})}
+              onChange={this.fieldUpdaters.image}
               fullWidth
             /><br />
             <TextField
@@ -310,17 +280,14 @@ the save changes button is supposed to be disabled in this case");
                 " of " + MAX_BIOGRAPHY_LENGTH + " characters)"}
               value={this.state.biography}
               disabled={this.state.saving}
-              onChange={e =>
-                this.setState({ biography: e.target.value }, () => {
-                    this.debouncedHandleFormStateChanges();
-                    this.handleBiographyChanges();
-                  })}
+              onChange={this.fieldUpdaters.biography}
               multiLine
               rows={2}
               fullWidth
             /><br />
             <RaisedButton
               label={changedStateMessage}
+              type="submit"
               primary
               style={styles.buttons}
               disabled={!this.state.changed || this.state.saving}
