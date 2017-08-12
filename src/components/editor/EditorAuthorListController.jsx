@@ -1,8 +1,9 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
-import { debounce, slugifyAuthor } from 'lib/utilities';
-import { Link, browserHistory } from 'react-router';
-import _ from 'lodash';
+import { slugifyAuthor } from 'lib/utilities';
+import { browserHistory } from 'react-router';
+import EditorSearchBar from './EditorSearchBar';
+import { updateFieldValue } from './lib/form-field-updaters';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -11,8 +12,6 @@ import Divider from 'material-ui/Divider';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import Menu from 'material-ui/Menu';
-import MenuItem from 'material-ui/MenuItem';
 import PersonAdd from 'material-ui/svg-icons/social/person-add';
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
 
@@ -43,53 +42,25 @@ const styles = {
 export default class EditorAuthorListController extends FalcorController {
   constructor(props) {
     super(props);
-    this.handleSearchChange = this.handleSearchChange.bind(this);
     this.handleCreateAuthorChange = this.handleCreateAuthorChange.bind(this);
     this.createAuthor = this.createAuthor.bind(this);
+    this.fieldUpdaters = {
+      inputName: updateFieldValue.bind(this, 'inputName', undefined),
+      inputSlug: updateFieldValue.bind(this, 'inputSlug', undefined),
+    };
     this.safeSetState({
-      slugSearchValue: '',
-      searchSuggestions: [],
       createAuthorValid: false,
       inputName: "",
       inputSlug: "",
     });
-    this.debouncedGetSuggestions = debounce((query, wasCalledInstantly = false) => {
-      /* Since we provided the instantFlag to the debounced function we have to be careful
-      always to provide the query parameter to the function, or the debounce function will
-      append true as the query value as it always just appends the argument to the back of the
-      provided arguments */
-      let processedQuery = query;
-      if (!wasCalledInstantly) {
-        // If it wasn't called instantly we get the value from state
-        // otherwise we want it directly as setState is asynchronous and
-        // won't give the most updated value
-        processedQuery = this.state.slugSearchValue;
-      }
-      if (!(processedQuery.trim())) {
-        this.safeSetState({ searchSuggestions: [] });
-        return;
-      }
-      this.props.model.get(['search', 'authors', processedQuery, { length: 3 }, ['name', 'slug']])
-      .then((x) => {
-        if (!x) {
-          this.safeSetState({ searchSuggestions: [] });
-          return;
-        }
-        const suggestions = x.json.search.authors[processedQuery];
-        const suggestionsArray = _.map(suggestions, value => value);
-        this.safeSetState({ searchSuggestions: suggestionsArray });
-      });
-    }, 250, true);
   }
+
   static getFalcorPathSets() {
     return [];
   }
 
-  handleSearchChange(e) {
-    this.debouncedGetSuggestions(e.target.value);
-    this.safeSetState({
-      slugSearchValue: e.target.value,
-    });
+  handleClickAuthor(author) {
+    browserHistory.push(`/authors/${author.slug}`);
   }
 
   handleCreateAuthorChange() {
@@ -144,40 +115,13 @@ export default class EditorAuthorListController extends FalcorController {
                 <div style={styles.tabs}>
                   <h2>Edit Author</h2>
                   <Divider />
-                  <form onSubmit={(e)=>{e.preventDefault()}}>
-                    <TextField
-                      hintText="John Appleseed"
-                      floatingLabelText="Input Name"
-                      value={this.state.slugSearchValue}
-                      onChange={this.handleSearchChange}
-                    />
-                    <br />
-                    <Paper
-                      style={styles.authorMenu}
-                      zDepth={0}
-                    >
-                      <Menu>
-                      {
-                        this.state.searchSuggestions.map((author) => {
-                          const link = "/authors/" + author.slug;
-                          return (
-                            <div key={author.slug}>
-                              <Link
-                                to={link}
-                                onClick={() => {
-                                  this.safeSetState({slugSearchValue: author.name,
-                                  searchSuggestions: []})}
-                                }
-                              >
-                                <MenuItem primaryText={author.name} />
-                              </Link>
-                            </div>
-                          );
-                        })
-                      }
-                      </Menu>
-                    </Paper>
-                  </form>
+                  <EditorSearchBar
+                    model={this.props.model}
+                    mode="authors"
+                    fields={['slug']}
+                    length={3}
+                    handleClick={this.handleClickAuthor}
+                  />
                 </div>
               </Tab>
               <Tab label="ADD NEW" icon={<PersonAdd />}>
@@ -194,7 +138,7 @@ export default class EditorAuthorListController extends FalcorController {
                       hintText="John Appleseed"
                       floatingLabelText="Input Name"
                       value={this.state.inputName}
-                      onChange={e => this.setState({ inputName: e.target.value })}
+                      onChange={this.fieldUpdaters.inputName}
                     />
                     <br />
                     <TextField
@@ -203,7 +147,7 @@ export default class EditorAuthorListController extends FalcorController {
                       hintText="john-appleseed"
                       floatingLabelText="Input URL Slug"
                       value={this.state.inputSlug}
-                      onChange={e => this.setState({ inputSlug: e.target.value })}
+                      onChange={this.fieldUpdaters.inputSlug}
                     />
                     <br />
                     <RaisedButton
