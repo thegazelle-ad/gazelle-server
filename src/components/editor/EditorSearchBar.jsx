@@ -158,7 +158,7 @@ export default class EditorSearchBar extends BaseComponent {
             floatingLabelText="Search for Authors"
             hintText="Author"
             value={this.state.searchValue}
-            onChange={this.handleSearchChange}
+            onChange={this.fieldUpdaters.searchValue}
           />
           <div>
             <Menu style={{width: 200}}>
