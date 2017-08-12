@@ -11,13 +11,14 @@ import Person from 'material-ui/svg-icons/social/person';
 import Photo from 'material-ui/svg-icons/image/photo';
 import LibraryBooks from 'material-ui/svg-icons/av/library-books';
 
+const styles = {
+  title: {
+    fontSize: '20px',
+  },
+};
+
 export default class EditorNavigation extends BaseComponent {
   render() {
-    const styles = {
-      title: {
-        fontSize: '20px',
-      },
-    };
     return (
       <div>
         <Drawer open={this.props.isNavOpen} zDepth={2}>
