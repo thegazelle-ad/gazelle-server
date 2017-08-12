@@ -6,6 +6,29 @@ import _ from 'lodash';
 import CircularProgress from 'material-ui/CircularProgress';
 import RaisedButton from 'material-ui/RaisedButton';
 
+const styles = {
+  paper: {
+    height: '100%',
+    width: '100%',
+    marginTop: 20,
+    marginBottom: 20,
+    textAlign: 'left',
+    display: 'inline-block',
+  },
+  tabs: {
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingBottom: 15,
+  },
+  buttons: {
+    marginTop: 12,
+    marginBottom: 24,
+  },
+  publishingButtons: {
+    margin: 12,
+  },
+};
+
 export default class EditorMainIssueController extends FalcorController {
   constructor(props) {
     super(props);
@@ -108,10 +131,9 @@ export default class EditorMainIssueController extends FalcorController {
 
   unpublishIssue() {
     const callback = () => {
-      this.safeSetState({ publishing: false });
-      // window.alert("Issue succesfully unpublished");
-    };
-    this.safeSetState({ publishing: true });
+      this.safeSetState({publishing: false});
+    }
+    this.safeSetState({publishing: true});
     this.falcorUpdate({
       paths: [['issuesByNumber', this.props.params.issueNumber, 'published_at']],
       jsonGraph: {
@@ -125,29 +147,6 @@ export default class EditorMainIssueController extends FalcorController {
   }
 
   render() {
-    const styles = {
-      paper: {
-        height: '100%',
-        width: '100%',
-        marginTop: 20,
-        marginBottom: 20,
-        textAlign: 'left',
-        display: 'inline-block',
-      },
-      tabs: {
-        paddingLeft: 30,
-        paddingRight: 30,
-        paddingBottom: 15,
-      },
-      buttons: {
-        marginTop: 12,
-        marginBottom: 24,
-      },
-      publishingButtons: {
-        margin: 12,
-      },
-    }
-
     if (this.state.ready) {
       if (!this.state.data) {
         return <p>This issue does not exist</p>;
