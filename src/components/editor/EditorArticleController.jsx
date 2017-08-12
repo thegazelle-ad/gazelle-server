@@ -25,7 +25,6 @@ export default class EditorArticleController extends FalcorController {
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
     this.handleAddAuthor = this.handleAddAuthor.bind(this);
     this.handleDeleteAuthor = this.handleDeleteAuthor.bind(this);
-    this.handleTeaserChanges = this.handleTeaserChanges.bind(this);
     this.unpublish = this.unpublish.bind(this);
     this.fieldUpdaters = {
       teaser: updateFieldValue.bind(this, 'teaser', {
@@ -45,7 +44,7 @@ export default class EditorArticleController extends FalcorController {
       image: "",
     });
 
-    this.debouncedHandleFormStateChanges = debounce( () => {
+    this.debouncedHandleFormStateChanges = debounce(() => {
       // We don't want the debounced event to happen if we're saving
       if (this.state.saving) return;
 
@@ -104,7 +103,7 @@ export default class EditorArticleController extends FalcorController {
     return prevProps.params.slug === props.params.slug;
   }
 
-  formHasChanged(prevState, state) {
+  formHasUpdated(prevState, state) {
     return (
       this.isFormFieldChanged(prevState.authors, state.authors) ||
       this.isFormFieldChanged(prevState.teaser, state.teaser) ||
@@ -115,7 +114,7 @@ export default class EditorArticleController extends FalcorController {
 
   componentDidUpdate(prevProps, prevState) {
     if (this.isSameArticle(prevProps, this.props) &&
-      this.formHasChanged(prevState, this.state) &&
+      this.formHasUpdated(prevState, this.state) &&
       this.state.ready) {
       // The update wasn't due to a change in article
       this.debouncedHandleFormStateChanges();
@@ -245,14 +244,6 @@ the save changes button is supposed to be disabled in this case");
     this.safeSetState({
       authors: newAuthors,
     });
-  }
-
-  handleTeaserChanges() {
-    let teaser = this.state.teaser;
-    if (teaser.length > MAX_TEASER_LENGTH) {
-      teaser = teaser.substr(0, MAX_TEASER_LENGTH);
-      this.safeSetState({ teaser: teaser });
-    }
   }
 
   unpublish() {
