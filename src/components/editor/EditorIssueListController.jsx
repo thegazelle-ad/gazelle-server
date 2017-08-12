@@ -124,21 +124,17 @@ export default class EditorIssueListController extends FalcorController {
     browserHistory.push('/issues/'+issueNumber+'/main');
   }
 
-  getInitialSelectedIndex() {
+  getSelectedTab() {
     const path = (this.props.location.pathname).split('/'); // Parse URL pathname
 
     switch (path[3]) {
       case 'main':
-        return 0;
-
       case 'articles':
-        return 1;
-
       case 'categories':
-        return 2;
+        return path[3];
 
       default:
-        throw new Error('This should never happen since we have an indexRedirect (getInitialSelectedIndex)');
+        throw new Error('This should never happen since we have an indexRedirect (getSelectedIndex)');
     }
   }
 
@@ -158,7 +154,7 @@ export default class EditorIssueListController extends FalcorController {
       }
       const baseUrl = "/issues/" + issueNumber;
 
-      const data = this.state.issuesByNumber;
+      const data = this.state.data.issuesByNumber;
 
       return (
         <div>
@@ -229,19 +225,22 @@ export default class EditorIssueListController extends FalcorController {
             {
               this.props.params.issueNumber ?
                 <div>
-                  <Tabs initialSelectedIndex={this.getInitialSelectedIndex()}>
+                  <Tabs value={this.getSelectedTab()}>
                     <Tab
                       label="MAIN"
+                      value="main"
                       icon={<Home />}
                       containerElement={<Link to={baseUrl+"/main"} />}
                     />
                     <Tab
                       label="ARTICLES"
+                      value="articles"
                       icon={<Description />}
                       containerElement={<Link to={baseUrl+"/articles"} />}
                     />
                     <Tab
                       label="CATEGORIES"
+                      value="categories"
                       icon={<Reorder />}
                       containerElement={<Link to={baseUrl+"/categories"} />}
                     />
