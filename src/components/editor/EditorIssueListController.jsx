@@ -2,6 +2,8 @@ import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
 import { browserHistory, Link } from 'react-router';
+import { updateFieldValue } from './lib/form-field-updaters';
+import { stringToInt } from 'lib/utilities';
 
 // material-ui
 import Paper from 'material-ui/Paper';
@@ -18,41 +20,82 @@ import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 import CircularProgress from 'material-ui/CircularProgress';
 
+const styles = {
+  paper: {
+    height: '100%',
+    width: '100%',
+    marginTop: 20,
+    marginBottom: 20,
+    textAlign: 'left',
+    display: 'inline-block',
+  },
+  tabs: {
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingBottom: 15,
+  },
+  buttons: {
+    marginTop: 12,
+    marginBottom: 24,
+  },
+}
+
 export default class EditorIssueListController extends FalcorController {
   constructor(props) {
     super(props);
-    this.handleChange = this.handleChange.bind(this);
     this.addIssue = this.addIssue.bind(this);
+    this.fieldUpdaters = {
+      name: updateFieldValue.bind(this, 'name', undefined),
+      issueNumber: updateFieldValue.bind(this, 'issueNumber', undefined),
+      currentIssue: updateFieldValue.bind(this, 'currentIssue', {
+        isMaterialSelect: true,
+      }),
+    }
     this.safeSetState({
       saving: false,
       name: '',
-      number: '',
-      value: 'none',
+      issueNumber: '',
+      currentIssue: 'none',
     });
   }
+
   static getFalcorPathSets() {
     return ['issuesByNumber', {from: 1, to: 200}, 'name'];
   }
 
-  handleChange(e, index, value) {
-    this.setState({ value: value }, () => {
-      const issueNumber = value;
+  componentWillMount() {
+    const falcorCallback = (data) => {
+      const issues = Object.keys(data.issuesByNumber).map(key => stringToInt(key));
+      const nextIssue = Math.max(...issues)+1;
+      // Set default values
+      this.safeSetState({
+        name: `Issue ${nextIssue}`,
+        issueNumber: nextIssue.toString(),
+      });
+    }
+    super.componentWillMount(falcorCallback);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.currentIssue !== this.state.currentIssue) {
+      const issueNumber = this.state.currentIssue;
       if (issueNumber === "none") {
         browserHistory.push("/issues");
-        return;
+      } else {
+        browserHistory.push(`/issues/${issueNumber}/main`);
       }
-      const currentUrl = this.props.location.pathname;
-      const urlArray = currentUrl.split('/');
-      urlArray[2] = issueNumber.toString();
-      const newUrl = urlArray.join('/');
-      browserHistory.push(newUrl+'/main');
-    })
+    }
   }
 
   addIssue(e) {
     e.preventDefault();
     const issueName = this.state.name;
     const issueNumber = this.state.issueNumber;
+
+    if (isNaN(stringToInt(issueNumber))) {
+      window.alert('the issue number given is not a valid number');
+      return;
+    }
 
     if (this.state.data.issuesByNumber.hasOwnProperty(issueNumber)) {
       window.alert("This issue has already been created, you cannot create it again");
@@ -61,13 +104,15 @@ export default class EditorIssueListController extends FalcorController {
 
     const issue = {};
     issue['name'] = issueName;
-    issue['issueNumber'] = parseInt(issueNumber);
+    issue['issueNumber'] = stringToInt(issueNumber);
 
     const callback = () => {
+      // Set next issue default
+      const nextIssue = (stringToInt(issueNumber) + 1).toString();
       this.safeSetState({
         saving: false,
-        name: "",
-        number: "",
+        name: `Issue ${nextIssue}`,
+        issueNumber: nextIssue,
       });
     }
     this.safeSetState({
@@ -82,32 +127,22 @@ export default class EditorIssueListController extends FalcorController {
   getInitialSelectedIndex() {
     const path = (this.props.location.pathname).split('/'); // Parse URL pathname
 
-    if (path[3] === "main") return 0;
-    else if (path[3] === "articles") return 1;
-    else return 2; // categories
+    switch (path[3]) {
+      case 'main':
+        return 0;
+
+      case 'articles':
+        return 1;
+
+      case 'categories':
+        return 2;
+
+      default:
+        throw new Error('This should never happen since we have an indexRedirect (getInitialSelectedIndex)');
+    }
   }
 
   render() {
-    const styles = {
-      paper: {
-        height: '100%',
-        width: '100%',
-        marginTop: 20,
-        marginBottom: 20,
-        textAlign: 'left',
-        display: 'inline-block',
-      },
-      tabs: {
-        paddingLeft: 30,
-        paddingRight: 30,
-        paddingBottom: 15,
-      },
-      buttons: {
-        marginTop: 12,
-        marginBottom: 24,
-      },
-    }
-
     if (this.state.ready) {
       if (!this.state.data) {
         return (
@@ -118,14 +153,12 @@ export default class EditorIssueListController extends FalcorController {
         );
       }
       const issueNumber = this.props.params.issueNumber;
-      if (issueNumber && isNaN(parseInt(issueNumber))) {
+      if (issueNumber && isNaN(stringToInt(issueNumber))) {
         return <div>Invalid URL</div>;
       }
       const baseUrl = "/issues/" + issueNumber;
 
-      const data = this.state.data.issuesByNumber;
-      const issues = Object.keys(data).map((key) => {return parseInt(key)});
-      const nextIssue = Math.max(...issues)+1;
+      const data = this.state.issuesByNumber;
 
       return (
         <div>
@@ -133,6 +166,26 @@ export default class EditorIssueListController extends FalcorController {
           <Divider />
           <Paper style={styles.paper} zDepth={2}>
             <Tabs>
+              <Tab label="EDIT" icon={<Edit />}>
+                <div style={styles.tabs}>
+                  <h2>Edit an issue</h2>
+                  <Divider />
+                  <p>Select an issue</p>
+                  <DropDownMenu
+                    maxHeight={400}
+                    value={this.state.currentIssue}
+                    onChange={this.fieldUpdaters.currentIssue}
+                  >
+                    <MenuItem value="none" key="none" primaryText="None Chosen" />
+                    {
+                      _.map(data, (issue, issueNumber) => {
+                        const name = issue.name;
+                        return <MenuItem value={issueNumber} key={issueNumber} primaryText={name} />;
+                      }).reverse()
+                    }
+                  </DropDownMenu>
+                </div>
+              </Tab>
               <Tab label="ADD NEW" icon={<AddIssue />}>
                 <div style={styles.tabs}>
                   <h2>Add a new issue</h2>
@@ -147,18 +200,18 @@ export default class EditorIssueListController extends FalcorController {
                   >
                     <TextField
                       name="name"
-                      defaultValue={"Issue " + nextIssue}
+                      value={this.state.name}
                       floatingLabelText="Issue Name"
                       disabled={this.state.saving}
-                      onChange={e => this.setState({ name: e.target.value })}
+                      onChange={this.fieldUpdaters.name}
                     /><br />
                     {/* Don't use type=number here as it had weird problems in Chrome */}
                     <TextField
                       name="issueNumber"
-                      defaultValue={nextIssue}
+                      value={this.state.issueNumber}
                       floatingLabelText="Issue Number"
                       disabled={this.state.saving}
-                      onChange={e => this.setState({ number: e.target.value })}
+                      onChange={this.fieldUpdaters.issueNumber}
                     /><br />
                     <br />
                     <RaisedButton
@@ -168,26 +221,6 @@ export default class EditorIssueListController extends FalcorController {
                       style={styles.button}
                     />
                   </form>
-                </div>
-              </Tab>
-              <Tab label="EDIT" icon={<Edit />}>
-                <div style={styles.tabs}>
-                  <h2>Edit an issue</h2>
-                  <Divider />
-                  <p>Select an issue</p>
-                  <DropDownMenu
-                    maxHeight={400}
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                  >
-                    <MenuItem value="none" key="none" primaryText="None Chosen" />
-                    {
-                      _.map(data, (issue, number) => {
-                        const name = issue.name;
-                        return <MenuItem value={number} key={number} primaryText={name} />;
-                      }).reverse()
-                    }
-                  </DropDownMenu>
                 </div>
               </Tab>
             </Tabs>
@@ -225,19 +258,10 @@ export default class EditorIssueListController extends FalcorController {
         </div>
       );
     }
-    else {
-      return (
-        <div className="circular-progress">
-          <CircularProgress />
-        </div>
-      );
-    }
+    return (
+      <div className="circular-progress">
+        <CircularProgress />
+      </div>
+    );
   }
 }
-
-// {
-//   _.map(data, (issue, number) => {
-//     const name = issue.name;
-//     return <option value={number} key={number}>{name}</option>;
-//   }).reverse()
-// }

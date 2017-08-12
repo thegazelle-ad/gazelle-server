@@ -251,3 +251,10 @@ export function isArray(candidate) {
 export function isFunction(candidate) {
   return typeof candidate === 'function';
 }
+
+export function stringToInt(str) {
+  if (/^[0-9]+$/.test(str)) {
+    return parseInt(str, 10);
+  }
+  return NaN;
+}

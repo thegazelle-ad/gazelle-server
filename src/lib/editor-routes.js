@@ -30,6 +30,7 @@ export default (
     </Route>
     <Route path="issues" component={EditorIssueListController}>
       <Route path=":issueNumber">
+        <IndexRedirect to="main" />
         <Route path="main" component={EditorMainIssueController} />
         <Route path="articles" component={EditorIssueArticleController} />
         <Route path="categories" component={EditorIssueCategoryController} />
