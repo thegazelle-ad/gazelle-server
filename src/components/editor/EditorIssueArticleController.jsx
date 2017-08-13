@@ -12,6 +12,26 @@ import CircularProgress from 'material-ui/CircularProgress';
 const ARTICLE_FIELDS = ['id', 'title', 'slug', 'category', 'published_at', 'html'];
 const ARTICLE_LIST_LENGTH = 100;
 
+const styles = {
+  paper: {
+    height: '100%',
+    width: '100%',
+    marginTop: 20,
+    marginBottom: 20,
+    textAlign: 'left',
+    display: 'inline-block',
+  },
+  tabs: {
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingBottom: 15,
+  },
+  buttons: {
+    marginTop: 12,
+    marginBottom: 24,
+  },
+}
+
 export default class EditorIssueArticleController extends FalcorController {
   constructor(props) {
     super(props);
@@ -188,7 +208,6 @@ export default class EditorIssueArticleController extends FalcorController {
       }
       this.safeSetState({changed: changedFlag});
     }
-
   }
 
   addArticle(mode, post) {
@@ -216,10 +235,6 @@ export default class EditorIssueArticleController extends FalcorController {
     const allArticles = this.state.mainArticles.concat(this.state.picks, this.state.featuredArticles);
     if (allArticles.some((article) => {return article.slug === post.slug})) {
       window.alert("That post is already in the issue");
-      this.safeSetState({
-        slugSearchValue: "",
-        searchSuggestions: [],
-      });
       return;
     }
     const newArticles = update(articles, {$push: [post]})
@@ -227,8 +242,6 @@ export default class EditorIssueArticleController extends FalcorController {
     this.handleArticlesChange(newArticles, mode);
     this.safeSetState({
       [key]: newArticles,
-      slugSearchValue: "",
-      searchSuggestions: [],
     })
   }
 
@@ -288,8 +301,8 @@ export default class EditorIssueArticleController extends FalcorController {
     }
     if (allSlugs.length === 0) {
       window.alert("Sorry, because of some non-trivial issues we currently don't have" +
-        " deleting every single author implemented. You hopefully shouldn't need this function" +
-        " either. Please readd an author to be able to save");
+        " deleting every single article implemented. You hopefully shouldn't need this function" +
+        " either. Please re-add an article to be able to save");
       return;
     }
     if (isPublished) {
@@ -410,8 +423,7 @@ export default class EditorIssueArticleController extends FalcorController {
     let date;
     if (article.published_at) {
       date = formatDate(new Date(article.published_at));
-    }
-    else {
+    } else {
       date = "Unpublished";
     }
     return (
@@ -428,32 +440,12 @@ export default class EditorIssueArticleController extends FalcorController {
   }
 
   render() {
-    const styles = {
-      paper: {
-        height: '100%',
-        width: '100%',
-        marginTop: 20,
-        marginBottom: 20,
-        textAlign: 'left',
-        display: 'inline-block',
-      },
-      tabs: {
-        paddingLeft: 30,
-        paddingRight: 30,
-        paddingBottom: 15,
-      },
-      buttons: {
-        marginTop: 12,
-        marginBottom: 24,
-      },
-    }
-
     if (this.state.ready) {
       if (!this.state.data) {
         return <div>This issue could not be found</div>;
       }
       const modes = ["picks", "featured", "main"];
-      if (modes.find((mode) => {return mode === this.state.showArticleListMode})) {
+      if (modes.find((mode) => mode === this.state.showArticleListMode)) {
         // Filter picked articles
         let articles = this.state.data.articlesByPage[ARTICLE_LIST_LENGTH][1];
         const seen = {};
@@ -482,174 +474,167 @@ export default class EditorIssueArticleController extends FalcorController {
           </div>
         );
       }
-      else {
-        const issueNumber = this.props.params.issueNumber;
-        const data = this.state.data.issuesByNumber[issueNumber];
-        const mainArticles = this.state.mainArticles;
-        const featuredArticles = this.state.featuredArticles;
-        const picks = this.state.picks;
+      const issueNumber = this.props.params.issueNumber;
+      const data = this.state.data.issuesByNumber[issueNumber];
+      const mainArticles = this.state.mainArticles;
+      const featuredArticles = this.state.featuredArticles;
+      const picks = this.state.picks;
 
-        let changedStateMessage;
-        const changedStateStyle = {};
-        if (!this.state.changed) {
-          if (!this.state.saving) {
-            changedStateMessage = "No Changes";
-          }
-          else {
-            changedStateMessage = "Saved";
-            changedStateStyle.color = "green";
-          }
+      let changedStateMessage;
+      const changedStateStyle = {};
+      if (!this.state.changed) {
+        if (!this.state.saving) {
+          changedStateMessage = "No Changes";
+        } else {
+          changedStateMessage = "Saved";
+          changedStateStyle.color = "green";
         }
-        else {
-          if (!this.state.saving) {
-            changedStateMessage = "Unsaved Changes";
-            changedStateStyle.color = "red";
-          }
-          else {
-            changedStateMessage = "Saving"
-            changedStateStyle.color = "#65e765";
-          }
+      } else {
+        if (!this.state.saving) {
+          changedStateMessage = "Unsaved Changes";
+          changedStateStyle.color = "red";
+        } else {
+          changedStateMessage = "Saving"
+          changedStateStyle.color = "#65e765";
         }
-        return (
-          <div style={styles.tabs}>
+      }
+      return (
+        <div style={styles.tabs}>
+          <button
+            type="button"
+            className="pure-button"
+            onClick={this.makeUnique}
+          >Remove duplicates</button>
+          <h2 style={changedStateStyle}>{changedStateMessage}</h2>
+          <h3>{data.name}</h3>
+          <p>
+            Here you may decide which articles are going to be in the issue, and their roles.
+            <br />At this moment in development please refresh the page after saving to see the
+            correct data.
+          </p>
+          <h4 style={{marginBottom: "0px", marginTop: "0px"}}>Featured Articles (please add exactly 1)</h4>
+          <div>
             <button
               type="button"
               className="pure-button"
-              onClick={this.makeUnique}
-            >Remove duplicates</button>
-            <h2 style={changedStateStyle}>{changedStateMessage}</h2>
-            <h3>{data.name}</h3>
-            <p>
-              Here you may decide which articles are going to be in the issue, and their roles.
-              <br />At this moment in development please refresh the page after saving to see the
-              correct data.
-            </p>
-            <h4 style={{marginBottom: "0px", marginTop: "0px"}}>Featured Articles (please add exactly 1)</h4>
-            <div>
-              <button
-                type="button"
-                className="pure-button"
-                onClick={() => {this.safeSetState({showArticleListMode: "featured"})}}
-              >Search By List</button>
-              {/* eslint-disable react/jsx-no-bind */}
-              <EditorSearchBar
-                model={this.props.model}
-                handleClick={this.addArticle.bind(this, "featured")}
-                length={3}
-                fields={ARTICLE_FIELDS}
-                disabled={this.state.saving}
-                mode="articles"
-                extraPathSets={[['authors', 0, 'slug']]}
-                showPubDate
-              />
-              {
-                featuredArticles.map((article) => {
-                  return (
-                    <div key={article.slug}>
-                      <button
-                        type="button"
-                        className="toggle-button"
-                        aria-label="Remove post from featured"
-                        onClick={this.deleteArticle.bind(this, "featured", article)}
-                        disabled={this.state.saving}
-                      >&times;&nbsp;</button>
-                      <div style={{marginLeft: "1em"}}>{article.title}</div>
-                    </div>
-                  );
-                })
-              }
-            </div>
-            <h4 style={{marginBottom: "0px", marginTop: "8px"}}>Editor's Picks (please add exactly 2)</h4>
-            <div>
-              <button
-                type="button"
-                className="pure-button"
-                onClick={() => {this.safeSetState({showArticleListMode: "picks"})}}
-              >Search By List</button>
-              <EditorSearchBar
-                model={this.props.model}
-                handleClick={this.addArticle.bind(this, "picks")}
-                length={3}
-                fields={ARTICLE_FIELDS}
-                disabled={this.state.saving}
-                mode="articles"
-                extraPathSets={[['authors', 0, 'slug']]}
-                showPubDate
-              />
-              {
-                picks.map((article) => {
-                  return (
-                    <div key={article.slug}>
-                      <button
-                        type="button"
-                        className="toggle-button"
-                        aria-label="Remove post from picks"
-                        onClick={this.deleteArticle.bind(this, "picks", article)}
-                        disabled={this.state.saving}
-                      >&times;&nbsp;</button>
-                      <div style={{marginLeft: "1em"}}>{article.title}</div>
-                    </div>
-                  );
-                })
-              }
-            </div>
-            <h4 style={{marginBottom: "0px", marginTop: "8px"}}>Main articles (add as many as you like)</h4>
-            <div>
-              <button
-                type="button"
-                className="pure-button"
-                onClick={() => {this.safeSetState({showArticleListMode: "main"})}}
-              >Search By List</button>
-              <EditorSearchBar
-                model={this.props.model}
-                handleClick={this.addArticle.bind(this, "main")}
-                length={3}
-                fields={ARTICLE_FIELDS}
-                disabled={this.state.saving}
-                mode="articles"
-                extraPathSets={[['authors', 0, 'slug']]}
-                showPubDate
-              />
-              <div style={{overflow: "auto", maxHeight: "20vh"}}>
-                {
-                  mainArticles.map((article) => {
-                    return (
-                      <div key={article.slug}>
-                        <button
-                          type="button"
-                          className="toggle-button"
-                          aria-label="Remove post from issue"
-                          onClick={this.deleteArticle.bind(this, "main", article)}
-                          disabled={this.state.saving}
-                        >&times;&nbsp;</button>
-                        <div style={{marginLeft: "1em"}}>{article.title}</div>
-                      </div>
-                    );
-                  })
-                }
-              </div>
-            </div>
-            {/* eslint-enable react/jsx-no-bind */}
-            <div style={{fontSize: "1.2em"}}>
-              <b>{mainArticles.length} articles</b>
-            </div>
+              onClick={() => {this.safeSetState({showArticleListMode: "featured"})}}
+            >Search By List</button>
+            {/* eslint-disable react/jsx-no-bind */}
+            <EditorSearchBar
+              model={this.props.model}
+              handleClick={this.addArticle.bind(this, "featured")}
+              length={3}
+              fields={ARTICLE_FIELDS}
+              disabled={this.state.saving}
+              mode="articles"
+              extraPathSets={[['authors', 0, 'slug']]}
+              showPubDate
+            />
+            {
+              featuredArticles.map((article) => {
+                return (
+                  <div key={article.slug}>
+                    <button
+                      type="button"
+                      className="toggle-button"
+                      aria-label="Remove post from featured"
+                      onClick={this.deleteArticle.bind(this, "featured", article)}
+                      disabled={this.state.saving}
+                    >&times;&nbsp;</button>
+                    <div style={{marginLeft: "1em"}}>{article.title}</div>
+                  </div>
+                );
+              })
+            }
+          </div>
+          <h4 style={{marginBottom: "0px", marginTop: "8px"}}>Editor's Picks (please add exactly 2)</h4>
+          <div>
             <button
               type="button"
-              className="pure-button pure-button-primary"
-              aria-label="Save changes"
-              onClick={this.saveChanges}
-              disabled={this.state.saving || !this.state.changed}
-            >Save Changes</button>
+              className="pure-button"
+              onClick={() => {this.safeSetState({showArticleListMode: "picks"})}}
+            >Search By List</button>
+            <EditorSearchBar
+              model={this.props.model}
+              handleClick={this.addArticle.bind(this, "picks")}
+              length={3}
+              fields={ARTICLE_FIELDS}
+              disabled={this.state.saving}
+              mode="articles"
+              extraPathSets={[['authors', 0, 'slug']]}
+              showPubDate
+            />
+            {
+              picks.map((article) => {
+                return (
+                  <div key={article.slug}>
+                    <button
+                      type="button"
+                      className="toggle-button"
+                      aria-label="Remove post from picks"
+                      onClick={this.deleteArticle.bind(this, "picks", article)}
+                      disabled={this.state.saving}
+                    >&times;&nbsp;</button>
+                    <div style={{marginLeft: "1em"}}>{article.title}</div>
+                  </div>
+                );
+              })
+            }
           </div>
-        );
-      }
-    }
-    else {
-      return (
-        <div className="circular-progress">
-          <CircularProgress />
+          <h4 style={{marginBottom: "0px", marginTop: "8px"}}>Main articles (add as many as you like)</h4>
+          <div>
+            <button
+              type="button"
+              className="pure-button"
+              onClick={() => {this.safeSetState({showArticleListMode: "main"})}}
+            >Search By List</button>
+            <EditorSearchBar
+              model={this.props.model}
+              handleClick={this.addArticle.bind(this, "main")}
+              length={3}
+              fields={ARTICLE_FIELDS}
+              disabled={this.state.saving}
+              mode="articles"
+              extraPathSets={[['authors', 0, 'slug']]}
+              showPubDate
+            />
+            <div style={{overflow: "auto", maxHeight: "20vh"}}>
+              {
+                mainArticles.map((article) => {
+                  return (
+                    <div key={article.slug}>
+                      <button
+                        type="button"
+                        className="toggle-button"
+                        aria-label="Remove post from issue"
+                        onClick={this.deleteArticle.bind(this, "main", article)}
+                        disabled={this.state.saving}
+                      >&times;&nbsp;</button>
+                      <div style={{marginLeft: "1em"}}>{article.title}</div>
+                    </div>
+                  );
+                })
+              }
+            </div>
+          </div>
+          {/* eslint-enable react/jsx-no-bind */}
+          <div style={{fontSize: "1.2em"}}>
+            <b>{mainArticles.length} articles</b>
+          </div>
+          <button
+            type="button"
+            className="pure-button pure-button-primary"
+            aria-label="Save changes"
+            onClick={this.saveChanges}
+            disabled={this.state.saving || !this.state.changed}
+          >Save Changes</button>
         </div>
       );
     }
+    return (
+      <div className="circular-progress">
+        <CircularProgress />
+      </div>
+    );
   }
 }
