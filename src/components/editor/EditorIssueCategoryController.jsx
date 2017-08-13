@@ -8,6 +8,29 @@ import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 import CircularProgress from 'material-ui/CircularProgress';
 
+const styles = {
+  paper: {
+    height: '100%',
+    width: '100%',
+    marginTop: 20,
+    marginBottom: 20,
+    textAlign: 'left',
+    display: 'inline-block',
+  },
+  innerPaper: {
+    margin: 20,
+  },
+  tabs: {
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingBottom: 15,
+  },
+  buttons: {
+    marginTop: 12,
+    marginBottom: 24,
+  },
+}
+
 export default class EditorIssueCategoryController extends FalcorController {
   constructor(props) {
     super(props);
@@ -32,7 +55,7 @@ export default class EditorIssueCategoryController extends FalcorController {
     const falcorCallBack = (data) => {
       const issueNumber = this.props.params.issueNumber;
       const categories = data.issuesByNumber[issueNumber].categories;
-      const categoriesArray = _.map(categories, (category) => category);
+      const categoriesArray = _.map(categories, category => category);
 
       this.safeSetState({
         categories: categoriesArray,
@@ -45,7 +68,7 @@ export default class EditorIssueCategoryController extends FalcorController {
     const falcorCallBack = (data) => {
       const issueNumber = this.props.params.issueNumber;
       const categories = data.issuesByNumber[issueNumber].categories;
-      const categoriesArray = _.map(categories, (category) => category);
+      const categoriesArray = _.map(categories, category => category);
       this.safeSetState({
         categories: categoriesArray,
       });
@@ -110,29 +133,6 @@ export default class EditorIssueCategoryController extends FalcorController {
   }
 
   render() {
-    const styles = {
-      paper: {
-        height: '100%',
-        width: '100%',
-        marginTop: 20,
-        marginBottom: 20,
-        textAlign: 'left',
-        display: 'inline-block',
-      },
-      innerPaper: {
-        margin: 20,
-      },
-      tabs: {
-        paddingLeft: 30,
-        paddingRight: 30,
-        paddingBottom: 15,
-      },
-      buttons: {
-        marginTop: 12,
-        marginBottom: 24,
-      },
-    }
-
     if (this.state.ready) {
       if (!this.state.data) {
         return (
