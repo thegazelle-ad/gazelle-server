@@ -911,7 +911,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
           // Map all the indices down to fit the indices returned by the db call
           const processedPathSet = {
             ...pathSet,
-            indices: pathSet.indicies.map(index => index - minIndex),
+            indices: pathSet.indices.map(index => index - minIndex),
           };
           const results = [];
           _.forEach(data, (queryResults, query) => {
@@ -948,7 +948,7 @@ export default class FalcorRouter extends BaseRouter.createClass([
           // Map all the indices down to fit the indices returned by the db call
           const processedPathSet = {
             ...pathSet,
-            indices: pathSet.indicies.map(index => index - minIndex),
+            indices: pathSet.indices.map(index => index - minIndex),
           };
           const results = [];
           _.forEach(data, (queryResults, query) => {
