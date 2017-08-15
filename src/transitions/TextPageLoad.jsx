@@ -2,7 +2,7 @@ import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
 
 export default class TextPageLoad extends BaseComponent {
-  render () {
+  render() {
     return (
       <div className="text-page-load">
         <h2 className="text-page__title-load"></h2>
@@ -11,4 +11,3 @@ export default class TextPageLoad extends BaseComponent {
     );
   }
 }
-
