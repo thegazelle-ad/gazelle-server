@@ -672,7 +672,7 @@ or missing category at issue number ${issueNumber} index ${i}`);
           this.where('issues_posts_order.issue_id', '=', latestIssueId).orWhereIn('slug', slugs);
         })
         .then((postRows) => {
-          let posts = {};
+          const posts = {};
           postRows.forEach((post) => {
             const slug = post.slug;
             if (!posts[slug]) {
@@ -700,18 +700,17 @@ or missing category at issue number ${issueNumber} index ${i}`);
             } else {
               // update amount of tags in common with current post
               // and whether the category is the same
-              posts = _.map(posts, (currentPost) => {
+              _.forEach(posts, (currentPost) => {
                 let cnt = 0;
                 currentPost.tags.forEach((currentTag) => {
                   if (post.tags.find(postTag => postTag === currentTag)) {
                     cnt++;
                   }
                 });
-                return {
-                  ...currentPost,
-                  tagsInCommon: cnt,
-                  categoryInCommon: currentPost.category_id === post.category_id,
-                };
+                // eslint-disable-next-line no-param-reassign
+                currentPost.tagsInCommon = cnt;
+                // eslint-disable-next-line no-param-reassign
+                currentPost.categoryInCommon = currentPost.category_id === post.category_id;
               });
 
               const ranking = Object.keys(posts).filter(currentSlug => (
