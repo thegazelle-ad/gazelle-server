@@ -211,10 +211,11 @@ export function followPath(path, object) {
   */
 
   // If using dot notation obj.key.key.key
+  let processedPath = path;
   if (typeof path === 'string') {
-    path = path.split('.');
+    processedPath = path.split('.');
   }
-  return path.reduce((currentObject, nextChild) => {
+  return processedPath.reduce((currentObject, nextChild) => {
     if (currentObject !== undefined && currentObject.hasOwnProperty(nextChild)) {
       return currentObject[nextChild];
     }

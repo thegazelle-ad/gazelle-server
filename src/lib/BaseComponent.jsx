@@ -63,10 +63,11 @@ export default class BaseComponent extends React.Component {
     if (this.mounted) {
       this.setState(updater);
     } else {
+      let updaterObject = updater;
       if (typeof updater === 'function') {
-        updater = updater(this.state, this.props);
+        updaterObject = updater(this.state, this.props);
       }
-      this.state = Object.assign({}, this.state, updater);
+      this.state = Object.assign({}, this.state, updaterObject);
     }
   }
 }

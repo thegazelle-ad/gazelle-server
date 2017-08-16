@@ -103,8 +103,8 @@ export default class EditorIssueListController extends FalcorController {
     }
 
     const issue = {};
-    issue['name'] = issueName;
-    issue['issueNumber'] = stringToInt(issueNumber);
+    issue.name = issueName;
+    issue.issueNumber = stringToInt(issueNumber);
 
     const callback = () => {
       // Set next issue default
@@ -121,7 +121,7 @@ export default class EditorIssueListController extends FalcorController {
     this.falcorCall(['issuesByNumber', 'addIssue'], [issue],
       undefined, undefined, undefined, callback);
 
-    browserHistory.push('/issues/' + issueNumber + '/main');
+    browserHistory.push(`/issues/${issueNumber}/main`);
   }
 
   getSelectedTab() {
@@ -134,7 +134,7 @@ export default class EditorIssueListController extends FalcorController {
         return path[3];
 
       default:
-        throw new Error('This should never happen since we have an indexRedirect (getSelectedIndex)');
+        throw new Error('Invalid selected tab (getSelectedTab, EditorIssueListController)');
     }
   }
 
@@ -148,11 +148,11 @@ export default class EditorIssueListController extends FalcorController {
           </div>
         );
       }
-      const issueNumber = this.props.params.issueNumber;
-      if (issueNumber && isNaN(stringToInt(issueNumber))) {
+      const currentIssueNumber = this.props.params.issueNumber;
+      if (currentIssueNumber && isNaN(stringToInt(currentIssueNumber))) {
         return <div>Invalid URL</div>;
       }
-      const baseUrl = '/issues/' + issueNumber;
+      const baseUrl = `/issues/${currentIssueNumber}`;
 
       const data = this.state.data.issuesByNumber;
 
@@ -176,7 +176,13 @@ export default class EditorIssueListController extends FalcorController {
                     {
                       _.map(data, (issue, issueNumber) => {
                         const name = issue.name;
-                        return <MenuItem value={issueNumber} key={issueNumber} primaryText={name} />;
+                        return (
+                          <MenuItem
+                            value={issueNumber}
+                            key={issueNumber}
+                            primaryText={name}
+                          />
+                        );
                       }).reverse()
                     }
                   </DropDownMenu>
@@ -223,30 +229,30 @@ export default class EditorIssueListController extends FalcorController {
           </Paper>
           <Paper style={styles.paper} zDepth={2}>
             {
-              this.props.params.issueNumber ?
+              currentIssueNumber ?
                 <div>
                   <Tabs value={this.getSelectedTab()}>
                     <Tab
                       label="MAIN"
                       value="main"
                       icon={<Home />}
-                      containerElement={<Link to={baseUrl + '/main'} />}
+                      containerElement={<Link to={`${baseUrl}/main`} />}
                     />
                     <Tab
                       label="ARTICLES"
                       value="articles"
                       icon={<Description />}
-                      containerElement={<Link to={baseUrl + '/articles'} />}
+                      containerElement={<Link to={`${baseUrl}/articles`} />}
                     />
                     <Tab
                       label="CATEGORIES"
                       value="categories"
                       icon={<Reorder />}
-                      containerElement={<Link to={baseUrl + '/categories'} />}
+                      containerElement={<Link to={`${baseUrl}/categories`} />}
                     />
                   </Tabs>
                   <div style={styles.tabs}>
-                    <h2>Issue {this.props.params.issueNumber}</h2>
+                    <h2>Issue {currentIssueNumber}</h2>
                     <Divider />
                   </div>
                 </div>

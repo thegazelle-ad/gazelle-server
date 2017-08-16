@@ -41,11 +41,11 @@ export default class EditorSearchBar extends BaseComponent {
           fields = _.uniq(fields);
 
           pathSets.push(
-            ['search', 'posts', processedQuery, { length: this.props.length }, fields]
+            ['search', 'posts', query, { length: this.props.length }, fields]
           );
           if (this.props.extraPathSets) {
             const extraPathSets = this.props.extraPathSets.map(pathSet => (
-              ['search', 'posts', processedQuery, { length: this.props.length }].concat(pathSet)
+              ['search', 'posts', query, { length: this.props.length }].concat(pathSet)
             ));
             pathSets = pathSets.concat(extraPathSets);
           }
@@ -55,11 +55,11 @@ export default class EditorSearchBar extends BaseComponent {
           fields = _.uniq(this.props.fields.concat(['name', 'slug']));
 
           pathSets.push(
-            ['search', 'authors', processedQuery, { length: this.props.length }, fields]
+            ['search', 'authors', query, { length: this.props.length }, fields]
           );
           if (this.props.extraPathSets) {
             const extraPathSets = this.props.extraPathSets.map(pathSet => (
-              ['search', 'authors', processedQuery, { length: this.props.length }].concat(pathSet)
+              ['search', 'authors', query, { length: this.props.length }].concat(pathSet)
             ));
             pathSets = pathSets.concat(extraPathSets);
           }
@@ -76,11 +76,11 @@ export default class EditorSearchBar extends BaseComponent {
         }
         let suggestions = x.json.search;
         if (this.props.mode === 'articles') {
-          suggestions = suggestions.posts[processedQuery];
+          suggestions = suggestions.posts[query];
         } else {
-          suggestions = suggestions.authors[processedQuery];
+          suggestions = suggestions.authors[query];
         }
-        const suggestionsArray = _.map(suggestions, (value) => { return value; });
+        const suggestionsArray = _.map(suggestions, value => value);
         this.safeSetState({ searchSuggestions: suggestionsArray });
       });
     }, this.props.debounceTime || 250);
@@ -124,12 +124,11 @@ export default class EditorSearchBar extends BaseComponent {
                   if (this.props.showPubDate) {
                     let date;
                     if (article.published_at) {
-                      date = 'Published: ' + moment(article.published_at).format('MMM DD, YYYY');
-                    }
-                    else {
+                      date = `Published: ${moment(article.published_at).format('MMM DD, YYYY')}`;
+                    } else {
                       date = 'Unpublished';
                     }
-                    textShown += ' - ' + date;
+                    textShown += ` - ${date}`;
                   }
                   return (
                     <div key={article.slug}>
@@ -160,19 +159,17 @@ export default class EditorSearchBar extends BaseComponent {
           <div>
             <Menu style={{ width: 200 }}>
               {
-                this.state.searchSuggestions.map((author) => {
-                  return (
-                    <div key={author.slug}>
-                      {/* eslint-disable react/jsx-no-bind */}
-                      <MenuItem
-                        primaryText={author.name}
-                        onClick={this.handleClick.bind(this, author)}
-                        disabled={this.props.disabled}
-                      />
-                      {/* eslint-enable react/jsx-no-bind */}
-                    </div>
-                  );
-                })
+                this.state.searchSuggestions.map((author) => (
+                  <div key={author.slug}>
+                    {/* eslint-disable react/jsx-no-bind */}
+                    <MenuItem
+                      primaryText={author.name}
+                      onClick={this.handleClick.bind(this, author)}
+                      disabled={this.props.disabled}
+                    />
+                    {/* eslint-enable react/jsx-no-bind */}
+                  </div>
+                ))
               }
             </Menu>
           </div>

@@ -31,7 +31,7 @@ export default class EditorAuthorController extends FalcorController {
     this.fieldUpdaters = {
       name: updateFieldValue.bind(this, 'name', undefined),
       slug: updateFieldValue.bind(this, 'slug', undefined),
-      job_title: updateFieldValue.bind(this, 'job_title', undefined),
+      jobTitle: updateFieldValue.bind(this, 'jobTitle', undefined),
       image: updateFieldValue.bind(this, 'image', undefined),
       biography: updateFieldValue.bind(this, 'biography', {
         trim: MAX_BIOGRAPHY_LENGTH,
@@ -42,7 +42,7 @@ export default class EditorAuthorController extends FalcorController {
       saving: false,
       name: '',
       slug: '',
-      job_title: '',
+      jobTitle: '',
       image: '',
       biography: '',
     });
@@ -69,14 +69,14 @@ export default class EditorAuthorController extends FalcorController {
       const name = data.authorsBySlug[this.props.params.slug].name || '';
       const slug = data.authorsBySlug[this.props.params.slug].slug || '';
       const image = data.authorsBySlug[this.props.params.slug].image || '';
-      const job_title = data.authorsBySlug[this.props.params.slug].job_title || '';
+      const jobTitle = data.authorsBySlug[this.props.params.slug].job_title || '';
       const biography = data.authorsBySlug[this.props.params.slug].biography || '';
 
       this.safeSetState({
         name,
         slug,
         image,
-        job_title,
+        jobTitle,
         biography,
       });
     };
@@ -88,14 +88,14 @@ export default class EditorAuthorController extends FalcorController {
       const name = data.authorsBySlug[this.props.params.slug].name || '';
       const slug = data.authorsBySlug[this.props.params.slug].slug || '';
       const image = data.authorsBySlug[this.props.params.slug].image || '';
-      const job_title = data.authorsBySlug[this.props.params.slug].job_title || '';
+      const jobTitle = data.authorsBySlug[this.props.params.slug].job_title || '';
       const biography = data.authorsBySlug[this.props.params.slug].biography || '';
 
       this.safeSetState({
         name,
         slug,
         image,
-        job_title,
+        jobTitle,
         biography,
       });
     };
@@ -115,7 +115,7 @@ export default class EditorAuthorController extends FalcorController {
       this.isFormFieldChanged(prevState.name, state.name) ||
       this.isFormFieldChanged(prevState.slug, state.slug) ||
       this.isFormFieldChanged(prevState.image, state.image) ||
-      this.isFormFieldChanged(prevState.job_title, state.job_title) ||
+      this.isFormFieldChanged(prevState.jobTitle, state.jobTitle) ||
       this.isFormFieldChanged(prevState.biography, state.biography)
     );
   }
@@ -136,8 +136,10 @@ export default class EditorAuthorController extends FalcorController {
     const authorSlug = this.props.params.slug;
 
     if (!this.isFormChanged()) {
-      throw new Error('Tried to save changes but there were no changes. \
-the save changes button is supposed to be disabled in this case');
+      throw new Error(
+        'Tried to save changes but there were no changes. ' +
+        'the save changes button is supposed to be disabled in this case'
+      );
     }
 
     // Modularize the code since we'll be reusing it for checking the slug
@@ -163,20 +165,22 @@ the save changes button is supposed to be disabled in this case');
       };
 
       // Fill in the data
-      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug]['name'] = this.state.name;
-      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug]['slug'] = this.state.slug;
-      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug]['job_title'] = this.state.job_title;
-      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug]['image'] = this.state.image;
-      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug]['biography'] = this.state.biography;
+      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug].name = this.state.name;
+      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug].slug = this.state.slug;
+      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug].job_title = this.state.jobTitle;
+      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug].image = this.state.image;
+      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug].biography = this.state.biography;
 
       // Update the values
       this.falcorUpdate(jsonGraphEnvelope, undefined, resetState);
     };
 
     if (this.isFormFieldChanged(this.state.slug, falcorData.slug)) {
-      if (!window.confirm('You are about to change the slug of an author, this means' +
-        ' that the url to their webpage will change among other things, it is strongly recommended' +
-        " not to change the slug unless it's very crucial. Are you sure you wish to proceed?")) {
+      if (!window.confirm(
+        'You are about to change the slug of an author, this means that the url to ' +
+        'their webpage will change among other things, it is strongly recommended ' +
+        " not to change the slug unless it's very crucial. Are you sure you wish to proceed?"
+      )) {
         return;
       }
       // Start the saving
@@ -211,7 +215,7 @@ the save changes button is supposed to be disabled in this case');
     const changedFlag =
       this.isFormFieldChanged(this.state.name, falcorData.name) ||
       this.isFormFieldChanged(this.state.slug, falcorData.slug) ||
-      this.isFormFieldChanged(this.state.job_title, falcorData.job_title) ||
+      this.isFormFieldChanged(this.state.jobTitle, falcorData.job_title) ||
       this.isFormFieldChanged(this.state.image, falcorData.image) ||
       this.isFormFieldChanged(this.state.biography, falcorData.biography);
     return changedFlag;
@@ -233,8 +237,7 @@ the save changes button is supposed to be disabled in this case');
       } else {
         if (!this.state.saving) {
           changedStateMessage = 'Save Changes';
-        }
-        else {
+        } else {
           changedStateMessage = 'Saving';
         }
       }
@@ -257,10 +260,10 @@ the save changes button is supposed to be disabled in this case');
               onChange={this.fieldUpdaters.slug}
             /><br />
             <TextField
-              value={this.state.job_title}
+              value={this.state.jobTitle}
               floatingLabelText="Job Title"
               disabled={this.state.saving}
-              onChange={this.fieldUpdaters.job_title}
+              onChange={this.fieldUpdaters.jobTitle}
             /><br />
             <TextField
               name="image"
@@ -272,8 +275,10 @@ the save changes button is supposed to be disabled in this case');
             /><br />
             <TextField
               name="biography"
-              floatingLabelText={'Biography (' + markdownLength(this.state.biography) +
-                ' of ' + MAX_BIOGRAPHY_LENGTH + ' characters)'}
+              floatingLabelText={
+                `Biography (${markdownLength(this.state.biography)} ` +
+                `of ${MAX_BIOGRAPHY_LENGTH} characters)`
+              }
               value={this.state.biography}
               disabled={this.state.saving}
               onChange={this.fieldUpdaters.biography}

@@ -128,8 +128,10 @@ export default class EditorArticleController extends FalcorController {
     const falcorData = this.state.data.articlesBySlug[articleSlug];
 
     if (!this.isFormChanged()) {
-      throw new Error('Tried to save changes but there were no changes. \
-the save changes button is supposed to be disabled in this case');
+      throw new Error(
+        'Tried to save changes but there were no changes. ' +
+        'the save changes button is supposed to be disabled in this case'
+      );
     }
 
     let processedAuthors = this.state.authors.map(author => author.id);
@@ -182,19 +184,20 @@ the save changes button is supposed to be disabled in this case');
       },
     };
     // Fill in the data
-    jsonGraphEnvelope.jsonGraph.articlesBySlug[articleSlug]['teaser'] = this.state.teaser;
-    jsonGraphEnvelope.jsonGraph.articlesBySlug[articleSlug]['category'] = this.state.category;
-    jsonGraphEnvelope.jsonGraph.articlesBySlug[articleSlug]['image'] = this.state.image;
+    jsonGraphEnvelope.jsonGraph.articlesBySlug[articleSlug].teaser = this.state.teaser;
+    jsonGraphEnvelope.jsonGraph.articlesBySlug[articleSlug].category = this.state.category;
+    jsonGraphEnvelope.jsonGraph.articlesBySlug[articleSlug].image = this.state.image;
 
     // Update the values
     this.safeSetState({ saving: true });
     const updatePromises = [this.falcorUpdate(jsonGraphEnvelope)];
 
     if (processedAuthors !== null) {
-      updatePromises.push(
-        this.falcorCall(['articlesBySlug', articleSlug, 'authors', 'updateAuthors'], [falcorData.id, processedAuthors],
-          [['name'], ['slug']])
-      );
+      updatePromises.push(this.falcorCall(
+        ['articlesBySlug', articleSlug, 'authors', 'updateAuthors'],
+        [falcorData.id, processedAuthors],
+        [['name'], ['slug']]
+      ));
     }
 
     Promise.all(updatePromises).then(() => {
@@ -216,9 +219,7 @@ the save changes button is supposed to be disabled in this case');
     // disable this if saving
     if (this.state.saving) return;
 
-    const alreadyAdded = this.state.authors.find((author) => {
-      return author.id === id;
-    }) !== undefined;
+    const alreadyAdded = this.state.authors.find(author => author.id === id) !== undefined;
 
     if (alreadyAdded) {
       window.alert('That author is already added');
@@ -234,9 +235,7 @@ the save changes button is supposed to be disabled in this case');
     // disabled this if saving
     if (this.state.saving) return;
 
-    const index = this.state.authors.findIndex((author) => {
-      return author.id === id;
-    });
+    const index = this.state.authors.findIndex(author => author.id === id);
     if (index === -1) {
       throw new Error('The author you are trying to delete cannot be found');
     }
@@ -279,12 +278,12 @@ the save changes button is supposed to be disabled in this case');
 
   areAuthorsChanged(currentAuthors, falcorAuthors) {
     const falcorAuthorsArray = _.map(falcorAuthors, author => author);
-    return falcorAuthorsArray.length !== currentAuthors.length ||
-      currentAuthors.some(author => {
-        return falcorAuthorsArray.find(falcorAuthor => {
-          return author.id === falcorAuthor.id;
-        }) === undefined;
-      });
+    return (
+      falcorAuthorsArray.length !== currentAuthors.length ||
+      currentAuthors.some(author => (
+        falcorAuthorsArray.find(falcorAuthor => author.id === falcorAuthor.id) === undefined
+      ))
+    );
   }
 
   isFormChanged() {
@@ -368,15 +367,13 @@ the save changes button is supposed to be disabled in this case');
               style={{ width: 200 }}
             >
               {
-                _.map(categories, (category) => {
-                  return (
-                    <MenuItem
-                      value={category.slug}
-                      key={category.slug}
-                      primaryText={category.name}
-                    />
-                  );
-                })
+                _.map(categories, category => (
+                  <MenuItem
+                    value={category.slug}
+                    key={category.slug}
+                    primaryText={category.name}
+                  />
+                ))
               }
             </SelectField>
             <TextField
@@ -389,8 +386,9 @@ the save changes button is supposed to be disabled in this case');
             /><br />
             <TextField
               name="teaser"
-              floatingLabelText={'Teaser (' + this.state.teaser.length +
-                ' of ' + MAX_TEASER_LENGTH + ' characters)'}
+              floatingLabelText={
+                `Teaser (${this.state.teaser.length} of ${MAX_TEASER_LENGTH} characters)`
+              }
               value={this.state.teaser}
               disabled={this.state.saving}
               onChange={this.fieldUpdaters.teaser}
@@ -418,10 +416,12 @@ the save changes button is supposed to be disabled in this case');
           <Divider />
           <br />
           {
-            article.published_at ?
-            'This article was published on ' + moment(article.published_at).format('MMMM DD, YYYY') + '.' :
-            'The article has yet to be published. It will be published automatically' +
-            ' when you publish the issue that contains it.'
+            article.published_at
+              ? `This article was published on ${
+                  moment(article.published_at).format('MMMM DD, YYYY')
+                }.`
+              : 'The article has yet to be published. It will be published automatically ' +
+                'when you publish the issue that contains it.'
           } <br />
           <RaisedButton
             label="Unpublish Article"

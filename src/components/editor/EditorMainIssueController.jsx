@@ -151,8 +151,9 @@ export default class EditorMainIssueController extends FalcorController {
       if (!this.state.data) {
         return <p>This issue does not exist</p>;
       }
-      const published = this.state.data.issuesByNumber[this.props.params.issueNumber]
-        .published_at ? true : false;
+      const published = Boolean(
+        this.state.data.issuesByNumber[this.props.params.issueNumber].published_at
+      );
       return (
         <div style={styles.tabs}>
           <RaisedButton

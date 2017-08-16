@@ -60,18 +60,16 @@ export default class EditAuthorsForm extends BaseComponent {
     };
 
     const authorChips = this.props.authors.length > 0 ?
-      _.map(this.props.authors, (author) => {
-        return (
-          <AuthorChip
-            key={author.id}
-            id={author.id}
-            onDelete={this.props.handleDeleteAuthor}
-            style={{ margin: 4 }}
-          >
-            {author.name}
-          </AuthorChip>
-        );
-      }) : null;
+      _.map(this.props.authors, (author) => (
+        <AuthorChip
+          key={author.id}
+          id={author.id}
+          onDelete={this.props.handleDeleteAuthor}
+          style={{ margin: 4 }}
+        >
+          {author.name}
+        </AuthorChip>
+      )) : null;
 
     const noAuthorsMessage = (
       <span style={{ color: 'rgba(0, 0, 0, 0.3)' }}>

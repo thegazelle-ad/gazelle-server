@@ -72,7 +72,7 @@ export default class EditorArticleListController extends FalcorController {
   createListElement(article) {
     const page = this.props.params.page;
     return (
-      <Link to={'/articles/page/' + page + '/slug/' + article.slug} key={article.slug}>
+      <Link to={`/articles/page/${page}/slug/${article.slug}`} key={article.slug}>
         <ListItem
           primaryText={article.title}
           secondaryText={
@@ -103,10 +103,10 @@ export default class EditorArticleListController extends FalcorController {
         );
       }
 
-      let page = this.props.params.page;
-      let data = this.state.data.articlesByPage[NUM_ARTICLES_IN_PAGE][page];
-      let length = this.state.data.totalAmountOfArticles;
-      let maxPage = Math.ceil(length / NUM_ARTICLES_IN_PAGE);
+      const page = this.props.params.page;
+      const data = this.state.data.articlesByPage[NUM_ARTICLES_IN_PAGE][page];
+      const length = this.state.data.totalAmountOfArticles;
+      const maxPage = Math.ceil(length / NUM_ARTICLES_IN_PAGE);
 
       return (
         <div>

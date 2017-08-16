@@ -92,7 +92,7 @@ export default class FalcorController extends BaseComponent {
       if (callback) {
         callback(null);
       }
-      return;
+      return Promise.resolve();
     }
 
     this.safeSetState({ fetching: true });
