@@ -16,7 +16,7 @@ const styles = {
     textAlign: 'left',
     display: 'inline-block',
   },
-}
+};
 
 export default class EditorArticleList extends BaseComponent {
   render() {
@@ -24,14 +24,14 @@ export default class EditorArticleList extends BaseComponent {
       const elements = this.props.elements;
       return (
         <Paper style={styles.paper} zDepth={1}>
-          <List style={{overflow: "auto", maxHeight: "400px"}}>
+          <List style={{ overflow: 'auto', maxHeight: '400px' }}>
             <Subheader>Recent Articles</Subheader>
             {
               _.map(elements, this.props.createElement)
             }
           </List>
         </Paper>
-      )
+      );
     }
     return <div>This page does not exist</div>;
   }

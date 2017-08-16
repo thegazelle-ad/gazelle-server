@@ -131,9 +131,9 @@ export default class EditorMainIssueController extends FalcorController {
 
   unpublishIssue() {
     const callback = () => {
-      this.safeSetState({publishing: false});
-    }
-    this.safeSetState({publishing: true});
+      this.safeSetState({ publishing: false });
+    };
+    this.safeSetState({ publishing: true });
     this.falcorUpdate({
       paths: [['issuesByNumber', this.props.params.issueNumber, 'published_at']],
       jsonGraph: {
@@ -158,8 +158,8 @@ export default class EditorMainIssueController extends FalcorController {
           <RaisedButton
             label={
               !published
-              ? "Publish Issue"
-              : "Issue Published"
+              ? 'Publish Issue'
+              : 'Issue Published'
             }
             primary
             style={styles.publishingButtons}
@@ -169,8 +169,8 @@ export default class EditorMainIssueController extends FalcorController {
           <RaisedButton
             label={
               published
-              ? "Unpublish Issue"
-              : "Issue Not Published"
+              ? 'Unpublish Issue'
+              : 'Issue Not Published'
             }
             secondary
             style={styles.publishingButtons}

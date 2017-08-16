@@ -39,9 +39,9 @@ export default class EditorArticleController extends FalcorController {
       changed: false,
       saving: false,
       authors: [],
-      teaser: "",
-      category: "",
-      image: "",
+      teaser: '',
+      category: '',
+      image: '',
     });
 
     this.debouncedHandleFormStateChanges = debounce(() => {
@@ -50,7 +50,7 @@ export default class EditorArticleController extends FalcorController {
 
       const changedFlag = this.isFormChanged();
       if (changedFlag !== this.state.changed) {
-        this.safeSetState({changed: changedFlag});
+        this.safeSetState({ changed: changedFlag });
       }
     }, 500);
   }
@@ -69,26 +69,26 @@ export default class EditorArticleController extends FalcorController {
 
   componentWillMount() {
     const falcorCallback = data => {
-      const article =  data.articlesBySlug[this.props.params.slug];
+      const article = data.articlesBySlug[this.props.params.slug];
       const teaser = article.teaser || '';
       const category = article.category || '';
       const image = article.image || '';
       const authors = _.map(article.authors, author => author);
 
       this.safeSetState({ teaser, category, image, authors });
-    }
+    };
     super.componentWillMount(falcorCallback);
   }
 
   componentWillReceiveProps(nextProps) {
     const falcorCallback = (data) => {
-      const article =  data.articlesBySlug[this.props.params.slug];
+      const article = data.articlesBySlug[this.props.params.slug];
       const teaser = article.teaser || '';
       const category = article.category || '';
       const image = article.image || '';
 
       this.safeSetState({ teaser, category, image });
-    }
+    };
     super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
 
     this.safeSetState({
@@ -128,37 +128,37 @@ export default class EditorArticleController extends FalcorController {
     const falcorData = this.state.data.articlesBySlug[articleSlug];
 
     if (!this.isFormChanged()) {
-      throw new Error("Tried to save changes but there were no changes. \
-the save changes button is supposed to be disabled in this case");
+      throw new Error('Tried to save changes but there were no changes. \
+the save changes button is supposed to be disabled in this case');
     }
 
     let processedAuthors = this.state.authors.map(author => author.id);
     // Check that all authors are unique
     if (_.uniq(processedAuthors).length !== processedAuthors.length) {
       window.alert("You have duplicate authors, as this shouldn't be able" +
-        " to happen, please contact developers. And if you know all the actions" +
-        " you did previously to this and can reproduce them that would be of great help." +
-        " The save has been cancelled");
+        ' to happen, please contact developers. And if you know all the actions' +
+        ' you did previously to this and can reproduce them that would be of great help.' +
+        ' The save has been cancelled');
       return;
     }
     if (processedAuthors.length === 0) {
       window.alert("Sorry, because of some non-trivial issues we currently don't have" +
         " deleting every single author implemented. You hopefully shouldn't need this function" +
-        " either. Please re-add an author to be able to save");
+        ' either. Please re-add an author to be able to save');
       return;
     }
 
     // Check the special case of someone trying to reassign a category as none
-    if (this.state.category === "none" && falcorData.category !== "none") {
-      window.alert("Save cancelled, you cannot reset a category to none." +
-        " If you wish to have this feature added, speak to the developers");
+    if (this.state.category === 'none' && falcorData.category !== 'none') {
+      window.alert('Save cancelled, you cannot reset a category to none.' +
+        ' If you wish to have this feature added, speak to the developers');
       return;
     }
 
-    if (this.state.image.length > 4 && this.state.image.substr(0, 5) !== "https") {
-      if (!window.confirm("You are saving an image without using https. " +
-        "This can be correct in a few cases but is mostly not. Are you sure " +
-        " you wish to continue saving?")) {
+    if (this.state.image.length > 4 && this.state.image.substr(0, 5) !== 'https') {
+      if (!window.confirm('You are saving an image without using https. ' +
+        'This can be correct in a few cases but is mostly not. Are you sure ' +
+        ' you wish to continue saving?')) {
         return;
       }
     }
@@ -187,8 +187,8 @@ the save changes button is supposed to be disabled in this case");
     jsonGraphEnvelope.jsonGraph.articlesBySlug[articleSlug]['image'] = this.state.image;
 
     // Update the values
-    this.safeSetState({saving: true});
-    const updatePromises = [this.falcorUpdate(jsonGraphEnvelope)]
+    this.safeSetState({ saving: true });
+    const updatePromises = [this.falcorUpdate(jsonGraphEnvelope)];
 
     if (processedAuthors !== null) {
       updatePromises.push(
@@ -203,10 +203,10 @@ the save changes button is supposed to be disabled in this case");
         changed: false,
         authorsAdded: [],
         authorsDeleted: {},
-        changesObject: {mainForm: false, authors: false},
-      })
+        changesObject: { mainForm: false, authors: false },
+      });
       // This is purely so the 'saved' message can be seen by the user for a second
-      setTimeout(() => {this.safeSetState({saving: false})}, 1000);
+      setTimeout(() => { this.safeSetState({ saving: false }); }, 1000);
     });
   }
 
@@ -221,10 +221,10 @@ the save changes button is supposed to be disabled in this case");
     }) !== undefined;
 
     if (alreadyAdded) {
-      window.alert("That author is already added");
+      window.alert('That author is already added');
       return;
     }
-    const newAuthors = update(this.state.authors, {$push: [{ id, name }]});
+    const newAuthors = update(this.state.authors, { $push: [{ id, name }] });
     this.safeSetState({
       authors: newAuthors,
     });
@@ -238,9 +238,9 @@ the save changes button is supposed to be disabled in this case");
       return author.id === id;
     });
     if (index === -1) {
-      throw new Error("The author you are trying to delete cannot be found");
+      throw new Error('The author you are trying to delete cannot be found');
     }
-    const newAuthors = update(this.state.authors, {$splice: [[index, 1]]});
+    const newAuthors = update(this.state.authors, { $splice: [[index, 1]] });
     this.safeSetState({
       authors: newAuthors,
     });
@@ -337,11 +337,11 @@ the save changes button is supposed to be disabled in this case");
         }
       } else {
         if (!this.state.saving) {
-          changedStateMessage = "Save Changes";
-          changedStateStyle.color = "red";
+          changedStateMessage = 'Save Changes';
+          changedStateStyle.color = 'red';
         } else {
-          changedStateMessage = "Saving"
-          changedStateStyle.color = "#65e765";
+          changedStateMessage = 'Saving';
+          changedStateStyle.color = '#65e765';
         }
       }
 
@@ -365,7 +365,7 @@ the save changes button is supposed to be disabled in this case");
               onChange={this.fieldUpdaters.category}
               disabled={this.state.saving}
               autoWidth={false}
-              style={{width: 200}}
+              style={{ width: 200 }}
             >
               {
                 _.map(categories, (category) => {
@@ -389,8 +389,8 @@ the save changes button is supposed to be disabled in this case");
             /><br />
             <TextField
               name="teaser"
-              floatingLabelText={"Teaser (" + this.state.teaser.length +
-                " of " + MAX_TEASER_LENGTH + " characters)"}
+              floatingLabelText={'Teaser (' + this.state.teaser.length +
+                ' of ' + MAX_TEASER_LENGTH + ' characters)'}
               value={this.state.teaser}
               disabled={this.state.saving}
               onChange={this.fieldUpdaters.teaser}
@@ -419,9 +419,9 @@ the save changes button is supposed to be disabled in this case");
           <br />
           {
             article.published_at ?
-            "This article was published on " +  moment(article.published_at).format('MMMM DD, YYYY') + "." :
-            "The article has yet to be published. It will be published automatically" +
-            " when you publish the issue that contains it."
+            'This article was published on ' + moment(article.published_at).format('MMMM DD, YYYY') + '.' :
+            'The article has yet to be published. It will be published automatically' +
+            ' when you publish the issue that contains it.'
           } <br />
           <RaisedButton
             label="Unpublish Article"

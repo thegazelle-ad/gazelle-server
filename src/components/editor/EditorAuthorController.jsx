@@ -22,7 +22,7 @@ const styles = {
     marginTop: 12,
     marginBottom: 12,
   },
-}
+};
 
 export default class EditorAuthorController extends FalcorController {
   constructor(props) {
@@ -53,7 +53,7 @@ export default class EditorAuthorController extends FalcorController {
 
       const changedFlag = this.isFormChanged();
       if (changedFlag !== this.state.changed) {
-        this.safeSetState({changed: changedFlag});
+        this.safeSetState({ changed: changedFlag });
       }
     }, 500);
   }
@@ -133,11 +133,11 @@ export default class EditorAuthorController extends FalcorController {
     event.preventDefault();
 
     const falcorData = this.state.data.authorsBySlug[this.props.params.slug];
-    const authorSlug = this.props.params.slug
+    const authorSlug = this.props.params.slug;
 
     if (!this.isFormChanged()) {
-      throw new Error("Tried to save changes but there were no changes. \
-the save changes button is supposed to be disabled in this case");
+      throw new Error('Tried to save changes but there were no changes. \
+the save changes button is supposed to be disabled in this case');
     }
 
     // Modularize the code since we'll be reusing it for checking the slug
@@ -174,8 +174,8 @@ the save changes button is supposed to be disabled in this case");
     };
 
     if (this.isFormFieldChanged(this.state.slug, falcorData.slug)) {
-      if (!window.confirm("You are about to change the slug of an author, this means" +
-        " that the url to their webpage will change among other things, it is strongly recommended" +
+      if (!window.confirm('You are about to change the slug of an author, this means' +
+        ' that the url to their webpage will change among other things, it is strongly recommended' +
         " not to change the slug unless it's very crucial. Are you sure you wish to proceed?")) {
         return;
       }
@@ -202,11 +202,11 @@ the save changes button is supposed to be disabled in this case");
     }
   }
 
-  isFormFieldChanged (userInput, falcorData) {
+  isFormFieldChanged(userInput, falcorData) {
     return ((userInput !== falcorData) && !(!userInput && !falcorData));
   }
 
-  isFormChanged () {
+  isFormChanged() {
     const falcorData = this.state.data.authorsBySlug[this.props.params.slug];
     const changedFlag =
       this.isFormFieldChanged(this.state.name, falcorData.name) ||
@@ -228,14 +228,14 @@ the save changes button is supposed to be disabled in this case");
         if (!this.state.saving) {
           changedStateMessage = 'No Changes';
         } else {
-          changedStateMessage = "Saved";
+          changedStateMessage = 'Saved';
         }
       } else {
         if (!this.state.saving) {
-          changedStateMessage = "Save Changes";
+          changedStateMessage = 'Save Changes';
         }
         else {
-          changedStateMessage = "Saving"
+          changedStateMessage = 'Saving';
         }
       }
 
@@ -272,8 +272,8 @@ the save changes button is supposed to be disabled in this case");
             /><br />
             <TextField
               name="biography"
-              floatingLabelText={"Biography (" + markdownLength(this.state.biography) +
-                " of " + MAX_BIOGRAPHY_LENGTH + " characters)"}
+              floatingLabelText={'Biography (' + markdownLength(this.state.biography) +
+                ' of ' + MAX_BIOGRAPHY_LENGTH + ' characters)'}
               value={this.state.biography}
               disabled={this.state.saving}
               onChange={this.fieldUpdaters.biography}

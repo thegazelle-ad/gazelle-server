@@ -147,7 +147,7 @@ export default class FalcorController extends BaseComponent {
   // This will update the values in the database through falcor
   // and update the cache accordingly
   falcorUpdate(jsonGraphEnvelope, stateToSet = {}, callback) {
-    this.safeSetState({fetching: true});
+    this.safeSetState({ fetching: true });
     return this.props.model.set(jsonGraphEnvelope).then(() => {
       // For now we'll just fetch every time after an update
       // This would be very bad for updating views, so maybe we'll do that differently

@@ -211,7 +211,7 @@ export function followPath(path, object) {
   */
 
   // If using dot notation obj.key.key.key
-  if (typeof path === "string") {
+  if (typeof path === 'string') {
     path = path.split('.');
   }
   return path.reduce((currentObject, nextChild) => {
