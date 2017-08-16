@@ -181,7 +181,8 @@ export default class EditorIssueCategoryController extends FalcorController {
               <p>
                 Here you can reorder the categories. Remember that every time you
                 change which articles are in the issue, for now the order of the categories
-                will be randomized and you will have to come back here and reorder them. <br /><br />
+                will be randomized and you will have to come back here and reorder them.
+                <br /><br />
                 Also remember that this should be the last step before the issue is published and
                 at this point all articles you want in the issue should be already added.
               </p>

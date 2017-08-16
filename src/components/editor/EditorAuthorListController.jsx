@@ -91,15 +91,13 @@ export default class EditorAuthorListController extends FalcorController {
         window.alert('This slug is already taken, please change to another one');
         return;
       }
-      else {
-        // Create the author
-        const callback = () => {
-          window.alert('Author added successfully');
-          browserHistory.push('/authors/' + slug);
-        };
-        this.falcorCall(['authorsBySlug', 'createAuthor'], [{ slug, name }],
-          undefined, undefined, undefined, callback);
-      }
+      // Create the author
+      const callback = () => {
+        window.alert('Author added successfully');
+        browserHistory.push(`/authors/${slug}`);
+      };
+      this.falcorCall(['authorsBySlug', 'createAuthor'], [{ slug, name }],
+        undefined, undefined, undefined, callback);
     });
   }
 

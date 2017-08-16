@@ -1,5 +1,13 @@
 import { followPath, isPlainObject } from 'lib/utilities';
 
+export function trimField(length, fieldValue) {
+  if (!fieldValue) {
+    return '';
+  }
+
+  return fieldValue.substr(0, length);
+}
+
 /**
  * A function that will have 'this' bound to a React Component, the first
  * argument 'key', will be bound to the key in this.state, for which the form
@@ -21,11 +29,11 @@ import { followPath, isPlainObject } from 'lib/utilities';
  * @arg {Object} e - this is the syntheticEvent React will pass to the function
  * when something changes in the form field we bind this function to
  */
-export function updateFieldValue(keyPath, options = {}, e) {
+export function updateFieldValue(keyPath, options = {}, e, ...restArgs) {
   // Handle options
   let value;
   let trimLength = false;
-  for (const key in options) {
+  Object.keys(options).forEach(key => {
     switch (key) {
       case 'isMaterialSelect':
         if (options.isMaterialSelect) {
@@ -35,7 +43,7 @@ export function updateFieldValue(keyPath, options = {}, e) {
            * We currently don't support the multiple argument, as we don't use it.
            * If we start using it though, it should be implemented here as an option.
            */
-          value = arguments[4];
+          value = restArgs[1];
         }
         break;
 
@@ -46,7 +54,8 @@ export function updateFieldValue(keyPath, options = {}, e) {
       default:
         throw new Error('Undefined options not allowed in updateFieldValue');
     }
-  }
+  });
+
   if (value === undefined) {
     /**
      * This means that the materialSelect option wasn't set,
@@ -90,12 +99,4 @@ export function updateFieldValue(keyPath, options = {}, e) {
     });
     return updater;
   });
-}
-
-export function trimField(length, fieldValue) {
-  if (!fieldValue) {
-    return '';
-  }
-
-  return fieldValue.substr(0, length);
 }

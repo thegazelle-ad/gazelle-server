@@ -257,8 +257,11 @@ export default class EditorIssueArticleController extends FalcorController {
     }
 
     // Check if it is already picked in the issue
-    const allArticles = this.state.mainArticles.concat(this.state.picks, this.state.featuredArticles);
-    if (allArticles.some((article) => { return article.slug === post.slug; })) {
+    const allArticles = this.state.mainArticles.concat(
+      this.state.picks,
+      this.state.featuredArticles
+    );
+    if (allArticles.some(article => article.slug === post.slug)) {
       window.alert('That post is already in the issue');
       return;
     }
@@ -535,7 +538,9 @@ export default class EditorIssueArticleController extends FalcorController {
             <br />At this moment in development please refresh the page after saving to see the
             correct data.
           </p>
-          <h4 style={{ marginBottom: '0px', marginTop: '0px' }}>Featured Articles (please add exactly 1)</h4>
+          <h4 style={{ marginBottom: '0px', marginTop: '0px' }}>
+            Featured Articles (please add exactly 1)
+          </h4>
           <div>
             <button
               type="button"
