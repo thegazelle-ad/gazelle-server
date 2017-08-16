@@ -80,9 +80,6 @@ export default class EditorSearchBar extends BaseComponent {
         } else {
           suggestions = suggestions.authors[processedQuery];
         }
-        else {
-          suggestions = suggestions.authors[query];
-        }
         const suggestionsArray = _.map(suggestions, (value) => {return value});
         this.safeSetState({searchSuggestions: suggestionsArray});
       })

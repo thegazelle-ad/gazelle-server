@@ -228,10 +228,6 @@ the save changes button is supposed to be disabled in this case");
         if (!this.state.saving) {
           changedStateMessage = 'No Changes';
         } else {
-          changedStateMessage = 'Saved';
-          changedStateStyle.color = 'green';
-        }
-        else {
           changedStateMessage = "Saved";
         }
       } else {
