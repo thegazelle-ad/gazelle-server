@@ -44,7 +44,7 @@ export function updateFieldValue(keyPath, options = {}, e) {
         break;
 
       default:
-        throw new Error("Undefined options not allowed in updateFieldValue");
+        throw new Error('Undefined options not allowed in updateFieldValue');
     }
   }
   if (value === undefined) {
@@ -53,7 +53,7 @@ export function updateFieldValue(keyPath, options = {}, e) {
      * and it also makes sure we get the value before event dissappears and avoids
      * us needing to use event.persist
      */
-    value = e.target.value
+    value = e.target.value;
   }
 
   if (trimLength !== false) {
@@ -70,7 +70,7 @@ export function updateFieldValue(keyPath, options = {}, e) {
     let latestNestedObject = updater;
     let currentKeyPath = '';
     keyArray.forEach((key, index) => {
-      if (index === keyArray.length-1) {
+      if (index === keyArray.length - 1) {
         latestNestedObject[key] = value;
       } else {
         currentKeyPath += `${index === 0 ? '' : '.'}${key}`;

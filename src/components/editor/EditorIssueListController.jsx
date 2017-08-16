@@ -8,7 +8,7 @@ import { stringToInt } from 'lib/utilities';
 // material-ui
 import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
-import {Tabs, Tab} from 'material-ui/Tabs';
+import { Tabs, Tab } from 'material-ui/Tabs';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import AddIssue from 'material-ui/svg-icons/av/library-add';
@@ -38,7 +38,7 @@ const styles = {
     marginTop: 12,
     marginBottom: 24,
   },
-}
+};
 
 export default class EditorIssueListController extends FalcorController {
   constructor(props) {
@@ -50,7 +50,7 @@ export default class EditorIssueListController extends FalcorController {
       currentIssue: updateFieldValue.bind(this, 'currentIssue', {
         isMaterialSelect: true,
       }),
-    }
+    };
     this.safeSetState({
       saving: false,
       name: '',
@@ -66,21 +66,21 @@ export default class EditorIssueListController extends FalcorController {
   componentWillMount() {
     const falcorCallback = (data) => {
       const issues = Object.keys(data.issuesByNumber).map(key => stringToInt(key));
-      const nextIssue = Math.max(...issues)+1;
+      const nextIssue = Math.max(...issues) + 1;
       // Set default values
       this.safeSetState({
         name: `Issue ${nextIssue}`,
         issueNumber: nextIssue.toString(),
       });
-    }
+    };
     super.componentWillMount(falcorCallback);
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.currentIssue !== this.state.currentIssue) {
       const issueNumber = this.state.currentIssue;
-      if (issueNumber === "none") {
-        browserHistory.push("/issues");
+      if (issueNumber === 'none') {
+        browserHistory.push('/issues');
       } else {
         browserHistory.push(`/issues/${issueNumber}/main`);
       }
@@ -98,7 +98,7 @@ export default class EditorIssueListController extends FalcorController {
     }
 
     if (this.state.data.issuesByNumber.hasOwnProperty(issueNumber)) {
-      window.alert("This issue has already been created, you cannot create it again");
+      window.alert('This issue has already been created, you cannot create it again');
       return;
     }
 
@@ -121,7 +121,7 @@ export default class EditorIssueListController extends FalcorController {
     this.falcorCall(['issuesByNumber', 'addIssue'], [issue],
       undefined, undefined, undefined, callback);
 
-    browserHistory.push('/issues/'+issueNumber+'/main');
+    browserHistory.push('/issues/' + issueNumber + '/main');
   }
 
   getSelectedTab() {
@@ -152,7 +152,7 @@ export default class EditorIssueListController extends FalcorController {
       if (issueNumber && isNaN(stringToInt(issueNumber))) {
         return <div>Invalid URL</div>;
       }
-      const baseUrl = "/issues/" + issueNumber;
+      const baseUrl = '/issues/' + issueNumber;
 
       const data = this.state.data.issuesByNumber;
 
@@ -230,19 +230,19 @@ export default class EditorIssueListController extends FalcorController {
                       label="MAIN"
                       value="main"
                       icon={<Home />}
-                      containerElement={<Link to={baseUrl+"/main"} />}
+                      containerElement={<Link to={baseUrl + '/main'} />}
                     />
                     <Tab
                       label="ARTICLES"
                       value="articles"
                       icon={<Description />}
-                      containerElement={<Link to={baseUrl+"/articles"} />}
+                      containerElement={<Link to={baseUrl + '/articles'} />}
                     />
                     <Tab
                       label="CATEGORIES"
                       value="categories"
                       icon={<Reorder />}
-                      containerElement={<Link to={baseUrl+"/categories"} />}
+                      containerElement={<Link to={baseUrl + '/categories'} />}
                     />
                   </Tabs>
                   <div style={styles.tabs}>

@@ -30,7 +30,7 @@ const styles = {
     marginTop: 12,
     marginBottom: 24,
   },
-}
+};
 
 export default class EditorIssueArticleController extends FalcorController {
   constructor(props) {
@@ -258,8 +258,8 @@ export default class EditorIssueArticleController extends FalcorController {
 
     // Check if it is already picked in the issue
     const allArticles = this.state.mainArticles.concat(this.state.picks, this.state.featuredArticles);
-    if (allArticles.some((article) => {return article.slug === post.slug})) {
-      window.alert("That post is already in the issue");
+    if (allArticles.some((article) => { return article.slug === post.slug; })) {
+      window.alert('That post is already in the issue');
       return;
     }
     const newArticles = update(articles, { $push: [post] });
@@ -267,7 +267,7 @@ export default class EditorIssueArticleController extends FalcorController {
     this.handleArticlesChange(newArticles, mode);
     this.safeSetState({
       [key]: newArticles,
-    })
+    });
   }
 
   deleteArticle(mode, post) {
@@ -327,7 +327,7 @@ export default class EditorIssueArticleController extends FalcorController {
     if (allSlugs.length === 0) {
       window.alert("Sorry, because of some non-trivial issues we currently don't have" +
         " deleting every single article implemented. You hopefully shouldn't need this function" +
-        " either. Please re-add an article to be able to save");
+        ' either. Please re-add an article to be able to save');
       return;
     }
     if (isPublished) {
@@ -535,12 +535,12 @@ export default class EditorIssueArticleController extends FalcorController {
             <br />At this moment in development please refresh the page after saving to see the
             correct data.
           </p>
-          <h4 style={{marginBottom: "0px", marginTop: "0px"}}>Featured Articles (please add exactly 1)</h4>
+          <h4 style={{ marginBottom: '0px', marginTop: '0px' }}>Featured Articles (please add exactly 1)</h4>
           <div>
             <button
               type="button"
               className="pure-button"
-              onClick={() => {this.safeSetState({showArticleListMode: "featured"})}}
+              onClick={() => { this.safeSetState({ showArticleListMode: 'featured' }); }}
             >Search By List</button>
             {/* eslint-disable react/jsx-no-bind */}
             <EditorSearchBar
@@ -639,7 +639,7 @@ export default class EditorIssueArticleController extends FalcorController {
             </div>
           </div>
           {/* eslint-enable react/jsx-no-bind */}
-          <div style={{fontSize: "1.2em"}}>
+          <div style={{ fontSize: '1.2em' }}>
             <b>{mainArticles.length} articles</b>
           </div>
           <button

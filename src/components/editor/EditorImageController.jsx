@@ -8,7 +8,7 @@ import { Link } from 'react-router';
 // material-ui
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
-import {Tabs, Tab} from 'material-ui/Tabs';
+import { Tabs, Tab } from 'material-ui/Tabs';
 import FileUpload from 'material-ui/svg-icons/file/file-upload';
 import Folder from 'material-ui/svg-icons/file/folder';
 import RaisedButton from 'material-ui/RaisedButton';

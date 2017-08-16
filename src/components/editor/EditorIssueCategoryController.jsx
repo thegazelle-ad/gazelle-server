@@ -29,7 +29,7 @@ const styles = {
     marginTop: 12,
     marginBottom: 24,
   },
-}
+};
 
 export default class EditorIssueCategoryController extends FalcorController {
   constructor(props) {
@@ -162,15 +162,15 @@ export default class EditorIssueCategoryController extends FalcorController {
       let changedStateMessage;
       if (!this.state.changed) {
         if (!this.state.saving) {
-          changedStateMessage = "No Changes";
+          changedStateMessage = 'No Changes';
         } else {
-          changedStateMessage = "Saved";
+          changedStateMessage = 'Saved';
         }
       } else {
         if (!this.state.saving) {
-          changedStateMessage = "Save Changes";
+          changedStateMessage = 'Save Changes';
         } else {
-          changedStateMessage = "Saving"
+          changedStateMessage = 'Saving';
         }
       }
 

@@ -57,8 +57,8 @@ export default class BaseComponent extends React.Component {
    */
   safeSetState(updater, cb) {
     if (cb) {
-      throw new Error("We do not support the callback to setState " +
-        "in this codebase, you can probably use componentDidUpdate instead");
+      throw new Error('We do not support the callback to setState ' +
+        'in this codebase, you can probably use componentDidUpdate instead');
     }
     if (this.mounted) {
       this.setState(updater);

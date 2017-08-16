@@ -9,7 +9,7 @@ import { updateFieldValue } from './lib/form-field-updaters';
 import CircularProgress from 'material-ui/CircularProgress';
 import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
-import {Tabs, Tab} from 'material-ui/Tabs';
+import { Tabs, Tab } from 'material-ui/Tabs';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import PersonAdd from 'material-ui/svg-icons/social/person-add';
@@ -50,8 +50,8 @@ export default class EditorAuthorListController extends FalcorController {
     };
     this.safeSetState({
       createAuthorValid: false,
-      inputName: "",
-      inputSlug: "",
+      inputName: '',
+      inputSlug: '',
     });
   }
 
@@ -94,13 +94,13 @@ export default class EditorAuthorListController extends FalcorController {
       else {
         // Create the author
         const callback = () => {
-          window.alert("Author added successfully");
+          window.alert('Author added successfully');
           browserHistory.push('/authors/' + slug);
-        }
-        this.falcorCall(['authorsBySlug', 'createAuthor'], [{slug: slug, name: name}],
+        };
+        this.falcorCall(['authorsBySlug', 'createAuthor'], [{ slug, name }],
           undefined, undefined, undefined, callback);
       }
-    })
+    });
   }
 
   render() {

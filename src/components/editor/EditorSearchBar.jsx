@@ -25,7 +25,7 @@ export default class EditorSearchBar extends BaseComponent {
     this.debouncedGetSuggestions = debounce(() => {
       const query = this.state.searchValue;
       if (!(query.trim())) {
-        this.safeSetState({searchSuggestions: []});
+        this.safeSetState({ searchSuggestions: [] });
         return;
       }
       let pathSets = [];
@@ -80,9 +80,9 @@ export default class EditorSearchBar extends BaseComponent {
         } else {
           suggestions = suggestions.authors[processedQuery];
         }
-        const suggestionsArray = _.map(suggestions, (value) => {return value});
-        this.safeSetState({searchSuggestions: suggestionsArray});
-      })
+        const suggestionsArray = _.map(suggestions, (value) => { return value; });
+        this.safeSetState({ searchSuggestions: suggestionsArray });
+      });
     }, this.props.debounceTime || 250);
   }
 
@@ -106,7 +106,7 @@ export default class EditorSearchBar extends BaseComponent {
   }
 
   render() {
-    if (this.props.mode === "articles") {
+    if (this.props.mode === 'articles') {
       return (
         <div>
           <TextField
@@ -124,10 +124,10 @@ export default class EditorSearchBar extends BaseComponent {
                   if (this.props.showPubDate) {
                     let date;
                     if (article.published_at) {
-                      date = "Published: " + moment(article.published_at).format('MMM DD, YYYY');
+                      date = 'Published: ' + moment(article.published_at).format('MMM DD, YYYY');
                     }
                     else {
-                      date = "Unpublished";
+                      date = 'Unpublished';
                     }
                     textShown += ' - ' + date;
                   }
@@ -158,7 +158,7 @@ export default class EditorSearchBar extends BaseComponent {
             onChange={this.fieldUpdaters.searchValue}
           />
           <div>
-            <Menu style={{width: 200}}>
+            <Menu style={{ width: 200 }}>
               {
                 this.state.searchSuggestions.map((author) => {
                   return (
@@ -225,4 +225,4 @@ EditorSearchBar.propTypes = {
       return error;
     }
   },
-}
+};

@@ -38,4 +38,4 @@ export default class EditorNavigation extends BaseComponent {
 
 EditorNavigation.propTypes = {
   isNavOpen: React.PropTypes.bool.isRequired,
-}
+};

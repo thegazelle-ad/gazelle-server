@@ -61,20 +61,20 @@ export default class EditAuthorsForm extends BaseComponent {
 
     const authorChips = this.props.authors.length > 0 ?
       _.map(this.props.authors, (author) => {
-        return(
+        return (
           <AuthorChip
             key={author.id}
             id={author.id}
             onDelete={this.props.handleDeleteAuthor}
-            style={{margin: 4}}
+            style={{ margin: 4 }}
           >
             {author.name}
           </AuthorChip>
-        )
+        );
       }) : null;
 
     const noAuthorsMessage = (
-      <span style={{color: "rgba(0, 0, 0, 0.3)"}}>
+      <span style={{ color: 'rgba(0, 0, 0, 0.3)' }}>
         No authors are currently assigned to this article
       </span>
     );
@@ -82,7 +82,7 @@ export default class EditAuthorsForm extends BaseComponent {
     return (
       <div>
         <br />
-        <p style={{marginTop: 0, marginBottom: 10}}>Authors</p>
+        <p style={{ marginTop: 0, marginBottom: 10 }}>Authors</p>
         <div style={styles.wrapper} >
           {authorChips || noAuthorsMessage}
         </div>

@@ -10,7 +10,7 @@ import ListItem from 'material-ui/List/ListItem';
 import CircularProgress from 'material-ui/CircularProgress';
 import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
-import {darkBlack} from 'material-ui/styles/colors';
+import { darkBlack } from 'material-ui/styles/colors';
 import RaisedButton from 'material-ui/RaisedButton';
 
 const styles = {
@@ -72,12 +72,12 @@ export default class EditorArticleListController extends FalcorController {
   createListElement(article) {
     const page = this.props.params.page;
     return (
-      <Link to={"/articles/page/" + page + "/slug/"+article.slug} key={article.slug}>
+      <Link to={'/articles/page/' + page + '/slug/' + article.slug} key={article.slug}>
         <ListItem
           primaryText={article.title}
           secondaryText={
             <p>
-              <span style={{color: darkBlack}}>
+              <span style={{ color: darkBlack }}>
                 {moment(article.published_at).format('MMM DD, YYYY')}
               </span> {" -- "}
               {article.teaser}
@@ -106,7 +106,7 @@ export default class EditorArticleListController extends FalcorController {
       let page = this.props.params.page;
       let data = this.state.data.articlesByPage[NUM_ARTICLES_IN_PAGE][page];
       let length = this.state.data.totalAmountOfArticles;
-      let maxPage = Math.ceil(length/NUM_ARTICLES_IN_PAGE);
+      let maxPage = Math.ceil(length / NUM_ARTICLES_IN_PAGE);
 
       return (
         <div>
