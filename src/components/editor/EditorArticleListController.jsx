@@ -153,16 +153,10 @@ export default class EditorArticleListController extends FalcorController {
         </div>
       );
     }
-    else {
-      return (
-        <div className="circular-progress">
-          <CircularProgress />
-          {this.props.children}
-        </div>
-        <div className="pure-u-1-8"></div>
-        <div className="pure-u-1-2">
-          {this.props.children}
-        </div>
+    return (
+      <div className="circular-progress">
+        <CircularProgress />
+        {this.props.children}
       </div>
     );
   }
