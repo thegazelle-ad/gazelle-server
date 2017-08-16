@@ -146,7 +146,8 @@ export default class EditorImageUploader extends BaseComponent {
       this.addImagePreviewUrl(file);
     });
 
-    e.target.parentNode.reset();
+    // Reset to "No Files Chosen" in the input element instead of saying "10 files" or so
+    e.target.parentNode.parentNode.parentNode.parentNode.parentNode.reset();
   }
 
   handlePreviewChange() {
