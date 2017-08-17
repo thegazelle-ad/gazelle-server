@@ -19,7 +19,7 @@ Fs.readdirSync('node_modules').forEach(function (module) {
 module.exports = [{
 // Front end
   target: 'node',
-  entry: './src/server.js',
+  entry: './src/index.js',
   output: {
     path: __dirname,
     filename: "./build/server.js",
@@ -94,7 +94,7 @@ module.exports = [{
   },
 }, {
   target: 'web',
-  entry: './src/client.js',
+  entry: './src/client-scripts/gazelle-client.js',
   output: {
     filename: "./static/build/client.js",
   },
@@ -136,7 +136,7 @@ module.exports = [{
 },
 {
   target: 'web',
-  entry: './src/editor-client.js',
+  entry: './src/client-scripts/admin-client.js',
   output: {
     filename: "./static/build/editor-client.js",
   },
