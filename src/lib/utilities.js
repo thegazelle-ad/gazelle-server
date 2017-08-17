@@ -252,3 +252,34 @@ export function stringToInt(str) {
   }
   return NaN;
 }
+
+// Environment functions and constants
+export const isProduction = process.env.NODE_ENV === 'production';
+export const isStaging = process.env.NODE_ENV === 'beta';
+export const isDevelopment = !isProduction && !isStaging;
+
+export function filterByEnvironment(development, beta, production) {
+  if (production === undefined) {
+    /**
+     * In case of only two arguments being specificed we re-value the arguments
+     * so they now function as non-production and production
+     */
+    if (development === undefined || beta === undefined) {
+      // Less than 2 arguments were given which is not supported
+      throw new Error('Less than 2 arguments were passed to filterByEnvironment');
+    }
+
+    if (isProduction) {
+      return beta;
+    }
+    return development;
+  }
+
+  // All 3 arguments were specified
+  if (isProduction) {
+    return production;
+  } else if (isStaging) {
+    return beta;
+  }
+  return development;
+}
