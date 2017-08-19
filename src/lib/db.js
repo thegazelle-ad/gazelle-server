@@ -3,7 +3,7 @@
 import knex from 'knex';
 import stable from 'stable';
 import databaseConfig from 'lib/../../config/database.config';
-import { mapGhostNames } from 'lib/falcor/FalcorRouter';
+import { mapGhostNames } from 'lib/falcor/falcor-utilities';
 import _ from 'lodash';
 import { formatDate, formatDateTime } from 'lib/utilities';
 

@@ -155,7 +155,7 @@ export default function runAdminServer(serverFalcorModel) {
        * temporarily if extra s3 tests are needed at some point.
        */
       setTimeout(() => {
-        res.status(200).send('success on test url');
+        res.status(200).send('success test_url');
       }, 2000);
       deleteTmpFile();
     } else {
