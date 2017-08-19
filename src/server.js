@@ -235,7 +235,7 @@ if (process.env.NODE_ENV === 'beta') {
     );
   });
   mainApp.get(/(?!\/login)/, (req, res) => {
-    res.redirect(`307,/login?url=${req.url}`);
+    res.redirect(307, `/login?url=${req.url}`);
   });
 } else {
   mainApp.get('*', (req, res) => {
