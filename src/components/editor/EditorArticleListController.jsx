@@ -52,7 +52,7 @@ export default class EditorArticleListController extends FalcorController {
         { length: NUM_ARTICLES_IN_PAGE },
         ['title', 'slug', 'teaser', 'published_at'],
       ],
-      ['totalAmountOfArticles'],
+      ['articles', 'length'],
     ];
   }
 
@@ -105,7 +105,7 @@ export default class EditorArticleListController extends FalcorController {
 
       const page = this.props.params.page;
       const data = this.state.data.articles.byPage[NUM_ARTICLES_IN_PAGE][page];
-      const length = this.state.data.totalAmountOfArticles;
+      const length = this.state.data.articles.length;
       const maxPage = Math.ceil(length / NUM_ARTICLES_IN_PAGE);
 
       return (
