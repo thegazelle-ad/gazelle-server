@@ -20,7 +20,7 @@ export default [
             if (index < data.length) {
               results.push({
                 path: ['trending', index],
-                value: $ref(['articlesBySlug', data[index].slug]),
+                value: $ref(['articles', 'bySlug', data[index].slug]),
               });
             }
           });

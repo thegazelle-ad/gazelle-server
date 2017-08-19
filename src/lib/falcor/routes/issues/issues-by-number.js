@@ -17,7 +17,7 @@ export default [
           data.forEach((row) => {
             results.push({
               path: ['issuesByNumber', row.issue_order, 'featured'],
-              value: $ref(['articlesBySlug', row.slug]),
+              value: $ref(['articles', 'bySlug', row.slug]),
             });
           });
           resolve(results);
@@ -37,7 +37,7 @@ export default [
               if (index < postSlugArray.length) {
                 results.push({
                   path: ['issuesByNumber', issueNumber, 'picks', index],
-                  value: $ref(['articlesBySlug', postSlugArray[index]]),
+                  value: $ref(['articles', 'bySlug', postSlugArray[index]]),
                 });
               }
             });
@@ -100,11 +100,19 @@ export default [
                 pathSet.articleIndices.forEach((articleIndex) => {
                   if (articleIndex < categoryArray[categoryIndex].length) {
                     results.push({
-                      path:
-                        ['issuesByNumber', issueNumber,
-                        'categories', categoryIndex,
-                        'articles', articleIndex],
-                      value: $ref(['articlesBySlug', categoryArray[categoryIndex][articleIndex]]),
+                      path: [
+                        'issuesByNumber',
+                        issueNumber,
+                        'categories',
+                        categoryIndex,
+                        'articles',
+                        articleIndex,
+                      ],
+                      value: $ref([
+                        'articles',
+                        'bySlug',
+                        categoryArray[categoryIndex][articleIndex],
+                      ]),
                     });
                   }
                 });
@@ -257,7 +265,7 @@ export default [
           });
           data.publishedArticles.forEach((slug) => {
             results.push({
-              path: ['articlesBySlug', slug, 'published_at'],
+              path: ['articles', 'bySlug', slug, 'published_at'],
               value: publishTime,
             });
           });

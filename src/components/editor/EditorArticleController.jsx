@@ -58,18 +58,18 @@ export default class EditorArticleController extends FalcorController {
   static getFalcorPathSets(params) {
     return [
       [
-        'articlesBySlug',
+        'articles', 'bySlug',
         params.slug,
         ['title', 'category', 'teaser', 'image', 'id', 'published_at'],
       ],
-      ['articlesBySlug', params.slug, 'authors', { length: 10 }, ['id', 'name']],
+      ['articles', 'bySlug', params.slug, 'authors', { length: 10 }, ['id', 'name']],
       ['categoriesByIndex', { length: 30 }, ['name', 'slug']],
     ];
   }
 
   componentWillMount() {
     const falcorCallback = data => {
-      const article = data.articlesBySlug[this.props.params.slug];
+      const article = data.articles.bySlug[this.props.params.slug];
       const teaser = article.teaser || '';
       const category = article.category || '';
       const image = article.image || '';
@@ -82,7 +82,7 @@ export default class EditorArticleController extends FalcorController {
 
   componentWillReceiveProps(nextProps) {
     const falcorCallback = (data) => {
-      const article = data.articlesBySlug[this.props.params.slug];
+      const article = data.articles.bySlug[this.props.params.slug];
       const teaser = article.teaser || '';
       const category = article.category || '';
       const image = article.image || '';
@@ -125,7 +125,7 @@ export default class EditorArticleController extends FalcorController {
     event.preventDefault();
 
     const articleSlug = this.props.params.slug;
-    const falcorData = this.state.data.articlesBySlug[articleSlug];
+    const falcorData = this.state.data.articles.bySlug[articleSlug];
 
     if (!this.isFormChanged()) {
       throw new Error(
@@ -175,18 +175,20 @@ export default class EditorArticleController extends FalcorController {
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
       paths: [
-        ['articlesBySlug', articleSlug, ['teaser', 'category', 'image']],
+        ['articles', 'bySlug', articleSlug, ['teaser', 'category', 'image']],
       ],
       jsonGraph: {
-        articlesBySlug: {
-          [articleSlug]: {},
+        articles: {
+          bySlug: {
+            [articleSlug]: {},
+          },
         },
       },
     };
     // Fill in the data
-    jsonGraphEnvelope.jsonGraph.articlesBySlug[articleSlug].teaser = this.state.teaser;
-    jsonGraphEnvelope.jsonGraph.articlesBySlug[articleSlug].category = this.state.category;
-    jsonGraphEnvelope.jsonGraph.articlesBySlug[articleSlug].image = this.state.image;
+    jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].teaser = this.state.teaser;
+    jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].category = this.state.category;
+    jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].image = this.state.image;
 
     // Update the values
     this.safeSetState({ saving: true });
@@ -194,7 +196,7 @@ export default class EditorArticleController extends FalcorController {
 
     if (processedAuthors !== null) {
       updatePromises.push(this.falcorCall(
-        ['articlesBySlug', articleSlug, 'authors', 'updateAuthors'],
+        ['articles', 'bySlug', articleSlug, 'authors', 'updateAuthors'],
         [falcorData.id, processedAuthors],
         [['name'], ['slug']]
       ));
@@ -249,12 +251,14 @@ export default class EditorArticleController extends FalcorController {
     const slug = this.props.params.slug;
     const jsonGraphEnvelope = {
       paths: [
-        ['articlesBySlug', slug, 'published_at'],
+        ['articles', 'bySlug', slug, 'published_at'],
       ],
       jsonGraph: {
-        articlesBySlug: {
-          [slug]: {
-            published_at: null,
+        articles: {
+          bySlug: {
+            [slug]: {
+              published_at: null,
+            },
           },
         },
       },
@@ -287,7 +291,7 @@ export default class EditorArticleController extends FalcorController {
   }
 
   isFormChanged() {
-    const falcorData = this.state.data.articlesBySlug[this.props.params.slug];
+    const falcorData = this.state.data.articles.bySlug[this.props.params.slug];
     const changedFlag =
       this.isFormFieldChanged(this.state.teaser, falcorData.teaser) ||
       this.isFormFieldChanged(this.state.category, falcorData.category) ||
@@ -311,12 +315,12 @@ export default class EditorArticleController extends FalcorController {
     };
 
     if (this.state.ready) {
-      if (!this.state.data || !this.state.data.articlesBySlug) {
+      if (!this.state.data || !this.state.data.articles.bySlug) {
         return <div><p>Error: No articles match this slug</p></div>;
       }
 
       const slug = this.props.params.slug;
-      const article = this.state.data.articlesBySlug[slug];
+      const article = this.state.data.articles.bySlug[slug];
 
       // If it is a new article it won't have any meta data yet
       if (!article.hasOwnProperty('category')) {

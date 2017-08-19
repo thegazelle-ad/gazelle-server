@@ -42,7 +42,7 @@ export default [
               if (index < postSlugArray.length) {
                 results.push({
                   path: ['categoriesBySlug', categorySlug, 'articles', index],
-                  value: $ref(['articlesBySlug', postSlugArray[index]]),
+                  value: $ref(['articles', 'bySlug', postSlugArray[index]]),
                 });
               }
             });
