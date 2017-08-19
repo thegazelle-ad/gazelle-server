@@ -7,14 +7,14 @@ const $ref = falcor.Model.ref;
 export default [
   {
     /*
-    Get articles by page (they are also in chronological order, articlesByPage[pageLength][1][0]
+    Get articles by page (they are also in chronological order, articles['byPage'][pageLength][1][0]
     is the latest published article to the Ghost database). Only use positive integer page lengths
     and page numbers, and non-negative page indices. [{integers:indicesOnPage}] is logically
     redundant but needed for working properly with falcor. Normal falcorPath syntax would be:
-    articlesByPage[pageLength][pageNumber][{length: pageLength}]
+    articles['byPage'][pageLength][pageNumber][{length: pageLength}]
     where {length: pageLength} makes use of falcor's range object.
     */
-    route: 'articlesByPage[{integers:pageLengths}][{integers:pageNumbers}][{integers:indicesOnPage}]', // eslint-disable-line max-len
+    route: "articles['byPage'][{integers:pageLengths}][{integers:pageNumbers}][{integers:indicesOnPage}]", // eslint-disable-line max-len
     get: (pathSet) => (
       new Promise((resolve) => {
         const results = [];
@@ -53,7 +53,7 @@ export default [
                 }
                 if (index < articles.length) {
                   results.push({
-                    path: ['articlesByPage', pageLength, pageNumber, index],
+                    path: ['articles', 'byPage', pageLength, pageNumber, index],
                     value: $ref(['articles', 'bySlug', articles[index].slug]),
                   });
                 }

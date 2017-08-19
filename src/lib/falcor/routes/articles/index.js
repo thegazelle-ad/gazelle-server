@@ -1,7 +1,7 @@
-import articlesByPage from './articles-by-page';
+import byPage from './by-page';
 import bySlug from './by-slug';
 
 export default [].concat(
-  articlesByPage,
+  byPage,
   bySlug
 );

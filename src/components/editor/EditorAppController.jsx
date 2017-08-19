@@ -111,7 +111,7 @@ export default class EditorAppController extends BaseComponent {
   }
 
   resetGhostInfo() {
-    this.props.model.invalidate(['articlesByPage'], ['articles', 'bySlug']);
+    this.props.model.invalidate(['articles', 'byPage'], ['articles', 'bySlug']);
     browserHistory.push('/');
   }
 
