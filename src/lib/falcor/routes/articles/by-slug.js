@@ -11,10 +11,10 @@ const $ref = falcor.Model.ref;
 export default [
   {
     // Get article data from Ghost API
-    route: "articlesBySlug[{keys:slugs}]['id', 'image', 'slug', 'title', 'markdown', 'html', 'teaser']", // eslint-disable-line max-len
+    route: "articles['bySlug'][{keys:slugs}]['id', 'image', 'slug', 'title', 'markdown', 'html', 'teaser']", // eslint-disable-line max-len
     get: (pathSet) => (
       new Promise((resolve) => {
-        const requestedFields = pathSet[2];
+        const requestedFields = pathSet[3];
         let query = 'filter=';
         pathSet.slugs.forEach((slug, index) => {
           query += `${index > 0 ? ',' : ''}slug:'${slug}'`;
@@ -25,16 +25,15 @@ export default [
             query += `,${mapGhostNames(field)}`;
           }
         });
-        query += `&limit=${pathSet.slugs.length.toString()}`;
+        query += `&limit=${pathSet.slugs.length}`;
         ghostArticleQuery(query).then((data) => {
-          let dataInstance = data;
-          dataInstance = data.posts;
+          const posts = data.posts;
           const results = [];
-          dataInstance.forEach((article) => {
+          posts.forEach((article) => {
             requestedFields.forEach((field) => {
               const ghostField = mapGhostNames(field);
               results.push({
-                path: ['articlesBySlug', article.slug, field],
+                path: ['articles', 'bySlug', article.slug, field],
                 value: article[ghostField],
               });
             });
@@ -52,18 +51,18 @@ export default [
     ),
     set: (jsonGraphArg) => (
       new Promise((resolve) => {
-        const articlesBySlug = jsonGraphArg.articlesBySlug;
-        const slugs = Object.keys(articlesBySlug);
-        db.updateGhostFields(articlesBySlug).then((flag) => {
+        const articles = jsonGraphArg.articles.bySlug;
+        const slugs = Object.keys(articles);
+        db.updateGhostFields(articles).then((flag) => {
           const results = [];
           if (flag !== true) {
             throw new Error('For unknown reasons updateGhostFields returned a non-true flag');
           }
           slugs.forEach((slug) => {
-            const slugObject = articlesBySlug[slug];
+            const slugObject = articles[slug];
             _.forEach(slugObject, (value, field) => {
               results.push({
-                path: ['articlesBySlug', slug, field],
+                path: ['articles', 'bySlug', slug, field],
                 value,
               });
             });
@@ -75,10 +74,10 @@ export default [
   },
   {
     // Get custom article data from MariaDB
-    route: "articlesBySlug[{keys:slugs}]['category', 'published_at', 'views']",
+    route: "articles['bySlug'][{keys:slugs}]['category', 'published_at', 'views']",
     get: (pathSet) => (
       new Promise((resolve) => {
-        const requestedFields = pathSet[2];
+        const requestedFields = pathSet[3];
         db.articleQuery(pathSet.slugs, requestedFields).then((data) => {
           const results = [];
           data.forEach((article) => {
@@ -91,7 +90,7 @@ export default [
             }
             requestedFields.forEach((field) => {
               results.push({
-                path: ['articlesBySlug', processedArticle.slug, field],
+                path: ['articles', 'bySlug', processedArticle.slug, field],
                 value: processedArticle[field],
               });
             });
@@ -102,19 +101,19 @@ export default [
     ),
     set: (jsonGraphArg) => (
       new Promise((resolve) => {
-        const articlesBySlug = jsonGraphArg.articlesBySlug;
-        const slugs = Object.keys(articlesBySlug);
+        const articles = jsonGraphArg.articles.bySlug;
+        const slugs = Object.keys(articles);
         const results = [];
-        db.updatePostMeta(articlesBySlug)
+        db.updatePostMeta(articles)
         .then((flag) => {
           if (!flag) {
             throw new Error('For unknown reasons updatePostMeta returned a non-true flag');
           }
           slugs.forEach((slug) => {
-            const slugObject = articlesBySlug[slug];
+            const slugObject = articles[slug];
             _.forEach(slugObject, (value, field) => {
               results.push({
-                path: ['articlesBySlug', slug, field],
+                path: ['articles', 'bySlug', slug, field],
                 value,
               });
             });
@@ -126,14 +125,14 @@ export default [
   },
   {
     // Get issueNumber from database
-    route: "articlesBySlug[{keys:slugs}]['issueNumber']",
+    route: "articles['bySlug'][{keys:slugs}]['issueNumber']",
     get: (pathSet) => (
       new Promise((resolve) => {
         db.articleIssueQuery(pathSet.slugs).then((data) => {
           const results = [];
           data.forEach((row) => {
             results.push({
-              path: ['articlesBySlug', row.slug, 'issueNumber'],
+              path: ['articles', 'bySlug', row.slug, 'issueNumber'],
               value: row.issueNumber,
             });
           });
@@ -143,13 +142,13 @@ export default [
     ),
     set: (jsonGraphArg) => (
       new Promise((resolve) => {
-        const articlesBySlug = jsonGraphArg.articlesBySlug;
-        const slugs = Object.keys(articlesBySlug);
+        const articles = jsonGraphArg.articles.bySlug;
+        const slugs = Object.keys(articles);
         const results = [];
         slugs.forEach((slug) => {
           results.push({
-            path: ['articlesBySlug', slug, 'issueNumber'],
-            value: articlesBySlug[slug].issueNumber,
+            path: ['articles', 'bySlug', slug, 'issueNumber'],
+            value: articles[slug].issueNumber,
           });
         });
         resolve(results);
@@ -158,7 +157,7 @@ export default [
   },
   {
     // Get author information from article
-    route: "articlesBySlug[{keys:slugs}]['authors'][{integers:indices}]",
+    route: "articles['bySlug'][{keys:slugs}]['authors'][{integers:indices}]",
     get: (pathSet) => (
       new Promise((resolve) => {
         db.articleAuthorQuery(pathSet.slugs).then((data) => {
@@ -169,7 +168,7 @@ export default [
             pathSet.indices.forEach((index) => {
               if (index < authorSlugArray.length) {
                 results.push({
-                  path: ['articlesBySlug', postSlug, 'authors', index],
+                  path: ['articles', 'bySlug', postSlug, 'authors', index],
                   value: $ref(['authorsBySlug', authorSlugArray[index]]),
                 });
               }
@@ -182,7 +181,7 @@ export default [
   },
   {
     // Add authors to an article
-    route: "articlesBySlug[{keys:slugs}]['authors']['updateAuthors']",
+    route: "articles['bySlug'][{keys:slugs}]['authors']['updateAuthors']",
     call: (callPath, args) => {
       // the falcor.model.call only takes a path not a pathset
       // so it is not possible to call this function for more
@@ -200,12 +199,12 @@ export default [
           const results = [];
           // Invalidate all the old data
           results.push({
-            path: ['articlesBySlug', articleSlug, 'authors'],
+            path: ['articles', 'bySlug', articleSlug, 'authors'],
             invalidated: true,
           });
           data.forEach((slug, index) => {
             results.push({
-              path: ['articlesBySlug', articleSlug, 'authors', index],
+              path: ['articles', 'bySlug', articleSlug, 'authors', index],
               value: $ref(['authorsBySlug', slug]),
             });
           });
@@ -216,7 +215,7 @@ export default [
   },
   {
     // Get related articles
-    route: "articlesBySlug[{keys:slugs}]['related'][{integers:indices}]",
+    route: "articles['bySlug'][{keys:slugs}]['related'][{integers:indices}]",
     get: (pathSet) => (
       new Promise((resolve) => {
         // The dbRelatedArticleQuery function will only return 3 related articles
@@ -228,8 +227,8 @@ export default [
             pathSet.indices.forEach((index) => {
               if (data.hasOwnProperty(slug) && index < data[slug].length) {
                 results.push({
-                  path: ['articlesBySlug', slug, 'related', index],
-                  value: $ref(['articlesBySlug', data[slug][index]]),
+                  path: ['articles', 'bySlug', slug, 'related', index],
+                  value: $ref(['articles', 'bySlug', data[slug][index]]),
                 });
               }
             });
@@ -240,7 +239,7 @@ export default [
     ),
   },
   {
-    route: "articlesBySlug[{keys:slugs}]['addView']",
+    route: "articles['bySlug'][{keys:slugs}]['addView']",
     call: (callPath) => (
       new Promise((resolve) => {
         // It's a function call so there should only be one slug
@@ -258,7 +257,7 @@ export default [
             throw new Error(`addView for slug ${slug} returned unexpected value`);
           } else {
             resolve([{
-              path: ['articlesBySlug', slug, 'views'],
+              path: ['articles', 'bySlug', slug, 'views'],
               value: views,
             }]);
           }

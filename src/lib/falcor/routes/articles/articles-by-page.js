@@ -54,7 +54,7 @@ export default [
                 if (index < articles.length) {
                   results.push({
                     path: ['articlesByPage', pageLength, pageNumber, index],
-                    value: $ref(['articlesBySlug', articles[index].slug]),
+                    value: $ref(['articles', 'bySlug', articles[index].slug]),
                   });
                 }
               });

@@ -15,23 +15,24 @@ export default class ArticleController extends FalcorController {
     return [
       // Fetch article data
       [
-        'articlesBySlug',
+        'articles',
+        'bySlug',
         params.articleSlug,
         ['title', 'teaser', 'html', 'published_at', 'issueNumber', 'category', 'slug', 'image'],
       ],
-      ['articlesBySlug', params.articleSlug, 'authors', { length: 10 }, ['name', 'slug']],
+      ['articles', 'bySlug', params.articleSlug, 'authors', { length: 10 }, ['name', 'slug']],
 
       // Fetch two related articles
       // TODO: convert fetching by category to fetching by tag
       [
-        'articlesBySlug',
+        'articles', 'bySlug',
         params.articleSlug,
         'related',
         { length: 2 },
         ['title', 'teaser', 'image', 'issueNumber', 'category', 'slug'],
       ],
       [
-        'articlesBySlug', params.articleSlug,
+        'articles', 'bySlug', params.articleSlug,
         'related',
         { length: 2 },
         'authors',
@@ -54,7 +55,7 @@ export default class ArticleController extends FalcorController {
     // later to make this consistent for a user in general?)
     if (process.env.NODE_ENV !== 'beta' && !isArticleViewed(slug)) {
       viewArticle(slug);
-      this.props.model.call(['articlesBySlug', slug, 'addView'], [], [], []).then(() => {});
+      this.props.model.call(['articles', 'bySlug', slug, 'addView'], [], [], []).then(() => {});
     }
   }
 
@@ -63,7 +64,7 @@ export default class ArticleController extends FalcorController {
     const slug = this.props.params.articleSlug;
     if (process.env.NODE_ENV !== 'beta' && !isArticleViewed(slug)) {
       viewArticle(slug);
-      this.props.model.call(['articlesBySlug', slug, 'addView'], [], [], []).then(() => {});
+      this.props.model.call(['articles', 'bySlug', slug, 'addView'], [], [], []).then(() => {});
     }
   }
 
@@ -71,10 +72,10 @@ export default class ArticleController extends FalcorController {
     if (this.state.ready) {
       if (
         !this.state.data ||
-        !this.state.data.articlesBySlug ||
-        !this.state.data.articlesBySlug[this.props.params.articleSlug] ||
-        !this.state.data.articlesBySlug[this.props.params.articleSlug].title ||
-        !this.state.data.articlesBySlug[this.props.params.articleSlug].issueNumber
+        !this.state.data.articles.bySlug ||
+        !this.state.data.articles.bySlug[this.props.params.articleSlug] ||
+        !this.state.data.articles.bySlug[this.props.params.articleSlug].title ||
+        !this.state.data.articles.bySlug[this.props.params.articleSlug].issueNumber
       ) {
         return (
           <NotFound />
@@ -83,7 +84,7 @@ export default class ArticleController extends FalcorController {
 
       const articleSlug = this.props.params.articleSlug;
       // Access data fetched via Falcor
-      const articleData = this.state.data.articlesBySlug[articleSlug];
+      const articleData = this.state.data.articles.bySlug[articleSlug];
       const trendingData = this.state.data.trending;
       const relatedArticlesData = articleData.related;
       // make sure article meta image has default

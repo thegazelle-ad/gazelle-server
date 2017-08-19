@@ -34,7 +34,7 @@ export default [
               if (index < queryResults.length) {
                 results.push({
                   path: ['search', 'posts', query, index],
-                  value: $ref(['articlesBySlug', queryResults[index]]),
+                  value: $ref(['articles', 'bySlug', queryResults[index]]),
                 });
               }
             });
