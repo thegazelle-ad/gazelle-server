@@ -39,7 +39,7 @@ export const development = () => {
       expect(isProduction).toBe(false);
     });
   });
-}
+};
 
 export const beta = () => {
   describe('filterByEnvironment', () => {
@@ -73,7 +73,7 @@ export const beta = () => {
       expect(isProduction).toBe(false);
     });
   });
-}
+};
 
 export const production = () => {
   describe('filterByEnvironment', () => {
@@ -107,4 +107,4 @@ export const production = () => {
       expect(isProduction).toBe(true);
     });
   });
-}
+};

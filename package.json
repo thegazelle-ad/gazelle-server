@@ -8,7 +8,7 @@
     "build-production": "./node_modules/.bin/webpack -p --config ./webpack.production.config.js --bail",
     "build-beta": "./node_modules/.bin/webpack -p --config ./webpack.beta.config.js --bail",
     "test": "jest --verbose --testPathPattern '__tests__/.*\\.test\\.js$'",
-    "lint": "find src -regex \".*?\\.jsx?\" -not -regex \".*?-test\\.js\"| xargs ./node_modules/.bin/eslint"
+    "lint": "find src -regex \".*?\\.jsx?\" -not -regex \".*?[-.]test\\.js\"| xargs ./node_modules/.bin/eslint"
   },
   "jest": {
     "unmockedModulePathPatterns": [
