@@ -79,9 +79,16 @@ export default class EditorIssueArticleController extends FalcorController {
       ['issuesByNumber', params.issueNumber, 'featured', 'authors', 0, 'slug'],
       ['issuesByNumber', params.issueNumber, 'picks', { length: 10 }, 'authors', 0, 'slug'],
       // This is for the articleList
-      ['articlesByPage', ARTICLE_LIST_LENGTH, 1, { length: ARTICLE_LIST_LENGTH }, ARTICLE_FIELDS],
       [
-        'articlesByPage',
+        'articles',
+        'byPage',
+        ARTICLE_LIST_LENGTH,
+        1,
+        { length: ARTICLE_LIST_LENGTH },
+        ARTICLE_FIELDS,
+      ],
+      [
+        'articles', 'byPage',
         ARTICLE_LIST_LENGTH,
         1,
         { length: ARTICLE_LIST_LENGTH },
@@ -472,7 +479,7 @@ export default class EditorIssueArticleController extends FalcorController {
       const modes = ['picks', 'featured', 'main'];
       if (modes.find(mode => mode === this.state.showArticleListMode)) {
         // Filter picked articles
-        let articles = this.state.data.articlesByPage[ARTICLE_LIST_LENGTH][1];
+        let articles = this.state.data.articles.byPage[ARTICLE_LIST_LENGTH][1];
         const seen = {};
         const allArticles = this.state.mainArticles.concat(
           this.state.featuredArticles, this.state.picks);

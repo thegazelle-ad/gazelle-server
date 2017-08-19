@@ -46,7 +46,7 @@ export default class EditorArticleListController extends FalcorController {
   static getFalcorPathSets(params) {
     return [
       [
-        'articlesByPage',
+        'articles', 'byPage',
         NUM_ARTICLES_IN_PAGE,
         parseInt(params.page, 10),
         { length: NUM_ARTICLES_IN_PAGE },
@@ -92,7 +92,7 @@ export default class EditorArticleListController extends FalcorController {
   render() {
     if (this.state.ready) {
       // If trying to access inacessible page, redirect to page 1
-      if (!this.state.data.articlesByPage) {
+      if (!this.state.data.articles.byPage) {
         return (
           <p>
             You have tried accessing a page that doesn't exist. Please press
@@ -104,7 +104,7 @@ export default class EditorArticleListController extends FalcorController {
       }
 
       const page = this.props.params.page;
-      const data = this.state.data.articlesByPage[NUM_ARTICLES_IN_PAGE][page];
+      const data = this.state.data.articles.byPage[NUM_ARTICLES_IN_PAGE][page];
       const length = this.state.data.totalAmountOfArticles;
       const maxPage = Math.ceil(length / NUM_ARTICLES_IN_PAGE);
 
