@@ -35,7 +35,6 @@ export default class EditorAppController extends BaseComponent {
   constructor(props) {
     super(props);
     this.restartServer = this.restartServer.bind(this);
-    this.pingServer = this.pingServer.bind(this);
     this.handleDisableLink = this.handleDisableLink.bind(this);
     this.resetGhostInfo = this.resetGhostInfo.bind(this);
     this.isLoggedIn = this.isLoggedIn.bind(this);
