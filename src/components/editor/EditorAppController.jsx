@@ -56,9 +56,9 @@ export default class EditorAppController extends BaseComponent {
     }
   }
 
-  pingServer () {
+  pingServer() {
     let counter = 0;
-    function isRestarted () {
+    function isRestarted() {
       http.get('/isrestarted', (response) => {
         let signal = '';
         response.on('data', (chunk) => {
@@ -66,10 +66,9 @@ export default class EditorAppController extends BaseComponent {
         });
         response.on('end', () => {
           if (signal === 'false') {
-            window.alert("Servers restarted successfully");
-          }
-          else if (signal === 'true') {
-            counter+=1;
+            window.alert('Servers restarted successfully');
+          } else if (signal === 'true') {
+            counter += 1;
             if (counter <= 5) {
               setTimeout(isRestarted, 500);
             }
@@ -77,8 +76,8 @@ export default class EditorAppController extends BaseComponent {
           if (counter > 5) {
             window.alert('Error');
           }
-        })
-      })
+        });
+      });
     }
     isRestarted();
   }
@@ -88,14 +87,8 @@ export default class EditorAppController extends BaseComponent {
     const options = {
       hostname: HOSTNAME,
       port: PORT,
-<<<<<<< d3c8d13623aea3cbf13fcc99d1adbfcac89d2f09
       path: `/restartserver?password=${password}`,
     };
-=======
-      path: '/restartserver?password=' + password,
-    }
-
->>>>>>> Reset Server Button
     http.get(options, (res) => {
       let reply = '';
 
@@ -104,45 +97,15 @@ export default class EditorAppController extends BaseComponent {
       });
 
       res.on('end', () => {
-<<<<<<< 53fc8f687b5c20a2315a5809a6aec3883cb882c9
-<<<<<<< d3c8d13623aea3cbf13fcc99d1adbfcac89d2f09
-        if (reply === 'restarted') {
-          window.alert('Servers restarted successfully');
+        if (reply === 'start') {
+          window.alert('Server is being restarted now');
+          this.pingServer();
         } else if (reply === 'error') {
-          window.alert('there was an error restarting the servers');
+          window.alert('There was an error restarting the servers');
         } else if (reply === 'invalid') {
-          window.alert('invalid password');
+          window.alert('Invalid password');
         } else {
           window.alert('unknown error');
-=======
-        if (reply === "restarted") {
-          window.alert("Servers restarted successfully");
-        }
-        else if (reply === "start") {
-          window.alert("server is being restarted now");
-=======
-        if (reply === "start") {
-          window.alert("Server is being restarted now");
-<<<<<<< 9907f2f92e33d7e1a3d761b5263013b6637e3769
-          this.isRestarted();
->>>>>>> Update EditorAppController.jsx
-=======
-          this.pingServer();
->>>>>>> Made corrections to EditorAppController as suggested
-        }
-        else if (reply === "error") {
-          window.alert("There was an error restarting the servers");
-        }
-        else if (reply === "invalid") {
-          window.alert("Invalid password");
-        }
-        else {
-<<<<<<< 53fc8f687b5c20a2315a5809a6aec3883cb882c9
-          window.alert("unknown error");
->>>>>>> Reset Server Button
-=======
-          window.alert("Unknown error");
->>>>>>> Update EditorAppController.jsx
         }
       });
     });

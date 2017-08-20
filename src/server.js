@@ -323,38 +323,19 @@ if (process.env.NODE_ENV === 'production') {
 let isRestarted = false;
 
 editorTools.get('/restartserver', (req, res) => {
-
   if (!process.env.NODE_ENV) {
-<<<<<<< d3c8d13623aea3cbf13fcc99d1adbfcac89d2f09
     // in dev mode
-    res.status(200).send('restarted');
-=======
-    //in dev mode
-<<<<<<< 0af29e795f37b4b6774a801dfbb2d4c721535b7d
-    res.status(200).send("restarted");
->>>>>>> Reset Server Button
-=======
-    res.status(200).send("start");
->>>>>>> Update server.js
+    res.status(200).send('start');
     return;
   }
 
   const password = req.query.password;
-<<<<<<< d3c8d13623aea3cbf13fcc99d1adbfcac89d2f09
+
   if ((typeof password) !== 'string' || password.length < 1) {
-=======
-  
-  if ((typeof password) !== "string" || password.length < 1) {
->>>>>>> Reset Server Button
     res.status(401).send('invalid');
-<<<<<<< 0af29e795f37b4b6774a801dfbb2d4c721535b7d
   } else if (hash(password) === 8692053) {
-=======
-  }
-  else if (hash(password) === 8692053) {
     isRestarted = true;
     res.status(200).send('start');
->>>>>>> Update server.js
     exec(PATH_NAME, (err, stdout, stderr) => {
       if (err) {
         if (process.env.NODE_ENV !== 'production') {
@@ -373,16 +354,11 @@ editorTools.get('/restartserver', (req, res) => {
   }
 });
 
-<<<<<<< d3c8d13623aea3cbf13fcc99d1adbfcac89d2f09
 const uploadDir = path.join(__dirname, '../tmp');
-=======
+
 editorTools.get('/isrestarted', (req, res) => {
   res.status(200).send(isRestarted);
 });
-
-
-const upload_dir = path.join(__dirname, '../tmp');
->>>>>>> Reset Server Button
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
@@ -482,17 +458,7 @@ editorTools.listen(process.env.EDITOR_PORT ? process.env.EDITOR_PORT : 4000, err
     return;
   }
 
-<<<<<<< d3c8d13623aea3cbf13fcc99d1adbfcac89d2f09
   console.log( // eslint-disable-line no-console
     'Editor tools server started on port', process.env.EDITOR_PORT ? process.env.EDITOR_PORT : 4000
   );
 });
-=======
-  console.log('Editor tools server started on port', process.env.EDITOR_PORT ? process.env.EDITOR_PORT : 4000); // eslint-disable-line no-console
-<<<<<<< 0af29e795f37b4b6774a801dfbb2d4c721535b7d
-  });
->>>>>>> Reset Server Button
-=======
-
-});
->>>>>>> Update server.js
