@@ -34,6 +34,7 @@ if (process.env.NODE_ENV === 'production') {
 export default class EditorAppController extends BaseComponent {
   constructor(props) {
     super(props);
+    this.restartServer = this.restartServer.bind(this);
     this.handleDisableLink = this.handleDisableLink.bind(this);
     this.resetGhostInfo = this.resetGhostInfo.bind(this);
     this.isLoggedIn = this.isLoggedIn.bind(this);
@@ -54,6 +55,32 @@ export default class EditorAppController extends BaseComponent {
     }
   }
 
+  pingServer() {
+    let counter = 0;
+    function isRestarted() {
+      http.get('/isrestarted', (response) => {
+        let signal = '';
+        response.on('data', (chunk) => {
+          signal += chunk;
+        });
+        response.on('end', () => {
+          if (signal === 'false') {
+            window.alert('Servers restarted successfully');
+          } else if (signal === 'true') {
+            counter += 1;
+            if (counter <= 5) {
+              setTimeout(isRestarted, 500);
+            }
+          }
+          if (counter > 5) {
+            window.alert('Error');
+          }
+        });
+      });
+    }
+    isRestarted();
+  }
+
   restartServer() {
     const password = window.prompt('Please input the password');
     const options = {
@@ -69,12 +96,13 @@ export default class EditorAppController extends BaseComponent {
       });
 
       res.on('end', () => {
-        if (reply === 'restarted') {
-          window.alert('Servers restarted successfully');
+        if (reply === 'start') {
+          window.alert('Server is being restarted now');
+          this.pingServer();
         } else if (reply === 'error') {
-          window.alert('there was an error restarting the servers');
+          window.alert('There was an error restarting the servers');
         } else if (reply === 'invalid') {
-          window.alert('invalid password');
+          window.alert('Invalid password');
         } else {
           window.alert('unknown error');
         }

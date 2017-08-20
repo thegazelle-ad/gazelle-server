@@ -320,17 +320,22 @@ if (process.env.NODE_ENV === 'production') {
   PATH_NAME = `${__dirname}/scripts/restartServers.sh`;
 }
 
+let isRestarted = false;
+
 editorTools.get('/restartserver', (req, res) => {
   if (!process.env.NODE_ENV) {
     // in dev mode
-    res.status(200).send('restarted');
+    res.status(200).send('start');
     return;
   }
 
   const password = req.query.password;
+
   if ((typeof password) !== 'string' || password.length < 1) {
     res.status(401).send('invalid');
   } else if (hash(password) === 8692053) {
+    isRestarted = true;
+    res.status(200).send('start');
     exec(PATH_NAME, (err, stdout, stderr) => {
       if (err) {
         if (process.env.NODE_ENV !== 'production') {
@@ -342,7 +347,6 @@ editorTools.get('/restartserver', (req, res) => {
           console.log(stdout); // eslint-disable-line no-console
           console.log(stderr); // eslint-disable-line no-console
         }
-        res.status(200).send('restarted');
       }
     });
   } else {
@@ -351,6 +355,10 @@ editorTools.get('/restartserver', (req, res) => {
 });
 
 const uploadDir = path.join(__dirname, '../tmp');
+
+editorTools.get('/isrestarted', (req, res) => {
+  res.status(200).send(isRestarted);
+});
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
