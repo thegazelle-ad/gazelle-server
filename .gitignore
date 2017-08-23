@@ -3,7 +3,7 @@ static/build/
 config/database.config.js
 config/ghost.config.js
 config/s3.config.js
-scripts/backupDatabase.sh
+scripts/backup-database.sh
 *tmp/*
 
 ## Below this is automatically generated

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Router, browserHistory } from 'react-router';
 import falcor from 'falcor';
 import routes from 'lib/editor-routes';
-import { injectModelCreateElement, setAppReady } from 'lib/falcor/falcorUtils';
+import { injectModelCreateElement, setAppReady } from 'lib/falcor/falcor-utilities';
 import HttpDataSource from 'falcor-http-datasource';
 
 // Set app ready so falcor doesn't try to load from cache

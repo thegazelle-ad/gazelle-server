@@ -1,6 +1,6 @@
-jest.unmock('lib/falcor/falcorUtils');
+jest.unmock('lib/falcor/falcor-utilities');
 
-import { pathSetsInCache } from 'lib/falcor/falcorUtils';
+import { pathSetsInCache } from 'lib/falcor/falcor-utilities';
 
 /* We skip this test for the moment as we aren't currently using this function
  * though we may in the future */
