@@ -4,7 +4,7 @@ import {
   expandCache,
   pathSetsInCache,
   validateFalcorPathSets,
-} from 'lib/falcor/falcorUtils';
+} from 'lib/falcor/falcor-utilities';
 import BaseComponent from 'lib/BaseComponent';
 import { setLoading, signalLeaving } from 'lib/loader';
 import { uuid } from 'lib/utilities';

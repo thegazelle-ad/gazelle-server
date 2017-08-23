@@ -1,6 +1,6 @@
 #!/bin/bash
 
-node "`dirname $0`/helperFiles/getGhostConfig.js"
+node "`dirname $0`/helpers/get-ghost-config.js"
 if [ $? -ne 0 ]
   then
     exit 1

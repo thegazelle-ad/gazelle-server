@@ -1,5 +1,5 @@
 import React from 'react';
-import { setAppReady } from 'lib/falcor/falcorUtils';
+import { setAppReady } from 'lib/falcor/falcor-utilities';
 import ReactTransitionGroup from 'react-addons-transition-group';
 import _ from 'lodash';
 import { TransitionManager } from 'lib/loader';

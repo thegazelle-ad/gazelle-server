@@ -1,5 +1,5 @@
 import BaseRouter from 'falcor-router';
-import { ghostArticleQuery } from 'lib/ghostAPI';
+import { ghostArticleQuery } from 'lib/ghost-api';
 import DbFunctions from 'lib/db';
 import falcor from 'falcor';
 import _ from 'lodash';

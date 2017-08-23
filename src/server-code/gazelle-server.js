@@ -28,7 +28,7 @@ import bodyParser from 'body-parser';
 /* Our helper functions */
 import { isStaging } from 'lib/utilities';
 import { md5Hash } from 'lib/server-utilities';
-import { injectModelCreateElement } from 'lib/falcor/falcorUtils';
+import { injectModelCreateElement } from 'lib/falcor/falcor-utilities';
 
 
 export default function runGazelleServer(serverFalcorModel) {

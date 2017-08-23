@@ -27,7 +27,7 @@ import { md5Hash } from 'lib/server-utilities';
 export default function runAdminServer(serverFalcorModel) {
   // Create MD5 hash of static files for better cache performance
   const clientScriptHash = md5Hash('./static/build/editor-client.js');
-  const cssHash = md5Hash('./static/editorStyles.css');
+  const cssHash = md5Hash('./static/admin.css');
 
   const htmlString = `
     <!DOCTYPE html>
@@ -35,7 +35,7 @@ export default function runAdminServer(serverFalcorModel) {
       <head>
         <title>Gazelle Editor Tools</title>
         <link rel="stylesheet" href="/pure-min.css">
-        <link rel="stylesheet" type="text/css" href="/editorStyles.css?h=${cssHash}">
+        <link rel="stylesheet" type="text/css" href="/admin.css?h=${cssHash}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
       </head>
       <body>
@@ -77,9 +77,9 @@ export default function runAdminServer(serverFalcorModel) {
 
   /* Restart Servers command */
   const PATH_NAME = filterByEnvironment(
-    `${__dirname}/scripts/restartServers.sh`,
-    '~/gazelle-beta/scripts/restartServers.sh',
-    '~/gazelle-production/scripts/restartServers.sh'
+    `${__dirname}/scripts/restart-servers.sh`,
+    '~/gazelle-beta/scripts/restart-servers.sh',
+    '~/gazelle-production/scripts/restart-servers.sh'
   );
 
   let isRestarted = false;

@@ -1,7 +1,7 @@
-jest.unmock('lib/falcor/falcorUtils');
+jest.unmock('lib/falcor/falcor-utilities');
 jest.unmock('lib/utilities');
 
-import { expandCache } from 'lib/falcor/falcorUtils';
+import { expandCache } from 'lib/falcor/falcor-utilities';
 describe('expandCache', () => {
   it('does expand atoms', () => {
     const cache = {key: {$type: 'atom', value: [1, 2, 3]}};
