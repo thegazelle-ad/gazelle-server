@@ -57,9 +57,7 @@ export default function runGazelleServer(serverFalcorModel) {
             ${head.meta}
           </head>
           <body>
-            <div id="main">
-            ${body}
-            </div>
+            <div id="main">${body}</div>
             <script>
               var _initialCache = ${JSON.stringify(cache)};
             </script>
