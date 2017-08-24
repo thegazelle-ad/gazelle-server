@@ -1,4 +1,5 @@
 import React from 'react';
+import crypto from 'crypto';
 
 // TODO: Add Jest Testing
 export function debounce(func, timeout, addInstantFlag = false) {
@@ -187,12 +188,19 @@ const H2PRIME = 3296731;
 const BIG_PRIME = 5003943032159437;
 
 export function hash(password) {
-  let num = password.charCodeAt(0);
-  for (let i = 1; i < password.length; i++) {
-    num = ((num * 256) % BIG_PRIME + password.charCodeAt(i)) % BIG_PRIME;
-  }
-  return ((num % H1PRIME) + 5 * (num % H2PRIME) + 1 + 25) % BIG_PRIME;
+  const hashInstance = crypto.createHash('sha512');
+  const hashVal = hashInstance.update(password).digest('hex');
+  console.log("hash: " + hashVal);
+  return hashVal;
 }
+
+// export function hash(password) {
+//   let num = password.charCodeAt(0);
+//   for (let i = 1; i < password.length; i++) {
+//     num = ((num * 256) % BIG_PRIME + password.charCodeAt(i)) % BIG_PRIME;
+//   }
+//   return ((num % H1PRIME) + 5 * (num % H2PRIME) + 1 + 25) % BIG_PRIME;
+// }
 
 // For tracking the articles visited in that particular session
 // so we at least don't count views more than once per session
