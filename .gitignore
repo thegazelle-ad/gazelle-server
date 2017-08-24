@@ -4,7 +4,7 @@ config/database.config.js
 config/ghost.config.js
 config/s3.config.js
 scripts/backup-database.sh
-*tmp/*
+**/tmp/*
 
 ## Below this is automatically generated
 

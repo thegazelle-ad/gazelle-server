@@ -114,7 +114,7 @@ export default function runAdminServer(serverFalcorModel) {
   });
 
   /* Image Uploader */
-  const uploadDir = path.join(__dirname, '../tmp');
+  const uploadDir = path.join(__dirname, '../../tmp');
 
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
@@ -140,6 +140,14 @@ export default function runAdminServer(serverFalcorModel) {
   });
 
   app.post('/upload', upload.single('image'), (req, res) => {
+    const filePath = req.file.path;
+    const deleteTmpFile = () => {
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          console.error(err); // eslint-disable-line no-console
+        }
+      });
+    };
     if (isDevelopment) {
       /**
        * As we are in dev-mode, we don't actually want to upload to s3.
@@ -149,8 +157,8 @@ export default function runAdminServer(serverFalcorModel) {
       setTimeout(() => {
         res.status(200).send('success on test url');
       }, 2000);
+      deleteTmpFile();
     } else {
-      const filePath = req.file.path;
       const year = new Date().getFullYear().toString();
       let month = new Date().getMonth() + 1;
       if (month < 10) {
@@ -167,13 +175,6 @@ export default function runAdminServer(serverFalcorModel) {
           Bucket,
           Key,
         },
-      };
-      const deleteTmpFile = () => {
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            console.error(err); // eslint-disable-line no-console
-          }
-        });
       };
       awsSdkClient.headObject({ Bucket, Key }, (err) => {
         if (err && err.code === 'NotFound') {
