@@ -4,6 +4,16 @@ import { browserHistory } from 'react-router';
 import { hash } from 'lib/utilities';
 import _ from 'lodash';
 
+import TextField from 'material-ui/TextField';
+import RaisedButton from 'material-ui/RaisedButton';
+
+const styles = {
+  buttons: {
+    marginTop: 12,
+    marginBottom: 24,
+  },
+};
+
 export default class Login extends BaseComponent {
   constructor(props) {
     super(props);
@@ -23,6 +33,7 @@ export default class Login extends BaseComponent {
   handleSubmit(e) {
     e.preventDefault();
     const pass = e.target.password.value;
+    // eslint-disable-next-line max-len
     if (hash(pass) !== 'eaafc81d7868e1c203ecc90f387acfa4c24d1027134b0bfda6fd7c536efc5d8dd5718609a407dbfcd41e747aec331153d47733153afb7c125c558acba3fb6bcd') {
       window.alert('Incorrect password');
       e.target.password.value = ''; // eslint-disable-line no-param-reassign
@@ -43,18 +54,18 @@ export default class Login extends BaseComponent {
   render() {
     return (
       <div>
-        <form className="pure form" onSubmit={this.handleSubmit}>
-          Input Password:<br />
-          <input
-            type="password"
+        <form onSubmit={this.handleSubmit}>
+          <TextField
             name="password"
-            placeholder="Password"
+            type="password"
+            floatingLabelText="Password"
             autoFocus
-          />
-          <input
+          /><br /><br />
+          <RaisedButton
             type="submit"
-            className="pure-button"
-            value="Enter Editor Tools"
+            label="Enter Editor Tools"
+            primary
+            style={styles.button}
           />
         </form>
       </div>

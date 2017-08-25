@@ -183,22 +183,10 @@ export function markdownLength(str) {
   return length;
 }
 
-// const H1PRIME = 4189793;
-// const H2PRIME = 3296731;
-// const BIG_PRIME = 5003943032159437;
-
 export function hash(password) {
   const hashInstance = crypto.createHash('sha512');
   return hashInstance.update(password).digest('hex');
 }
-
-// export function hash(password) {
-//   let num = password.charCodeAt(0);
-//   for (let i = 1; i < password.length; i++) {
-//     num = ((num * 256) % BIG_PRIME + password.charCodeAt(i)) % BIG_PRIME;
-//   }
-//   return ((num % H1PRIME) + 5 * (num % H2PRIME) + 1 + 25) % BIG_PRIME;
-// }
 
 // For tracking the articles visited in that particular session
 // so we at least don't count views more than once per session
