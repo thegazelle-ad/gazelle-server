@@ -115,6 +115,10 @@ export default class EditorAppController extends BaseComponent {
     browserHistory.push('/');
   }
 
+  signOut() {
+    browserHistory.push('/login');
+  }
+
   render() {
     const navItems = ['Articles', 'Authors', 'Issues', 'Images'];
     const bodyStyle = { transition: 'margin-left 450ms cubic-bezier(0.23, 1, 0.32, 1)' };
@@ -139,7 +143,10 @@ export default class EditorAppController extends BaseComponent {
           disabled
         />
         <Divider />
-        <MenuItem primaryText="Sign out" />
+        <MenuItem
+          primaryText="Sign out"
+          onClick={this.signOut}
+        />
       </IconMenu>
     );
 
