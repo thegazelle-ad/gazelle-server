@@ -93,7 +93,7 @@ export default function runAdminServer(serverFalcorModel) {
     const password = req.query.password;
     if ((typeof password) !== 'string' || password.length < 1) {
       res.status(401).send('invalid');
-    } else if (hash(password) === 8692053) {
+    } else if (hash(password) === 'eaafc81d7868e1c203ecc90f387acfa4c24d1027134b0bfda6fd7c536efc5d8dd5718609a407dbfcd41e747aec331153d47733153afb7c125c558acba3fb6bcd') { // eslint-disable-line max-len
       isRestarted = true;
       res.status(200).send('start');
       exec(PATH_NAME, (err) => {
