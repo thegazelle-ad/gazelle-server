@@ -183,15 +183,13 @@ export function markdownLength(str) {
   return length;
 }
 
-const H1PRIME = 4189793;
-const H2PRIME = 3296731;
-const BIG_PRIME = 5003943032159437;
+// const H1PRIME = 4189793;
+// const H2PRIME = 3296731;
+// const BIG_PRIME = 5003943032159437;
 
 export function hash(password) {
   const hashInstance = crypto.createHash('sha512');
-  const hashVal = hashInstance.update(password).digest('hex');
-  console.log("hash: " + hashVal);
-  return hashVal;
+  return hashInstance.update(password).digest('hex');
 }
 
 // export function hash(password) {

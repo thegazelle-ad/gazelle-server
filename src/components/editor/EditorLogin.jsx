@@ -23,7 +23,7 @@ export default class Login extends BaseComponent {
   handleSubmit(e) {
     e.preventDefault();
     const pass = e.target.password.value;
-    if (hash(pass) !== 8692053) {
+    if (hash(pass) !== 'eaafc81d7868e1c203ecc90f387acfa4c24d1027134b0bfda6fd7c536efc5d8dd5718609a407dbfcd41e747aec331153d47733153afb7c125c558acba3fb6bcd') {
       window.alert('Incorrect password');
       e.target.password.value = ''; // eslint-disable-line no-param-reassign
     } else {
