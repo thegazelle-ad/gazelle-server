@@ -18,7 +18,7 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-            key: v1-dependencies-{{ checksum 'npm-shrinkwrap.json' }}
+          key: v1-dependencies-{{ checksum 'npm-shrinkwrap.json' }}
 
       # Setup environment to prep build
       - run: |
