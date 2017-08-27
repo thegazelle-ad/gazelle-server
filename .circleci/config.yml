@@ -13,14 +13,14 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum 'npm-shrinkwrap.json' }}
+            - v1-dependencies-{{ checksum npm-shrinkwrap.json }}
 
       - run: npm install
 
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum 'npm-shrinkwrap.json' }}
+          key: v1-dependencies-{{ checksum npm-shrinkwrap.json }}
 
       # Setup environment to prep build
       - run: |
