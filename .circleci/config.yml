@@ -5,6 +5,8 @@ jobs:
       - image: circleci/node:7.10
 
     steps:
+      - checkout
+
       # Setup known_hosts so the VM allows ssh access without the prompt
       - run: mkdir ~/.ssh && echo '|1|lngQecMeLZI49/+fr5Ee0gOWaKE=|arylHILm4qsNJewDKKwFKOijBxE= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLONO0airQQL9d1rOZzT/p3SBH8acSYaN4N8qJezd/0UbnF8SBi+m1wB2nay5o0HQBQTM6O+MKXDwzYec886K78=' >> ~/.ssh/known_hosts
 
