@@ -1,0 +1,51 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:7.10
+
+    steps:
+      - checkout
+
+      # Setup known_hosts so the VM allows ssh access without the prompt
+      - run: mkdir -p ~/.ssh && echo '|1|lngQecMeLZI49/+fr5Ee0gOWaKE=|arylHILm4qsNJewDKKwFKOijBxE= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLONO0airQQL9d1rOZzT/p3SBH8acSYaN4N8qJezd/0UbnF8SBi+m1wB2nay5o0HQBQTM6O+MKXDwzYec886K78=' >> ~/.ssh/known_hosts
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+
+      # Setup environment to prep build
+      - run: |
+          cp config/database.config.example.js config/database.config.js
+          cp config/s3.config.example.js config/s3.config.js
+          cp config/ghost.config.example.js config/ghost.config.js
+          ./scripts/get-ghost-config.sh
+
+      # Test that we can build without errors
+      - run: npm run build-production
+
+      # Test and lint
+      - run: npm test
+      - run: npm run lint
+
+      - deploy:
+          name: Deploy to staging if tests pass and we're on master
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              ssh gazelle@51.15.130.216 ./deployment/update-beta.sh
+            fi
+
+      - deploy:
+          name: Deploy to productoin if tests pass and we're on stable
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "stable" ]; then
+              ssh gazelle@51.15.130.216 ./deployment/update-production.sh
+            fi
