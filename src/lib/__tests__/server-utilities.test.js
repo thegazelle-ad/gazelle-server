@@ -1,7 +1,5 @@
 import { md5Hash } from 'lib/server-utilities';
 import crypto from 'crypto';
-jest.unmock('lib/server-utilities');
-jest.unmock('crypto');
 
 describe('md5Hash', () => {
   const indexHash = md5Hash('./src/index.js');
