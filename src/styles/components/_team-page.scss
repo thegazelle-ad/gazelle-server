@@ -58,6 +58,9 @@
     &__team__members{
     &__member {
       width: 100%;
+      &__name{
+        font-size: 1.5rem;
+      }
     }
   }
 }
