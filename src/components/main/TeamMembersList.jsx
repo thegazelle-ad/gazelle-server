@@ -19,8 +19,10 @@ export default class TeamMembersList extends BaseComponent {
               alt="Team Member"
               className="team-page__team__members__member__image"
             />
-            <h2 className="team-page__team__members__member__name">{member.name}</h2>
-            <h3 className="team-page__team__members__member__job-title">{member.job_title}</h3>
+            <div className="team-page__team__members__member__text">
+              <h2 className="team-page__team__members__member__text__name">{member.name}</h2>
+              <h3 className="team-page__team__members__member__text__job-title">{member.job_title}</h3>
+            </div>
           </Link>
         );
       });
