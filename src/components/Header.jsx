@@ -32,8 +32,8 @@ export default class Header extends BaseComponent {
           </div>
           <div className="header__title">
             {/* TODO: change link to proper Gazelle icon uploaded to server*/}
-            <Link className="header__title__logo" to="/" className="header__title__content">
-              <img src="./static/header-logo.png" alt="logo" />
+            <Link to="/" className="header__title__content">
+              <img src="./static/header-logo-transparent.png" alt="logo" />
               <h1 className="header__title__content__site-name">{this.props.appName}</h1>
             </Link>
           </div>
