@@ -10,6 +10,9 @@
       margin: 0.75rem 0;
     }
   }
+  &__team {
+    margin-bottom: 5px;
+  }
   &__team__members {
     display: flex;
     flex-wrap: wrap;
@@ -17,8 +20,17 @@
     justify-content: center;
     &__member {
       width: 200px;
-      margin: 1rem;
+      margin: 0.65rem;
       text-align: center;
+      background-color: white;
+      padding: 0.5rem;
+      border-radius: 2px;
+      border: 1px solid rgba(0,0,0,0.2);
+      transition: border-color 0.1s ease-out;
+      //box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+      &:hover {
+        border-color: rgb(27, 122, 176);
+      }
       &__image {
         @include uppercase;
         object-fit: cover;
@@ -27,16 +39,27 @@
         height: 200px;
       }
       &__name {
-        font-size: 1.3rem;
+        font-size: 1.1rem;
         font-weight: 400;
         margin: 0 0.75rem 0 0;
       }
       &__job-title {
         font-size: 1rem;
         font-weight: 300;
-        color: $light-grey;
+        color: rgba(0, 0, 0, 0.4);
         margin: 0 0.5rem 0 0;
       }
     }
   }
+}
+
+@media only screen and (max-width : 500px) {
+  .team-page{
+    &__team__members{
+    &__member {
+      width: 100%;
+    }
+  }
+}
+/* Styles */
 }
