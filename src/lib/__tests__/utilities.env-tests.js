@@ -5,7 +5,6 @@
  * but rather when it is imported
  */
 import { filterByEnvironment, isDevelopment, isStaging, isProduction } from 'lib/utilities';
-jest.unmock('lib/utilities');
 
 export const development = () => {
   describe('filterByEnvironment', () => {

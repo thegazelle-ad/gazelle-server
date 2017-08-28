@@ -4,7 +4,6 @@ process.env.NODE_ENV = 'development';
  * before we redefine process.env.NODE_ENV.
  */
 const utilities = require('lib/__tests__/utilities.env-tests.js').development;
-jest.unmock('lib/__tests__/utilities.env-tests.js');
 
 describe('development', () => {
   utilities();
