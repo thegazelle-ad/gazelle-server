@@ -1,4 +1,4 @@
-import { pathSetsInCache } from 'lib/falcor/falcor-utilities';
+import { pathSetsInCache } from '../falcor-utilities';
 
 /* We skip this test for the moment as we aren't currently using this function
  * though we may in the future */
