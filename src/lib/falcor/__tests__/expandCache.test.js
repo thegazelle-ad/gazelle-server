@@ -1,4 +1,4 @@
-import { expandCache } from 'lib/falcor/falcor-utilities';
+import { expandCache } from '../falcor-utilities';
 
 describe('expandCache', () => {
   it('does expand atoms', () => {
