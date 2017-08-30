@@ -1,3 +1,3 @@
-import authorsBySlug from './authors-by-slug';
+import bySlug from './by-slug';
 
-export default authorsBySlug;
+export default bySlug;
