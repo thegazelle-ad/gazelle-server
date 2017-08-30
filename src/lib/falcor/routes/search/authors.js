@@ -34,7 +34,7 @@ export default [
               if (index < queryResults.length) {
                 results.push({
                   path: ['search', 'authors', query, index],
-                  value: $ref(['authorsBySlug', queryResults[index]]),
+                  value: $ref(['authors', 'bySlug', queryResults[index]]),
                 });
               }
             });

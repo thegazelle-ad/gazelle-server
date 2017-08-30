@@ -12,16 +12,16 @@ export default class AuthorController extends FalcorController {
 
     // Multilevel request requires Falcor Path for each level of data requested
     return [
-      ['authorsBySlug', params.authorSlug, ['name', 'biography', 'slug', 'job_title', 'image']],
+      ['authors', 'bySlug', params.authorSlug, ['name', 'biography', 'slug', 'job_title', 'image']],
       [
-        'authorsBySlug',
+        'authors', 'bySlug',
         params.authorSlug,
         'articles',
         { to: 50 },
         ['title', 'image', 'teaser', 'issueNumber', 'category', 'slug'],
       ],
       [
-        'authorsBySlug',
+        'authors', 'bySlug',
         params.authorSlug,
         'articles',
         { to: 50 },
@@ -41,7 +41,7 @@ export default class AuthorController extends FalcorController {
       }
 
       const authorSlug = this.props.params.authorSlug;
-      const authorData = this.state.data.authorsBySlug[authorSlug];
+      const authorData = this.state.data.authors.bySlug[authorSlug];
       if (!authorData.image) { // Default image for authors without one
         authorData.image = 'https://gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=300';
       }
