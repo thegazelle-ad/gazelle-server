@@ -63,7 +63,7 @@ export default class EditorArticleController extends FalcorController {
         ['title', 'category', 'teaser', 'image', 'id', 'published_at'],
       ],
       ['articles', 'bySlug', params.slug, 'authors', { length: 10 }, ['id', 'name']],
-      ['categoriesByIndex', { length: 30 }, ['name', 'slug']],
+      ['categories', 'byIndex', { length: 30 }, ['name', 'slug']],
     ];
   }
 
@@ -326,7 +326,7 @@ export default class EditorArticleController extends FalcorController {
       if (!article.hasOwnProperty('category')) {
         article.category = 'none';
       }
-      const categories = this.state.data.categoriesByIndex;
+      const categories = this.state.data.categories.byIndex;
       categories.none = { name: 'none', slug: 'none' };
 
       let changedStateMessage;

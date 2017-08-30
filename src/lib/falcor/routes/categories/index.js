@@ -1,7 +1,7 @@
-import categoriesByIndex from './categories-by-index';
+import byIndex from './by-index';
 import categoriesBySlug from './categories-by-slug';
 
 export default [].concat(
-  categoriesByIndex,
+  byIndex,
   categoriesBySlug
 );
