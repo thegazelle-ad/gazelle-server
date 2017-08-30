@@ -39,7 +39,7 @@ export default class EditorMainIssueController extends FalcorController {
     });
   }
   static getFalcorPathSets(params) {
-    return ['issuesByNumber', params.issueNumber, 'published_at'];
+    return ['issues', 'byNumber', params.issueNumber, 'published_at'];
   }
 
   publishIssue() {
@@ -49,7 +49,7 @@ export default class EditorMainIssueController extends FalcorController {
     };
     const falcorPathSets = [
       [
-        'issuesByNumber',
+        'issues', 'byNumber',
         this.props.params.issueNumber,
         'categories',
         { length: 20 },
@@ -58,7 +58,7 @@ export default class EditorMainIssueController extends FalcorController {
         ['title', 'teaser', 'category', 'html'],
       ],
       [
-        'issuesByNumber',
+        'issues', 'byNumber',
         this.props.params.issueNumber,
         'categories',
         { length: 20 },
@@ -67,7 +67,7 @@ export default class EditorMainIssueController extends FalcorController {
         'authors',
         0,
       ],
-      ['issuesByNumber', this.props.params.issueNumber, ['id', 'published_at', 'name']],
+      ['issues', 'byNumber', this.props.params.issueNumber, ['id', 'published_at', 'name']],
     ];
     this.props.model.get(...falcorPathSets).then((x) => {
       if (!x) {
@@ -76,7 +76,7 @@ export default class EditorMainIssueController extends FalcorController {
       } else {
         // Check validity of the issue before publishing it
         const issueNumber = this.props.params.issueNumber;
-        const issue = x.json.issuesByNumber[issueNumber];
+        const issue = x.json.issues.byNumber[issueNumber];
         const fields = falcorPathSets[0][falcorPathSets[0].length - 1]
           .filter((field) => field !== 'title');
         if (issue.published_at) {
@@ -118,7 +118,7 @@ export default class EditorMainIssueController extends FalcorController {
         }
         // The issue is valid, we can publish it
         this.safeSetState({ publishing: true });
-        this.falcorCall(['issuesByNumber', issueNumber, 'publishIssue'],
+        this.falcorCall(['issues', 'byNumber', issueNumber, 'publishIssue'],
           [issue.id], undefined, undefined, undefined, callback);
       }
     })
@@ -135,11 +135,13 @@ export default class EditorMainIssueController extends FalcorController {
     };
     this.safeSetState({ publishing: true });
     this.falcorUpdate({
-      paths: [['issuesByNumber', this.props.params.issueNumber, 'published_at']],
+      paths: [['issues', 'byNumber', this.props.params.issueNumber, 'published_at']],
       jsonGraph: {
-        issuesByNumber: {
-          [this.props.params.issueNumber]: {
-            published_at: null,
+        issues: {
+          byNumber: {
+            [this.props.params.issueNumber]: {
+              published_at: null,
+            },
           },
         },
       },
@@ -152,7 +154,7 @@ export default class EditorMainIssueController extends FalcorController {
         return <p>This issue does not exist</p>;
       }
       const published = Boolean(
-        this.state.data.issuesByNumber[this.props.params.issueNumber].published_at
+        this.state.data.issues.byNumber[this.props.params.issueNumber].published_at
       );
       return (
         <div style={styles.tabs}>

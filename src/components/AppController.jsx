@@ -26,7 +26,7 @@ export default class AppController extends FalcorController {
       const issueNumber = mapLegacyIssueSlugsToIssueNumber(params.issueNumber);
       return [
         ['latestIssue', ['issueNumber']], // Used for robustness when setting navigationData
-        ['issuesByNumber', issueNumber, ['published_at', 'issueNumber']],
+        ['issues', 'byNumber', issueNumber, ['published_at', 'issueNumber']],
       ];
     }
     // User is on home page
@@ -47,10 +47,10 @@ export default class AppController extends FalcorController {
         this.props.params.issueNumber !== this.state.data.latestIssue.issueNumber
       ) { // User is on an archived issuepage
         const issueNumber = mapLegacyIssueSlugsToIssueNumber(this.props.params.issueNumber);
-        navigationData = this.state.data.issuesByNumber[issueNumber];
+        navigationData = this.state.data.issues.byNumber[issueNumber];
       } else { // User is on home page, categories, author page, info page, etc.
         if (this.props.params.issueNumber) { // User is on an article from current issue
-          navigationData = this.state.data.issuesByNumber[this.state.data.latestIssue.issueNumber];
+          navigationData = this.state.data.issues.byNumber[this.state.data.latestIssue.issueNumber];
         } else { navigationData = this.state.data.latestIssue; }
       }
     }

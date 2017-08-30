@@ -9,14 +9,14 @@ const $ref = falcor.Model.ref;
 export default [
   {
     // get featured article
-    route: "issuesByNumber[{integers:issueNumbers}]['featured']",
+    route: "issues['byNumber'][{integers:issueNumbers}]['featured']",
     get: (pathSet) => (
       new Promise((resolve) => {
         db.featuredArticleQuery(pathSet.issueNumbers).then((data) => {
           const results = [];
           data.forEach((row) => {
             results.push({
-              path: ['issuesByNumber', row.issue_order, 'featured'],
+              path: ['issues', 'byNumber', row.issue_order, 'featured'],
               value: $ref(['articles', 'bySlug', row.slug]),
             });
           });
@@ -27,7 +27,7 @@ export default [
   },
   {
     // get editor's picks
-    route: "issuesByNumber[{integers:issueNumbers}]['picks'][{integers:indices}]",
+    route: "issues['byNumber'][{integers:issueNumbers}]['picks'][{integers:indices}]",
     get: (pathSet) => (
       new Promise((resolve) => {
         db.editorPickQuery(pathSet.issueNumbers).then((data) => {
@@ -36,7 +36,7 @@ export default [
             pathSet.indices.forEach((index) => {
               if (index < postSlugArray.length) {
                 results.push({
-                  path: ['issuesByNumber', issueNumber, 'picks', index],
+                  path: ['issues', 'byNumber', issueNumber, 'picks', index],
                   value: $ref(['articles', 'bySlug', postSlugArray[index]]),
                 });
               }
@@ -54,10 +54,10 @@ export default [
       depending on whether it is fetched directly from categories which is ordered chronologically
       and all articles from that category are fetched or from an issue where it is ordered by
       editor tools */
-    route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers:indices}]['id', 'name', 'slug']", // eslint-disable-line max-len
+    route: "issues['byNumber'][{integers:issueNumbers}]['categories'][{integers:indices}]['id', 'name', 'slug']", // eslint-disable-line max-len
     get: (pathSet) => (
       new Promise((resolve) => {
-        const requestedFields = pathSet[4];
+        const requestedFields = pathSet[5];
         db.issueCategoryQuery(pathSet.issueNumbers, requestedFields).then((data) => {
           // data is an object with keys of issue numbers and values
           // arrays of category objects in correct order as given in editor tools
@@ -67,7 +67,7 @@ export default [
               if (index < categorySlugArray.length) {
                 requestedFields.forEach((field) => {
                   results.push({
-                    path: ['issuesByNumber', issueNumber, 'categories', index, field],
+                    path: ['issues', 'byNumber', issueNumber, 'categories', index, field],
                     value: categorySlugArray[index][field],
                   });
                 });
@@ -81,7 +81,7 @@ export default [
   },
   {
     // Get articles within issue categories
-    route: "issuesByNumber[{integers:issueNumbers}]['categories'][{integers:categoryIndices}]['articles'][{integers:articleIndices}]", // eslint-disable-line max-len
+    route: "issues['byNumber'][{integers:issueNumbers}]['categories'][{integers:categoryIndices}]['articles'][{integers:articleIndices}]", // eslint-disable-line max-len
     get: (pathSet) => (
       // This will currently fetch every single article from the issue
       // every time, and then just only return the ones asked for
@@ -101,7 +101,7 @@ export default [
                   if (articleIndex < categoryArray[categoryIndex].length) {
                     results.push({
                       path: [
-                        'issuesByNumber',
+                        'issues', 'byNumber',
                         issueNumber,
                         'categories',
                         categoryIndex,
@@ -126,7 +126,8 @@ export default [
   },
   {
     // Get issue data
-    route: "issuesByNumber[{integers:issueNumbers}]['id', 'published_at', 'name', 'issueNumber']",
+    // eslint-disable-next-line max-len
+    route: "issues['byNumber'][{integers:issueNumbers}]['id', 'published_at', 'name', 'issueNumber']",
     get: (pathSet) => {
       const mapFields = (field) => {
         switch (field) {
@@ -137,7 +138,7 @@ export default [
         }
       };
       return new Promise((resolve) => {
-        const requestedFields = pathSet[2];
+        const requestedFields = pathSet[3];
         const dbColumns = requestedFields.map(mapFields);
         db.issueQuery(pathSet.issueNumbers, dbColumns).then((data) => {
           const results = [];
@@ -152,7 +153,7 @@ export default [
             }
             requestedFields.forEach((field) => {
               results.push({
-                path: ['issuesByNumber', processedIssue.issue_order, field],
+                path: ['issues', 'byNumber', processedIssue.issue_order, field],
                 value: processedIssue[mapFields(field)],
               });
             });
@@ -163,14 +164,14 @@ export default [
     },
     set: (jsonGraphArg) => (
       new Promise((resolve) => {
-        const issueNumber = Object.keys(jsonGraphArg.issuesByNumber)[0];
-        const issueObject = jsonGraphArg.issuesByNumber[issueNumber];
+        const issueNumber = Object.keys(jsonGraphArg.issues.byNumber)[0];
+        const issueObject = jsonGraphArg.issues.byNumber[issueNumber];
         db.updateIssueData(jsonGraphArg).then((flag) => {
           if (flag !== true) {
             throw new Error('Error while updating issue data');
           }
           resolve([{
-            path: ['issuesByNumber', parseInt(issueNumber, 10), 'published_at'],
+            path: ['issues', 'byNumber', parseInt(issueNumber, 10), 'published_at'],
             value: issueObject.published_at,
           }, {
             path: ['latestIssue'],
@@ -181,7 +182,7 @@ export default [
     ),
   },
   {
-    route: "issuesByNumber['updateIssueArticles']",
+    route: "issues['byNumber']['updateIssueArticles']",
     call: (callPath, args) => (
       new Promise((resolve) => {
         const issueNumber = args[0];
@@ -207,11 +208,11 @@ export default [
           if (toAdd.hasOwnProperty('categories')) {
             _.forEach(toAdd.categories, (category, key) => {
               results.push({
-                path: ['issuesByNumber', issueNumber, 'categories', key, 'name'],
+                path: ['issues', 'byNumber', issueNumber, 'categories', key, 'name'],
                 value: category.name,
               });
               results.push({
-                path: ['issuesByNumber', issueNumber, 'categories', key, 'slug'],
+                path: ['issues', 'byNumber', issueNumber, 'categories', key, 'slug'],
                 value: category.slug,
               });
               results = results.concat(category.articles);
@@ -226,7 +227,7 @@ export default [
     ),
   },
   {
-    route: "issuesByNumber[{integers:issueNumbers}]['updateIssueCategories']",
+    route: "issues['byNumber'][{integers:issueNumbers}]['updateIssueCategories']",
     call: (callPath, args) => (
       new Promise((resolve) => {
         const issueNumber = callPath.issueNumbers[0];
@@ -241,7 +242,7 @@ export default [
               value: 'placeholder',
             },
             {
-              path: ['issuesByNumber', issueNumber, 'categories'],
+              path: ['issues', 'byNumber', issueNumber, 'categories'],
               invalidated: true,
             },
           ];
@@ -251,7 +252,7 @@ export default [
     ),
   },
   {
-    route: "issuesByNumber[{integers:issueNumbers}]['publishIssue']",
+    route: "issues['byNumber'][{integers:issueNumbers}]['publishIssue']",
     call: (callPath, args) => (
       new Promise((resolve) => {
         const issueId = args[0];
@@ -260,7 +261,7 @@ export default [
           const results = [];
           const publishTime = data.date.getTime();
           results.push({
-            path: ['issuesByNumber', issueNumber, 'published_at'],
+            path: ['issues', 'byNumber', issueNumber, 'published_at'],
             value: publishTime,
           });
           data.publishedArticles.forEach((slug) => {
@@ -275,7 +276,7 @@ export default [
     ),
   },
   {
-    route: "issuesByNumber['addIssue']",
+    route: "issues['byNumber']['addIssue']",
     call: (callPath, args) => (
       new Promise((resolve) => {
         const issue = args[0];
@@ -287,7 +288,7 @@ export default [
           const results = [];
           fields.forEach((field) => {
             results.push({
-              path: ['issuesByNumber', issue.issueNumber, field],
+              path: ['issues', 'byNumber', issue.issueNumber, field],
               value: issue[field],
             });
           });
