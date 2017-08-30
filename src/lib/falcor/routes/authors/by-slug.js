@@ -63,7 +63,7 @@ export default [
               if (index < teamSlugArray.length) {
                 results.push({
                   path: ['authors', 'bySlug', authorSlug, 'teams', index],
-                  value: $ref(['teamsBySlug', teamSlugArray[index]]),
+                  value: $ref(['teams', 'bySlug', teamSlugArray[index]]),
                 });
               }
             });

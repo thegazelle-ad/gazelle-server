@@ -16,7 +16,7 @@ export default [
             if (index < data.length) {
               results.push({
                 path: ['teamsByIndex', index],
-                value: $ref(['teamsBySlug', data[index]]),
+                value: $ref(['teams', 'bySlug', data[index]]),
               });
             }
           });
