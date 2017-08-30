@@ -7,7 +7,7 @@ const $ref = falcor.Model.ref;
 
 export default [
   {
-    route: 'teamsByIndex[{integers:indices}]',
+    route: "teams['byIndex'][{integers:indices}]",
     get: (pathSet) => (
       new Promise((resolve) => {
         db.teamArrayQuery().then((data) => {
@@ -15,7 +15,7 @@ export default [
           pathSet.indices.forEach((index) => {
             if (index < data.length) {
               results.push({
-                path: ['teamsByIndex', index],
+                path: ['teams', 'byIndex', index],
                 value: $ref(['teams', 'bySlug', data[index]]),
               });
             }

@@ -1,7 +1,7 @@
 import bySlug from './by-slug';
-import teamsByIndex from './teams-by-index';
+import byIndex from './by-index';
 
 export default [].concat(
-  teamsByIndex,
+  byIndex,
   bySlug
 );
