@@ -8,12 +8,12 @@ const $ref = falcor.Model.ref;
 export default [
   {
     // Get latest issue
-    route: 'latestIssue',
+    route: "issues['latest']",
     get: () => (
       new Promise((resolve) => {
         db.latestIssueQuery().then((row) => {
           resolve([{
-            path: ['latestIssue'],
+            path: ['issues', 'latest'],
             value: $ref(['issues', 'byNumber', row[0].issue_order]),
           }]);
         });

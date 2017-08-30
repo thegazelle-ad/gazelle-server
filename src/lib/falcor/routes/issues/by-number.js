@@ -174,7 +174,7 @@ export default [
             path: ['issues', 'byNumber', parseInt(issueNumber, 10), 'published_at'],
             value: issueObject.published_at,
           }, {
-            path: ['latestIssue'],
+            path: ['issues', 'latest'],
             invalidated: true,
           }]);
         });
@@ -293,7 +293,7 @@ export default [
             });
           });
           results.push({
-            path: ['latestIssue'],
+            path: ['issues', 'latest'],
             invalidated: true,
           });
           resolve(results);

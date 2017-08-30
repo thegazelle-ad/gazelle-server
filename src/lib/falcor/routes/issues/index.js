@@ -1,3 +1,7 @@
 import byNumber from './by-number';
+import meta from './meta';
 
-export default byNumber;
+export default [].concat(
+  byNumber,
+  meta
+);
