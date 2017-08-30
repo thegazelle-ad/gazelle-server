@@ -9,16 +9,16 @@ const $ref = falcor.Model.ref;
 export default [
   {
     // get categories name
-    route: "categoriesBySlug[{keys:slugs}]['name', 'slug']",
+    route: "categories['bySlug'][{keys:slugs}]['name', 'slug']",
     get: (pathSet) => (
       new Promise((resolve) => {
-        const requestedFields = pathSet[2];
+        const requestedFields = pathSet[3];
         db.categoryQuery(pathSet.slugs, requestedFields).then((data) => {
           const results = [];
           data.forEach((category) => {
             requestedFields.forEach((field) => {
               results.push({
-                path: ['categoriesBySlug', category.slug, field],
+                path: ['categories', 'bySlug', category.slug, field],
                 value: category[field],
               });
             });
@@ -30,7 +30,7 @@ export default [
   },
   {
     // get articles in a category
-    route: "categoriesBySlug[{keys:slugs}]['articles'][{integers:indices}]",
+    route: "categories['bySlug'][{keys:slugs}]['articles'][{integers:indices}]",
     get: (pathSet) => (
       new Promise((resolve) => {
         db.categoryArticleQuery(pathSet.slugs).then((data) => {
@@ -41,7 +41,7 @@ export default [
             pathSet.indices.forEach((index) => {
               if (index < postSlugArray.length) {
                 results.push({
-                  path: ['categoriesBySlug', categorySlug, 'articles', index],
+                  path: ['categories', 'bySlug', categorySlug, 'articles', index],
                   value: $ref(['articles', 'bySlug', postSlugArray[index]]),
                 });
               }

@@ -11,16 +11,16 @@ export default class CategoryController extends FalcorController {
     // Multilevel request requires Falcor Path for each level of data requested
     // Grab first 10 articles for category requested
     return [
-      ['categoriesBySlug', params.category, 'name'],
+      ['categories', 'bySlug', params.category, 'name'],
       [
-        'categoriesBySlug',
+        'categories', 'bySlug',
         params.category,
         'articles',
         { length: 10 },
         ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image'],
       ],
       [
-        'categoriesBySlug',
+        'categories', 'bySlug',
         params.category,
         'articles',
         { length: 10 },
@@ -40,7 +40,7 @@ export default class CategoryController extends FalcorController {
         );
       }
       const category = this.props.params.category;
-      const categoryData = this.state.data.categoriesBySlug[category];
+      const categoryData = this.state.data.categories.bySlug[category];
       const uppercase = (str) => {
         const array = str.split(' ');
         const newArray = [];

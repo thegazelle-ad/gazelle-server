@@ -20,7 +20,7 @@ export default [
             if (index < data.length) {
               results.push({
                 path: ['categories', 'byIndex', index],
-                value: $ref(['categoriesBySlug', data[index]]),
+                value: $ref(['categories', 'bySlug', data[index]]),
               });
             }
           });
