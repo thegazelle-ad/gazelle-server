@@ -8,7 +8,7 @@ const $ref = falcor.Model.ref;
 export default [
   {
     // get categories by index
-    route: 'categoriesByIndex[{integers:indices}]',
+    route: "categories['byIndex'][{integers:indices}]",
     get: (pathSet) => (
       new Promise((resolve) => {
         // This will fetch every single category at this time which shouldn't
@@ -19,7 +19,7 @@ export default [
           pathSet.indices.forEach((index) => {
             if (index < data.length) {
               results.push({
-                path: ['categoriesByIndex', index],
+                path: ['categories', 'byIndex', index],
                 value: $ref(['categoriesBySlug', data[index]]),
               });
             }
