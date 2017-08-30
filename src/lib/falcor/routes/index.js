@@ -7,7 +7,6 @@ import placeholder from './placeholder';
 import search from './search';
 import teams from './teams';
 import trending from './trending';
-import latestIssue from './latest-issue';
 
 export {
   articles,
@@ -19,5 +18,4 @@ export {
   search,
   teams,
   trending,
-  latestIssue,
 };

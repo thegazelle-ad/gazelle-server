@@ -22,7 +22,7 @@ export default class IssueController extends FalcorController {
     // URL Format: thegazelle.org/issue/:issueNumber/:articleCategory/:articleSlug
 
     // Conditional return allows The Gazelle to return the correct issue
-    // User is either requesting the 'latestIssue' on the home page or an
+    // User is either requesting the 'issues', 'latest' on the home page or an
     // old issue.
     if (params.issueNumber) { // If not on home page grab specificed issue
       const issueNumber = mapLegacyIssueSlugsToIssueNumber(params.issueNumber);
@@ -97,34 +97,34 @@ export default class IssueController extends FalcorController {
       ];
     } // User is on home page
     return [
-      ['latestIssue', ['issueNumber', 'published_at']],
+      ['issues', 'latest', ['issueNumber', 'published_at']],
 
       // Request the featured article
       [
-        'latestIssue',
+        'issues', 'latest',
         'featured',
         ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image'],
       ],
-      ['latestIssue', 'featured', 'authors', { length: 10 }, ['name', 'slug']],
+      ['issues', 'latest', 'featured', 'authors', { length: 10 }, ['name', 'slug']],
 
       // Request first two Editor's Picks
       [
-        'latestIssue',
+        'issues', 'latest',
         'picks',
         { length: 2 },
         ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image'],
       ],
-      ['latestIssue', 'picks', { length: 2 }, 'authors', { length: 10 }, ['name', 'slug']],
+      ['issues', 'latest', 'picks', { length: 2 }, 'authors', { length: 10 }, ['name', 'slug']],
 
       // Request first five Trending articles
       ['trending', { length: 6 }, ['title', 'issueNumber', 'category', 'slug', 'image']],
       ['trending', { length: 6 }, 'authors', { length: 10 }, ['name', 'slug']],
 
       // Request all category names and slugs (max 10 categories)
-      ['latestIssue', 'categories', { length: 10 }, ['name', 'slug']],
+      ['issues', 'latest', 'categories', { length: 10 }, ['name', 'slug']],
 
       // Request necessary data from all articles from each category (max 30 articles)
-      ['latestIssue',
+      ['issues', 'latest',
         'categories',
         { length: 10 },
         'articles',
@@ -134,7 +134,7 @@ export default class IssueController extends FalcorController {
 
       // Request author name and slug for each article (max 10 authors)
       [
-        'latestIssue',
+        'issues', 'latest',
         'categories',
         { length: 10 },
         'articles',
@@ -155,7 +155,7 @@ export default class IssueController extends FalcorController {
       }
       let issueData;
       if (!this.props.params.issueNumber) {
-        issueData = this.state.data.latestIssue;
+        issueData = this.state.data.issues.latest;
       } else {
         issueData =
          this.state.data.issues.byNumber
