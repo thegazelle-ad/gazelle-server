@@ -31,7 +31,7 @@ export default [
               if (index < queryResults.length) {
                 results.push({
                   path: ['search', 'teams', query, index],
-                  value: $ref(['teamsBySlug', queryResults[index]]),
+                  value: $ref(['teams', 'bySlug', queryResults[index]]),
                 });
               }
             });

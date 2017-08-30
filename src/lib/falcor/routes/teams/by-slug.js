@@ -8,16 +8,16 @@ const $ref = falcor.Model.ref;
 
 export default [
   {
-    route: "teamsBySlug[{keys:slugs}]['slug', 'id', 'name', 'description']",
+    route: "teams['bySlug'][{keys:slugs}]['slug', 'id', 'name', 'description']",
     get: (pathSet) => (
       new Promise((resolve) => {
-        const requestedFields = pathSet[2];
+        const requestedFields = pathSet[3];
         db.teamQuery(pathSet.slugs, requestedFields).then((data) => {
           const results = [];
           data.forEach((team) => {
             requestedFields.forEach((field) => {
               results.push({
-                path: ['teamsBySlug', team.slug, field],
+                path: ['teams', 'bySlug', team.slug, field],
                 value: team[field],
               });
             });
@@ -28,7 +28,7 @@ export default [
     ),
     set: (jsonGraphArg) => (
       new Promise((resolve, reject) => {
-        const teamsBySlug = jsonGraphArg.teamsBySlug;
+        const teamsBySlug = jsonGraphArg.teams.bySlug;
         db.updateTeams(teamsBySlug).then((flag) => {
           if (!flag) {
             throw new Error('For unknown reasons updateTeams returned a non-true flag');
@@ -37,7 +37,7 @@ export default [
           _.forEach(teamsBySlug, (teamObject, slug) => {
             _.forEach(teamObject, (value, field) => {
               results.push({
-                path: ['teamsBySlug', slug, field],
+                path: ['teams', 'bySlug', slug, field],
                 value,
               });
             });
@@ -51,7 +51,7 @@ export default [
     ),
   },
   {
-    route: "teamsBySlug[{keys:slugs}]['authors'][{integers:indices}]",
+    route: "teams['bySlug'][{keys:slugs}]['authors'][{integers:indices}]",
     get: (pathSet) => (
       new Promise((resolve) => {
         db.teamAuthorQuery(pathSet.slugs).then((data) => {
@@ -60,7 +60,7 @@ export default [
             pathSet.indices.forEach((index) => {
               if (index < authorSlugArray.length) {
                 results.push({
-                  path: ['teamsBySlug', teamSlug, 'authors', index],
+                  path: ['teams', 'bySlug', teamSlug, 'authors', index],
                   value: $ref(['authors', 'bySlug', authorSlugArray[index]]),
                 });
               }
@@ -72,7 +72,7 @@ export default [
     ),
   },
   {
-    route: "teamsBySlug['createTeam']",
+    route: "teams['bySlug']['createTeam']",
     call: (callPath, args) => (
       new Promise((resolve) => {
         const teamObject = args[0];
@@ -86,7 +86,7 @@ export default [
           const results = [];
           _.forEach(teamObject, (value, field) => {
             results.push({
-              path: ['teamsBySlug', teamObject.slug, field],
+              path: ['teams', 'bySlug', teamObject.slug, field],
               value,
             });
           });
