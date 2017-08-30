@@ -60,12 +60,12 @@ export default class EditorIssueListController extends FalcorController {
   }
 
   static getFalcorPathSets() {
-    return ['issuesByNumber', { from: 1, to: 200 }, 'name'];
+    return ['issues', 'byNumber', { from: 1, to: 200 }, 'name'];
   }
 
   componentWillMount() {
     const falcorCallback = (data) => {
-      const issues = Object.keys(data.issuesByNumber).map(key => stringToInt(key));
+      const issues = Object.keys(data.issues.byNumber).map(key => stringToInt(key));
       const nextIssue = Math.max(...issues) + 1;
       // Set default values
       this.safeSetState({
@@ -97,7 +97,7 @@ export default class EditorIssueListController extends FalcorController {
       return;
     }
 
-    if (this.state.data.issuesByNumber.hasOwnProperty(issueNumber)) {
+    if (this.state.data.issues.byNumber.hasOwnProperty(issueNumber)) {
       window.alert('This issue has already been created, you cannot create it again');
       return;
     }
@@ -118,7 +118,7 @@ export default class EditorIssueListController extends FalcorController {
     this.safeSetState({
       saving: true,
     });
-    this.falcorCall(['issuesByNumber', 'addIssue'], [issue],
+    this.falcorCall(['issues', 'byNumber', 'addIssue'], [issue],
       undefined, undefined, undefined, callback);
 
     browserHistory.push(`/issues/${issueNumber}/main`);
@@ -154,7 +154,7 @@ export default class EditorIssueListController extends FalcorController {
       }
       const baseUrl = `/issues/${currentIssueNumber}`;
 
-      const data = this.state.data.issuesByNumber;
+      const data = this.state.data.issues.byNumber;
 
       return (
         <div>

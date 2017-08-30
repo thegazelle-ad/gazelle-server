@@ -27,27 +27,35 @@ export default class IssueController extends FalcorController {
     if (params.issueNumber) { // If not on home page grab specificed issue
       const issueNumber = mapLegacyIssueSlugsToIssueNumber(params.issueNumber);
       return [
-        ['issuesByNumber', issueNumber, ['issueNumber', 'published_at']],
+        ['issues', 'byNumber', issueNumber, ['issueNumber', 'published_at']],
 
         // Request the featured article
         [
-          'issuesByNumber',
+          'issues', 'byNumber',
           issueNumber,
           'featured',
           ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image'],
         ],
-        ['issuesByNumber', issueNumber, 'featured', 'authors', { length: 10 }, ['name', 'slug']],
+        [
+          'issues',
+          'byNumber',
+          issueNumber,
+          'featured',
+          'authors',
+          { length: 10 },
+          ['name', 'slug'],
+        ],
 
         // Request first two Editor's Picks
         [
-          'issuesByNumber',
+          'issues', 'byNumber',
           issueNumber,
           'picks',
           { length: 2 },
           ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image'],
         ],
         [
-          'issuesByNumber',
+          'issues', 'byNumber',
           issueNumber,
           'picks',
           { length: 2 },
@@ -61,11 +69,11 @@ export default class IssueController extends FalcorController {
         ['trending', { length: 6 }, 'authors', { length: 10 }, ['name', 'slug']],
 
         // Request all category names and slugs (max 10 categories)
-        ['issuesByNumber', issueNumber, 'categories', { length: 10 }, ['name', 'slug']],
+        ['issues', 'byNumber', issueNumber, 'categories', { length: 10 }, ['name', 'slug']],
 
         // Request necessary data from all articles from each category (max 30 articles)
         [
-          'issuesByNumber',
+          'issues', 'byNumber',
           issueNumber,
           'categories',
           { length: 10 },
@@ -76,7 +84,7 @@ export default class IssueController extends FalcorController {
 
         // Request author name and slug for each article (max 10 authors)
         [
-          'issuesByNumber',
+          'issues', 'byNumber',
           issueNumber,
           'categories',
           { length: 10 },
@@ -140,7 +148,7 @@ export default class IssueController extends FalcorController {
 
   render() {
     if (this.state.ready) {
-      if (!this.state.data || (this.props.params.issueNumber && !this.state.data.issuesByNumber)) {
+      if (!this.state.data || (this.props.params.issueNumber && !this.state.data.issues.byNumber)) {
         return (
           <NotFound />
         );
@@ -150,7 +158,7 @@ export default class IssueController extends FalcorController {
         issueData = this.state.data.latestIssue;
       } else {
         issueData =
-         this.state.data.issuesByNumber
+         this.state.data.issues.byNumber
          [mapLegacyIssueSlugsToIssueNumber(this.props.params.issueNumber)];
       }
       const trendingData = this.state.data.trending;

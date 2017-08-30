@@ -14,7 +14,7 @@ export default [
         db.latestIssueQuery().then((row) => {
           resolve([{
             path: ['latestIssue'],
-            value: $ref(['issuesByNumber', row[0].issue_order]),
+            value: $ref(['issues', 'byNumber', row[0].issue_order]),
           }]);
         });
       })

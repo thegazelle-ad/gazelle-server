@@ -1,3 +1,3 @@
-import issuesByNumber from './issues-by-number';
+import byNumber from './by-number';
 
-export default issuesByNumber;
+export default byNumber;
