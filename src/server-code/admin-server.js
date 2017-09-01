@@ -21,8 +21,7 @@ import bodyParser from 'body-parser';
 
 /* Our own helper functions */
 import { isDevelopment, filterByEnvironment, hash } from 'lib/utilities';
-import { md5Hash } from 'lib/server-utilities';
-
+import { md5Hash, compressJPEG, deleteFile } from 'lib/server-utilities';
 
 export default function runAdminServer(serverFalcorModel) {
   // Create MD5 hash of static files for better cache performance
@@ -141,23 +140,20 @@ export default function runAdminServer(serverFalcorModel) {
 
   app.post('/upload', upload.single('image'), (req, res) => {
     const filePath = req.file.path;
-    const deleteTmpFile = () => {
-      fs.unlink(filePath, (err) => {
-        if (err) {
-          console.error(err); // eslint-disable-line no-console
-        }
-      });
-    };
+
     if (isDevelopment) {
       /**
        * As we are in dev-mode, we don't actually want to upload to s3.
        * You can either compile with production mode or remove this
        * temporarily if extra s3 tests are needed at some point.
        */
-      setTimeout(() => {
-        res.status(200).send('success test_url');
-      }, 2000);
-      deleteTmpFile();
+      compressJPEG(filePath).then(() => {
+        setTimeout(() => {
+          res.status(200).send('success test_url');
+        }, 2000);
+        // eslint-disable-next-line no-console
+        deleteFile(filePath).catch(error => console.log(error));
+      });
     } else {
       const year = new Date().getFullYear().toString();
       let month = new Date().getMonth() + 1;
@@ -176,22 +172,29 @@ export default function runAdminServer(serverFalcorModel) {
           Key,
         },
       };
-      awsSdkClient.headObject({ Bucket, Key }, (err) => {
-        if (err && err.code === 'NotFound') {
-          const s3Uploader = s3Client.uploadFile(s3Params);
-          s3Uploader.on('error', s3Err => {
-            console.error(s3Err); // eslint-disable-line no-console
-            deleteTmpFile();
-            return res.status(500).send('Error uploading');
-          });
-          s3Uploader.on('end', () => {
-            const imageUrl = s3.getPublicUrl(Bucket, Key);
-            deleteTmpFile();
-            return res.status(200).send(`success ${imageUrl}`);
-          });
-        }
-        deleteTmpFile();
-        return res.status(409).send(`object already exists, ${Key}`);
+
+      /* Compress image, then upload to S3 */
+      compressJPEG(filePath).then(() => {
+        awsSdkClient.headObject({ Bucket, Key }, (err) => {
+          if (err && err.code === 'NotFound') {
+            const s3Uploader = s3Client.uploadFile(s3Params);
+            s3Uploader.on('error', s3Err => {
+              console.error(s3Err); // eslint-disable-line no-console
+              // eslint-disable-next-line no-console
+              deleteFile(filePath).catch(error => console.log(error));
+              return res.status(500).send('Error uploading');
+            });
+            s3Uploader.on('end', () => {
+              const imageUrl = s3.getPublicUrl(Bucket, Key);
+              // eslint-disable-next-line no-console
+              deleteFile(filePath).catch(error => console.log(error));
+              return res.status(200).send(`success ${imageUrl}`);
+            });
+          }
+          // eslint-disable-next-line no-console
+          deleteFile(filePath).catch(error => console.log(error));
+          return res.status(409).send(`object already exists, ${Key}`);
+        });
       });
     }
   });
