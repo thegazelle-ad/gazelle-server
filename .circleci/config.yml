@@ -10,6 +10,15 @@ jobs:
     <<: *defaults
     steps:
       - checkout
+
+      # Complete setup
+      - run: |
+          cp config/database.config.example.js config/database.config.js
+          cp config/s3.config.example.js config/s3.config.js
+          cp config/ghost.config.example.js config/ghost.config.js
+          ./scripts/get-ghost-config.sh
+
+      # Cache it
       - run:
           name: save the SHA1 hash of git commit being built to file
           command: echo $CIRCLE_SHA1 > .circle-sha
@@ -54,13 +63,6 @@ jobs:
       - restore_cache:
           keys:
             - v2-dependencies-{{ checksum "npm-shrinkwrap.json" }}
-
-      # Setup environment to prep build
-      - run: |
-          cp config/database.config.example.js config/database.config.js
-          cp config/s3.config.example.js config/s3.config.js
-          cp config/ghost.config.example.js config/ghost.config.js
-          ./scripts/get-ghost-config.sh
 
       # Test that we can build without errors
       - run: npm run build-production
