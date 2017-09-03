@@ -9,6 +9,7 @@ jobs:
   checkout_code:
     <<: *defaults
     steps:
+      - checkout
       - run:
           name: save the SHA1 hash of git commit being built to file
           command: echo $CIRCLE_SHA1 > .circle-sha
