@@ -3,25 +3,19 @@ defaults: &defaults
   docker:
     - image: circleci/node:7.10
 
-restore_repo: &restore_repo
-  - run:
-      name: save SHA to a file
-      command: echo $CIRCLE_SHA1 > .circle-sha
-  - restore_cache:
-      keys:
-        - v1-repo-{{ checksum ".circle-sha" }}
-
-restore_dependencies: &restore_dependencies
-  - restore_cache:
-      keys:
-        - v1-dependencies-{{ "npm-shrinkwrap.json" }}
 
 version: 2
 jobs:
   checkout_code:
     <<: *defaults
     steps:
-      <<: *restore_repo
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+
       - run:
           name: save the SHA1 hash of git commit being built to file
           command: echo $CIRCLE_SHA1 > .circle-sha
@@ -34,7 +28,12 @@ jobs:
   install_dependencies:
     <<: *defaults
     steps:
-      <<: *restore_repo
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
 
       # Download and cache dependencies
       - restore_cache:
@@ -67,16 +66,32 @@ jobs:
   test:
     <<: *defaults
     steps:
-      <<: *restore_repo
-      <<: *restore_dependencies
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ "npm-shrinkwrap.json" }}
 
       - run: npm test
 
   lint:
     <<: *defaults
     steps:
-      <<: *restore_repo
-      <<: *restore_dependencies
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ "npm-shrinkwrap.json" }}
 
       - run: npm run lint
 
