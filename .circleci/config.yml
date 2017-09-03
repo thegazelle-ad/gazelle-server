@@ -50,8 +50,16 @@ jobs:
   build:
     <<: *defaults
     steps:
-      <<: *restore_repo
-      <<: *restore_dependencies
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "npm-shrinkwrap.json" }}
 
       # Setup environment to prep build
       - run: |
