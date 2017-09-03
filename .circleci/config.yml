@@ -77,7 +77,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ "npm-shrinkwrap.json" }}
+            - v1-dependencies-{{ checksum "npm-shrinkwrap.json" }}
 
       - run: npm test
 
@@ -93,7 +93,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ "npm-shrinkwrap.json" }}
+            - v1-dependencies-{{ checksum "npm-shrinkwrap.json" }}
 
       - run: npm run lint
 
