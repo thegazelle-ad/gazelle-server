@@ -1,8 +1,25 @@
-defaults: &defaults
+working_directory: &working_directory
   working_directory: ~/gazelle-server
+
+docker_no_database: &docker_no_database
   docker:
     - image: circleci/node:7.10
 
+docker_with_database: &docker_with_database
+  docker:
+    - image: circleci/node:7.10
+    - image: mariadb:10.1
+      environment:
+        MYSQL_ROOT_PASSWORD: circleci_test_gazelle
+        MYSQL_DATABASE: the_gazelle
+
+defaults: &defaults
+  <<: *working_directory
+  <<: *docker_no_database
+
+defaults_with_database: &defaults_with_database
+  <<: *working_directory
+  <<: *docker_with_database
 
 version: 2
 jobs:
@@ -40,14 +57,14 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v2-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+            - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
 
       - run: npm install
 
       - save_cache:
           paths:
             - node_modules
-          key: v2-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+          key: v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
 
   build:
     <<: *defaults
@@ -61,7 +78,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - v2-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+            - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
 
       # Complete config
       - run: ./scripts/get-ghost-config.sh
@@ -80,7 +97,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - v2-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+            - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
 
       - run: npm test
 
@@ -96,9 +113,33 @@ jobs:
 
       - restore_cache:
           keys:
-            - v2-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+            - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
 
       - run: npm run lint
+
+  main_gazelle_pages_test:
+    <<: *defaults_with_database
+    steps:
+      - run:
+          name: install mysql client
+          command: sudo apt-get install mysql-client
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
+
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+
+      - run: ./scripts/circleci/get-test-database.sh
+      - run: ./scripts/circleci/main-gazelle-pages-test.sh
 
   prep_deploy:
     <<: *defaults
@@ -147,6 +188,9 @@ workflows:
           requires:
             - install_dependencies
       - lint:
+          requires:
+            - install_dependencies
+      - main_gazelle_pages_test:
           requires:
             - install_dependencies
       - prep_deploy
