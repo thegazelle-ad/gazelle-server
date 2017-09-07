@@ -47,9 +47,9 @@
           margin: 0;
         }
         &__job-title {
-          font-size: 0.8rem;
+          font-size: 1rem;
           font-weight: 300;
-          color: rgba(0, 0, 0, 0.4);
+          color: $light-grey;
           margin: 0 0 0.4rem 0;
         }
       }
