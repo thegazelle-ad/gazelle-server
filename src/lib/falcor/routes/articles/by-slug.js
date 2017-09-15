@@ -184,7 +184,7 @@ export default [
     // Get interactive article meta data
     get: (pathSet) => (
       new Promise((resolve) => {
-        const fields = pathSet[3];
+        const fields = pathSet[4];
         db.interactiveArticleQuery(pathSet.slugs, fields).then((data) => {
           const results = [];
           data.forEach((article) => {

@@ -7,7 +7,8 @@ export default class InteractiveArticle extends FalcorController {
   static getFalcorPathSets(params) {
     return [
       // Fetch article metadata
-      ['articles', 'bySlug', params.articleSlug, ['title', 'teaser', 'slug', 'image']],
+      ['articles', 'bySlug', params.articleSlug,
+        ['title', 'teaser', 'slug', 'image', 'published_at']],
       // Fetch interactive article html/js/css
       // For now we only use the html part, the js and css parts are for further improvements
       ['articles', 'bySlug', params.articleSlug, 'interactiveData', ['html', 'js', 'css']],
@@ -20,6 +21,10 @@ export default class InteractiveArticle extends FalcorController {
         return <NotFound />;
       }
       const articleSlug = this.props.params.articleSlug;
+      const publishDate = this.state.data.articles.bySlug[articleSlug].published_at;
+      if (!publishDate) {
+        return <NotFound />;
+      }
       // Access data fetched via Falcor
       const articleData = this.state.data.articles.bySlug[articleSlug];
       const interactiveCode = articleData.interactiveData;

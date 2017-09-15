@@ -19,7 +19,7 @@ export default class ArticlePreview extends BaseComponent {
     }
     return (
       <div className="article-preview">
-        <Link to={`/issue/${article.issueNumber.toString()}/${article.category}/${article.slug}`}>
+        <Link to={url}>
           <img
             className="article-preview__featured-image"
             src={article.image}

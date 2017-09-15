@@ -9,7 +9,8 @@ import { formatDate } from 'lib/utilities';
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
 
-const ARTICLE_FIELDS = ['id', 'title', 'slug', 'category', 'published_at', 'html'];
+const ARTICLE_FIELDS = ['id', 'title', 'slug', 'category',
+  'published_at', 'html', 'is_interactive'];
 const ARTICLE_LIST_LENGTH = 100;
 
 const styles = {
@@ -342,7 +343,8 @@ export default class EditorIssueArticleController extends FalcorController {
     }
     if (isPublished) {
       // Check that all articles are valid since issue is already published
-      const fields = ARTICLE_FIELDS.filter((field) => field !== 'published_at');
+      const fields = ARTICLE_FIELDS.filter((field) => (
+        field !== 'published_at' && field !== 'is_interactive'));
       const articlesValid = allArticles.every((article) => {
         const slug = article.slug;
         const isOldArticle = (
@@ -358,6 +360,10 @@ export default class EditorIssueArticleController extends FalcorController {
           return true;
         }
         const fieldsValid = fields.every((field) => {
+          // Special case for interactive articles, don't need html key
+          if (article.is_interactive && field === 'html') {
+            return true;
+          }
           if (!article[field]) {
             window.alert(
               `${article.title} has no ${field}. Please correct this ` +
