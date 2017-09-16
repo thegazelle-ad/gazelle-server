@@ -2,6 +2,7 @@ import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import Helmet from 'react-helmet';
 import NotFound from 'components/NotFound';
+import InteractiveArticleLoad from 'transitions/InteractiveArticleLoad';
 
 export default class InteractiveArticle extends FalcorController {
   static getFalcorPathSets(params) {
@@ -60,6 +61,6 @@ export default class InteractiveArticle extends FalcorController {
         </div>
       );
     }
-    return <div>loading...</div>;
+    return <InteractiveArticleLoad />;
   }
 }
