@@ -265,6 +265,20 @@ export default class db {
     });
   }
 
+  interactiveArticleQuery(slugs, columns) {
+    // Fetch information from interactive_meta
+    return new Promise((resolve) => {
+      const processedColumns = columns.map(col => `interactive_meta.${col}`);
+      database.select('slug', ...processedColumns)
+      .from('posts')
+      .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
+      .leftJoin('interactive_meta', 'interactive_meta.id', '=', 'posts.id')
+      .whereIn('slug', slugs)
+      .then(rows => resolve(rows))
+      .catch((e) => { throw new Error(e); });
+    });
+  }
+
   categoryQuery(slugs, columns) {
     // slugs parameter is an array of category slugs
     // to fetch the name of
