@@ -176,7 +176,7 @@ export default class IssueController extends FalcorController {
         // Render nothing if this.props.articles is empty
         _.map((issueData.categories || []), category => (
           <div key={category.name} className="issue__category">
-            <Link to={`/category/ ${category.slug}`}>
+            <Link to={`/category/${category.slug}`}>
               <h2 className="section-header">{category.name}</h2>
             </Link>
             <ArticleList articles={category.articles} />
