@@ -93,7 +93,7 @@ export default class EditorAuthorListController extends FalcorController {
       }
       // Create the author
       const callback = () => {
-        window.alert('Author added successfully');
+        window.alert('Staff member added successfully');
         browserHistory.push(`/authors/${slug}`);
       };
       this.falcorCall(['authors', 'bySlug', 'createAuthor'], [{ slug, name }],
@@ -105,17 +105,17 @@ export default class EditorAuthorListController extends FalcorController {
     if (this.state.ready) {
       return (
         <div>
-          <h1>Authors</h1>
+          <h1>Staff</h1>
           <Divider />
           <Paper style={styles.paper} zDepth={2}>
             <Tabs>
               <Tab label="EDIT" icon={<ModeEdit />}>
                 <div style={styles.tabs}>
-                  <h2>Edit Author</h2>
+                  <h2>Edit Staff</h2>
                   <Divider />
                   <EditorSearchBar
                     model={this.props.model}
-                    mode="authors"
+                    mode={"authors"}
                     fields={['slug']}
                     length={3}
                     handleClick={this.handleClickAuthor}
@@ -124,7 +124,7 @@ export default class EditorAuthorListController extends FalcorController {
               </Tab>
               <Tab label="ADD NEW" icon={<PersonAdd />}>
                 <div style={styles.tabs}>
-                  <h2>Add New Author</h2>
+                  <h2>Add New Staff</h2>
                   <Divider />
                   <form
                     onSubmit={this.createAuthor}
@@ -149,7 +149,7 @@ export default class EditorAuthorListController extends FalcorController {
                     />
                     <br />
                     <RaisedButton
-                      label="Create Author"
+                      label="Create Staff"
                       type="submit"
                       disabled={!this.state.createAuthorValid}
                       primary

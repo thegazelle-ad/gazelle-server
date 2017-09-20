@@ -2,6 +2,7 @@ import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
 import EditAuthorsForm from './EditAuthorsForm';
+// import EditMediaContributorsForm from './EditMediaContributorsForm';
 import { debounce } from 'lib/utilities';
 import update from 'react-addons-update';
 import moment from 'moment';
@@ -25,6 +26,8 @@ export default class EditorArticleController extends FalcorController {
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
     this.handleAddAuthor = this.handleAddAuthor.bind(this);
     this.handleDeleteAuthor = this.handleDeleteAuthor.bind(this);
+    this.handleAddMediaContributor = this.handleAddMediaContributor.bind(this);
+    this.handleDeleteMediaContributor = this.handleDeleteMediaContributor.bind(this);
     this.unpublish = this.unpublish.bind(this);
     this.fieldUpdaters = {
       teaser: updateFieldValue.bind(this, 'teaser', {
@@ -39,6 +42,7 @@ export default class EditorArticleController extends FalcorController {
       changed: false,
       saving: false,
       authors: [],
+      mediaContributors: [],
       teaser: '',
       category: '',
       image: '',
@@ -96,6 +100,8 @@ export default class EditorArticleController extends FalcorController {
       saving: false,
       authors: [],
       authorsDeleted: {},
+      mediaContributors: [],
+      mediaContributorsDeleted: {},
     });
   }
 
@@ -108,7 +114,8 @@ export default class EditorArticleController extends FalcorController {
       this.isFormFieldChanged(prevState.authors, state.authors) ||
       this.isFormFieldChanged(prevState.teaser, state.teaser) ||
       this.isFormFieldChanged(prevState.category, state.category) ||
-      this.isFormFieldChanged(prevState.image, state.image)
+      this.isFormFieldChanged(prevState.image, state.image) ||
+      this.isFormFieldChanged(prevState.mediaContributors, state.mediaContributors)
     );
   }
 
@@ -135,6 +142,8 @@ export default class EditorArticleController extends FalcorController {
     }
 
     let processedAuthors = this.state.authors.map(author => author.id);
+    let processedMediaContributors =
+      this.state.mediaContributors.map(author => author.id);
     // Check that all authors are unique
     if (_.uniq(processedAuthors).length !== processedAuthors.length) {
       window.alert("You have duplicate authors, as this shouldn't be able" +
@@ -147,6 +156,20 @@ export default class EditorArticleController extends FalcorController {
       window.alert("Sorry, because of some non-trivial issues we currently don't have" +
         " deleting every single author implemented. You hopefully shouldn't need this function" +
         ' either. Please re-add an author to be able to save');
+      return;
+    }
+    // Check that all Media Contributors are unique
+    if (_.uniq(processedMediaContributors).length !== processedMediaContributors.length) {
+      window.alert("You have duplicate media contributors, as this shouldn't be able" +
+        ' to happen, please contact developers. And if you know all the actions' +
+        ' you did previously to this and can reproduce them that would be of great help.' +
+        ' The save has been cancelled');
+      return;
+    }
+    if (processedMediaContributors.length === 0) {
+      window.alert("Sorry, because of some non-trivial issues we currently don't have" +
+        " deleting every single media contributor implemented. You hopefully shouldn't" +
+        'need this function either. Please re-add an author to be able to save');
       return;
     }
 
@@ -172,6 +195,13 @@ export default class EditorArticleController extends FalcorController {
       processedAuthors = null;
     }
 
+    if (processedMediaContributors.length === 0 &&
+      (!falcorData.authors || Object.keys(falcorData.authors).length === 0)
+      ) {
+      /* Indicate that we won't update Media Contributors
+      as there were none before and none were added */
+      processedMediaContributors = null;
+    }
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
       paths: [
@@ -201,6 +231,8 @@ export default class EditorArticleController extends FalcorController {
         [['name'], ['slug']]
       ));
     }
+
+    // ADD similar statement for pushing Media Contributors to Falcor
 
     Promise.all(updatePromises).then(() => {
       // Reset state after save is done
@@ -244,6 +276,36 @@ export default class EditorArticleController extends FalcorController {
     const newAuthors = update(this.state.authors, { $splice: [[index, 1]] });
     this.safeSetState({
       authors: newAuthors,
+    });
+  }
+
+  handleAddMediaContributor(id, name) {
+    if (this.state.saving) return;
+
+    const alreadyAdded = this.state.mediaContributors.find(author => author.id === id)
+     !== undefined;
+
+    if (alreadyAdded) {
+      window.alert('That Media Contributor is already added');
+      return;
+    }
+    const newMediaContributors = update(this.state.mediaContributors, { $push: [{ id, name }] });
+    this.safeSetState({
+      mediaContributors: newMediaContributors,
+    });
+  }
+
+  handleDeleteMediaContributor(id) {
+    // disabled this if saving
+    if (this.state.saving) return;
+
+    const index = this.state.mediaContributors.findIndex(author => author.id === id);
+    if (index === -1) {
+      throw new Error('The Media Contributor you are trying to delete cannot be found');
+    }
+    const newMediaContributors = update(this.state.mediaContributors, { $splice: [[index, 1]] });
+    this.safeSetState({
+      mediaContributors: newMediaContributors,
     });
   }
 
@@ -400,6 +462,7 @@ export default class EditorArticleController extends FalcorController {
               rows={2}
               fullWidth
             /><br />
+            <p>Authors</p>
             <EditAuthorsForm
               authors={this.state.authors}
               onChange={this.debouncedHandleFormStateChanges}
@@ -407,7 +470,16 @@ export default class EditorArticleController extends FalcorController {
               handleDeleteAuthor={this.handleDeleteAuthor}
               model={this.props.model}
               disabled={this.state.saving}
-            />
+            /><br />
+            <p>Media Contributors</p>
+            <EditAuthorsForm
+              authors={this.state.mediaContributors}
+              onChange={this.debouncedHandleFormStateChanges}
+              handleAddAuthor={this.handleAddMediaContributor}
+              handleDeleteAuthor={this.handleDeleteMediaContributor}
+              model={this.props.model}
+              disabled={this.state.saving}
+            /><br />
             <RaisedButton
               label={changedStateMessage}
               primary

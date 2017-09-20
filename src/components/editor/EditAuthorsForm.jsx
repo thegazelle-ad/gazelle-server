@@ -48,7 +48,10 @@ export default class EditAuthorsForm extends BaseComponent {
   }
 
   handleClickAddAuthor(author) {
-    this.props.handleAddAuthor(author.id, author.name);
+    this.props
+
+
+    .handleAddAuthor(author.id, author.name);
   }
 
   render() {
@@ -80,7 +83,6 @@ export default class EditAuthorsForm extends BaseComponent {
     return (
       <div>
         <br />
-        <p style={{ marginTop: 0, marginBottom: 10 }}>Authors</p>
         <div style={styles.wrapper} >
           {authorChips || noAuthorsMessage}
         </div>

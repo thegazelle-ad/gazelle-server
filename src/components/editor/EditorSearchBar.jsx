@@ -151,8 +151,8 @@ export default class EditorSearchBar extends BaseComponent {
       return (
         <div>
           <TextField
-            floatingLabelText="Search for Authors"
-            hintText="Author"
+            floatingLabelText="Search for Staff"
+            hintText="Staff"
             value={this.state.searchValue}
             onChange={this.fieldUpdaters.searchValue}
           />

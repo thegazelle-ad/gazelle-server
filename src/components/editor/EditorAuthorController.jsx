@@ -226,7 +226,7 @@ export default class EditorAuthorController extends FalcorController {
   render() {
     if (this.state.ready) {
       if (!this.state.data) {
-        return <div><p>No authors match the slug given in the URL</p></div>;
+        return <div><p>No staff members match the slug given in the URL</p></div>;
       }
 
       let changedStateMessage;
