@@ -1,0 +1,94 @@
+body{
+	background-color: $background-grey;
+}
+
+.team-page-load {
+	max-width: 800px;
+	height: 780px;
+	display: block;
+	margin: auto;
+	padding-top: 20px;
+}
+
+.team-page__title-load:empty {
+	height: 30px;
+	margin: auto;
+	background-image:
+		linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%),
+		linear-gradient($transition-grey 30px, transparent 0);
+	background-size:
+		20% 100%, 260px 100%;
+	background-position:
+		-90% 0%, 50% 0%;
+	background-repeat: repeat-y;
+	animation: title-transition 2s infinite linear;
+}
+ 
+@keyframes title-transition {
+	to {
+		background-position:
+			140% 0%, 50% 0%;
+	}
+}
+
+.team-page__member-load:empty {
+	height: 720px; 
+
+	background-image: 
+		linear-gradient(90deg, rgba(250, 250, 250, 0), rgba(250, 250, 250, 0.5) 50%, rgba(250, 250, 250, 0) 100%),
+
+		linear-gradient($transition-grey 1px, transparent 0),
+		linear-gradient($transition-grey 20px, transparent 0),
+		linear-gradient($transition-grey 12px, transparent 0),
+		linear-gradient(#ffffff 70px, transparent 0),
+		linear-gradient($transition-grey 290px, transparent 0),
+
+		linear-gradient($transition-grey 1px, transparent 0),
+		linear-gradient($transition-grey 20px, transparent 0),
+		linear-gradient($transition-grey 12px, transparent 0),
+		linear-gradient(#ffffff 70px, transparent 0),
+		linear-gradient($transition-grey 290px, transparent 0),
+
+		linear-gradient($transition-grey 1px, transparent 0),
+		linear-gradient($transition-grey 20px, transparent 0),
+		linear-gradient($transition-grey 12px, transparent 0),
+		linear-gradient(#ffffff 70px, transparent 0),
+		linear-gradient($transition-grey 290px, transparent 0);
+
+	background-size:
+		20% 50%,
+		200px 50%, 160px 50%, 120px 50%, 199.5px 50%, 200px 50%,
+		200px 50%, 160px 50%, 120px 50%, 199.5px 50%, 200px 50%,
+		200px 50%, 160px 50%, 120px 50%, 199.5px 50%, 200px 50%;
+
+	background-position:
+		-90% 0%,
+		50px 330px, 70px 277px, 90px 305px, 50px 260px, 50px 40px,
+		300px 330px, 320px 277px, 340px 305px, 300px 260px, 300px 40px,
+		550px 330px, 570px 277px, 590px 305px, 550px 260px, 550px 40px;
+
+	background-repeat: repeat-y;
+	animation: text-transition 2s infinite linear;
+}
+
+@keyframes text-transition {
+	to {
+		background-position:
+			140% 0%, 
+			50px 330px, 70px 277px, 90px 305px, 50px 260px, 50px 40px,
+			300px 330px, 320px 277px, 340px 305px, 300px 260px, 300px 40px,
+			550px 330px, 570px 277px, 590px 305px, 550px 260px, 550px 40px;
+	}
+}
+
+@media screen and (max-width: 825px){
+	.team-page-load {
+		max-width: 550px;
+	}
+}
+
+@media screen and (max-width: 550px){
+	.team-page-load {
+		max-width: 300px;
+	}
+}
