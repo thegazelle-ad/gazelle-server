@@ -127,6 +127,17 @@ export default class EditorAuthorController extends FalcorController {
       // The update wasn't due to a change in article
       this.debouncedHandleFormStateChanges();
     }
+    // scroll to author profile once page loads
+    const { hash } = window.location;
+    if (hash) {
+      setTimeout(() => {
+        const id = hash.replace('#', '');
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView();
+        }
+      }, 0);
+    }
   }
 
   handleSaveChanges(event) {
@@ -245,7 +256,7 @@ export default class EditorAuthorController extends FalcorController {
       }
 
       return (
-        <div style={styles.authorProfile}>
+        <div style={styles.authorProfile} id="author-profile">
           <h3>Author Profile: {this.state.name}</h3>
           <Divider />
           <form onSubmit={this.handleSaveChanges}>
