@@ -6,7 +6,7 @@ export default class TeamPageLoad extends BaseComponent {
     return (
       <div className="team-page-load">
         <h2 className="team-page__title-load"></h2>
-        <div className='team-page__member-load'></div>
+        <div className="team-page__member-load"></div>
       </div>
     );
   }
