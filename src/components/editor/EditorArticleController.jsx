@@ -119,17 +119,6 @@ export default class EditorArticleController extends FalcorController {
       // The update wasn't due to a change in article
       this.debouncedHandleFormStateChanges();
     }
-    // scroll to article editor once page loads
-    const { hash } = window.location;
-    if (hash) {
-      setTimeout(() => {
-        const id = hash.replace('#', '');
-        const element = document.getElementById(id);
-        if (element) {
-          element.scrollIntoView();
-        }
-      }, 0);
-    }
   }
 
   handleSaveChanges(event) {

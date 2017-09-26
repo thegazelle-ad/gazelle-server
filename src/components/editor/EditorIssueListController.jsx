@@ -82,7 +82,7 @@ export default class EditorIssueListController extends FalcorController {
       if (issueNumber === 'none') {
         browserHistory.push('/issues');
       } else {
-        browserHistory.push(`/issues/${issueNumber}/main`);
+        browserHistory.push(`/issues/${issueNumber}/main#issue-editor`);
       }
     }
   }
@@ -227,7 +227,7 @@ export default class EditorIssueListController extends FalcorController {
               </Tab>
             </Tabs>
           </Paper>
-          <Paper style={styles.paper} zDepth={2}>
+          <Paper id="issue-editor" style={styles.paper} zDepth={2}>
             {
               currentIssueNumber ?
                 <div>
@@ -236,19 +236,19 @@ export default class EditorIssueListController extends FalcorController {
                       label="MAIN"
                       value="main"
                       icon={<Home />}
-                      containerElement={<Link to={`${baseUrl}/main`} />}
+                      containerElement={<Link to={`${baseUrl}/main#issue-editor`} />}
                     />
                     <Tab
                       label="ARTICLES"
                       value="articles"
                       icon={<Description />}
-                      containerElement={<Link to={`${baseUrl}/articles`} />}
+                      containerElement={<Link to={`${baseUrl}/articles#issue-editor`} />}
                     />
                     <Tab
                       label="CATEGORIES"
                       value="categories"
                       icon={<Reorder />}
-                      containerElement={<Link to={`${baseUrl}/categories`} />}
+                      containerElement={<Link to={`${baseUrl}/categories#issue-editor`} />}
                     />
                   </Tabs>
                   <div style={styles.tabs}>
