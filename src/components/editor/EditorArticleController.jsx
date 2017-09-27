@@ -8,6 +8,7 @@ import moment from 'moment';
 import { updateFieldValue } from 'components/editor/lib/form-field-updaters';
 
 // material-ui
+import Dialog from 'material-ui/Dialog';
 import CircularProgress from 'material-ui/CircularProgress';
 import RaisedButton from 'material-ui/RaisedButton';
 import Divider from 'material-ui/Divider';
@@ -21,6 +22,7 @@ const MAX_TEASER_LENGTH = 156;
 export default class EditorArticleController extends FalcorController {
   constructor(props) {
     super(props);
+    this.handleDialogClose = this.handleDialogClose.bind(this);
     this.isFormChanged = this.isFormChanged.bind(this);
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
     this.handleAddAuthor = this.handleAddAuthor.bind(this);
@@ -36,6 +38,7 @@ export default class EditorArticleController extends FalcorController {
       image: updateFieldValue.bind(this, 'image', undefined),
     };
     this.safeSetState({
+      open: true,
       changed: false,
       saving: false,
       authors: [],
@@ -92,6 +95,7 @@ export default class EditorArticleController extends FalcorController {
     super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
 
     this.safeSetState({
+      open: true,
       changed: false,
       saving: false,
       authors: [],
@@ -119,6 +123,10 @@ export default class EditorArticleController extends FalcorController {
       // The update wasn't due to a change in article
       this.debouncedHandleFormStateChanges();
     }
+  }
+
+  handleDialogClose() {
+    this.safeSetState({ open: false });
   }
 
   handleSaveChanges(event) {
@@ -348,93 +356,107 @@ export default class EditorArticleController extends FalcorController {
         }
       }
 
+      // Dialog action button
+      const actions = [
+        <RaisedButton
+          label={changedStateMessage}
+          primary
+          style={styles.buttons}
+          type="submit"
+          onClick={this.handleDialogClose}
+          disabled={!this.state.changed || this.state.saving}
+        />,
+      ];
+
       return (
         <div style={styles.innerPaper}>
-          <h2>Article Editor: {article.title}</h2>
-          <Divider />
-          <TextField
-            disabled
-            defaultValue={article.title}
-            floatingLabelText="Title"
-            fullWidth
-          />
-          <form
-            onSubmit={this.handleSaveChanges}
+          <Dialog
+            title="Article Editor"
+            actions={actions}
+            open={this.state.open}
+            modal={false}
+            autoScrollBodyContent={true}
+            onRequestClose={this.handleDialogClose}
           >
-            <SelectField
-              floatingLabelText="Category"
-              maxHeight={400}
-              value={this.state.category}
-              onChange={this.fieldUpdaters.category}
-              disabled={this.state.saving}
-              autoWidth={false}
-              style={{ width: 200 }}
+            <h2>{article.title}</h2>
+            <Divider />
+            <TextField
+              disabled
+              defaultValue={article.title}
+              floatingLabelText="Title"
+              fullWidth
+            />
+            <form
+              onSubmit={this.handleSaveChanges}
             >
-              {
-                _.map(categories, category => (
-                  <MenuItem
-                    value={category.slug}
-                    key={category.slug}
-                    primaryText={category.name}
-                  />
-                ))
-              }
-            </SelectField>
-            <TextField
-              name="image"
-              value={this.state.image}
-              floatingLabelText="Image (Remember to use https:// not http://)"
-              disabled={this.state.saving}
-              onChange={this.fieldUpdaters.image}
-              fullWidth
-            /><br />
-            <TextField
-              name="teaser"
-              floatingLabelText={
-                `Teaser (${this.state.teaser.length} of ${MAX_TEASER_LENGTH} characters)`
-              }
-              value={this.state.teaser}
-              disabled={this.state.saving}
-              onChange={this.fieldUpdaters.teaser}
-              multiLine
-              rows={2}
-              fullWidth
-            /><br />
-            <EditAuthorsForm
-              authors={this.state.authors}
-              onChange={this.debouncedHandleFormStateChanges}
-              handleAddAuthor={this.handleAddAuthor}
-              handleDeleteAuthor={this.handleDeleteAuthor}
-              model={this.props.model}
-              disabled={this.state.saving}
-            />
+              <SelectField
+                floatingLabelText="Category"
+                maxHeight={400}
+                value={this.state.category}
+                onChange={this.fieldUpdaters.category}
+                disabled={this.state.saving}
+                autoWidth={false}
+                style={{ width: 200 }}
+              >
+                {
+                  _.map(categories, category => (
+                    <MenuItem
+                      value={category.slug}
+                      key={category.slug}
+                      primaryText={category.name}
+                    />
+                  ))
+                }
+              </SelectField>
+              <TextField
+                name="image"
+                value={this.state.image}
+                floatingLabelText="Image (Remember to use https:// not http://)"
+                disabled={this.state.saving}
+                onChange={this.fieldUpdaters.image}
+                fullWidth
+              /><br />
+              <TextField
+                name="teaser"
+                floatingLabelText={
+                  `Teaser (${this.state.teaser.length} of ${MAX_TEASER_LENGTH} characters)`
+                }
+                value={this.state.teaser}
+                disabled={this.state.saving}
+                onChange={this.fieldUpdaters.teaser}
+                multiLine
+                rows={2}
+                fullWidth
+              /><br />
+              <EditAuthorsForm
+                authors={this.state.authors}
+                onChange={this.debouncedHandleFormStateChanges}
+                handleAddAuthor={this.handleAddAuthor}
+                handleDeleteAuthor={this.handleDeleteAuthor}
+                model={this.props.model}
+                disabled={this.state.saving}
+              />
+            </form>
+            <br />
+            <Divider />
+            <br />
+            {
+              article.published_at
+                ? `This article was published on ${
+                    moment(article.published_at).format('MMMM DD, YYYY')
+                  }.`
+                : 'The article has yet to be published. It will be published automatically ' +
+                  'when you publish the issue that contains it.'
+            } <br />
             <RaisedButton
-              label={changedStateMessage}
-              primary
+              label="Unpublish Article"
+              secondary
               style={styles.buttons}
-              type="submit"
-              disabled={!this.state.changed || this.state.saving}
+              disabled={!article.published_at}
+              onClick={this.unpublish}
+              icon={<Warning />}
             />
-          </form>
-          <br />
-          <Divider />
-          <br />
-          {
-            article.published_at
-              ? `This article was published on ${
-                  moment(article.published_at).format('MMMM DD, YYYY')
-                }.`
-              : 'The article has yet to be published. It will be published automatically ' +
-                'when you publish the issue that contains it.'
-          } <br />
-          <RaisedButton
-            label="Unpublish Article"
-            secondary
-            style={styles.buttons}
-            disabled={!article.published_at}
-            onClick={this.unpublish}
-            icon={<Warning />}
-          />
+          </Dialog>
         </div>
       );
     }
