@@ -65,14 +65,14 @@ export default class EditorArticleListController extends FalcorController {
 
   clickSearchSuggestion(article) {
     const page = this.props.params.page;
-    const path = `/articles/page/${page}/slug/${article.slug}#article-editor`;
+    const path = `/articles/page/${page}/slug/${article.slug}`;
     browserHistory.push(path);
   }
 
   createListElement(article) {
     const page = this.props.params.page;
     return (
-      <Link to={`/articles/page/${page}/slug/${article.slug}#article-editor`} key={article.slug}>
+      <Link to={`/articles/page/${page}/slug/${article.slug}`} key={article.slug}>
         <ListItem
           primaryText={article.title}
           secondaryText={

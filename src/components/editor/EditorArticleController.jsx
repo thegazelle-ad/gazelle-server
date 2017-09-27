@@ -349,7 +349,7 @@ export default class EditorArticleController extends FalcorController {
       }
 
       return (
-        <div style={styles.innerPaper} id="article-editor">
+        <div style={styles.innerPaper}>
           <h2>Article Editor: {article.title}</h2>
           <Divider />
           <TextField

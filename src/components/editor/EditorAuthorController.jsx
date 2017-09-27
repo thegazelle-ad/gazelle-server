@@ -245,7 +245,7 @@ export default class EditorAuthorController extends FalcorController {
       }
 
       return (
-        <div style={styles.authorProfile} id="author-profile">
+        <div style={styles.authorProfile}>
           <h3>Author Profile: {this.state.name}</h3>
           <Divider />
           <form onSubmit={this.handleSaveChanges}>

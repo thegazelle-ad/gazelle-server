@@ -60,7 +60,7 @@ export default class EditorAuthorListController extends FalcorController {
   }
 
   handleClickAuthor(author) {
-    browserHistory.push(`/authors/${author.slug}#author-profile`);
+    browserHistory.push(`/authors/${author.slug}`);
   }
 
   handleCreateAuthorChange() {
