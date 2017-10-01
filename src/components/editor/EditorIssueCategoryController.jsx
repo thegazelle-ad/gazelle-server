@@ -46,15 +46,15 @@ export default class EditorIssueCategoryController extends FalcorController {
 
   static getFalcorPathSets(params) {
     return [
-      ['issuesByNumber', params.issueNumber, 'categories', { length: 20 }, ['name', 'id']],
-      ['issuesByNumber', params.issueNumber, 'name'],
+      ['issues', 'byNumber', params.issueNumber, 'categories', { length: 20 }, ['name', 'id']],
+      ['issues', 'byNumber', params.issueNumber, 'name'],
     ];
   }
 
   componentWillMount() {
     const falcorCallBack = (data) => {
       const issueNumber = this.props.params.issueNumber;
-      const categories = data.issuesByNumber[issueNumber].categories;
+      const categories = data.issues.byNumber[issueNumber].categories;
       const categoriesArray = _.map(categories, category => category);
 
       this.safeSetState({
@@ -67,7 +67,7 @@ export default class EditorIssueCategoryController extends FalcorController {
   componentWillReceiveProps(nextProps) {
     const falcorCallBack = (data) => {
       const issueNumber = this.props.params.issueNumber;
-      const categories = data.issuesByNumber[issueNumber].categories;
+      const categories = data.issues.byNumber[issueNumber].categories;
       const categoriesArray = _.map(categories, category => category);
       this.safeSetState({
         categories: categoriesArray,
@@ -82,7 +82,7 @@ export default class EditorIssueCategoryController extends FalcorController {
 
   handleChanges(newCategories) {
     const issueNumber = this.props.params.issueNumber;
-    const oldCategories = this.state.data.issuesByNumber[issueNumber].categories;
+    const oldCategories = this.state.data.issues.byNumber[issueNumber].categories;
     const changed = newCategories.some((category, index) => (
       category.id !== oldCategories[index].id
     ));
@@ -104,7 +104,7 @@ export default class EditorIssueCategoryController extends FalcorController {
 
   handleSave() {
     const issueNumber = this.props.params.issueNumber;
-    const oldCategories = this.state.data.issuesByNumber[issueNumber].categories;
+    const oldCategories = this.state.data.issues.byNumber[issueNumber].categories;
     const newCategories = this.state.categories;
     // Shallow validity check
     if (Object.keys(oldCategories).length !== newCategories.length) {
@@ -116,7 +116,7 @@ export default class EditorIssueCategoryController extends FalcorController {
 
     const callback = (data) => {
       const updatedCategories = _.map(
-        data.issuesByNumber[issueNumber].categories,
+        data.issues.byNumber[issueNumber].categories,
         category => category
       );
       this.safeSetState({
@@ -128,7 +128,7 @@ export default class EditorIssueCategoryController extends FalcorController {
       }, 1000);
     };
     this.safeSetState({ saving: true });
-    this.falcorCall(['issuesByNumber', issueNumber, 'updateIssueCategories'],
+    this.falcorCall(['issues', 'byNumber', issueNumber, 'updateIssueCategories'],
       [idArray], undefined, undefined, undefined, callback);
   }
 

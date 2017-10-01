@@ -17,7 +17,7 @@ export default class ArchivesController extends FalcorController {
   static getFalcorPathSets() {
     return [
       // Returns 150 archived issues
-      ['issuesByNumber', { length: 150 }, ['issueNumber', 'published_at']],
+      ['issues', 'byNumber', { length: 150 }, ['issueNumber', 'published_at']],
     ];
   }
 
@@ -26,7 +26,7 @@ export default class ArchivesController extends FalcorController {
       if (this.state.data === null) {
         return <NotFound />;
       }
-      const data = _.filter(this.state.data.issuesByNumber, issue => issue.published_at);
+      const data = _.filter(this.state.data.issues.byNumber, issue => issue.published_at);
       const meta = [
         // Search results
         {

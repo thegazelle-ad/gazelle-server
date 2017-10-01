@@ -1,0 +1,170 @@
+defaults: &defaults
+  working_directory: ~/gazelle-server
+  docker:
+    - image: circleci/node:7.10
+
+
+version: 2
+jobs:
+  checkout_code:
+    <<: *defaults
+    steps:
+      - checkout
+
+      # Complete setup
+      - run: |
+          cp config/database.config.example.js config/database.config.js
+          cp config/s3.config.example.js config/s3.config.js
+          cp config/ghost.config.example.js config/ghost.config.js
+
+      # Cache it
+      - run:
+          name: save the SHA1 hash of git commit being built to file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+
+      - save_cache:
+          key: v1-repo-{{ checksum ".circle-sha" }}
+          paths:
+            - ~/gazelle-server
+
+  install_dependencies:
+    <<: *defaults
+    steps:
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v2-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+
+  build:
+    <<: *defaults
+    steps:
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+
+      # Complete config
+      - run: ./scripts/get-ghost-config.sh
+      # Test that we can build without errors
+      - run: npm run build-production
+
+  test:
+    <<: *defaults
+    steps:
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+
+      - run: npm test
+
+  lint:
+    <<: *defaults
+    steps:
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+
+      - run: npm run lint
+
+  prep_deploy:
+    <<: *defaults
+    steps:
+      # Setup known_hosts so the VM allows ssh access without the prompt
+      - run:
+          name: Add server ssh key to known_hosts
+          command: mkdir -p ~/.ssh && echo '|1|lngQecMeLZI49/+fr5Ee0gOWaKE=|arylHILm4qsNJewDKKwFKOijBxE= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLONO0airQQL9d1rOZzT/p3SBH8acSYaN4N8qJezd/0UbnF8SBi+m1wB2nay5o0HQBQTM6O+MKXDwzYec886K78=' >> ~/.ssh/known_hosts
+      - persist_to_workspace:
+          root: ~/.ssh
+          paths:
+            - known_hosts
+
+  deploy_staging:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/.ssh
+
+      - run:
+          name: Deploy to staging
+          command: ssh gazelle@51.15.130.216 ./deployment/update-beta.sh
+
+  deploy_production:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/.ssh
+
+      - run:
+          name: Deploy to production
+          command: ssh gazelle@51.15.130.216 ./deployment/update-production.sh
+
+workflows:
+  version: 2
+  build_test_deploy:
+    jobs:
+      - checkout_code
+      - install_dependencies:
+          requires:
+            - checkout_code
+      - build:
+          requires:
+            - install_dependencies
+      - test:
+          requires:
+            - install_dependencies
+      - lint:
+          requires:
+            - install_dependencies
+      - prep_deploy
+      - deploy_staging:
+          requires:
+            - build
+            - test
+            - lint
+            - prep_deploy
+          filters:
+            branches:
+              only: master
+      - deploy_production:
+          requires:
+            - build
+            - test
+            - lint
+            - prep_deploy
+          filters:
+            branches:
+              only: stable

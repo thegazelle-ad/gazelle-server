@@ -9,20 +9,20 @@ export default class Navigation extends BaseComponent {
   render() {
     const categories = [
       {
-        name: 'on campus',
-        slug: 'on-campus',
+        name: 'news',
+        slug: 'news',
       },
       {
-        name: 'in focus',
-        slug: 'in-focus',
+        name: 'features',
+        slug: 'features',
       },
       {
-        name: 'commentary',
-        slug: 'commentary',
+        name: 'opinion',
+        slug: 'opinion',
       },
       {
-        name: 'off campus',
-        slug: 'off-campus',
+        name: 'multimedia',
+        slug: 'media',
       },
     ];
     if (this.props.navigationData != null) { // Wait for navigation data to come in asynchronously

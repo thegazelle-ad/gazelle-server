@@ -85,7 +85,7 @@ export default class EditorAuthorListController extends FalcorController {
     }
 
     // Check if the slug is already taken
-    this.props.model.get(['authorsBySlug', slug, 'slug']).then((x) => {
+    this.props.model.get(['authors', 'bySlug', slug, 'slug']).then((x) => {
       if (x) {
         // Something was found, which means the slug is taken
         window.alert('This slug is already taken, please change to another one');
@@ -96,7 +96,7 @@ export default class EditorAuthorListController extends FalcorController {
         window.alert('Author added successfully');
         browserHistory.push(`/authors/${slug}`);
       };
-      this.falcorCall(['authorsBySlug', 'createAuthor'], [{ slug, name }],
+      this.falcorCall(['authors', 'bySlug', 'createAuthor'], [{ slug, name }],
         undefined, undefined, undefined, callback);
     });
   }

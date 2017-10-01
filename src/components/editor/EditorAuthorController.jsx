@@ -60,17 +60,17 @@ export default class EditorAuthorController extends FalcorController {
 
   static getFalcorPathSets(params) {
     return [
-      ['authorsBySlug', params.slug, ['name', 'image', 'biography', 'slug', 'job_title']],
+      ['authors', 'bySlug', params.slug, ['name', 'image', 'biography', 'slug', 'job_title']],
     ];
   }
 
   componentWillMount() {
     const falcorCallback = (data) => {
-      const name = data.authorsBySlug[this.props.params.slug].name || '';
-      const slug = data.authorsBySlug[this.props.params.slug].slug || '';
-      const image = data.authorsBySlug[this.props.params.slug].image || '';
-      const jobTitle = data.authorsBySlug[this.props.params.slug].job_title || '';
-      const biography = data.authorsBySlug[this.props.params.slug].biography || '';
+      const name = data.authors.bySlug[this.props.params.slug].name || '';
+      const slug = data.authors.bySlug[this.props.params.slug].slug || '';
+      const image = data.authors.bySlug[this.props.params.slug].image || '';
+      const jobTitle = data.authors.bySlug[this.props.params.slug].job_title || '';
+      const biography = data.authors.bySlug[this.props.params.slug].biography || '';
 
       this.safeSetState({
         name,
@@ -85,11 +85,11 @@ export default class EditorAuthorController extends FalcorController {
 
   componentWillReceiveProps(nextProps) {
     const falcorCallback = (data) => {
-      const name = data.authorsBySlug[this.props.params.slug].name || '';
-      const slug = data.authorsBySlug[this.props.params.slug].slug || '';
-      const image = data.authorsBySlug[this.props.params.slug].image || '';
-      const jobTitle = data.authorsBySlug[this.props.params.slug].job_title || '';
-      const biography = data.authorsBySlug[this.props.params.slug].biography || '';
+      const name = data.authors.bySlug[this.props.params.slug].name || '';
+      const slug = data.authors.bySlug[this.props.params.slug].slug || '';
+      const image = data.authors.bySlug[this.props.params.slug].image || '';
+      const jobTitle = data.authors.bySlug[this.props.params.slug].job_title || '';
+      const biography = data.authors.bySlug[this.props.params.slug].biography || '';
 
       this.safeSetState({
         name,
@@ -132,7 +132,7 @@ export default class EditorAuthorController extends FalcorController {
   handleSaveChanges(event) {
     event.preventDefault();
 
-    const falcorData = this.state.data.authorsBySlug[this.props.params.slug];
+    const falcorData = this.state.data.authors.bySlug[this.props.params.slug];
     const authorSlug = this.props.params.slug;
 
     if (!this.isFormChanged()) {
@@ -155,21 +155,23 @@ export default class EditorAuthorController extends FalcorController {
       // Build the jsonGraphEnvelope
       const jsonGraphEnvelope = {
         paths: [
-          ['authorsBySlug', authorSlug, ['name', 'slug', 'job_title', 'image', 'biography']],
+          ['authors', 'bySlug', authorSlug, ['name', 'slug', 'job_title', 'image', 'biography']],
         ],
         jsonGraph: {
-          authorsBySlug: {
-            [authorSlug]: {},
+          authors: {
+            bySlug: {
+              [authorSlug]: {},
+            },
           },
         },
       };
 
       // Fill in the data
-      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug].name = this.state.name;
-      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug].slug = this.state.slug;
-      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug].job_title = this.state.jobTitle;
-      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug].image = this.state.image;
-      jsonGraphEnvelope.jsonGraph.authorsBySlug[authorSlug].biography = this.state.biography;
+      jsonGraphEnvelope.jsonGraph.authors.bySlug[authorSlug].name = this.state.name;
+      jsonGraphEnvelope.jsonGraph.authors.bySlug[authorSlug].slug = this.state.slug;
+      jsonGraphEnvelope.jsonGraph.authors.bySlug[authorSlug].job_title = this.state.jobTitle;
+      jsonGraphEnvelope.jsonGraph.authors.bySlug[authorSlug].image = this.state.image;
+      jsonGraphEnvelope.jsonGraph.authors.bySlug[authorSlug].biography = this.state.biography;
 
       // Update the values
       this.falcorUpdate(jsonGraphEnvelope, undefined, resetState);
@@ -187,7 +189,7 @@ export default class EditorAuthorController extends FalcorController {
       this.safeSetState({ saving: true });
 
       // Make sure this slug is not already taken since we operate with unique slugs
-      this.props.model.get(['authorsBySlug', this.state.slug, 'slug']).then((x) => {
+      this.props.model.get(['authors', 'bySlug', this.state.slug, 'slug']).then((x) => {
         if (x) {
           // This slug is already taken as something was returned
           window.alert('The slug you chose is already taken, please change it');
@@ -211,7 +213,7 @@ export default class EditorAuthorController extends FalcorController {
   }
 
   isFormChanged() {
-    const falcorData = this.state.data.authorsBySlug[this.props.params.slug];
+    const falcorData = this.state.data.authors.bySlug[this.props.params.slug];
     const changedFlag =
       this.isFormFieldChanged(this.state.name, falcorData.name) ||
       this.isFormFieldChanged(this.state.slug, falcorData.slug) ||
