@@ -3,19 +3,33 @@
   flex: 1 1 auto;
 
   .article-list{
+    padding: 0.5rem;
     .article-preview {
-      padding: 0 0 0.7rem 0;
+      margin: 0 !important;
+      padding: 0 0 0.7rem 0 !important;
+      width: 500px;
       max-width: $column-1;
       flex: 0 1 auto;
+      box-shadow: none;
+      background: $background-grey;
+      border: none;
+
       &__featured-image {
         display: none;
       }
       &__content {
+        padding: 0 !important;
+        &__category-header {
+          display: none;
+        }
         &__title {
           margin: 0;
           font-size: 1rem;
           line-height: normal;
           padding-bottom: 0.1rem;
+          &:hover{
+            color: $link-blue;
+          }
         }
         &__authors {
           @include uppercase();

@@ -117,9 +117,6 @@ export default class IssueController extends FalcorController {
         // Render nothing if this.props.articles is empty
         _.map((issueData.categories || []), category => (
           <div key={category.name} className="issue__category">
-            <Link to={`/category/${category.slug}`}>
-              <h2 className="section-header">{category.name}</h2>
-            </Link>
             <ArticleList articles={category.articles} />
           </div>
         ))
@@ -160,7 +157,10 @@ export default class IssueController extends FalcorController {
               <EditorsPicks articles={issueData.picks} />
               <Trending articles={trendingData} />
             </div>
+            <div className="categories"> {/* CSS rule in _issue.scss*/}
+              <h2 className="divider"></h2>
               {renderCategories}
+            </div>
             <MailingListButton />
           </div>
         </div>
