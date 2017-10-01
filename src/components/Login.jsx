@@ -24,7 +24,8 @@ export default class Login extends BaseComponent {
   handleSubmit(e) {
     e.preventDefault();
     const pass = e.target.password.value;
-    if (hash(pass) !== 2451962) {
+    // eslint-disable-next-line max-len
+    if (hash(pass) !== 'ebbfa89c771f3f004f8e3959def97cb7f63c313a3b62a35ffe9e298067bea2d95c16e145df6390bcf84ea297fb1b8dfecf03cee47262f5f0ec03975cb42e4110') {
       window.alert('Incorrect password');
       e.target.password.value = ''; // eslint-disable-line no-param-reassign
     } else {

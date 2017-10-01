@@ -63,6 +63,7 @@
   'pages/issue',
   'pages/category';
 
-// 7. Transitions
+// 7. Skeleton Code Transitions
 @import
-  'transitions/text-page-load';
+  'transitions/text-page-load',
+  'transitions/interactive-article-load';

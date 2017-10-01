@@ -7,25 +7,19 @@
     "start": "node ./build/server.js",
     "build-production": "./node_modules/.bin/webpack -p --config ./webpack.production.config.js --bail",
     "build-beta": "./node_modules/.bin/webpack -p --config ./webpack.beta.config.js --bail",
-    "test": "jest --verbose --testPathPattern '__tests__/.*\\.test\\.js$'",
-    "lint": "find src -regex \".*?\\.jsx?\" -not -regex \".*?[-.]test\\.js\"| xargs ./node_modules/.bin/eslint"
+    "test": "jest",
+    "lint": "eslint '{src,__tests__}/**/*.{js,jsx}'"
   },
   "jest": {
-    "unmockedModulePathPatterns": [
-      "<rootDir>/node_modules/react"
-    ],
-    "modulePaths": [
-      "<rootDir>"
-    ],
     "moduleFileExtensions": [
-      "",
       "js",
       "jsx"
     ],
     "moduleDirectories": [
       "node_modules",
       "./src"
-    ]
+    ],
+    "testRegex": "__tests__/.*\\.test\\.js$"
   },
   "repository": {
     "type": "git",
@@ -46,7 +40,7 @@
   "devDependencies": {
     "babel-cli": "^6.10.1",
     "babel-core": "^6.4.5",
-    "babel-jest": "^13.2.2",
+    "babel-jest": "^20.0.3",
     "babel-loader": "^6.2.1",
     "babel-plugin-lodash": "^3.2.4",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
@@ -63,7 +57,7 @@
     "eslint-plugin-react": "^5.1.1",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
-    "jest-cli": "^13.2.3",
+    "jest": "^20.0.4",
     "node-sass": "^4.5.3",
     "null-loader": "^0.1.1",
     "postcss-cssnext": "^2.7.0",
@@ -76,6 +70,7 @@
     "webpack-node-externals": "^1.2.0"
   },
   "dependencies": {
+    "bluebird": "^3.5.0",
     "body-parser": "^1.15.2",
     "child_process": "^1.0.2",
     "classnames": "^2.2.5",
@@ -88,6 +83,8 @@
     "google-auth-library": "^0.9.8",
     "googleapis": "^12.4.0",
     "history": "^3.0.0",
+    "imagemin": "^5.3.1",
+    "imagemin-jpeg-recompress": "^5.1.0",
     "knex": "^0.11.10",
     "lodash": "^4.13.1",
     "material-ui": "^0.17.1",

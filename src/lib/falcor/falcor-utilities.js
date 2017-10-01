@@ -377,3 +377,14 @@ export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
   // This command returns a copy of oldData with the new updates applied
   return update(oldData, dataUpdates);
 }
+
+export const mapGhostNames = (falcorName) => {
+  switch (falcorName) {
+    case 'teaser':
+      return 'meta_description';
+    case 'issueNumber':
+      return 'issue_order';
+    default:
+      return falcorName;
+  }
+};

@@ -22,135 +22,84 @@ export default class IssueController extends FalcorController {
     // URL Format: thegazelle.org/issue/:issueNumber/:articleCategory/:articleSlug
 
     // Conditional return allows The Gazelle to return the correct issue
-    // User is either requesting the 'latestIssue' on the home page or an
+    // User is either requesting the 'issues', 'latest' on the home page or an
     // old issue.
+    const articleFields = ['title', 'teaser', 'issueNumber', 'category',
+      'slug', 'image', 'is_interactive'];
+    const authorFields = ['name', 'slug'];
+    const issueFields = ['issueNumber', 'published_at'];
+    const categoryFields = ['name', 'slug'];
     if (params.issueNumber) { // If not on home page grab specificed issue
       const issueNumber = mapLegacyIssueSlugsToIssueNumber(params.issueNumber);
       return [
-        ['issuesByNumber', issueNumber, ['issueNumber', 'published_at']],
+        ['issues', 'byNumber', issueNumber, issueFields],
 
         // Request the featured article
-        [
-          'issuesByNumber',
-          issueNumber,
-          'featured',
-          ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image'],
-        ],
-        ['issuesByNumber', issueNumber, 'featured', 'authors', { length: 10 }, ['name', 'slug']],
+        ['issues', 'byNumber', issueNumber, 'featured', articleFields],
+        ['issues', 'byNumber', issueNumber, 'featured', 'authors', { length: 10 }, authorFields],
 
         // Request first two Editor's Picks
-        [
-          'issuesByNumber',
-          issueNumber,
-          'picks',
-          { length: 2 },
-          ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image'],
-        ],
-        [
-          'issuesByNumber',
-          issueNumber,
-          'picks',
-          { length: 2 },
-          'authors',
-          { length: 10 },
-          ['name', 'slug'],
-        ],
+        ['issues', 'byNumber', issueNumber, 'picks', { length: 2 }, articleFields],
+        ['issues', 'byNumber', issueNumber, 'picks', { length: 2 },
+          'authors', { length: 10 }, authorFields],
 
         // Request first five Trending articles
-        ['trending', { length: 6 }, ['title', 'issueNumber', 'category', 'slug', 'image']],
-        ['trending', { length: 6 }, 'authors', { length: 10 }, ['name', 'slug']],
+        ['trending', { length: 6 }, articleFields],
+        ['trending', { length: 6 }, 'authors', { length: 10 }, authorFields],
 
         // Request all category names and slugs (max 10 categories)
-        ['issuesByNumber', issueNumber, 'categories', { length: 10 }, ['name', 'slug']],
+        ['issues', 'byNumber', issueNumber, 'categories', { length: 10 }, categoryFields],
 
         // Request necessary data from all articles from each category (max 30 articles)
-        [
-          'issuesByNumber',
-          issueNumber,
-          'categories',
-          { length: 10 },
-          'articles',
-          { length: 30 },
-          ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image'],
-        ],
+        ['issues', 'byNumber', issueNumber, 'categories', { length: 10 },
+          'articles', { length: 30 }, articleFields],
 
         // Request author name and slug for each article (max 10 authors)
-        [
-          'issuesByNumber',
-          issueNumber,
-          'categories',
-          { length: 10 },
-          'articles',
-          { length: 30 },
-          'authors',
-          { length: 10 },
-          ['name', 'slug'],
-        ],
+        ['issues', 'byNumber', issueNumber, 'categories', { length: 10 },
+          'articles', { length: 30 }, 'authors', { length: 10 }, authorFields],
       ];
-    } // User is on home page
+    }
+    // User is on home page
     return [
-      ['latestIssue', ['issueNumber', 'published_at']],
+      ['issues', 'latest', issueFields],
 
       // Request the featured article
-      [
-        'latestIssue',
-        'featured',
-        ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image'],
-      ],
-      ['latestIssue', 'featured', 'authors', { length: 10 }, ['name', 'slug']],
+      ['issues', 'latest', 'featured', articleFields],
+      ['issues', 'latest', 'featured', 'authors', { length: 10 }, authorFields],
 
       // Request first two Editor's Picks
-      [
-        'latestIssue',
-        'picks',
-        { length: 2 },
-        ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image'],
-      ],
-      ['latestIssue', 'picks', { length: 2 }, 'authors', { length: 10 }, ['name', 'slug']],
+      ['issues', 'latest', 'picks', { length: 2 }, articleFields],
+      ['issues', 'latest', 'picks', { length: 2 }, 'authors', { length: 10 }, authorFields],
 
       // Request first five Trending articles
-      ['trending', { length: 6 }, ['title', 'issueNumber', 'category', 'slug', 'image']],
-      ['trending', { length: 6 }, 'authors', { length: 10 }, ['name', 'slug']],
+      ['trending', { length: 6 }, articleFields],
+      ['trending', { length: 6 }, 'authors', { length: 10 }, authorFields],
 
       // Request all category names and slugs (max 10 categories)
-      ['latestIssue', 'categories', { length: 10 }, ['name', 'slug']],
+      ['issues', 'latest', 'categories', { length: 10 }, categoryFields],
 
       // Request necessary data from all articles from each category (max 30 articles)
-      ['latestIssue',
-        'categories',
-        { length: 10 },
-        'articles',
-        { length: 30 },
-        ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image'],
-      ],
+      ['issues', 'latest', 'categories', { length: 10 }, 'articles', { length: 30 }, articleFields],
 
       // Request author name and slug for each article (max 10 authors)
-      [
-        'latestIssue',
-        'categories',
-        { length: 10 },
-        'articles',
-        { length: 30 },
-        'authors',
-        { length: 10 },
-        ['name', 'slug'],
-      ],
+      ['issues', 'latest', 'categories', { length: 10 }, 'articles',
+        { length: 30 }, 'authors', { length: 10 }, authorFields],
     ];
   }
 
   render() {
     if (this.state.ready) {
-      if (!this.state.data || (this.props.params.issueNumber && !this.state.data.issuesByNumber)) {
+      if (!this.state.data || (this.props.params.issueNumber && !this.state.data.issues.byNumber)) {
         return (
           <NotFound />
         );
       }
       let issueData;
       if (!this.props.params.issueNumber) {
-        issueData = this.state.data.latestIssue;
+        issueData = this.state.data.issues.latest;
       } else {
         issueData =
-         this.state.data.issuesByNumber
+         this.state.data.issues.byNumber
          [mapLegacyIssueSlugsToIssueNumber(this.props.params.issueNumber)];
       }
       const trendingData = this.state.data.trending;

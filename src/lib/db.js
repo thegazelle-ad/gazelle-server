@@ -3,7 +3,7 @@
 import knex from 'knex';
 import stable from 'stable';
 import databaseConfig from 'lib/../../config/database.config';
-import { mapGhostNames } from 'lib/falcor/FalcorRouter';
+import { mapGhostNames } from 'lib/falcor/falcor-utilities';
 import _ from 'lodash';
 import { formatDate, formatDateTime } from 'lib/utilities';
 
@@ -262,6 +262,20 @@ export default class db {
       .catch((e) => {
         throw new Error(e);
       });
+    });
+  }
+
+  interactiveArticleQuery(slugs, columns) {
+    // Fetch information from interactive_meta
+    return new Promise((resolve) => {
+      const processedColumns = columns.map(col => `interactive_meta.${col}`);
+      database.select('slug', ...processedColumns)
+      .from('posts')
+      .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
+      .leftJoin('interactive_meta', 'interactive_meta.id', '=', 'posts.id')
+      .whereIn('slug', slugs)
+      .then(rows => resolve(rows))
+      .catch((e) => { throw new Error(e); });
     });
   }
 

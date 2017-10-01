@@ -9,7 +9,8 @@ import { formatDate } from 'lib/utilities';
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
 
-const ARTICLE_FIELDS = ['id', 'title', 'slug', 'category', 'published_at', 'html'];
+const ARTICLE_FIELDS = ['id', 'title', 'slug', 'category',
+  'published_at', 'html', 'is_interactive'];
 const ARTICLE_LIST_LENGTH = 100;
 
 const styles = {
@@ -50,9 +51,9 @@ export default class EditorIssueArticleController extends FalcorController {
 
   static getFalcorPathSets(params) {
     return [
-      ['issuesByNumber', params.issueNumber, ['name', 'published_at']],
+      ['issues', 'byNumber', params.issueNumber, ['name', 'published_at']],
       [
-        'issuesByNumber',
+        'issues', 'byNumber',
         params.issueNumber,
         'categories',
         { length: 20 },
@@ -60,13 +61,13 @@ export default class EditorIssueArticleController extends FalcorController {
         { length: 50 },
         ARTICLE_FIELDS,
       ],
-      ['issuesByNumber', params.issueNumber, 'featured', ARTICLE_FIELDS],
-      ['issuesByNumber', params.issueNumber, 'picks', { length: 10 }, ARTICLE_FIELDS],
+      ['issues', 'byNumber', params.issueNumber, 'featured', ARTICLE_FIELDS],
+      ['issues', 'byNumber', params.issueNumber, 'picks', { length: 10 }, ARTICLE_FIELDS],
       /* The following three calls are simply calling the first author to check
        *if any author has been assigned
         this is used for validiy checking */
       [
-        'issuesByNumber',
+        'issues', 'byNumber',
         params.issueNumber,
         'categories',
         { length: 20 },
@@ -76,12 +77,19 @@ export default class EditorIssueArticleController extends FalcorController {
         0,
         'slug',
       ],
-      ['issuesByNumber', params.issueNumber, 'featured', 'authors', 0, 'slug'],
-      ['issuesByNumber', params.issueNumber, 'picks', { length: 10 }, 'authors', 0, 'slug'],
+      ['issues', 'byNumber', params.issueNumber, 'featured', 'authors', 0, 'slug'],
+      ['issues', 'byNumber', params.issueNumber, 'picks', { length: 10 }, 'authors', 0, 'slug'],
       // This is for the articleList
-      ['articlesByPage', ARTICLE_LIST_LENGTH, 1, { length: ARTICLE_LIST_LENGTH }, ARTICLE_FIELDS],
       [
-        'articlesByPage',
+        'articles',
+        'byPage',
+        ARTICLE_LIST_LENGTH,
+        1,
+        { length: ARTICLE_LIST_LENGTH },
+        ARTICLE_FIELDS,
+      ],
+      [
+        'articles', 'byPage',
         ARTICLE_LIST_LENGTH,
         1,
         { length: ARTICLE_LIST_LENGTH },
@@ -95,7 +103,7 @@ export default class EditorIssueArticleController extends FalcorController {
   componentWillMount() {
     const falcorCallBack = (data) => {
       const issueNumber = this.props.params.issueNumber;
-      const issueData = data.issuesByNumber[issueNumber];
+      const issueData = data.issues.byNumber[issueNumber];
       const mainArticles = [];
       _.forEach(issueData.categories, (category) => {
         _.forEach(category.articles, (article) => {
@@ -116,7 +124,7 @@ export default class EditorIssueArticleController extends FalcorController {
   componentWillReceiveProps(nextProps) {
     const falcorCallBack = (data) => {
       const issueNumber = this.props.params.issueNumber;
-      const issueData = data.issuesByNumber[issueNumber];
+      const issueData = data.issues.byNumber[issueNumber];
       const mainArticles = [];
       _.forEach(issueData.categories, (category) => {
         _.forEach(category.articles, (article) => {
@@ -141,7 +149,7 @@ export default class EditorIssueArticleController extends FalcorController {
 
   handleArticlesChange(newArticles, mode) {
     const issueNumber = this.props.params.issueNumber;
-    const data = this.state.data.issuesByNumber[issueNumber];
+    const data = this.state.data.issues.byNumber[issueNumber];
 
     // Get all the variables set for each corresponding mode
     let originalArticles;
@@ -312,7 +320,7 @@ export default class EditorIssueArticleController extends FalcorController {
     const featuredArticles = this.state.featuredArticles;
     const picks = this.state.picks;
     const mainArticles = this.state.mainArticles;
-    const data = this.state.data.issuesByNumber[issueNumber];
+    const data = this.state.data.issues.byNumber[issueNumber];
     const isPublished = data.published_at;
 
     const allArticles =
@@ -335,7 +343,8 @@ export default class EditorIssueArticleController extends FalcorController {
     }
     if (isPublished) {
       // Check that all articles are valid since issue is already published
-      const fields = ARTICLE_FIELDS.filter((field) => field !== 'published_at');
+      const fields = ARTICLE_FIELDS.filter((field) => (
+        field !== 'published_at' && field !== 'is_interactive'));
       const articlesValid = allArticles.every((article) => {
         const slug = article.slug;
         const isOldArticle = (
@@ -351,6 +360,10 @@ export default class EditorIssueArticleController extends FalcorController {
           return true;
         }
         const fieldsValid = fields.every((field) => {
+          // Special case for interactive articles, don't need html key
+          if (article.is_interactive && field === 'html') {
+            return true;
+          }
           if (!article[field]) {
             window.alert(
               `${article.title} has no ${field}. Please correct this ` +
@@ -402,7 +415,7 @@ export default class EditorIssueArticleController extends FalcorController {
 
     const refPaths = ARTICLE_FIELDS.map(field => [field]);
     this.safeSetState({ saving: true });
-    this.falcorCall(['issuesByNumber', 'updateIssueArticles'],
+    this.falcorCall(['issues', 'byNumber', 'updateIssueArticles'],
       [issueNumber, featuredArticles, picks, mainArticles],
       refPaths, undefined, undefined, resetState);
   }
@@ -472,7 +485,7 @@ export default class EditorIssueArticleController extends FalcorController {
       const modes = ['picks', 'featured', 'main'];
       if (modes.find(mode => mode === this.state.showArticleListMode)) {
         // Filter picked articles
-        let articles = this.state.data.articlesByPage[ARTICLE_LIST_LENGTH][1];
+        let articles = this.state.data.articles.byPage[ARTICLE_LIST_LENGTH][1];
         const seen = {};
         const allArticles = this.state.mainArticles.concat(
           this.state.featuredArticles, this.state.picks);
@@ -501,7 +514,7 @@ export default class EditorIssueArticleController extends FalcorController {
         );
       }
       const issueNumber = this.props.params.issueNumber;
-      const data = this.state.data.issuesByNumber[issueNumber];
+      const data = this.state.data.issues.byNumber[issueNumber];
       const mainArticles = this.state.mainArticles;
       const featuredArticles = this.state.featuredArticles;
       const picks = this.state.picks;

@@ -111,8 +111,12 @@ export default class EditorAppController extends BaseComponent {
   }
 
   resetGhostInfo() {
-    this.props.model.invalidate(['articlesByPage'], ['articlesBySlug']);
+    this.props.model.invalidate(['articles', 'byPage'], ['articles', 'bySlug']);
     browserHistory.push('/');
+  }
+
+  signOut() {
+    browserHistory.push('/login');
   }
 
   render() {
@@ -139,7 +143,10 @@ export default class EditorAppController extends BaseComponent {
           disabled
         />
         <Divider />
-        <MenuItem primaryText="Sign out" />
+        <MenuItem
+          primaryText="Sign out"
+          onClick={this.signOut}
+        />
       </IconMenu>
     );
 

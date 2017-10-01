@@ -10,12 +10,16 @@ export default class ArticlePreview extends BaseComponent {
   render() {
     const article = this.props.article;
     let url = `/issue/${article.issueNumber.toString()}/${article.category}/${article.slug}`;
+    if (article.is_interactive) {
+      // We don't use standard url for interactive articles
+      url = `/interactive/${article.slug}`;
+    }
     if (!article.image) { // Article image default
       article.image = 'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
     }
     return (
       <div className="article-preview">
-        <Link to={`/issue/${article.issueNumber.toString()}/${article.category}/${article.slug}`}>
+        <Link to={url}>
           <img
             className="article-preview__featured-image"
             src={article.image}
