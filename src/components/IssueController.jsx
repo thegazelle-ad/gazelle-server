@@ -5,7 +5,7 @@
 import React from 'react';
 import _ from 'lodash';
 import FalcorController from 'lib/falcor/FalcorController';
-//import { Link } from 'react-router';
+// import { Link } from 'react-router';
 import Helmet from 'react-helmet'; // Add meta tags for pre-Ghost release
 import { mapLegacyIssueSlugsToIssueNumber } from 'lib/utilities';
 
