@@ -1,12 +1,12 @@
 .editors-picks {
   max-width: 70%;
-  margin-right: 0.75rem;
+  margin-right: .75rem;
   .section-header {
     // Extend line beyond .editors-picks div
     margin-right: -30px;
   }
   .article-list {
-    padding: 0;
+    padding: 0 .75rem 0 0;
 
     &:last-child {
       // Divider between Editor's Picks and Trending
@@ -14,8 +14,10 @@
     }
     .article-preview {
       max-width: $column-2;
-      &__content__category-header {
-        display: block;
+      &__content{
+        &__category-header {
+          display: block;
+        }
       }
     }
   }
@@ -27,6 +29,7 @@
       margin-right: 0;
     }
     .article-list {
+      padding: 0;
       &:last-child {
         border-right: none;
       }
