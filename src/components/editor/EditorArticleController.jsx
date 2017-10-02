@@ -1,5 +1,6 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
+import { browserHistory } from 'react-router';
 import _ from 'lodash';
 import EditAuthorsForm from './EditAuthorsForm';
 import { debounce } from 'lib/utilities';
@@ -95,7 +96,6 @@ export default class EditorArticleController extends FalcorController {
     super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
 
     this.safeSetState({
-      open: true,
       changed: false,
       saving: false,
       authors: [],
@@ -126,7 +126,11 @@ export default class EditorArticleController extends FalcorController {
   }
 
   handleDialogClose() {
-    this.safeSetState({ open: false });
+    if (this.state.saving) return;
+
+    const page = this.props.params.page;
+    const path = `/articles/page/${page}`;
+    browserHistory.push(path);
   }
 
   handleSaveChanges(event) {
@@ -356,108 +360,100 @@ export default class EditorArticleController extends FalcorController {
         }
       }
 
-      // Dialog action button
-      const actions = [
-        <RaisedButton
-          label={changedStateMessage}
-          primary
-          style={styles.buttons}
-          type="submit"
-          onClick={this.handleDialogClose}
-          disabled={!this.state.changed || this.state.saving}
-        />,
-      ];
-
       return (
-        <div style={styles.innerPaper}>
-          <Dialog
-            title="Article Editor"
-            actions={actions}
-            open={this.state.open}
-            modal={false}
-            autoScrollBodyContent={true}
-            onRequestClose={this.handleDialogClose}
+        <Dialog
+          title="Article Editor"
+          open={this.state.open}
+          modal={false}
+          autoScrollBodyContent
+          onRequestClose={this.handleDialogClose}
+        >
+          <h2>{article.title}</h2>
+          <Divider />
+          <TextField
+            disabled
+            defaultValue={article.title}
+            floatingLabelText="Title"
+            fullWidth
+          />
+          <form
+            onSubmit={this.handleSaveChanges}
           >
-            <h2>{article.title}</h2>
-            <Divider />
-            <TextField
-              disabled
-              defaultValue={article.title}
-              floatingLabelText="Title"
-              fullWidth
-            />
-            <form
-              onSubmit={this.handleSaveChanges}
+            <SelectField
+              floatingLabelText="Category"
+              maxHeight={400}
+              value={this.state.category}
+              onChange={this.fieldUpdaters.category}
+              disabled={this.state.saving}
+              autoWidth={false}
+              style={{ width: 200 }}
             >
-              <SelectField
-                floatingLabelText="Category"
-                maxHeight={400}
-                value={this.state.category}
-                onChange={this.fieldUpdaters.category}
-                disabled={this.state.saving}
-                autoWidth={false}
-                style={{ width: 200 }}
-              >
-                {
-                  _.map(categories, category => (
-                    <MenuItem
-                      value={category.slug}
-                      key={category.slug}
-                      primaryText={category.name}
-                    />
-                  ))
-                }
-              </SelectField>
-              <TextField
-                name="image"
-                value={this.state.image}
-                floatingLabelText="Image (Remember to use https:// not http://)"
-                disabled={this.state.saving}
-                onChange={this.fieldUpdaters.image}
-                fullWidth
-              /><br />
-              <TextField
-                name="teaser"
-                floatingLabelText={
-                  `Teaser (${this.state.teaser.length} of ${MAX_TEASER_LENGTH} characters)`
-                }
-                value={this.state.teaser}
-                disabled={this.state.saving}
-                onChange={this.fieldUpdaters.teaser}
-                multiLine
-                rows={2}
-                fullWidth
-              /><br />
-              <EditAuthorsForm
-                authors={this.state.authors}
-                onChange={this.debouncedHandleFormStateChanges}
-                handleAddAuthor={this.handleAddAuthor}
-                handleDeleteAuthor={this.handleDeleteAuthor}
-                model={this.props.model}
-                disabled={this.state.saving}
-              />
-            </form>
-            <br />
-            <Divider />
-            <br />
-            {
-              article.published_at
-                ? `This article was published on ${
-                    moment(article.published_at).format('MMMM DD, YYYY')
-                  }.`
-                : 'The article has yet to be published. It will be published automatically ' +
-                  'when you publish the issue that contains it.'
-            } <br />
-            <RaisedButton
-              label="Unpublish Article"
-              secondary
-              style={styles.buttons}
-              disabled={!article.published_at}
-              onClick={this.unpublish}
-              icon={<Warning />}
+              {
+                _.map(categories, category => (
+                  <MenuItem
+                    value={category.slug}
+                    key={category.slug}
+                    primaryText={category.name}
+                  />
+                ))
+              }
+            </SelectField>
+            <TextField
+              name="image"
+              value={this.state.image}
+              floatingLabelText="Image (Remember to use https:// not http://)"
+              disabled={this.state.saving}
+              onChange={this.fieldUpdaters.image}
+              fullWidth
+            /><br />
+            <TextField
+              name="teaser"
+              floatingLabelText={
+                `Teaser (${this.state.teaser.length} of ${MAX_TEASER_LENGTH} characters)`
+              }
+              value={this.state.teaser}
+              disabled={this.state.saving}
+              onChange={this.fieldUpdaters.teaser}
+              multiLine
+              rows={2}
+              fullWidth
+            /><br />
+            <EditAuthorsForm
+              authors={this.state.authors}
+              onChange={this.debouncedHandleFormStateChanges}
+              handleAddAuthor={this.handleAddAuthor}
+              handleDeleteAuthor={this.handleDeleteAuthor}
+              model={this.props.model}
+              disabled={this.state.saving}
             />
-          </Dialog>
-        </div>
+            <RaisedButton
+              label={changedStateMessage}
+              primary
+              style={styles.buttons}
+              type="submit"
+              disabled={!this.state.changed || this.state.saving}
+            />
+          </form>
+          <br />
+          <Divider />
+          <br />
+          {
+            article.published_at
+              ? `This article was published on ${
+                  moment(article.published_at).format('MMMM DD, YYYY')
+                }.`
+              : 'The article has yet to be published. It will be published automatically ' +
+                'when you publish the issue that contains it.'
+          } <br />
+          <RaisedButton
+            label="Unpublish Article"
+            secondary
+            style={styles.buttons}
+            disabled={!article.published_at}
+            onClick={this.unpublish}
+            icon={<Warning />}
+          />
+        </Dialog>
       );
     }
     return (
