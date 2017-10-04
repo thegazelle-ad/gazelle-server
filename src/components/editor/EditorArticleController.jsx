@@ -318,11 +318,6 @@ export default class EditorArticleController extends FalcorController {
         marginTop: 24,
         marginBottom: 12,
       },
-      innerPaper: {
-        paddingLeft: 30,
-        paddingRight: 30,
-        paddingBottom: 15,
-      },
     };
 
     if (this.state.ready) {
