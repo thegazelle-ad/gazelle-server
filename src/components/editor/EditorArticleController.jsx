@@ -39,7 +39,6 @@ export default class EditorArticleController extends FalcorController {
       image: updateFieldValue.bind(this, 'image', undefined),
     };
     this.safeSetState({
-      open: true,
       changed: false,
       saving: false,
       authors: [],
@@ -363,7 +362,7 @@ export default class EditorArticleController extends FalcorController {
       return (
         <Dialog
           title="Article Editor"
-          open={this.state.open}
+          open
           modal={false}
           autoScrollBodyContent
           onRequestClose={this.handleDialogClose}

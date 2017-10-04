@@ -6,6 +6,7 @@ import { updateFieldValue } from './lib/form-field-updaters';
 import { stringToInt } from 'lib/utilities';
 
 // material-ui
+import Dialog from 'material-ui/Dialog';
 import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
 import { Tabs, Tab } from 'material-ui/Tabs';
@@ -43,6 +44,7 @@ const styles = {
 export default class EditorIssueListController extends FalcorController {
   constructor(props) {
     super(props);
+    this.handleDialogClose = this.handleDialogClose.bind(this);
     this.addIssue = this.addIssue.bind(this);
     this.fieldUpdaters = {
       name: updateFieldValue.bind(this, 'name', undefined),
@@ -85,6 +87,13 @@ export default class EditorIssueListController extends FalcorController {
         browserHistory.push(`/issues/${issueNumber}/main`);
       }
     }
+  }
+
+  handleDialogClose() {
+    if (this.state.saving) return;
+
+    const path = '/issues';
+    browserHistory.push(path);
   }
 
   addIssue(e) {
@@ -227,10 +236,15 @@ export default class EditorIssueListController extends FalcorController {
               </Tab>
             </Tabs>
           </Paper>
-          <Paper style={styles.paper} zDepth={2}>
+
+          <div>
             {
               currentIssueNumber ?
-                <div>
+                <Dialog
+                  open
+                  autoScrollBodyContent
+                  onRequestClose={this.handleDialogClose}
+                >
                   <Tabs value={this.getSelectedTab()}>
                     <Tab
                       label="MAIN"
@@ -255,11 +269,11 @@ export default class EditorIssueListController extends FalcorController {
                     <h2>Issue {currentIssueNumber}</h2>
                     <Divider />
                   </div>
-                </div>
+                  {this.props.children}
+                </Dialog>
                 : null
             }
-            {this.props.children}
-          </Paper>
+          </div>
         </div>
       );
     }
