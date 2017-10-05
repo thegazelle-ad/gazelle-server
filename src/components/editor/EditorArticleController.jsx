@@ -1,5 +1,6 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
+import { browserHistory } from 'react-router';
 import _ from 'lodash';
 import EditAuthorsForm from './EditAuthorsForm';
 import { debounce } from 'lib/utilities';
@@ -8,6 +9,7 @@ import moment from 'moment';
 import { updateFieldValue } from 'components/editor/lib/form-field-updaters';
 
 // material-ui
+import Dialog from 'material-ui/Dialog';
 import CircularProgress from 'material-ui/CircularProgress';
 import RaisedButton from 'material-ui/RaisedButton';
 import Divider from 'material-ui/Divider';
@@ -21,6 +23,7 @@ const MAX_TEASER_LENGTH = 156;
 export default class EditorArticleController extends FalcorController {
   constructor(props) {
     super(props);
+    this.handleDialogClose = this.handleDialogClose.bind(this);
     this.isFormChanged = this.isFormChanged.bind(this);
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
     this.handleAddAuthor = this.handleAddAuthor.bind(this);
@@ -119,6 +122,14 @@ export default class EditorArticleController extends FalcorController {
       // The update wasn't due to a change in article
       this.debouncedHandleFormStateChanges();
     }
+  }
+
+  handleDialogClose() {
+    if (this.state.saving) return;
+
+    const page = this.props.params.page;
+    const path = `/articles/page/${page}`;
+    browserHistory.push(path);
   }
 
   handleSaveChanges(event) {
@@ -307,11 +318,6 @@ export default class EditorArticleController extends FalcorController {
         marginTop: 24,
         marginBottom: 12,
       },
-      innerPaper: {
-        paddingLeft: 30,
-        paddingRight: 30,
-        paddingBottom: 15,
-      },
     };
 
     if (this.state.ready) {
@@ -349,8 +355,14 @@ export default class EditorArticleController extends FalcorController {
       }
 
       return (
-        <div style={styles.innerPaper}>
-          <h2>Article Editor: {article.title}</h2>
+        <Dialog
+          title="Article Editor"
+          open
+          modal={false}
+          autoScrollBodyContent
+          onRequestClose={this.handleDialogClose}
+        >
+          <h2>{article.title}</h2>
           <Divider />
           <TextField
             disabled
@@ -435,7 +447,7 @@ export default class EditorArticleController extends FalcorController {
             onClick={this.unpublish}
             icon={<Warning />}
           />
-        </div>
+        </Dialog>
       );
     }
     return (

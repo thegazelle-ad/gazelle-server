@@ -161,9 +161,7 @@ export default class EditorAuthorListController extends FalcorController {
             </Tabs>
             <Divider />
           </Paper>
-          <Paper style={styles.paper} zDepth={2}>
-            {this.props.children}
-          </Paper>
+          {this.props.children}
           <br />
         </div>
       );

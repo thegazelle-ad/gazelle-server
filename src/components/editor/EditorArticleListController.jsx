@@ -147,9 +147,7 @@ export default class EditorArticleListController extends FalcorController {
               />
             </div>
           </Paper>
-          <Paper style={styles.paper} zDepth={2}>
-            {this.props.children}
-          </Paper>
+          {this.props.children}
         </div>
       );
     }

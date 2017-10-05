@@ -1,9 +1,11 @@
 import React from 'react';
+import { browserHistory } from 'react-router';
 import FalcorController from 'lib/falcor/FalcorController';
 import { debounce, markdownLength } from 'lib/utilities';
 import { updateFieldValue } from './lib/form-field-updaters';
 
 // material-ui
+import Dialog from 'material-ui/Dialog';
 import CircularProgress from 'material-ui/CircularProgress';
 import Divider from 'material-ui/Divider';
 import TextField from 'material-ui/TextField';
@@ -27,6 +29,7 @@ const styles = {
 export default class EditorAuthorController extends FalcorController {
   constructor(props) {
     super(props);
+    this.handleDialogClose = this.handleDialogClose.bind(this);
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
     this.fieldUpdaters = {
       name: updateFieldValue.bind(this, 'name', undefined),
@@ -127,6 +130,13 @@ export default class EditorAuthorController extends FalcorController {
       // The update wasn't due to a change in article
       this.debouncedHandleFormStateChanges();
     }
+  }
+
+  handleDialogClose() {
+    if (this.state.saving) return;
+
+    const path = '/authors';
+    browserHistory.push(path);
   }
 
   handleSaveChanges(event) {
@@ -245,58 +255,65 @@ export default class EditorAuthorController extends FalcorController {
       }
 
       return (
-        <div style={styles.authorProfile}>
-          <h3>Author Profile: {this.state.name}</h3>
-          <Divider />
-          <form onSubmit={this.handleSaveChanges}>
-            <TextField
-              value={this.state.name}
-              floatingLabelText="Name"
-              disabled={this.state.saving}
-              onChange={this.fieldUpdaters.name}
-            /><br />
-            <TextField
-              value={this.state.slug}
-              floatingLabelText="Slug"
-              disabled={this.state.saving}
-              onChange={this.fieldUpdaters.slug}
-            /><br />
-            <TextField
-              value={this.state.jobTitle}
-              floatingLabelText="Job Title"
-              disabled={this.state.saving}
-              onChange={this.fieldUpdaters.jobTitle}
-            /><br />
-            <TextField
-              name="image"
-              value={this.state.image}
-              floatingLabelText="Image (Remember to use https:// not http://)"
-              disabled={this.state.saving}
-              onChange={this.fieldUpdaters.image}
-              fullWidth
-            /><br />
-            <TextField
-              name="biography"
-              floatingLabelText={
-                `Biography (${markdownLength(this.state.biography)} ` +
-                `of ${MAX_BIOGRAPHY_LENGTH} characters)`
-              }
-              value={this.state.biography}
-              disabled={this.state.saving}
-              onChange={this.fieldUpdaters.biography}
-              multiLine
-              rows={2}
-              fullWidth
-            /><br />
-            <RaisedButton
-              label={changedStateMessage}
-              type="submit"
-              primary
-              style={styles.buttons}
-              disabled={!this.state.changed || this.state.saving}
-            />
-          </form>
-        </div>
+        <Dialog
+          title="Author Profile"
+          open
+          autoScrollBodyContent
+          onRequestClose={this.handleDialogClose}
+        >
+          <div style={styles.authorProfile}>
+            <h3>Author Profile: {this.state.name}</h3>
+            <Divider />
+            <form onSubmit={this.handleSaveChanges}>
+              <TextField
+                value={this.state.name}
+                floatingLabelText="Name"
+                disabled={this.state.saving}
+                onChange={this.fieldUpdaters.name}
+              /><br />
+              <TextField
+                value={this.state.slug}
+                floatingLabelText="Slug"
+                disabled={this.state.saving}
+                onChange={this.fieldUpdaters.slug}
+              /><br />
+              <TextField
+                value={this.state.jobTitle}
+                floatingLabelText="Job Title"
+                disabled={this.state.saving}
+                onChange={this.fieldUpdaters.jobTitle}
+              /><br />
+              <TextField
+                name="image"
+                value={this.state.image}
+                floatingLabelText="Image (Remember to use https:// not http://)"
+                disabled={this.state.saving}
+                onChange={this.fieldUpdaters.image}
+                fullWidth
+              /><br />
+              <TextField
+                name="biography"
+                floatingLabelText={
+                  `Biography (${markdownLength(this.state.biography)} ` +
+                  `of ${MAX_BIOGRAPHY_LENGTH} characters)`
+                }
+                value={this.state.biography}
+                disabled={this.state.saving}
+                onChange={this.fieldUpdaters.biography}
+                multiLine
+                rows={2}
+                fullWidth
+              /><br />
+              <RaisedButton
+                label={changedStateMessage}
+                type="submit"
+                primary
+                style={styles.buttons}
+                disabled={!this.state.changed || this.state.saving}
+              />
+            </form>
+          </div>
+        </Dialog>
       );
     }
     return (
