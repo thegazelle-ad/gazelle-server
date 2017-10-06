@@ -3,11 +3,11 @@ working_directory: &working_directory
 
 docker_no_database: &docker_no_database
   docker:
-    - image: circleci/node:7.10
+    - image: thegazelle/gazelle-main-circleci-primary:0.0.1
 
 docker_with_database: &docker_with_database
   docker:
-    - image: circleci/node:7.10
+    - image: thegazelle/gazelle-main-circleci-primary:0.0.1
     - image: mariadb:10.1
       environment:
         MYSQL_ROOT_PASSWORD: circleci_test_gazelle
@@ -120,9 +120,6 @@ jobs:
   main_gazelle_pages_test:
     <<: *defaults_with_database
     steps:
-      - run:
-          name: install mysql client
-          command: sudo apt-get install mysql-client
       - run:
           name: save SHA to a file
           command: echo $CIRCLE_SHA1 > .circle-sha
