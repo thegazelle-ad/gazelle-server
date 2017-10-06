@@ -66,7 +66,7 @@ jobs:
             - node_modules
           key: v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
 
-  build:
+  unit_test:
     <<: *defaults
     steps:
       - run:
@@ -75,26 +75,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ checksum ".circle-sha" }}
-
-      - restore_cache:
-          keys:
-            - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
-
-      # Complete config
-      - run: ./scripts/get-ghost-config.sh
-      # Test that we can build without errors
-      - run: npm run build-production
-
-  test:
-    <<: *defaults
-    steps:
-      - run:
-          name: save SHA to a file
-          command: echo $CIRCLE_SHA1 > .circle-sha
-      - restore_cache:
-          keys:
-            - v1-repo-{{ checksum ".circle-sha" }}
-
       - restore_cache:
           keys:
             - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
@@ -110,14 +90,36 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ checksum ".circle-sha" }}
-
       - restore_cache:
           keys:
             - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
 
       - run: npm run lint
 
-  main_gazelle_pages_test:
+  fetch_test_database:
+    <<: *defaults
+    steps:
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
+      - restore_cache:
+          keys:
+            - v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}
+
+      - run: ./scripts/circleci/fetch-test-database.sh
+
+      - save_cache:
+          paths:
+            - scripts/circleci/helpers/test.dump
+          key: v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}
+
+  build:
     <<: *defaults_with_database
     steps:
       - run:
@@ -126,16 +128,62 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ checksum ".circle-sha" }}
-
       - restore_cache:
           keys:
             - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
+      - restore_cache:
+          keys:
+            - v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}
 
       - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
-      - run: ./scripts/circleci/get-test-database.sh
+      - run: ./scripts/circleci/load-test-database.sh
+
+      # Complete config
+      - run: ./scripts/get-ghost-config.sh
+
+      - restore_cache:
+          keys:
+            - v1-build-{{ arch }}-{{ .Revision }}
+
+      - run: npm run build-production
+
+      - save_cache:
+          paths:
+            - build
+            - static/build
+          key: v1-build-{{ arch }}-{{ .Revision }}
+
+  end_to_end_test:
+    <<: *defaults_with_database
+    steps:
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
+      - restore_cache:
+          keys:
+            - v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}
+      - restore_cache:
+          keys:
+            - v1-build-{{ arch }}-{{ .Revision }}
+
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+
+      - run: ./scripts/circleci/load-test-database.sh
+
+      # Currently this whole job is just a placeholder but we will add super awesome E2E tests here
+      # the plan is to pull in the crawler test repo and if we get around to it before we ditch ghost
+      # then also pull in the ghost repo, boot everything up and then run our awesome E2E tests
       - run: ./scripts/circleci/main-gazelle-pages-test.sh
 
   prep_deploy:
@@ -175,36 +223,49 @@ workflows:
   build_test_deploy:
     jobs:
       - checkout_code
+
       - install_dependencies:
           requires:
             - checkout_code
-      - build:
-          requires:
-            - install_dependencies
-      - test:
+
+      - unit_test:
           requires:
             - install_dependencies
       - lint:
           requires:
             - install_dependencies
-      - main_gazelle_pages_test:
+      - fetch_test_database:
           requires:
             - install_dependencies
-      - prep_deploy
-      - deploy_staging:
+
+      - build:
+          requires:
+            - fetch_test_database
+      - end_to_end_test:
           requires:
             - build
-            - test
+
+      # Deployment related
+      - prep_deploy:
+          filters:
+            branches:
+              only:
+                - master
+                - stable
+      - deploy_staging:
+          requires:
+            - unit_test
             - lint
+            - end_to_end_test
             - prep_deploy
           filters:
             branches:
               only: master
       - deploy_production:
           requires:
-            - build
-            - test
+            - unit_test
             - lint
+            - end_to_end_test
             - prep_deploy
           filters:
             branches:
