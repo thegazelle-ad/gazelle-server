@@ -341,6 +341,18 @@ export default class EditorIssueArticleController extends FalcorController {
         ' either. Please re-add an article to be able to save');
       return;
     }
+    const allArticlesHaveCategories = allArticles.every(article => {
+      if (!article.hasOwnProperty('category') || !article.category) {
+        window.alert(
+          `${article.title} has no category and can therefore not be added to an issue yet`
+        );
+        return false;
+      }
+      return true;
+    });
+    if (!allArticlesHaveCategories) {
+      return;
+    }
     if (isPublished) {
       // Check that all articles are valid since issue is already published
       const fields = ARTICLE_FIELDS.filter((field) => (

@@ -29,6 +29,8 @@ const styles = {
   },
 };
 
+const ARTICLE_FIELDS = ['title', 'teaser', 'category', 'image', 'slug', 'html'];
+
 export default class EditorMainIssueController extends FalcorController {
   constructor(props) {
     super(props);
@@ -45,7 +47,6 @@ export default class EditorMainIssueController extends FalcorController {
   publishIssue() {
     const callback = () => {
       this.safeSetState({ publishing: false });
-      // window.alert("Issue successfully published");
     };
     const falcorPathSets = [
       [
@@ -55,7 +56,7 @@ export default class EditorMainIssueController extends FalcorController {
         { length: 20 },
         'articles',
         { length: 50 },
-        ['title', 'teaser', 'category', 'html'],
+        ARTICLE_FIELDS,
       ],
       [
         'issues', 'byNumber',
@@ -64,6 +65,34 @@ export default class EditorMainIssueController extends FalcorController {
         { length: 20 },
         'articles',
         { length: 50 },
+        'authors',
+        0,
+      ],
+      [
+        'issues', 'byNumber',
+        this.props.params.issueNumber,
+        'featured',
+        ARTICLE_FIELDS,
+      ],
+      [
+        'issues', 'byNumber',
+        this.props.params.issueNumber,
+        'featured',
+        'authors',
+        0,
+      ],
+      [
+        'issues', 'byNumber',
+        this.props.params.issueNumber,
+        'picks',
+        { length: 10 },
+        ARTICLE_FIELDS,
+      ],
+      [
+        'issues', 'byNumber',
+        this.props.params.issueNumber,
+        'picks',
+        { length: 10 },
         'authors',
         0,
       ],
@@ -77,43 +106,54 @@ export default class EditorMainIssueController extends FalcorController {
         // Check validity of the issue before publishing it
         const issueNumber = this.props.params.issueNumber;
         const issue = x.json.issues.byNumber[issueNumber];
-        const fields = falcorPathSets[0][falcorPathSets[0].length - 1]
-          .filter((field) => field !== 'title');
+        const fields = ARTICLE_FIELDS;
+        if (!issue.featured) {
+          window.alert('You need to add a featured article');
+          return;
+        }
+        let allArticles = [issue.featured];
+        allArticles = allArticles.concat(_.map(issue.picks, y => y));
+        if (allArticles.length !== 3) {
+          window.alert('you must have exactly 2 editor\'s picks in an issue');
+          return;
+        }
+        _.forEach(issue.categories, category => (
+          allArticles = allArticles.concat(_.map(category.articles, y => y))
+        ));
         if (issue.published_at) {
           if (!window.confirm('This article is already published, do you want to republish it?')) {
             return;
           }
         }
-        const categoriesValid = _.every(issue.categories, category => (
-          _.every(category.articles, (article) => {
-            const fieldsValid = fields.every((field) => {
-              if (!article[field]) {
-                window.alert(`${article.title} has no ${field}. Please correct this`);
-                return false;
-              }
-              return true;
-            });
-            if (!fieldsValid) {
+        const articlesValid = allArticles.every(article => {
+          const fieldsValid = fields.every((field) => {
+            if (!article[field]) {
+              console.log(article);
+              window.alert(`${article.title} has no ${field}. Please correct this`);
               return false;
-            }
-            if (!article.hasOwnProperty('authors') || !article.authors[0]) {
-              window.alert(`${article.title} has no authors. Please correct this`);
-              return false;
-            }
-            if (/http(?!s)/.test(article.html)) {
-              if (!window.confirm(
-                  `${article.title} has a non https link in it's body. ` +
-                  'please make sure this link is not an image/video etc. being loaded in. ' +
-                  'If you are sure of this press okay to continue, else cancel to check.'
-                )
-              ) {
-                return false;
-              }
             }
             return true;
-          })
-        ));
-        if (!categoriesValid) {
+          });
+          if (!fieldsValid) {
+            return false;
+          }
+          if (!article.hasOwnProperty('authors') || !article.authors[0]) {
+            window.alert(`${article.title} has no authors. Please correct this`);
+            return false;
+          }
+          if (/http(?!s)/.test(article.html)) {
+            if (!window.confirm(
+                `${article.title} has a non https link in it's body. ` +
+                'please make sure this link is not an image/video etc. being loaded in. ' +
+                'If you are sure of this press okay to continue, else cancel to check.'
+              )
+            ) {
+              return false;
+            }
+          }
+          return true;
+        });
+        if (!articlesValid) {
           return;
         }
         // The issue is valid, we can publish it

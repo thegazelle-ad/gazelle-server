@@ -1241,15 +1241,15 @@ ${JSON.stringify(issuesToUpdate)}`);
                     data: {},
                     invalidated: [
                       {
-                        path: ['issuesByNumber', issueNumber, 'categories'],
+                        path: ['issues', 'byNumber', issueNumber, 'categories'],
                         invalidated: true,
                       },
                       {
-                        path: ['issuesByNumber', issueNumber, 'featured'],
+                        path: ['issues', 'byNumber', issueNumber, 'featured'],
                         invalidated: true,
                       },
                       {
-                        path: ['issuesByNumber', issueNumber, 'picks'],
+                        path: ['issues', 'byNumber', issueNumber, 'picks'],
                         invalidated: true,
                       },
                     ],
@@ -1267,8 +1267,8 @@ ${JSON.stringify(issuesToUpdate)}`);
                     if (index === 0) {
                       // Create the key and also only insert this one
                       data.featured = {
-                        path: ['issuesByNumber', issueNumber, 'featured'],
-                        value: { $type: 'ref', value: ['articlesBySlug', article.slug] },
+                        path: ['issues', 'byNumber', issueNumber, 'featured'],
+                        value: { $type: 'ref', value: ['articles', 'bySlug', article.slug] },
                       };
                     }
                   });
@@ -1279,8 +1279,8 @@ ${JSON.stringify(issuesToUpdate)}`);
                       data.picks = [];
                     }
                     data.picks.push({
-                      path: ['issuesByNumber', issueNumber, 'picks', index],
-                      value: { $type: 'ref', value: ['articlesBySlug', article.slug] },
+                      path: ['issues', 'byNumber', issueNumber, 'picks', index],
+                      value: { $type: 'ref', value: ['articles', 'bySlug', article.slug] },
                     });
                   });
 
@@ -1299,14 +1299,14 @@ ${JSON.stringify(issuesToUpdate)}`);
                           slug: category.slug,
                           articles: [{
                             path: [
-                              'issuesByNumber',
+                              'issues', 'byNumber',
                               issueNumber,
                               'categories',
                               category.index,
                               'articles',
                               articleIndex,
                             ],
-                            value: { $type: 'ref', value: ['articlesBySlug', article.slug] },
+                            value: { $type: 'ref', value: ['articles', 'bySlug', article.slug] },
                           }],
                         },
                       };
@@ -1320,14 +1320,14 @@ ${JSON.stringify(issuesToUpdate)}`);
                         slug: category.slug,
                         articles: [{
                           path: [
-                            'issuesByNumber',
+                            'issues', 'byNumber',
                             issueNumber,
                             'categories',
                             category.index,
                             'articles',
                             articleIndex,
                           ],
-                          value: { $type: 'ref', value: ['articlesBySlug', article.slug] },
+                          value: { $type: 'ref', value: ['articles', 'bySlug', article.slug] },
                         }],
                       };
                     } else {
@@ -1335,14 +1335,14 @@ ${JSON.stringify(issuesToUpdate)}`);
                       const category = slugToObject[article.category];
                       data.categories[category.index].articles.push({
                         path: [
-                          'issuesByNumber',
+                          'issues', 'byNumber',
                           issueNumber,
                           'categories',
                           category.index,
                           'articles',
                           articleIndex,
                         ],
-                        value: { $type: 'ref', value: ['articlesBySlug', article.slug] },
+                        value: { $type: 'ref', value: ['articles', 'bySlug', article.slug] },
                       });
                     }
                     // Increment the order
@@ -1357,7 +1357,7 @@ ${JSON.stringify(issuesToUpdate)}`);
                     const toPublish = allArticles.filter((article) => {
                       if (!article.published_at) {
                         data.published.push({
-                          path: ['articlesBySlug', article.slug, 'published_at'],
+                          path: ['articles', 'bySlug', article.slug, 'published_at'],
                           value: date.getTime(),
                         });
                         return true;
@@ -1385,8 +1385,8 @@ ${JSON.stringify(issuesToUpdate)}`);
 
   updateIssueData(jsonGraphArg) {
     return new Promise((resolve) => {
-      const issueNumber = Object.keys(jsonGraphArg.issuesByNumber)[0];
-      const value = jsonGraphArg.issuesByNumber[issueNumber].published_at;
+      const issueNumber = Object.keys(jsonGraphArg.issues.byNumber)[0];
+      const value = jsonGraphArg.issues.byNumber[issueNumber].published_at;
       database('issues').where('issue_order', '=', issueNumber)
       .update('published_at', value)
       .then(() => {
