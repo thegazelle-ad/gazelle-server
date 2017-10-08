@@ -30,3 +30,6 @@ src/transitions/*  @zanemountcastle
 src/client-scripts/*  @emilgoldsmith
 src/server-code/*     @emilgoldsmith
 src/index.js          @emilgoldsmith
+
+# Emil has ownership over everything CircleCI related
+.circleci/*      @emilgoldsmith
