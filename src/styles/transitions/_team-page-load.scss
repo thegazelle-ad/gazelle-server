@@ -93,27 +93,96 @@ body{
 
 @media screen and (max-width: 1025px){
 	.team-page-load {
-		width: 732px;
+		width: 768px;
 	}
 	.team-page__title-load {
 		width: 768px !important;
+	}
+	.team-page__member-load {
+		width: 768px !important;
+		background-image: 
+			linear-gradient(90deg, rgba(250, 250, 250, 0), rgba(250, 250, 250, 0.5) 50%, rgba(250, 250, 250, 0) 100%),
+
+			linear-gradient($transition-grey 1px, transparent 0),
+			linear-gradient($transition-grey 20px, transparent 0),
+			linear-gradient($transition-grey 12px, transparent 0),
+			linear-gradient(#ffffff 70px, transparent 0),
+			linear-gradient($transition-grey 290px, transparent 0),
+
+			linear-gradient($transition-grey 1px, transparent 0),
+			linear-gradient($transition-grey 20px, transparent 0),
+			linear-gradient($transition-grey 12px, transparent 0),
+			linear-gradient(#ffffff 70px, transparent 0),
+			linear-gradient($transition-grey 290px, transparent 0),
+
+			linear-gradient($transition-grey 1px, transparent 0),
+			linear-gradient($transition-grey 20px, transparent 0),
+			linear-gradient($transition-grey 12px, transparent 0),
+			linear-gradient(#ffffff 70px, transparent 0),
+			linear-gradient($transition-grey 290px, transparent 0),
+
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0) !important;
 	}
 }
 
 @media screen and (max-width: 750px){
 	.team-page-load {
-		width: 500px;
+		width: 536px;
 	}
 	.team-page__title-load {
 		width: 536px !important;
+	}
+	.team-page__member-load {
+		width: 536px !important;
+		background-image: 
+			linear-gradient(90deg, rgba(250, 250, 250, 0), rgba(250, 250, 250, 0.5) 50%, rgba(250, 250, 250, 0) 100%),
+
+			linear-gradient($transition-grey 1px, transparent 0),
+			linear-gradient($transition-grey 20px, transparent 0),
+			linear-gradient($transition-grey 12px, transparent 0),
+			linear-gradient(#ffffff 70px, transparent 0),
+			linear-gradient($transition-grey 290px, transparent 0),
+
+			linear-gradient($transition-grey 1px, transparent 0),
+			linear-gradient($transition-grey 20px, transparent 0),
+			linear-gradient($transition-grey 12px, transparent 0),
+			linear-gradient(#ffffff 70px, transparent 0),
+			linear-gradient($transition-grey 290px, transparent 0),
+
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0) !important;
 	}
 }
 
 @media screen and (max-width: 550px){
 	.team-page-load {
-		width: 268px;
+		width: 304px;
 	}
 	.team-page__title-load {
 		width: 304px !important;
+	}
+	.team-page__member-load {
+		width: 304px !important;
+		background-image: 
+			linear-gradient(90deg, rgba(250, 250, 250, 0), rgba(250, 250, 250, 0.5) 50%, rgba(250, 250, 250, 0) 100%),
+
+			linear-gradient($transition-grey 1px, transparent 0),
+			linear-gradient($transition-grey 20px, transparent 0),
+			linear-gradient($transition-grey 12px, transparent 0),
+			linear-gradient(#ffffff 70px, transparent 0),
+			linear-gradient($transition-grey 290px, transparent 0),
+
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0) !important;
 	}
 }
