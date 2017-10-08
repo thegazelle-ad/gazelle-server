@@ -9,6 +9,7 @@ import Helmet from 'react-helmet'; // Add meta tags for pre-Ghost release
 // Import components
 import TeamPage from 'components/TeamPage';
 import NotFound from 'components/NotFound';
+import TeamPageLoad from 'transitions/TeamPageLoad';
 
 export default class TeamPageController extends FalcorController {
   static getFalcorPathSets() {
@@ -25,7 +26,7 @@ export default class TeamPageController extends FalcorController {
   }
 
   render() {
-    if (this.state.ready) {
+    if (!this.state.ready) {
       if (!this.state.data) {
         return (
           <NotFound />
@@ -53,6 +54,6 @@ export default class TeamPageController extends FalcorController {
         </div>
       );
     }
-    return <div>Loading</div>;
+    return <TeamPageLoad />;
   }
 }
