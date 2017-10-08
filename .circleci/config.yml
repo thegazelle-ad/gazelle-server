@@ -3,11 +3,11 @@ working_directory: &working_directory
 
 docker_no_database: &docker_no_database
   docker:
-    - image: thegazelle/gazelle-main-circleci-primary:0.0.2
+    - image: thegazelle/gazelle-main-circleci-primary:0.0.3
 
 docker_with_database: &docker_with_database
   docker:
-    - image: thegazelle/gazelle-main-circleci-primary:0.0.2
+    - image: thegazelle/gazelle-main-circleci-primary:0.0.3
     - image: mariadb:10.1
       environment:
         MYSQL_ROOT_PASSWORD: circleci_test_gazelle
