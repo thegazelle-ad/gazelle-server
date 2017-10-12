@@ -8,7 +8,7 @@
     "build-production": "./node_modules/.bin/webpack -p --config ./webpack.production.config.js --bail",
     "build-beta": "./node_modules/.bin/webpack -p --config ./webpack.beta.config.js --bail",
     "test": "jest",
-    "lint": "eslint '{src,__tests__}/**/*.{js,jsx}'"
+    "lint": "eslint --max-warnings 0 '{src,__tests__}/**/*.{js,jsx}'"
   },
   "jest": {
     "moduleFileExtensions": [
