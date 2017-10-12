@@ -89,16 +89,14 @@ export default class EditorArticleController extends FalcorController {
       const teaser = article.teaser || '';
       const category = article.category || '';
       const image = article.image || '';
+      const authors = _.map(article.authors, author => author);
 
-      this.safeSetState({ teaser, category, image });
+      this.safeSetState({ teaser, category, image, authors });
     };
     super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
-
     this.safeSetState({
       changed: false,
       saving: false,
-      authors: [],
-      authorsDeleted: {},
     });
   }
 
