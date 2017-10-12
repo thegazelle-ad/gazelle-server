@@ -128,7 +128,6 @@ export default class EditorMainIssueController extends FalcorController {
         const articlesValid = allArticles.every(article => {
           const fieldsValid = fields.every((field) => {
             if (!article[field]) {
-              console.log(article);
               window.alert(`${article.title} has no ${field}. Please correct this`);
               return false;
             }
