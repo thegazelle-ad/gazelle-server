@@ -7,6 +7,7 @@ import placeholder from './placeholder';
 import search from './search';
 import teams from './teams';
 import trending from './trending';
+import semesters from './semesters';
 
 export {
   articles,
@@ -18,4 +19,5 @@ export {
   search,
   teams,
   trending,
+  semesters,
 };

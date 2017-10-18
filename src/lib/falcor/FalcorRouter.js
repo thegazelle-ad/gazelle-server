@@ -10,6 +10,7 @@ import {
   placeholder,
   teams,
   trending,
+  semesters,
 } from 'lib/falcor/routes';
 
 export default class FalcorRouter extends BaseRouter.createClass(
@@ -22,7 +23,8 @@ export default class FalcorRouter extends BaseRouter.createClass(
     issues,
     placeholder,
     teams,
-    trending
+    trending,
+    semesters
   )
 ) {
   /* eslint-disable no-useless-constructor */

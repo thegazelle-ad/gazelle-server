@@ -8,9 +8,9 @@ export default class TeamPage extends BaseComponent {
   render() {
     const renderTeams = (
       _.map((this.props.teamData || []), team => (
-        <div key={team.name} className="team-page__team">
-          <h2 className="section-header">{team.name}</h2>
-          <TeamMembersList members={team.authors} />
+        <div key={team.teamInfo.name} className="team-page__team">
+          <h2 className="section-header">{team.teamInfo.name}</h2>
+          <TeamMembersList members={team.members} />
         </div>
       ))
     );

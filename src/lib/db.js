@@ -1544,4 +1544,57 @@ ${JSON.stringify(issuesToUpdate)}`);
       });
     });
   }
+
+  getLatestSemester() {
+    return new Promise((resolve) => {
+      database.select('name', knex.raw("MAX('date') as date"))
+      .from('semesters')
+      .then((rows) => {
+        if (rows.length !== 1) {
+          throw new Error('Problems fetching latest semester');
+        }
+        resolve(rows[0].name);
+      })
+      .catch((e) => {
+        throw e;
+      });
+    });
+  }
+
+  getSemesterMembers(semesterName, teamIndices, memberIndices) {
+    return new Promise((resolve) =>
+      database.select('teams.slug as teamSlug', 'authors.slug as authorSlug', 'team_order', 'author_order') // eslint-disable-line max-len
+      .from('teams_authors')
+      .innerJoin('semesters', 'semesters.id', '=', 'semester_id')
+      .innerJoin('teams', 'teams.id', '=', 'team_id')
+      .innerJoin('authors', 'authors.id', '=', 'author_id')
+      .where('semesters.name', '=', semesterName)
+      .whereIn('team_order', teamIndices)
+      .whereIn('author_order', memberIndices)
+      .then(rows => {
+        const data = {};
+        rows.forEach(row => {
+          if (!data.hasOwnProperty(row.team_order)) {
+            data[row.team_order] = {};
+          }
+          data[row.team_order][row.author_order] = row.authorSlug;
+        });
+        resolve(data);
+      })
+    );
+  }
+
+  getSemesterTeams(semesterName, teamIndices) {
+    return new Promise((resolve) => (
+      database.distinct('teams.slug as teamSlug', 'team_order') // eslint-disable-line max-len
+      .from('teams_authors')
+      .innerJoin('semesters', 'semesters.id', '=', 'semester_id')
+      .innerJoin('teams', 'teams.id', '=', 'team_id')
+      .where('semesters.name', '=', semesterName)
+      .whereIn('team_order', teamIndices)
+      .then(rows => {
+        resolve(rows);
+      })
+    ));
+  }
 }

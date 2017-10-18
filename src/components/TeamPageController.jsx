@@ -13,11 +13,11 @@ import NotFound from 'components/NotFound';
 export default class TeamPageController extends FalcorController {
   static getFalcorPathSets() {
     return [
-      ['teams', 'byIndex', { length: 10 }, ['name']],
+      ['semesters', 'latest', { length: 10 }, 'teamInfo', 'name'],
       [
-        'teams', 'byIndex',
+        'semesters', 'latest',
         { length: 10 },
-        'authors',
+        'members',
         { length: 50 },
         ['name', 'slug', 'job_title', 'image'],
       ],
@@ -31,7 +31,7 @@ export default class TeamPageController extends FalcorController {
           <NotFound />
         );
       }
-      const teamData = this.state.data.teams.byIndex;
+      const teamData = this.state.data.semesters.latest;
       const meta = [
         // Search results
         { name: 'description', content: "The Gazelle's dedicated student team." },
