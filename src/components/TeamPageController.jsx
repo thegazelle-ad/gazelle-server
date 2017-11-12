@@ -26,7 +26,7 @@ export default class TeamPageController extends FalcorController {
   }
 
   render() {
-    if (!this.state.ready) {
+    if (this.state.ready) {
       if (!this.state.data) {
         return (
           <NotFound />

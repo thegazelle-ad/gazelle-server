@@ -100,7 +100,9 @@
       }
     }
     &__related-articles {
+      padding-bottom: 0;
       &__header {
+        margin: .3rem 0 !important;
         @include section-header;
       }
       @include vertical-article-list;
@@ -110,12 +112,14 @@
         border-right: 1px solid $border-grey;
         .article-preview {
           width: 100%;
+          margin-bottom: 0.3rem !important;
           &__featured-image {
-            width: 240px;
-            height: 150px;
+            width: 250px;
+            height: 180px;
           }
           &__content {
-            min-width: 50%;
+            min-width: 45%;
+            padding: 0.8rem;
             .sharing-buttons {
               display: none;
             }
