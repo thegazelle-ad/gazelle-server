@@ -66,27 +66,26 @@
     max-width: $column-1;
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-    border-bottom: 1px solid #E8E8E8;
+    justify-content: left;
+    margin-bottom: 1rem;
     flex-grow: 1;
     max-width: 100%; // Keeps articles with short titles/teasers centered
     &:last-child {
-      margin-bottom: 0;
       border-bottom: none;
       padding-bottom: 0;
     }
 
     &__featured-image {
       object-fit: cover;
-      width: 450px;
-      height: 250px;
+      height: 300px;
+      width: 30em;
     }
 
     &__content {
-      max-width: 20%;
-      min-width: 250px;
-      padding-left: 1.3rem;
+      margin: 0;
+      //max-width: 60em;
+      //min-width: 250px;
+      padding: 1.7rem;
       &__title {
        font-size: 1.2rem;
        line-height: 1.5rem;
