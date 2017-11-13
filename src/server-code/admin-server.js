@@ -18,6 +18,8 @@ import { exec } from 'child_process';
 // Helps us parse post requests from falcor
 import bodyParser from 'body-parser';
 
+import request from 'request';
+
 /* Our own helper functions */
 import { isDevelopment, hash, isCI } from 'lib/utilities';
 import { md5Hash, compressJPEG, deleteFile } from 'lib/server-utilities';
@@ -210,6 +212,36 @@ export default function runAdminServer(serverFalcorModel) {
     });
   }
 
+  const CLIENT_ID = '870681894101-ce7tdp6h9fvt2jfrqaaalim1s2n48ie3.apps.googleusercontent.com';
+  const WHITELIST = ['xt405@nyu.edu', 'tjk343@nyu.edu', 'ks3583@nyu.edu', 'kw1553@nyu.edu', 'hct245@nyu.edu',
+        'zmm228@nyu.edu', 'ego225@nyu.edu']; // eslint-disable-line max-len
+
+  app.post('/googlelogin', (req, res) => {
+    const token = req.body.data;
+    const endpoint = `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${token}`;
+
+    request.get(endpoint, (error, response, body) => {
+      if (error) {
+        res.status(500).send('google login error');
+      }
+
+      const content = JSON.parse(body);
+      // aud should contain our client id
+      const aud = content.aud;
+      const email = content.email;
+
+      if (aud.trim() === CLIENT_ID) {
+        // if valid email address, complete login
+        if (WHITELIST.indexOf(email) !== -1) {
+          res.sendStatus(200);
+        } else {
+          res.status(401).send('unauthorized user');
+        }
+      } else {
+        res.status(401).send('invalid token');
+      }
+    });
+  });
 
   const port = isCI || !process.env.ADMIN_PORT ? 4000 : process.env.ADMIN_PORT;
   app.listen(port, err => {
