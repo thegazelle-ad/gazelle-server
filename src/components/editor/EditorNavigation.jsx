@@ -9,6 +9,7 @@ import MenuItem from 'material-ui/MenuItem';
 import Description from 'material-ui/svg-icons/action/description';
 import Person from 'material-ui/svg-icons/social/person';
 import Photo from 'material-ui/svg-icons/image/photo';
+import Info from 'material-ui/svg-icons/action/info';
 import LibraryBooks from 'material-ui/svg-icons/av/library-books';
 
 const styles = {
@@ -30,6 +31,7 @@ export default class EditorNavigation extends BaseComponent {
           <Link to="/issues"><MenuItem leftIcon={<LibraryBooks />}>Issues</MenuItem></Link>
           <Link to="/authors"><MenuItem leftIcon={<Person />}>Authors</MenuItem></Link>
           <Link to="/images/upload"><MenuItem leftIcon={<Photo />}>Images</MenuItem></Link>
+          <Link to="/readme"><MenuItem leftIcon={<Info />}>Readme</MenuItem></Link>
         </Drawer>
       </div>
     );
