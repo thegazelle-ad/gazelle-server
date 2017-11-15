@@ -1,11 +1,12 @@
 import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
 
-export default class ReadMe extends BaseComponent {
+export default class Readme extends BaseComponent {
   render() {
     return (
+      /* eslint-disable */
       <div>
-        <h1>ReadMe</h1>
+        <h1>Readme</h1>
         <p>Step 1. Images<br />* Images must be 1350x750px for the header pic, and ideally the same size for in-line photos<br />* Upload images to admin.thegazelle.org<br /> * Login: password = gazellegazelle<br /> * Click on images, then choose file, or drag files onto the &lsquo;choose file button&rsquo;<br /> * Click upload<br /> * Copy the image url (always must start with https://s3.)<br /> * Paste in copy flow or work-space of your choice<br /> Screen Shot 2017-05-03 at 1.52.43 pm.png</p>
 <p>&nbsp;</p>
 <p>* I lost the url, how do I find the image again?<br /> * Click on Archive<br /> * Click on Amazon S3<br /> * https://console.aws.amazon.com/s3/buckets/thegazelle/gazelle/2017/09/?region=eu-west-1&amp;tab=overview# <br /> * Sign in<br /> * Email: editors@thegazelle.org<br /> * Password: SaadiyatRacists<br /> * Click on thegazelle &gt; gazelle &gt; year &gt; month &gt; title of image<br /> * Copy the image link, i.e. https://s3.amazonaws.com/thegazelle/gazelle/2017/05/the+gazelle_armenia.jpg<br /> Screen Shot 2017-05-03 at 2.30.21 pm.png</p>
@@ -25,12 +26,6 @@ export default class ReadMe extends BaseComponent {
 <p><br />Good form:<br />* Unpublish articles that you removed from all issues (if they are published the URLs to them will still work, though it wouldn&rsquo;t crash the website, just direct URLs to them would still show up instead of our 404 Page Not Found)</p>
       </div>
     );
+    /* eslint-enable */
   }
 }
-
-
-// Readme.propTypes = {
-//
-//   html: React.PropTypes.string.isRequired,
-//
-// };

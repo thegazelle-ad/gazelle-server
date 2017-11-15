@@ -120,7 +120,7 @@ export default class EditorAppController extends BaseComponent {
   }
 
   render() {
-    const navItems = ['Articles', 'Authors', 'Issues', 'Images', 'ReadMe'];
+    const navItems = ['Articles', 'Authors', 'Issues', 'Images', 'Readme'];
     const bodyStyle = { transition: 'margin-left 450ms cubic-bezier(0.23, 1, 0.32, 1)' };
     if (this.isLoggedIn()) { bodyStyle.marginLeft = 256; }
 

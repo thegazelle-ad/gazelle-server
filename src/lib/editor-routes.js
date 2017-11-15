@@ -14,7 +14,7 @@ import EditorLogin from 'components/editor/EditorLogin';
 import EditorImageController from 'components/editor/EditorImageController';
 import EditorImagePreviewList from 'components/editor/EditorImagePreviewList';
 import EditorImageArchive from 'components/editor/EditorImageArchive';
-import EditorReadMe from 'components/editor/EditorReadMe';
+import EditorReadme from 'components/editor/EditorReadme';
 
 export default (
   <Route path="/" component={EditorAppController}>
@@ -41,7 +41,7 @@ export default (
       <Route path="upload" component={EditorImagePreviewList} />
       <Route path="archive" component={EditorImageArchive} />
     </Route>
-    <Route path="readme" component={EditorReadMe} />
+    <Route path="readme" component={EditorReadme} />
 
     <Route path="*" component={EditorNotFound} />
   </Route>
