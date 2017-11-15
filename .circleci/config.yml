@@ -30,7 +30,7 @@ jobs:
 
       # Complete setup
       - run: |
-          cp config/database.config.example.js config/database.config.js
+          sed 's/"password",$/"circleci_test_gazelle",/' config/database.config.example.js > config/database.config.js
           cp config/s3.config.example.js config/s3.config.js
           cp config/ghost.config.example.js config/ghost.config.js
 
@@ -159,6 +159,8 @@ jobs:
   end_to_end_test:
     <<: *defaults_with_database
     steps:
+      - attach_workspace:
+          at: ~/.ssh
       - run:
           name: save SHA to a file
           command: echo $CIRCLE_SHA1 > .circle-sha
@@ -181,18 +183,45 @@ jobs:
 
       - run: ./scripts/circleci/load-test-database.sh
 
-      # Currently this whole job is just a placeholder but we will add super awesome E2E tests here
-      # the plan is to pull in the crawler test repo and if we get around to it before we ditch ghost
-      # then also pull in the ghost repo, boot everything up and then run our awesome E2E tests
+      - run:
+          name: Clone Ghost repo
+          command: |
+            cd ~
+            git clone git@github.com:thegazelle-ad/database-and-ghost-blog-server.git
+
+      - restore_cache:
+          keys:
+            - v1-ghost-dependencies-and-config-{{ arch }}-{{ checksum "~/database-and-ghost-blog-server/package.json" }}
+
+      - run:
+          name: Setup Ghost
+          command: |
+            cd ~/database-and-ghost-blog-server
+            sed "s/'password'/'circleci_test_gazelle'/" config.example.js > config.js
+            . ~/.nvm/nvm.sh
+            npm install --production
+
+      - save_cache:
+          paths:
+            - ~/database-and-ghost-blog-server/node_modules
+            - ~/database-and-ghost-blog-server/config.js
+          key: v1-ghost-dependencies-and-config-{{ arch }}-{{ checksum "~/database-and-ghost-blog-server/package.json" }}
+
+      # Actually run the tests
       - run: ./scripts/circleci/main-gazelle-pages-test.sh
 
-  prep_deploy:
+  prep_ssh:
     <<: *defaults
     steps:
       # Setup known_hosts so the VM allows ssh access without the prompt
       - run:
           name: Add server ssh key to known_hosts
           command: mkdir -p ~/.ssh && echo '|1|lngQecMeLZI49/+fr5Ee0gOWaKE=|arylHILm4qsNJewDKKwFKOijBxE= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLONO0airQQL9d1rOZzT/p3SBH8acSYaN4N8qJezd/0UbnF8SBi+m1wB2nay5o0HQBQTM6O+MKXDwzYec886K78=' >> ~/.ssh/known_hosts
+
+      - run:
+          name: Add Github RSA key to known_hosts
+          command: ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+
       - persist_to_workspace:
           root: ~/.ssh
           paths:
@@ -224,6 +253,8 @@ workflows:
     jobs:
       - checkout_code
 
+      - prep_ssh
+
       - install_dependencies:
           requires:
             - checkout_code
@@ -244,20 +275,15 @@ workflows:
       - end_to_end_test:
           requires:
             - build
+            - prep_ssh
 
       # Deployment related
-      - prep_deploy:
-          filters:
-            branches:
-              only:
-                - master
-                - stable
       - deploy_staging:
           requires:
             - unit_test
             - lint
             - end_to_end_test
-            - prep_deploy
+            - prep_ssh
           filters:
             branches:
               only: master
@@ -266,7 +292,7 @@ workflows:
             - unit_test
             - lint
             - end_to_end_test
-            - prep_deploy
+            - prep_ssh
           filters:
             branches:
               only: stable

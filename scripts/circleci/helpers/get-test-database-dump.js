@@ -3,13 +3,13 @@ function getTestDatabase(auth) {
   var service = google.drive({version: 'v3', auth: auth});
 
   service.files.list({
-    q: "name = 'CircleCI_test.dump' and mimeType = 'application/octet-stream'"
+    q: "name = 'CircleCI_test1.dump' and mimeType = 'application/octet-stream'"
   }, (err, response) => {
     if (err) {
       throw err;
     }
     if (response.files.length !== 1) {
-      throw new Error ("found more than one file named 'CircleCI_test.dump'");
+      throw new Error ("found more than one file named 'CircleCI_test1.dump'");
     }
     const id = response.files[0].id;
     const dest = fs.createWriteStream(__dirname + '/test.dump');

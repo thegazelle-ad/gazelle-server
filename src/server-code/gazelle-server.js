@@ -151,6 +151,15 @@ export default function runGazelleServer(serverFalcorModel) {
 
   app.use(compression());
 
+  // This endpoint is purely used so outsiders like CircleCI can know whether the server is running
+  app.get('/alive', (req, res) => {
+    res.status(200).send(
+      'This route is purely for internal testing, if you\'re seeing this in your browser' +
+      ' you should instead navigate to <a href="/">The Front Page</a> to access' +
+      ' the contents of our lovely newspaper.'
+    );
+  });
+
   if (isStaging) {
     app.get('/login', (req, res) => {
       match({ routes: mainRoutes, location: req.url },
