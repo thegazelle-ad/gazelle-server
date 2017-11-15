@@ -120,7 +120,6 @@ export default class EditorAppController extends BaseComponent {
   }
 
   render() {
-    const navItems = ['Articles', 'Authors', 'Issues', 'Images'];
     const bodyStyle = { transition: 'margin-left 450ms cubic-bezier(0.23, 1, 0.32, 1)' };
     if (this.isLoggedIn()) { bodyStyle.marginLeft = 256; }
 
@@ -162,7 +161,7 @@ export default class EditorAppController extends BaseComponent {
           />
 
           {/* Only show nav if logged in */}
-          <EditorNavigation navItems={navItems} isNavOpen={this.isLoggedIn()} />
+          <EditorNavigation isNavOpen={this.isLoggedIn()} />
           <div style={bodyStyle} className="editor-body">
             <div className="editor-items">
               {this.props.children}
