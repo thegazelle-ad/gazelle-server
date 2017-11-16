@@ -13,14 +13,6 @@ import FileUpload from 'material-ui/svg-icons/file/file-upload';
 import Folder from 'material-ui/svg-icons/file/folder';
 import RaisedButton from 'material-ui/RaisedButton';
 
-/* eslint-disable no-nested-ternary */
-const UPLOAD_URL = process.env.NODE_ENV
-  ? (process.env.NODE_ENV === 'production'
-    ? 'https://admin.thegazelle.org/upload'
-    : 'https://adminbeta.thegazelle.org/upload')
-  : 'http://localhost:4000/upload';
-/* eslint-enable no-nested-ternary */
-
 export default class EditorImageUploader extends BaseComponent {
   constructor() {
     super();
@@ -85,7 +77,7 @@ export default class EditorImageUploader extends BaseComponent {
                            'error logged in developer console';
       this.handleUploadTerminated(fileObject.metaData.name, 3, undefined, errorMessage);
     };
-    xhr.open('POST', UPLOAD_URL, true);
+    xhr.open('POST', '/upload', true);
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     // Put file in request and assign user-defined name
     formData.set('image', file, fileObject.metaData.name);

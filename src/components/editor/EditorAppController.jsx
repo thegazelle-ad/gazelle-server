@@ -17,20 +17,6 @@ import Divider from 'material-ui/Divider';
 // Components
 import EditorNavigation from 'components/editor/EditorNavigation';
 
-let HOSTNAME = '';
-let PORT = '';
-
-if (process.env.NODE_ENV === 'production') {
-  HOSTNAME = 'admin.thegazelle.org';
-  PORT = 443;
-} else if (process.env.NODE_ENV === 'beta') {
-  HOSTNAME = 'adminbeta.thegazelle.org';
-  PORT = 443;
-} else {
-  HOSTNAME = 'localhost';
-  PORT = 4000;
-}
-
 export default class EditorAppController extends BaseComponent {
   constructor(props) {
     super(props);
@@ -83,12 +69,7 @@ export default class EditorAppController extends BaseComponent {
 
   restartServer() {
     const password = window.prompt('Please input the password');
-    const options = {
-      hostname: HOSTNAME,
-      port: PORT,
-      path: `/restartserver?password=${password}`,
-    };
-    http.get(options, (res) => {
+    http.get(`/restartserver?password=${password}`, (res) => {
       let reply = '';
 
       res.on('data', (chunk) => {
