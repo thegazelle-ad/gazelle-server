@@ -20,7 +20,7 @@ import { exec } from 'child_process';
 import bodyParser from 'body-parser';
 
 /* Our own helper functions */
-import { isDevelopment, filterByEnvironment, hash } from 'lib/utilities';
+import { isDevelopment, filterByEnvironment, hash, isCI } from 'lib/utilities';
 import { md5Hash, compressJPEG, deleteFile } from 'lib/server-utilities';
 
 export default function runAdminServer(serverFalcorModel) {
@@ -220,13 +220,14 @@ export default function runAdminServer(serverFalcorModel) {
   }
 
 
-  app.listen(process.env.EDITOR_PORT || 4000, err => {
+  const port = isCI || !process.env.EDITOR_PORT ? 4000 : process.env.EDITOR_PORT;
+  app.listen(port, err => {
     if (err) {
       console.error(err); // eslint-disable-line no-console
       return;
     }
 
     // eslint-disable-next-line no-console
-    console.log(`Editor tools server started on port ${process.env.EDITOR_PORT || 4000}`);
+    console.log(`Editor tools server started on port ${port}`);
   });
 }

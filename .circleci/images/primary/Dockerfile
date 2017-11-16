@@ -12,3 +12,8 @@ RUN ["/bin/bash", "-c", ". $NVM_DIR/nvm.sh && nvm install 4.2"]
 # Remove the auto load nvm commands from the bashrc
 RUN head --lines=-3 ${HOME}/.bashrc > ${HOME}/tmp.txt
 RUN mv ${HOME}/tmp.txt ${HOME}/.bashrc
+
+# Install electron dependencies
+RUN sudo apt-get update &&\
+    sudo apt-get install -y libgtk2.0-0 libgconf-2-4 \
+        libasound2 libxtst6 libxss1 libnss3 xvfb

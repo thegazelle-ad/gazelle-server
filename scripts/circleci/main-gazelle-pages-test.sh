@@ -32,7 +32,7 @@ IS_UP=1
 while [ $IS_UP -ne 0 ]
 do
   sleep 0.5
-  curl -f http://localhost:8001/alive &> /dev/null
+  curl -f http://localhost:3000/alive &> /dev/null
   IS_UP=$(echo $?)
 done
 # Now the server is running
@@ -48,16 +48,23 @@ done
 # Now Ghost and therefore everything is running
 echo "Ghost server is responding"
 
-# Just an initial dummy test until we implement proper ones
+# Run display needed for nightmare that we use for E2E tests
+sudo Xvfb -ac -screen scrn 1280x2000x24 :9.0 &
+SCREEN_PID=$(echo $!)
+export DISPLAY=:9.0
+
 echo "Starting test"
 
-curl http://localhost:8001
+npm run test:e2e
+EXIT_CODE=$(echo $?)
 
 # Cleanup
 echo "Tests finished, starting cleanup"
 
 kill $SERVER_PID
 kill $GHOST_PID
+kill $SCREEN_PID
 
 # We also have to kill the node processes that they spawn
 ps -a | grep node | awk '{print $1}' | xargs kill
+exit $EXIT_CODE

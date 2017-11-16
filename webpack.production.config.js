@@ -48,6 +48,8 @@ module.exports = [{
         'NODE_ENV': '"production"', // compiles React as production build
 	      'MAIN_PORT': 8001, // we use a reverse proxy to forward this to port 80
         'EDITOR_PORT': 8002,
+        'CI': JSON.stringify(process.env.CI),
+        'CIRCLECI': JSON.stringify(process.env.CIRCLECI),
       },
     }),
     new webpack.optimize.UglifyJsPlugin({
@@ -153,6 +155,8 @@ module.exports = [{
     new webpack.DefinePlugin({
       'process.env':{
         'NODE_ENV': '"production"', // compiles React as production build
+        'CI': JSON.stringify(process.env.CI),
+        'CIRCLECI': JSON.stringify(process.env.CIRCLECI),
       },
     }),
   ],
