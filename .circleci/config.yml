@@ -79,7 +79,7 @@ jobs:
           keys:
             - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
 
-      - run: npm test
+      - run: npm run test:unit
 
   lint:
     <<: *defaults
