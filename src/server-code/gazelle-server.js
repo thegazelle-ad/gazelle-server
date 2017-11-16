@@ -26,7 +26,7 @@ import compression from 'compression';
 import bodyParser from 'body-parser';
 
 /* Our helper functions */
-import { isStaging } from 'lib/utilities';
+import { isStaging, isCI } from 'lib/utilities';
 import { md5Hash } from 'lib/server-utilities';
 import { injectModelCreateElement } from 'lib/falcor/falcor-utilities';
 
@@ -226,13 +226,14 @@ export default function runGazelleServer(serverFalcorModel) {
   // To run on port 80:
   //    Development build: run `sudo PORT=80 npm start`
   //    Production build: run `sudo npm start`
-  app.listen(process.env.MAIN_PORT || 3000, err => {
+  const port = isCI || !process.env.MAIN_PORT ? 3000 : process.env.MAIN_PORT;
+  app.listen(port, err => {
     if (err) {
       console.error(err); // eslint-disable-line no-console
       return;
     }
     console.log( // eslint-disable-line no-console
-      `The Gazelle Website started on port ${process.env.MAIN_PORT || 3000}`
+      `The Gazelle Website started on port ${port}`
     );
   });
 }
