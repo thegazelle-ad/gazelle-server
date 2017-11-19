@@ -278,3 +278,7 @@ export function filterByEnvironment(development, beta, production) {
   }
   return development;
 }
+
+export const googleClient = '870681894101-ce7tdp6h9fvt2jfrqaaalim1s2n48ie3.apps.googleusercontent.com'; // eslint-disable-line max-len
+export const googleWhitelist = ['xt405@nyu.edu', 'tjk343@nyu.edu', 'ks3583@nyu.edu', 'kw1553@nyu.edu', 'hct245@nyu.edu', 'zmm228@nyu.edu', 'ego225@nyu.edu']; // eslint-disable-line max-len
+
