@@ -102,15 +102,16 @@ export default class EditorAuthorListController extends FalcorController {
   }
 
   render() {
+    const ID = 'author-list';
     if (this.state.ready) {
       return (
-        <div>
+        <div id={ID}>
           <h1>Authors</h1>
           <Divider />
           <Paper style={styles.paper} zDepth={2}>
             <Tabs>
               <Tab label="EDIT" icon={<ModeEdit />}>
-                <div style={styles.tabs}>
+                <div id={`${ID}-edit-tab`} style={styles.tabs}>
                   <h2>Edit Author</h2>
                   <Divider />
                   <EditorSearchBar
@@ -123,7 +124,7 @@ export default class EditorAuthorListController extends FalcorController {
                 </div>
               </Tab>
               <Tab label="ADD NEW" icon={<PersonAdd />}>
-                <div style={styles.tabs}>
+                <div id={`${ID}-add-new-tab`} style={styles.tabs}>
                   <h2>Add New Author</h2>
                   <Divider />
                   <form

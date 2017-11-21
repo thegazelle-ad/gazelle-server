@@ -11,3 +11,17 @@ export function testPathServersideRender(host, path, name, code = 200) {
       });
   });
 }
+
+export function isVisible(selector, evaluateParent = false) {
+  let element = document.querySelector(selector);
+  if (evaluateParent) {
+    element = element.parentNode;
+  }
+  return (
+    element.style.width !== '0' &&
+    element.style.width !== '0px' &&
+    element.style.height !== '0' &&
+    element.style.height !== '0px' &&
+    element.style.display !== 'none'
+  );
+}
