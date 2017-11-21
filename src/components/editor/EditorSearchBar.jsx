@@ -106,9 +106,11 @@ export default class EditorSearchBar extends BaseComponent {
   }
 
   render() {
+    const searchResultClass = 'search-bar-result';
+    const searchBarClass = 'search-bar';
     if (this.props.mode === 'articles') {
       return (
-        <div>
+        <div className={`${searchBarClass} ${searchBarClass}-articles`}>
           <TextField
             floatingLabelText="Search for Articles"
             hintText="Article"
@@ -131,7 +133,7 @@ export default class EditorSearchBar extends BaseComponent {
                     textShown += ` - ${date}`;
                   }
                   return (
-                    <div key={article.slug}>
+                    <div className={searchResultClass} key={article.slug}>
                       {/* eslint-disable react/jsx-no-bind */}
                       <MenuItem
                         primaryText={textShown}
@@ -149,7 +151,7 @@ export default class EditorSearchBar extends BaseComponent {
       );
     } else if (this.props.mode === 'authors') {
       return (
-        <div>
+        <div className={`${searchBarClass} ${searchBarClass}-authors`}>
           <TextField
             floatingLabelText="Search for Authors"
             hintText="Author"
@@ -160,7 +162,7 @@ export default class EditorSearchBar extends BaseComponent {
             <Menu style={{ width: 200 }}>
               {
                 this.state.searchSuggestions.map((author) => (
-                  <div key={author.slug}>
+                  <div className={searchResultClass} key={author.slug}>
                     {/* eslint-disable react/jsx-no-bind */}
                     <MenuItem
                       primaryText={author.name}

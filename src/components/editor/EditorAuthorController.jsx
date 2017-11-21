@@ -234,9 +234,10 @@ export default class EditorAuthorController extends FalcorController {
   }
 
   render() {
+    const ID = 'author-editor';
     if (this.state.ready) {
       if (!this.state.data) {
-        return <div><p>No authors match the slug given in the URL</p></div>;
+        return <div id={ID}><p>No authors match the slug given in the URL</p></div>;
       }
 
       let changedStateMessage;
@@ -261,7 +262,7 @@ export default class EditorAuthorController extends FalcorController {
           autoScrollBodyContent
           onRequestClose={this.handleDialogClose}
         >
-          <div style={styles.authorProfile}>
+          <div id={ID} style={styles.authorProfile}>
             <h3>Author Profile: {this.state.name}</h3>
             <Divider />
             <form onSubmit={this.handleSaveChanges}>
