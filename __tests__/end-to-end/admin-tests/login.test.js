@@ -1,6 +1,7 @@
 import Nightmare from 'nightmare';
 
-import { SIMPLE_TEST_TIMEOUT, ADMIN_HOST as HOST } from '../utilities';
+import { SIMPLE_TEST_TIMEOUT } from '__tests__/end-to-end/e2e-constants';
+import { HOST } from './e2e-admin-constants';
 
 jest.setTimeout(SIMPLE_TEST_TIMEOUT);
 
