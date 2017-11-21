@@ -102,28 +102,33 @@ export default class EditorAppController extends BaseComponent {
 
   render() {
     const bodyStyle = { transition: 'margin-left 450ms cubic-bezier(0.23, 1, 0.32, 1)' };
+    const APP_ID = 'app';
+    const HEADER_ID = `${APP_ID}-header`;
     if (this.isLoggedIn()) { bodyStyle.marginLeft = 256; }
 
     const LoggedIn = () => (
       <IconMenu
         iconButtonElement={
-          <IconButton><MoreVertIcon /></IconButton>
+          <IconButton id={`${HEADER_ID}-menu-button`}><MoreVertIcon /></IconButton>
         }
         targetOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
       >
         <MenuItem
+          id={`${HEADER_ID}-restart-button`}
           primaryText="Restart Server"
           onClick={this.restartServer}
           style={{ color: '#C62828' }}
         />
         <MenuItem
+          id={`${HEADER_ID}-refresh-ghost-button`}
           primaryText="Refresh Ghost Data"
           onClick={this.resetGhostInfo}
           disabled
         />
         <Divider />
         <MenuItem
+          id={`${HEADER_ID}-sign-out-button`}
           primaryText="Sign out"
           onClick={this.signOut}
         />
@@ -132,8 +137,9 @@ export default class EditorAppController extends BaseComponent {
 
     return (
       <MuiThemeProvider>
-        <div className="mainContainer">
+        <div id={APP_ID} className="mainContainer">
           <AppBar
+            id={HEADER_ID}
             title={"Editor Tools"}
             iconElementRight={this.isLoggedIn() ?
               <LoggedIn /> :

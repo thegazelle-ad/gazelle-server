@@ -53,7 +53,7 @@ export default class Login extends BaseComponent {
 
   render() {
     return (
-      <div>
+      <div id="login-page">
         <form onSubmit={this.handleSubmit}>
           <TextField
             name="password"
