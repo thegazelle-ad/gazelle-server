@@ -10,6 +10,8 @@ var nodeModules = {}
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var cssnext = require('postcss-cssnext');
 
+var isCI = process.env.CI === 'true' && process.env.CIRCLECI === 'true';
+
 Fs.readdirSync('node_modules').forEach(function (module) {
   if (module !== '.bin') {
     nodeModules[module] = true
@@ -94,6 +96,7 @@ module.exports = [{
   postcss: function () {
     return [cssnext];
   },
+  devtool: isCI ? 'source-map' : undefined,
 }, {
   target: 'web',
   entry: './src/client-scripts/gazelle-client.js',
@@ -135,6 +138,7 @@ module.exports = [{
       },
     ],
   },
+  devtool: isCI ? 'source-map' : undefined,
 },
 {
   target: 'web',
@@ -172,4 +176,5 @@ module.exports = [{
       },
     ],
   },
+  devtool: isCI ? 'source-map' : undefined,
 }]
