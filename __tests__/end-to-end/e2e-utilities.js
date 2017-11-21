@@ -11,7 +11,3 @@ export function testPathServersideRender(host, path, name, code = 200) {
       });
   });
 }
-
-export const SIMPLE_TEST_TIMEOUT = 10 * 1000;
-export const GAZELLE_HOST = 'http://localhost:3000';
-export const ADMIN_HOST = 'http://localhost:4000';
