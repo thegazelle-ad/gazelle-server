@@ -13,9 +13,14 @@ import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import Divider from 'material-ui/Divider';
+import Dialog from 'material-ui/Dialog';
+import TextField from 'material-ui/TextField';
 
 // Components
 import EditorNavigation from 'components/editor/EditorNavigation';
+
+// Custom utilities
+import { updateFieldValue } from './lib/form-field-updaters';
 
 export default class EditorAppController extends BaseComponent {
   constructor(props) {
@@ -24,6 +29,18 @@ export default class EditorAppController extends BaseComponent {
     this.handleDisableLink = this.handleDisableLink.bind(this);
     this.resetGhostInfo = this.resetGhostInfo.bind(this);
     this.isLoggedIn = this.isLoggedIn.bind(this);
+    this.toggleRestartPasswordModal = this.toggleRestartPasswordModal.bind(this);
+    this.handleRestartPasswordEnter = this.handleRestartPasswordEnter.bind(this);
+    this.assignPasswordRef = ref => {
+      this.refs = { passwordInput: ref };
+    };
+    this.fieldUpdaters = {
+      restartPassword: updateFieldValue.bind(this, 'restartPasswordValue', undefined),
+    };
+    this.safeSetState({
+      restartPasswordModalOpen: false,
+      restartPasswordValue: '',
+    });
   }
 
   componentWillMount() {
@@ -68,7 +85,10 @@ export default class EditorAppController extends BaseComponent {
   }
 
   restartServer() {
-    const password = window.prompt('Please input the password');
+    const password = this.state.restartPasswordValue;
+    this.safeSetState({
+      restartPasswordValue: '',
+    });
     http.get(`/restartserver?password=${password}`, (res) => {
       let reply = '';
 
@@ -79,11 +99,16 @@ export default class EditorAppController extends BaseComponent {
       res.on('end', () => {
         if (reply === 'start') {
           window.alert('Server is being restarted now');
+          this.safeSetState({
+            restartPasswordModalOpen: false,
+          });
           this.pingServer();
         } else if (reply === 'error') {
           window.alert('There was an error restarting the servers');
         } else if (reply === 'invalid') {
           window.alert('Invalid password');
+          // Put focus back on password element for good UX
+          this.refs.passwordInput.focus();
         } else {
           window.alert('unknown error');
         }
@@ -98,6 +123,18 @@ export default class EditorAppController extends BaseComponent {
 
   signOut() {
     browserHistory.push('/login');
+  }
+
+  toggleRestartPasswordModal() {
+    this.safeSetState(prevState => ({
+      restartPasswordModalOpen: !prevState.restartPasswordModalOpen,
+    }));
+  }
+
+  handleRestartPasswordEnter(e) {
+    if (e.key === 'Enter') {
+      this.restartServer();
+    }
   }
 
   render() {
@@ -117,7 +154,7 @@ export default class EditorAppController extends BaseComponent {
         <MenuItem
           id={`${HEADER_ID}-restart-button`}
           primaryText="Restart Server"
-          onClick={this.restartServer}
+          onClick={this.toggleRestartPasswordModal}
           style={{ color: '#C62828' }}
         />
         <MenuItem
@@ -154,6 +191,32 @@ export default class EditorAppController extends BaseComponent {
               {this.props.children}
             </div>
           </div>
+          {/* Dialog for restart server password */}
+          <Dialog
+            title="Restart Server"
+            modal
+            open={this.state.restartPasswordModalOpen}
+            actions={[
+              <FlatButton
+                label="Cancel"
+                onClick={this.toggleRestartPasswordModal}
+              />,
+              <FlatButton
+                label="Submit"
+                onClick={this.restartServer}
+              />,
+            ]}
+          >
+            <TextField
+              ref={this.assignPasswordRef}
+              value={this.state.restartPasswordValue}
+              floatingLabelText="Input Password"
+              type="password"
+              onChange={this.fieldUpdaters.restartPassword}
+              onKeyUp={this.handleRestartPasswordEnter}
+              autoFocus
+            />
+          </Dialog>
         </div>
       </MuiThemeProvider>
     );
