@@ -3,9 +3,7 @@
 # Run our server
 cd ~/gazelle-server
 
-npm start &> /dev/null &
-
-SERVER_PID=$(echo $!)
+forever start build/server.js &> /dev/null
 
 echo "Gazelle server started"
 
@@ -61,7 +59,8 @@ EXIT_CODE=$(echo $?)
 # Cleanup
 echo "Tests finished, starting cleanup"
 
-kill $SERVER_PID
+forever stopall
+
 kill $GHOST_PID
 kill $SCREEN_PID
 

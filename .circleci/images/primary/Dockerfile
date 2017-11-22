@@ -2,6 +2,8 @@ FROM circleci/node:7.10
 
 RUN sudo apt-get install mysql-client
 
+RUN sudo npm i -g forever
+
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash
 
 # Enable NVM and install node 4.2
