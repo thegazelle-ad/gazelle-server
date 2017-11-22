@@ -228,11 +228,13 @@ export default class EditorAppController extends BaseComponent {
             open={this.state.restartPasswordModalOpen}
             actions={[
               <FlatButton
+                id="restart-server-password-cancel"
                 label="Cancel"
                 onClick={this.toggleRestartPasswordModal}
               />,
               <FlatButton
                 label="Submit"
+                id="restart-server-password-submit"
                 onClick={this.restartServer}
                 disabled={this.state.currentlyRestarting}
               />,
@@ -242,6 +244,7 @@ export default class EditorAppController extends BaseComponent {
               ref={this.assignPasswordRef}
               value={this.state.restartPasswordValue}
               floatingLabelText="Input Password"
+              id="restart-server-password-input"
               type="password"
               onChange={this.fieldUpdaters.restartPassword}
               onKeyUp={this.handleRestartPasswordEnter}
