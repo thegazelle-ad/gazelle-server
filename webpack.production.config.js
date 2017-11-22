@@ -53,6 +53,7 @@ module.exports = [{
         'EDITOR_PORT': 8002,
         'CI': JSON.stringify(process.env.CI),
         'CIRCLECI': JSON.stringify(process.env.CIRCLECI),
+        'ROOT_DIRECTORY': JSON.stringify(__dirname),
       },
     }),
     new webpack.optimize.UglifyJsPlugin({
