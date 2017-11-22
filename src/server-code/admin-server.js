@@ -20,7 +20,7 @@ import { exec } from 'child_process';
 import bodyParser from 'body-parser';
 
 /* Our own helper functions */
-import { isDevelopment, filterByEnvironment, hash, isCI } from 'lib/utilities';
+import { isDevelopment, hash, isCI } from 'lib/utilities';
 import { md5Hash, compressJPEG, deleteFile } from 'lib/server-utilities';
 
 export default function runAdminServer(serverFalcorModel) {
@@ -51,6 +51,7 @@ export default function runAdminServer(serverFalcorModel) {
 
   // This is for parsing post requests
   app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+  app.use(bodyParser.json());
 
   // For connecting the client to our falcor server
   app.use('/model.json', FalcorServer.dataSourceRoute(() => (
@@ -75,40 +76,31 @@ export default function runAdminServer(serverFalcorModel) {
   app.use(allowCrossDomain);
 
   /* Restart Servers command */
-  const PATH_NAME = filterByEnvironment(
-    `${__dirname}/scripts/restart-servers.sh`,
-    '~/gazelle-beta/scripts/restart-servers.sh',
-    '~/gazelle-production/scripts/restart-servers.sh'
-  );
+  const PATH_NAME = `${process.env.ROOT_DIRECTORY}/scripts/restart-servers.sh`;
 
   let isRestarted = false;
 
-  app.get('/restartserver', (req, res) => {
-    if (isDevelopment) {
-      res.status(200).send('start');
-      return;
-    }
-
-    const password = req.query.password;
+  app.post('/restart-server', (req, res) => {
+    const password = req.body.password;
     if ((typeof password) !== 'string' || password.length < 1) {
-      res.status(401).send('invalid');
+      res.sendStatus(401);
     } else if (hash(password) === 'eaafc81d7868e1c203ecc90f387acfa4c24d1027134b0bfda6fd7c536efc5d8dd5718609a407dbfcd41e747aec331153d47733153afb7c125c558acba3fb6bcd') { // eslint-disable-line max-len
       isRestarted = true;
-      res.status(200).send('start');
+      res.sendStatus(200);
       exec(PATH_NAME, (err) => {
         if (err) {
           if (process.env.NODE_ENV !== 'production') {
             console.error(err); // eslint-disable-line no-console
           }
-          res.status(500).send('error');
+          // In the case of an error isRestarted will stay true and so the ping will fail correctly
         }
       });
     } else {
-      res.status(401).send('invalid');
+      res.sendStatus(401);
     }
   });
 
-  app.get('/isrestarted', (req, res) => {
+  app.get('/is-restarted', (req, res) => {
     res.status(200).send(isRestarted);
   });
 

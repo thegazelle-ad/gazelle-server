@@ -1,7 +1,6 @@
 import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
 import { browserHistory } from 'react-router';
-import http from 'http';
 
 // material-ui
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -26,6 +25,7 @@ export default class EditorAppController extends BaseComponent {
   constructor(props) {
     super(props);
     this.restartServer = this.restartServer.bind(this);
+    this.pingServer = this.pingServer.bind(this);
     this.handleDisableLink = this.handleDisableLink.bind(this);
     this.resetGhostInfo = this.resetGhostInfo.bind(this);
     this.isLoggedIn = this.isLoggedIn.bind(this);
@@ -40,6 +40,7 @@ export default class EditorAppController extends BaseComponent {
     this.safeSetState({
       restartPasswordModalOpen: false,
       restartPasswordValue: '',
+      currentlyRestarting: false,
     });
   }
 
@@ -60,27 +61,47 @@ export default class EditorAppController extends BaseComponent {
 
   pingServer() {
     let counter = 0;
-    function isRestarted() {
-      http.get('/isrestarted', (response) => {
-        let signal = '';
-        response.on('data', (chunk) => {
-          signal += chunk;
-        });
-        response.on('end', () => {
-          if (signal === 'false') {
-            window.alert('Servers restarted successfully');
-          } else if (signal === 'true') {
-            counter += 1;
-            if (counter <= 5) {
-              setTimeout(isRestarted, 500);
+    // The function below is a closure that will be able to access the counter variable above
+    // across several calls
+    const isRestarted = () => {
+      const xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = () => {
+        let failed = false;
+        try {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+            // Request is done
+            const signal = xhr.responseText;
+            if (signal === 'false' && xhr.status === 200) {
+              window.alert('Server restarted successfully');
+              this.safeSetState({
+                restartPasswordModalOpen: false,
+                currentlyRestarting: false,
+              });
+            } else {
+              failed = true;
             }
           }
-          if (counter > 5) {
-            window.alert('Error');
+        } catch (e) {
+          // This means there was an error in communication
+          failed = true;
+        }
+        if (failed) {
+          // If it fails in any way including unexpected status codes or communication crash
+          // we just try again
+          counter += 1;
+          if (counter <= 5) {
+            setTimeout(isRestarted, 500);
+          } else {
+            window.alert(
+              "Timeout: Server still hasn't restarted, please contact dev team for assistance"
+            );
+            this.safeSetState({ currentlyRestarting: false });
           }
-        });
-      });
-    }
+        }
+      };
+      xhr.open('GET', '/is-restarted', true);
+      xhr.send();
+    };
     isRestarted();
   }
 
@@ -88,32 +109,41 @@ export default class EditorAppController extends BaseComponent {
     const password = this.state.restartPasswordValue;
     this.safeSetState({
       restartPasswordValue: '',
+      currentlyRestarting: true,
     });
-    http.get(`/restartserver?password=${password}`, (res) => {
-      let reply = '';
-
-      res.on('data', (chunk) => {
-        reply += chunk;
-      });
-
-      res.on('end', () => {
-        if (reply === 'start') {
-          window.alert('Server is being restarted now');
-          this.safeSetState({
-            restartPasswordModalOpen: false,
-          });
-          this.pingServer();
-        } else if (reply === 'error') {
-          window.alert('There was an error restarting the servers');
-        } else if (reply === 'invalid') {
-          window.alert('Invalid password');
-          // Put focus back on password element for good UX
-          this.refs.passwordInput.focus();
-        } else {
-          window.alert('unknown error');
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = () => {
+      let failed = false;
+      try {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          // Request is done
+          if (xhr.status === 200) {
+            window.alert('Server is being restarted now');
+            this.pingServer();
+          } else if (xhr.status === 401) {
+            window.alert('Invalid password');
+            this.safeSetState({ currentlyRestarting: false });
+            // Put focus back on password element for good UX
+            this.refs.passwordInput.focus();
+          } else {
+            // Unexpected behaviour
+            failed = true;
+          }
         }
-      });
-    });
+      } catch (e) {
+        // This means there was an error in communication
+        failed = true;
+      }
+      if (failed) {
+        window.alert('Unexpected error while trying to restart server, please contact dev team');
+        this.safeSetState({
+          currentlyRestarting: false,
+        });
+      }
+    };
+    xhr.open('POST', '/restart-server', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({ password }));
   }
 
   resetGhostInfo() {
@@ -132,7 +162,7 @@ export default class EditorAppController extends BaseComponent {
   }
 
   handleRestartPasswordEnter(e) {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !this.state.currentlyRestarting) {
       this.restartServer();
     }
   }
@@ -204,6 +234,7 @@ export default class EditorAppController extends BaseComponent {
               <FlatButton
                 label="Submit"
                 onClick={this.restartServer}
+                disabled={this.state.currentlyRestarting}
               />,
             ]}
           >
@@ -214,6 +245,7 @@ export default class EditorAppController extends BaseComponent {
               type="password"
               onChange={this.fieldUpdaters.restartPassword}
               onKeyUp={this.handleRestartPasswordEnter}
+              disabled={this.state.currentlyRestarting}
               autoFocus
             />
           </Dialog>

@@ -45,6 +45,11 @@ module.exports = [{
     new ExtractTextPlugin('./static/build/main.css', {
       allChunks: true,
     }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        'ROOT_DIRECTORY': JSON.stringify(__dirname),
+      },
+    }),
   ],
 
   module: {

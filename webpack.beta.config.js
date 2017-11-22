@@ -49,6 +49,7 @@ module.exports = [{
         'NODE_ENV': '"beta"', // compiles React as beta build
 	      'MAIN_PORT': 8003, // we use a reverse proxy to forward this to port 80 of editor.thegazelle.org
         'EDITOR_PORT': 8004,
+        'ROOT_DIRECTORY': JSON.stringify(__dirname),
       },
     }),
     new webpack.optimize.UglifyJsPlugin({
