@@ -1,6 +1,6 @@
 import { isVisible } from '__tests__/end-to-end/e2e-utilities';
 import { SIMPLE_TEST_TIMEOUT } from '__tests__/end-to-end/e2e-constants';
-import { getLoggedInState } from './e2e-admin-utilities';
+import { getLoggedInState, restartServer } from './e2e-admin-utilities';
 
 jest.setTimeout(SIMPLE_TEST_TIMEOUT);
 
@@ -12,16 +12,17 @@ describe('Admin interface author list', () => {
   const addNewTabSelector = '#author-list-add-new-tab';
   const editTabSelector = '#author-list-edit-tab';
   const authorEditorSelector = '#author-editor';
+  const searchInputSelector = `${authorListSelector} .search-bar-authors input[type="text"]`;
+  // This should return the first one, and we also currently search in a way so that there
+  // should always only be one result
+  const searchItemSelector = `${authorListSelector} .search-bar-authors .search-bar-result`;
 
   it('searches correctly for authors', () => {
     expect.assertions(1);
 
-    const inputElementSelector = `${authorListSelector} .search-bar-authors input[type="text"]`;
-    // There should only be one result so it'll therefore be the first one
-    const searchItemSelector = `${authorListSelector} .search-bar-authors .search-bar-result`;
     return getLoggedInState('/authors')
-      .wait(inputElementSelector)
-      .insert(inputElementSelector, 'Emil Goldsmith Olesen')
+      .wait(searchInputSelector)
+      .insert(searchInputSelector, 'Emil Goldsmith Olesen')
       .wait(searchItemSelector)
       // We click on the Material UI element where the onClick handler is actually set
       .click(`${searchItemSelector} span[role="menuitem"]`)
@@ -48,7 +49,7 @@ describe('Admin interface author list', () => {
   ));
 
   it('correctly adds new authors', () => {
-    expect.assertions(1);
+    expect.assertions(2);
 
     // We first create a new author with a unique name
     const authorName = `test-user-${new Date().getTime()}`;
@@ -77,6 +78,24 @@ describe('Admin interface author list', () => {
       .end()
       .then(path => {
         expect(path).toBe(`/authors/${authorName}`);
-      });
+        // This returns a promise so we won't do anything else until the server is done restarting
+        return restartServer();
+      })
+      .then(() => (
+        // We have restarted the server which also clears the cache so this is also a test that
+        // the data we inserted actually propagated to the database
+        getLoggedInState('/authors')
+          .wait(searchInputSelector)
+          .insert(searchInputSelector, authorName)
+          .wait(searchItemSelector)
+          // We click on the Material UI element where the onClick handler is actually set
+          .click(`${searchItemSelector} span[role="menuitem"]`)
+          .wait(authorEditorSelector)
+          .path()
+          .end()
+          .then((path) => {
+            expect(path).toBe(`/authors/${authorName}`);
+          })
+      ));
   });
 });
