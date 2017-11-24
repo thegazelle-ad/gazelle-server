@@ -1,10 +1,23 @@
-import { isVisible } from '__tests__/end-to-end/e2e-utilities';
-import { SIMPLE_TEST_TIMEOUT } from '__tests__/end-to-end/e2e-constants';
-import { getLoggedInState, restartServer } from './e2e-admin-utilities';
+import Nightmare from 'nightmare';
+
+import { SIMPLE_TEST_TIMEOUT, NIGHTMARE_CONFIG } from '__tests__/end-to-end/e2e-constants';
+import { getLoggedInState, restartServer, isVisible } from './e2e-admin-utilities';
 
 jest.setTimeout(SIMPLE_TEST_TIMEOUT);
 
 describe('Admin interface author list', () => {
+  let nightmare = null;
+  beforeEach(() => {
+    nightmare = new Nightmare(NIGHTMARE_CONFIG);
+  });
+
+  afterEach(() => {
+    // Kill the nightmare instance, this won't make a difference if everything worked as expected
+    // but if we don't have it when something doesn't go as unexpected it can make jest hang
+    // and not terminate
+    nightmare.halt();
+  });
+
   const authorListSelector = '#author-list';
   const getTabButtonSelector = index => (
     `${authorListSelector} button[type="button"]:nth-child(${index})`
@@ -20,7 +33,7 @@ describe('Admin interface author list', () => {
   it('searches correctly for authors', () => {
     expect.assertions(1);
 
-    return getLoggedInState('/authors')
+    return getLoggedInState(nightmare, '/authors')
       .wait(searchInputSelector)
       .insert(searchInputSelector, 'Emil Goldsmith Olesen')
       .wait(searchItemSelector)
@@ -35,7 +48,7 @@ describe('Admin interface author list', () => {
   });
 
   it('correctly switches tabs', () => (
-    getLoggedInState('/authors')
+    getLoggedInState(nightmare, '/authors')
       .wait(authorListSelector)
       // Click 'Add New' tab
       .click(getTabButtonSelector(2))
@@ -55,7 +68,7 @@ describe('Admin interface author list', () => {
     const authorName = `test-user-${new Date().getTime()}`;
     const getInputSelector = index => `${addNewTabSelector} form div:nth-of-type(${index}) input`;
     const createAuthorSelector = `${addNewTabSelector} button[type="submit"]`;
-    return getLoggedInState('/authors')
+    return getLoggedInState(nightmare, '/authors')
       .wait(authorListSelector)
       // Click 'Add New' tab
       // We use mouseup here because of weird Material UI behaviour with the touchtap event it uses
@@ -78,13 +91,21 @@ describe('Admin interface author list', () => {
       .end()
       .then(path => {
         expect(path).toBe(`/authors/${authorName}`);
+        // We reuse the variable since we know .then only runs because there were no exceptions
+        // so .end() has finished successfully, and also this means that the afterEach function will
+        // correctly terminate the nightmare instance if an error happens in this step
+        nightmare = new Nightmare(NIGHTMARE_CONFIG);
         // This returns a promise so we won't do anything else until the server is done restarting
-        return restartServer();
+        return restartServer(nightmare);
       })
-      .then(() => (
-        // We have restarted the server which also clears the cache so this is also a test that
+      .then(() => {
+        // We reuse the variable since we know .then only runs because there were no exceptions
+        // so .end() has finished successfully, and also this means that the afterEach function will
+        // correctly terminate the nightmare instance if an error happens in this step
+        nightmare = new Nightmare(NIGHTMARE_CONFIG);
+        // We have restarted the server which also clears the cache which allows us to test that
         // the data we inserted actually propagated to the database
-        getLoggedInState('/authors')
+        return getLoggedInState(nightmare, '/authors')
           .wait(searchInputSelector)
           .insert(searchInputSelector, authorName)
           .wait(searchItemSelector)
@@ -95,7 +116,7 @@ describe('Admin interface author list', () => {
           .end()
           .then((path) => {
             expect(path).toBe(`/authors/${authorName}`);
-          })
-      ));
+          });
+      });
   });
 });
