@@ -6,39 +6,46 @@
 import Nightmare from 'nightmare';
 
 import { testPathServersideRender } from '__tests__/end-to-end/e2e-utilities';
-import { SIMPLE_TEST_TIMEOUT } from '__tests__/end-to-end/e2e-constants';
+import { SIMPLE_TEST_TIMEOUT, NIGHTMARE_CONFIG } from '__tests__/end-to-end/e2e-constants';
 import { HOST } from './e2e-admin-constants';
 
 jest.setTimeout(SIMPLE_TEST_TIMEOUT);
 
+function testLoginRedirect(nightmare, path) {
+  expect.assertions(1);
+
+  let redirectedPath = path;
+  if (path === '') {
+    redirectedPath = '/';
+  }
+
+  return nightmare.goto(`${HOST}${path}`)
+    .end()
+    .then(result => {
+      expect(result.url).toBe(`${HOST}/login?url=${redirectedPath}`);
+    });
+}
+
 describe('Admin interface server side rendering', () => {
-  testPathServersideRender(HOST, '/login', 'any');
+  let nightmare = null;
+  beforeEach(() => {
+    nightmare = new Nightmare(NIGHTMARE_CONFIG);
+  });
 
-  it('correctly redirects to the login page', () => {
-    const nightmare1 = new Nightmare();
+  afterEach(() => {
+    // Kill the nightmare instance, this won't make a difference if everything worked as expected
+    // but if we don't have it when something doesn't go as unexpected it can make jest hang
+    // and not terminate
+    nightmare.halt();
+  });
 
-    expect.assertions(2);
+  it('renders any page correctly', () => testPathServersideRender(nightmare, HOST, '/login'));
 
-    const allPromises = [];
-
-    allPromises.push(
-      nightmare1.goto(`${HOST}`)
-      .end()
-      .then(result => {
-        expect(result.url).toBe(`${HOST}/login?url=/`);
-      })
+  describe('login redirect', () => {
+    it('handles attempting to access main page directly', () => testLoginRedirect(nightmare, ''));
+    it(
+      'handles attempting to access non-main page directly',
+      () => testLoginRedirect(nightmare, '/authors')
     );
-
-    const nightmare2 = new Nightmare();
-
-    allPromises.push(
-      nightmare2.goto(`${HOST}/authors`)
-      .end()
-      .then(result => {
-        expect(result.url).toBe(`${HOST}/login?url=/authors`);
-      })
-    );
-
-    return Promise.all(allPromises);
   });
 });

@@ -1,9 +1,27 @@
+import Nightmare from 'nightmare';
+
 import { getLoggedInState } from './e2e-admin-utilities';
-import { SIMPLE_TEST_TIMEOUT } from '__tests__/end-to-end/e2e-constants';
+import {
+  SIMPLE_TEST_TIMEOUT,
+  NIGHTMARE_CONFIG,
+  ENTER_UNICODE,
+} from '__tests__/end-to-end/e2e-constants';
 
 jest.setTimeout(SIMPLE_TEST_TIMEOUT);
 
 describe('Admin header', () => {
+  let nightmare = null;
+  beforeEach(() => {
+    nightmare = new Nightmare(NIGHTMARE_CONFIG);
+  });
+
+  afterEach(() => {
+    // Kill the nightmare instance, this won't make a difference if everything worked as expected
+    // but if we don't have it when something doesn't go as unexpected it can make jest hang
+    // and not terminate
+    nightmare.halt();
+  });
+
   const headerSelector = '#app-header';
 
   it('signs out correctly', () => {
@@ -12,7 +30,7 @@ describe('Admin header', () => {
     const headerMenuButtonSelector = `${headerSelector}-menu-button`;
     const signOutSelector = `${headerSelector}-sign-out-button`;
     const loginPageSelector = '#login-page';
-    return getLoggedInState('')
+    return getLoggedInState(nightmare, '')
       .wait(headerMenuButtonSelector)
       // mouseup for Material UI quirk
       .mouseup(headerMenuButtonSelector)
@@ -34,7 +52,7 @@ describe('Admin header', () => {
     const restartServerCancelSelector = '#restart-server-password-cancel';
 
     const testRestartServer = useEnter => {
-      const passwordInsertedState = getLoggedInState('')
+      const passwordInsertedState = getLoggedInState(nightmare, '')
         // We inject a script that sets window.THE_GAZELLE.serverRestartedSuccessfully = true when
         // the correct `window.alert` call has been made
         .inject('js', `${__dirname}/assets/checkServerRestarted.js`)
@@ -50,7 +68,7 @@ describe('Admin header', () => {
       let passwordSubmittedState;
       if (useEnter) {
         passwordSubmittedState = passwordInsertedState
-          .type(restartServerPasswordInputSelector, '\u000d');
+          .type(restartServerPasswordInputSelector, ENTER_UNICODE);
       } else {
         passwordSubmittedState = passwordInsertedState.click(restartServerSubmitSelector);
       }
@@ -64,7 +82,7 @@ describe('Admin header', () => {
     it('works with pressing submit', () => testRestartServer(false));
 
     it('works pressing cancel in modal', () => (
-      getLoggedInState('')
+      getLoggedInState(nightmare, '')
         // We inject a script that sets window.THE_GAZELLE.serverRestartedSuccessfully = true when
         // the correct `window.alert` call has been made
         .inject('js', `${__dirname}/assets/checkServerRestarted.js`)
