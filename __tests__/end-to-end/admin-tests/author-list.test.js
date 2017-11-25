@@ -1,6 +1,10 @@
 import Nightmare from 'nightmare';
 
-import { SIMPLE_TEST_TIMEOUT, NIGHTMARE_CONFIG } from '__tests__/end-to-end/e2e-constants';
+import {
+  SIMPLE_TEST_TIMEOUT,
+  NIGHTMARE_CONFIG,
+  ENTER_UNICODE,
+} from '__tests__/end-to-end/e2e-constants';
 import { getLoggedInState, restartServer, isVisible } from './e2e-admin-utilities';
 
 jest.setTimeout(SIMPLE_TEST_TIMEOUT);
@@ -61,14 +65,14 @@ describe('Admin interface author list', () => {
       .end()
   ));
 
-  it('correctly adds new authors', () => {
+  const testAddingNewAuthor = (useEnter = false, inputToPressEnterOn = 1) => {
     expect.assertions(2);
 
     // We first create a new author with a unique name
     const authorName = `test-user-${new Date().getTime()}`;
     const getInputSelector = index => `${addNewTabSelector} form div:nth-of-type(${index}) input`;
     const createAuthorSelector = `${addNewTabSelector} button[type="submit"]`;
-    return getLoggedInState(nightmare, '/authors')
+    const authorInformationEntered = getLoggedInState(nightmare, '/authors')
       .wait(authorListSelector)
       // Click 'Add New' tab
       // We use mouseup here because of weird Material UI behaviour with the touchtap event it uses
@@ -84,8 +88,18 @@ describe('Admin interface author list', () => {
       // Input slug
       .insert(getInputSelector(2), authorName.substr(0, authorName.length - 1))
       // We type the last character to fire the events to enable the create author button
-      .type(getInputSelector(2), authorName.substr(authorName.length - 1, 1))
-      .click(createAuthorSelector)
+      .type(getInputSelector(2), authorName.substr(authorName.length - 1, 1));
+
+    let authorInformationSubmitted;
+    if (useEnter) {
+      authorInformationSubmitted = authorInformationEntered
+        .type(getInputSelector(inputToPressEnterOn), ENTER_UNICODE);
+    } else {
+      authorInformationSubmitted = authorInformationEntered
+        .click(createAuthorSelector);
+    }
+
+    return authorInformationSubmitted
       .wait(authorEditorSelector)
       .path()
       .end()
@@ -118,5 +132,15 @@ describe('Admin interface author list', () => {
             expect(path).toBe(`/authors/${authorName}`);
           });
       });
-  });
+  };
+
+  it('correctly adds new authors using button', () => testAddingNewAuthor());
+  it(
+    'correctly adds new authors using enter on name',
+    () => testAddingNewAuthor(true, 1)
+  );
+  it(
+    'correctly adds new authors using enter on slug',
+    () => testAddingNewAuthor(true, 2)
+  );
 });
