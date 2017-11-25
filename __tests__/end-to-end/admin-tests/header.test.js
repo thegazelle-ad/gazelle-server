@@ -51,7 +51,7 @@ describe('Admin header', () => {
     const restartServerSubmitSelector = '#restart-server-password-submit';
     const restartServerCancelSelector = '#restart-server-password-cancel';
 
-    const testRestartServer = useEnter => {
+    const testRestartServer = (useEnter = false, initialWrongPassword = false) => {
       const passwordInsertedState = getLoggedInState(nightmare, '')
         // We inject a script that sets window.THE_GAZELLE.serverRestartedSuccessfully = true when
         // the correct `window.alert` call has been made
@@ -66,7 +66,17 @@ describe('Admin header', () => {
         .insert(restartServerPasswordInputSelector, process.env.CIRCLECI_ADMIN_PASSWORD);
 
       let passwordSubmittedState;
-      if (useEnter) {
+      if (initialWrongPassword) {
+        // Add an extra letter to invalidate password, submit it, then submit correct
+        passwordSubmittedState = passwordInsertedState
+          .insert(restartServerPasswordInputSelector, 'a')
+          .type(restartServerPasswordInputSelector, ENTER_UNICODE)
+          // TODO: When we change from the ugly window.alert to a proper banner then check that
+          // the 'invalid password' message shows,
+          // it's too much of a hassle testing it before that.
+          .insert(restartServerPasswordInputSelector, process.env.CIRCLECI_ADMIN_PASSWORD)
+          .type(restartServerPasswordInputSelector, ENTER_UNICODE);
+      } else if (useEnter) {
         passwordSubmittedState = passwordInsertedState
           .type(restartServerPasswordInputSelector, ENTER_UNICODE);
       } else {
@@ -80,6 +90,7 @@ describe('Admin header', () => {
 
     it('works with pressing enter', () => testRestartServer(true));
     it('works with pressing submit', () => testRestartServer(false));
+    it('works with an initial invalid password', () => testRestartServer(false, true));
 
     it('works pressing cancel in modal', () => (
       getLoggedInState(nightmare, '')
