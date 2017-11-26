@@ -12,6 +12,9 @@ import { Tabs, Tab } from 'material-ui/Tabs';
 import FileUpload from 'material-ui/svg-icons/file/file-upload';
 import Folder from 'material-ui/svg-icons/file/folder';
 import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
+import Dialog from 'material-ui/Dialog';
+import TextField from 'material-ui/TextField';
 
 export default class ImageUploader extends BaseComponent {
   constructor() {
@@ -20,12 +23,17 @@ export default class ImageUploader extends BaseComponent {
       files: [],
       changed: false,
       uploading: false,
+      changeNameOpen: false,
+      nameInput: '',
+      imgName: '',
     });
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleUpload = this.handleUpload.bind(this);
     this.deleteImagePreview = this.deleteImagePreview.bind(this);
     this.addImagePreviewUrl = this.addImagePreviewUrl.bind(this);
     this.changeImageName = this.changeImageName.bind(this);
+    this.changeImageNameClose = this.changeImageNameClose.bind(this);
+    this.changeImageNameOpen = this.changeImageNameOpen.bind(this);
     this.handlePreviewChange = this.handlePreviewChange.bind(this);
     this.handleUploadTerminated = this.handleUploadTerminated.bind(this);
     this.postUploadReset = this.postUploadReset.bind(this);
@@ -56,7 +64,7 @@ export default class ImageUploader extends BaseComponent {
     xhr.onload = () => {
       const response = xhr.response;
       if (response.split(' ')[0] === 'success') {
-        const amazonURL = response.split(' ')[1];
+        const amazonURL = `https://s3.amazonaws.com/thegazelle/${response.split(' ')[1]}`;
         this.handleUploadTerminated(fileObject.metaData.name, 2, amazonURL);
       } else {
         let errorMessage;
@@ -192,23 +200,31 @@ export default class ImageUploader extends BaseComponent {
     reader.readAsDataURL(fileObject.file);
   }
 
-  changeImageName(name) {
-    const newName = window.prompt('Please enter new name (and remember to keep ' +
-                                  `the extension) for ${name}:`);
-    if (!newName) {
-      return;
-    }
-    const index = this.state.files.findIndex(fileObject => fileObject.metaData.name === name);
+  changeImageNameOpen(name) {
+    this.setState({
+      changeNameOpen: true,
+      imgName: name,
+    });
+  }
+
+  changeImageName() {
+    const imgName = this.state.imgName;
+    const index = this.state.files.findIndex(fileObject => fileObject.metaData.name === imgName);
     if (index !== -1) {
       const newFiles = update(this.state.files, {
         [index]: {
-          metaData: { $merge: { name: newName } },
+          metaData: { $merge: { name: this.state.nameInput } },
         },
       });
       this.safeSetState({
         files: newFiles,
       });
     }
+    this.setState({ changeNameOpen: false });
+  }
+
+  changeImageNameClose() {
+    this.setState({ changeNameOpen: false });
   }
 
   postUploadReset() {
@@ -219,22 +235,34 @@ export default class ImageUploader extends BaseComponent {
   }
 
   render() {
-    let changedStateMessage;
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary
+        onClick={this.changeImageNameClose}
+      />,
+      <FlatButton
+        label="Submit"
+        primary
+        onClick={this.changeImageName}
+      />,
+    ];
     const changedStateStyle = {};
+    changedStateStyle.fontWeight = 'normal';
     if (!this.state.changed) {
       if (!this.state.uploading) {
-        changedStateMessage = 'No Changes';
+        changedStateStyle.display = 'none';
       } else {
-        changedStateMessage = 'Succesfully uploaded';
-        changedStateStyle.color = 'green';
+        changedStateStyle.display = 'block';
+        changedStateStyle.color = '#65e765';
       }
     } else {
       if (!this.state.uploading) {
-        changedStateMessage = 'Images awaiting upload';
-        changedStateStyle.color = 'red';
+        changedStateStyle.display = 'block';
+        changedStateStyle.color = '#6490e7';
       } else {
-        changedStateMessage = 'Uploading';
-        changedStateStyle.color = '#65e765';
+        changedStateStyle.display = 'block';
+        changedStateStyle.color = '#6490e7';
       }
     }
 
@@ -248,6 +276,7 @@ export default class ImageUploader extends BaseComponent {
           key={name}
           onDelete={this.deleteImagePreview}
           onChangeName={this.changeImageName}
+          onChangeNameOpen={this.changeImageNameOpen}
           amazonURL={amazonURL}
           errorMessage={errorMessage}
         />);
@@ -272,10 +301,27 @@ export default class ImageUploader extends BaseComponent {
       paper: {
         height: '100%',
         width: '100%',
+        minWidth: '400px',
         marginTop: 20,
         marginBottom: 20,
         textAlign: 'center',
         display: 'inline-block',
+        paddingBottom: 10,
+      },
+      imageInput: {
+        display: 'none',
+      },
+      uploadButtons: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+      raisedButton: {
+        color: 'white',
+        marginRight: '0.5rem',
+      },
+      buttonText: {
+        margin: '0rem 0.3rem',
       },
     };
 
@@ -285,31 +331,31 @@ export default class ImageUploader extends BaseComponent {
         <h1>Images</h1>
         <Divider />
         <Paper style={styles.paper} zDepth={2} >
-          <Tabs>
-            <Tab
-              icon={<FileUpload />}
-              label="UPLOAD"
-              containerElement={<Link to="/images/upload" />}
-            />
-            <Tab
-              icon={<Folder />}
-              label="ARCHIVES"
-              containerElement={<Link to="/images/archive" />}
-            />
-          </Tabs>
-          <div>
-            {isUpload ?
-              <div>
-                <h4 style={changedStateStyle}>{changedStateMessage}</h4>
-                <form
-                  className="image-submit pure-form pure-form-stacked"
-                  onSubmit={this.handleUpload}
-                >
-                  <RaisedButton
-                    label="Choose an Image"
+          <form
+            className="image-submit pure-form pure-form-stacked"
+            onSubmit={this.handleUpload}
+          >
+            <Tabs>
+              <Tab
+                icon={<FileUpload />}
+                label="UPLOAD"
+                containerElement={<Link to="/images/upload" />}
+              />
+              <Tab
+                icon={<Folder />}
+                label="ARCHIVES"
+                containerElement={<Link to="/images/archive" />}
+              />
+            </Tabs>
+            <div>
+              {isUpload ?
+                <div style={styles.uploadButtons}>
+                  <FlatButton
+                    label="Add an Image"
                     labelPosition="before"
                     style={styles.button}
                     containerElement="label"
+                    disabled={this.state.uploading}
                   >
                     <input
                       type="file"
@@ -317,39 +363,56 @@ export default class ImageUploader extends BaseComponent {
                       accept="image/*"
                       onChange={this.handleInputChange}
                       disabled={this.state.uploading}
+                      style={styles.imageInput}
                       multiple
                     />
-                  </RaisedButton>
-
-                  <input
+                  </FlatButton>
+                  <RaisedButton
+                    primary
                     type="submit"
-                    className="pure-button pure-button-primary"
-                    value="Upload"
                     disabled={this.state.uploading || !this.state.changed}
-                  />
-                </form>
-                {this.state.uploading && !this.state.changed ?
-                  <button
-                    type="button"
-                    className="pure-button pure-button-primary"
-                    onClick={this.postUploadReset}
-                  >Clear Upload</button>
-                : null
-                }
-              </div>
-            : null}
-          </div>
-          <div>
-            {isUpload
-              ? React.cloneElement(this.props.children,
-                {
-                  images: imagePreviews,
-                  onChange: this.handlePreviewChange,
-                })
-              : this.props.children
-            }
-          </div>
+                    style={styles.raisedButton}
+                  >
+                    <p style={styles.buttonText}>UPLOAD</p>
+                  </RaisedButton>
+                  {this.state.uploading && !this.state.changed ?
+                    <RaisedButton
+                      onClick={this.postUploadReset}
+                      secondary
+                      style={styles.raisedButton}
+                    ><p style={styles.buttonText}>NEW UPLOAD</p></RaisedButton>
+                  : null
+                  }
+                </div>
+              : null}
+            </div>
+            <div>
+              {isUpload
+                ? React.cloneElement(this.props.children,
+                  {
+                    images: imagePreviews,
+                    onChange: this.handlePreviewChange,
+                  })
+                : this.props.children
+              }
+            </div>
+          </form>
         </Paper>
+        <Dialog
+          title="Change Image Name"
+          actions={actions}
+          modal
+          open={this.state.changeNameOpen}
+        >
+          Please enter a new name (and remember to keep the extension) for the image:
+          <br />
+          <TextField
+            name="newName"
+            onChange={(event) => {
+              this.setState({ nameInput: event.target.value });
+            }}
+          />
+        </Dialog>
       </div>
     );
   }
