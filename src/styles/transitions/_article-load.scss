@@ -1,0 +1,119 @@
+.article-load {
+  max-width: 1000px;
+  height: 1400px;
+  display: block;
+  margin: auto;
+  padding-top: 20px;
+}
+
+.article__header-load:empty {
+  width: 750px;
+  height: 120px;
+  margin: auto;
+  background-image:
+    linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%),
+    linear-gradient($transition-grey 42px, transparent 0),
+    linear-gradient($transition-grey 19px, transparent 0),
+    linear-gradient($transition-grey 17px, transparent 0),
+    linear-gradient($transition-grey 17px, transparent 0),
+    linear-gradient($transition-grey 17px, transparent 0);
+  background-size:
+    40% 100%,
+    55% 100%,
+    90% 100%,
+    10% 100%,
+    10% 100%,
+    10% 100%;
+  background-position:
+    -90% 0%,
+    0% 0%,
+    0% 50px,
+    0% 77px,
+    12% 77px,
+    24% 77px;
+  background-repeat: repeat-y;
+  animation: title-transition 1.5s infinite linear;
+}
+
+@keyframes title-transition {
+  to {
+    background-position:
+      140% 0%,
+      0% 0%,
+      0% 50px,
+      0% 77px,
+      12% 77px,
+      24% 77px;
+  }
+}
+
+.article__image-load:empty {
+  width: 2000px;
+  height: 700px;
+  margin-left: -300px;
+  background-image:
+    linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%),
+    linear-gradient($transition-grey 700px, transparent 0);
+  background-size:
+    40% 100%,
+    100% 100%;
+  background-position:
+    -90% 0%,
+    0% 0px;
+  background-repeat: repeat-y;
+  animation: image-transition 1.5s infinite linear;
+}
+
+@keyframes image-transition {
+  to {
+    background-position:
+      140% 0%,
+      0% 0px;
+  }
+}
+
+
+.article__body-load:empty {
+  width: 700px;
+  height: 590px;
+  margin: auto;
+  background-image:
+    linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%),
+    linear-gradient($transition-grey 18px, transparent 0),
+    linear-gradient($transition-grey 18px, transparent 0),
+    linear-gradient($transition-grey 18px, transparent 0),
+    linear-gradient($transition-grey 18px, transparent 0),
+    linear-gradient($transition-grey 18px, transparent 0),
+    linear-gradient($transition-grey 18px, transparent 0);
+  background-size:
+    40% 33.3%,
+    50% 33.3%,
+    75% 33.3%,
+    95% 33.3%,
+    85% 33.3%,
+    60% 33.3%,
+    40% 33.3%;
+  background-position:
+    -90% 0%,
+    0% 30px,
+    0% 55px,
+    0% 80px,
+    0% 105px,
+    0% 130px,
+    0% 155px;
+  background-repeat: repeat-y;
+  animation: text-transition 1.5s infinite linear;
+}
+
+@keyframes text-transition {
+  to {
+    background-position:
+      140% 0%,
+      0% 30px,
+      0% 55px,
+      0% 80px,
+      0% 105px,
+      0% 130px,
+      0% 155px;
+  }
+}
