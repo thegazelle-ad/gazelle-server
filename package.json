@@ -11,7 +11,11 @@
     "test:unit": "jest --testPathPattern='.*__tests__/(?!end-to-end/).*\\.test\\.js'",
     "test:e2e": "jest --testPathPattern='__tests__/end-to-end/.*\\.test\\.js' --runInBand",
     "lint": "eslint --max-warnings 0 '{src,__tests__}/**/*.{js,jsx}'",
-    "precommit": "npm run lint && npm run test:unit"
+    "precommit": "git stash --keep-index; lint-staged; PRECOMMIT_PASSED=$(echo $?); git stash pop; exit $PRECOMMIT_PASSED"
+  },
+  "lint-staged": {
+    "*.js": "eslint --max-warnings 0",
+    "*": "jest --bail --findRelatedTests"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -62,9 +66,10 @@
     "file-loader": "^0.9.0",
     "husky": "^0.14.3",
     "jest": "^21.2.1",
+    "lint-staged": "^5.0.0",
+    "nightmare": "^2.10.0",
     "node-sass": "^4.5.3",
     "null-loader": "^0.1.1",
-    "nightmare": "^2.10.0",
     "postcss-cssnext": "^2.7.0",
     "postcss-loader": "^0.9.1",
     "sass-loader": "^4.0.0",
