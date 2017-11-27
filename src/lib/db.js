@@ -2,7 +2,7 @@
 // We disable camelcase here due to SQL naming conventions
 import knex from 'knex';
 import stable from 'stable';
-import databaseConfig from 'lib/../../config/database.config';
+import databaseConfig from 'config/database.config';
 import { mapGhostNames } from 'lib/falcor/falcor-utilities';
 import _ from 'lodash';
 import { formatDate, formatDateTime } from 'lib/utilities';
