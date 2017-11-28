@@ -6,7 +6,6 @@ import { browserHistory } from 'react-router';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import AppBar from 'material-ui/AppBar';
-import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
@@ -210,7 +209,7 @@ export default class AppController extends BaseComponent {
             title={"Admin Interface"}
             iconElementRight={this.isLoggedIn() ?
               <LoggedIn /> :
-              <FlatButton label="Sign In" />}
+              null}
             showMenuIconButton={false}
           />
 

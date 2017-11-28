@@ -21,7 +21,14 @@ import bodyParser from 'body-parser';
 import request from 'request';
 
 /* Our own helper functions */
-import { isDevelopment, filterByEnvironment, hash, googleClient, googleWhitelist } from 'lib/utilities'; // eslint-disable-line max-len
+import {
+  isDevelopment,
+  filterByEnvironment,
+  hash,
+  googleClientID,
+  googleWhitelist,
+  googleDevWhitelist,
+} from 'lib/utilities';
 import { md5Hash, compressJPEG, deleteFile } from 'lib/server-utilities';
 
 export default function runAdminServer(serverFalcorModel) {
@@ -214,7 +221,7 @@ export default function runAdminServer(serverFalcorModel) {
 
   app.post('/googlelogin', (req, res) => {
     const token = req.body.data;
-    const endpoint = `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${token}`;
+    const endpoint = `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${encodeURIComponent(token)}`;
 
     request.get(endpoint, (error, response, body) => {
       if (error) {
@@ -226,9 +233,11 @@ export default function runAdminServer(serverFalcorModel) {
       const aud = content.aud;
       const email = content.email;
 
-      if (aud.trim() === googleClient) {
+      if (aud.trim() === googleClientID) {
         // if valid email address, complete login
-        if (googleWhitelist.indexOf(email) !== -1) {
+        if (isDevelopment && googleDevWhitelist.indexOf(email) !== -1) {
+          res.sendStatus(200);
+        } else if (googleWhitelist.indexOf(email) !== -1) {
           res.sendStatus(200);
         } else {
           res.status(401).send('unauthorized user');
