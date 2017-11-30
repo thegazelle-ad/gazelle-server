@@ -3,13 +3,41 @@ import React from 'react';
 import { browserHistory } from 'react-router';
 import { googleClientID } from 'lib/utilities';
 import _ from 'lodash';
-import GoogleLogin from 'react-google-login';
+
+const style = {
+  button: {
+    marginTop: 36,
+  },
+};
 
 export default class Login extends BaseComponent {
   constructor(props) {
     super(props);
+    this.state = {
+      gapiReady: false,
+    };
     this.handleRedirect = this.handleRedirect.bind(this);
-    this.onGoogleResponse = this.onGoogleResponse.bind(this);
+    this.onSignIn = this.onSignIn.bind(this);
+    this.onSignInSuccess = this.onSignInSuccess.bind(this);
+  }
+
+  componentDidMount() {
+    const script = document.createElement('script');
+    script.src = 'https://apis.google.com/js/platform.js';
+    document.body.appendChild(script);
+
+    script.onload = () => {
+      window.gapi.load('auth2', () => {
+        this.setState({
+          gapiReady: true,
+        });
+        if (!window.gapi.auth2.getAuthInstance()) {
+          window.gapi.auth2.init({
+            client_id: googleClientID,
+          });
+        }
+      });
+    };
   }
 
   handleRedirect() {
@@ -25,16 +53,11 @@ export default class Login extends BaseComponent {
     browserHistory.push(url);
   }
 
-  onGoogleResponse(response) {
-    if (response.error) {
-      alert(`Google Login Failed.\n${response.error}`);
-      return;
-    }
-
-    const token = { data: response.tokenId };
+  onSignInSuccess(response) {
+    const token = { data: response.getAuthResponse().id_token };
 
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/googlelogin', true);
+    xhr.open('POST', '/googlelogin');
     xhr.setRequestHeader('Content-Type', 'application/json');
 
     xhr.onreadystatechange = () => {
@@ -48,20 +71,22 @@ export default class Login extends BaseComponent {
     xhr.send(JSON.stringify(token));
   }
 
+  onSignInFailure(response) {
+    alert(`Google Login Failed.\n${response.error}`);
+  }
+
+  onSignIn() {
+    if (this.state.gapiReady) {
+      const auth = window.gapi.auth2.getAuthInstance();
+      auth.signIn().then(res => this.onSignInSuccess(res), err => this.onSignInFailure(err));
+    } else {
+      alert('Google API is not ready. Try again.');
+    }
+  }
+
   render() {
     return (
-      <div className="googleOuterDiv">
-        <GoogleLogin
-          clientId={googleClientID}
-          onSuccess={this.onGoogleResponse}
-          onFailure={this.onGoogleResponse}
-          className="googleButton"
-        >
-          <div className="googleInnerDiv">
-            <span className="googleSpan">Login with Google</span>
-          </div>
-        </GoogleLogin>
-      </div>
+      <div className="g-signin2" onClick={this.onSignIn} style={style.button}></div>
     );
   }
 }
