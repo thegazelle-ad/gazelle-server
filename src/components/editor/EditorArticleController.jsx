@@ -67,6 +67,7 @@ export default class EditorArticleController extends FalcorController {
         ['title', 'category', 'teaser', 'image', 'id', 'published_at'],
       ],
       ['articles', 'bySlug', params.slug, 'authors', { length: 10 }, ['id', 'name']],
+      ['articles', 'bySlug', params.slug, 'mediaContributors', { length: 10 }, ['id', 'name']],
       ['categories', 'byIndex', { length: 30 }, ['name', 'slug']],
     ];
   }
@@ -78,8 +79,9 @@ export default class EditorArticleController extends FalcorController {
       const category = article.category || '';
       const image = article.image || '';
       const authors = _.map(article.authors, author => author);
+      const mediaContributors = _.map(article.mediaContributors, contributor => contributor);
 
-      this.safeSetState({ teaser, category, image, authors });
+      this.safeSetState({ teaser, category, image, authors, mediaContributors });
     };
     super.componentWillMount(falcorCallback);
   }
@@ -90,18 +92,16 @@ export default class EditorArticleController extends FalcorController {
       const teaser = article.teaser || '';
       const category = article.category || '';
       const image = article.image || '';
+      const authors = _.map(article.authors, author => author);
+      const mediaContributors = _.map(article.mediaContributors, contributor => contributor);
 
-      this.safeSetState({ teaser, category, image });
+      this.safeSetState({ teaser, category, image, authors, mediaContributors });
     };
     super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
 
     this.safeSetState({
       changed: false,
       saving: false,
-      authors: [],
-      authorsDeleted: {},
-      mediaContributors: [],
-      mediaContributorsDeleted: {},
     });
   }
 
@@ -231,6 +231,13 @@ export default class EditorArticleController extends FalcorController {
         [['name'], ['slug']]
       ));
     }
+    if (processedMediaContributors !== null) {
+      updatePromises.push(this.falcorCall(
+        ['articles', 'bySlug', articleSlug, 'mediaContributors', 'updateMediaContributors'],
+        [falcorData.id, processedMediaContributors],
+        [['name'], ['slug']]
+      ));
+    }
 
     // ADD similar statement for pushing Media Contributors to Falcor
 
@@ -240,7 +247,7 @@ export default class EditorArticleController extends FalcorController {
         changed: false,
         authorsAdded: [],
         authorsDeleted: {},
-        changesObject: { mainForm: false, authors: false },
+        changesObject: { mainForm: false, authors: false, mediaContributors: false },
       });
       // This is purely so the 'saved' message can be seen by the user for a second
       setTimeout(() => { this.safeSetState({ saving: false }); }, 1000);

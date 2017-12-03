@@ -846,6 +846,25 @@ or missing category at issue number ${issueNumber} index ${i}`);
     });
   }
 
+  updateMediaContributors(articleId, newContributors) {
+    return new Promise((resolve) => {
+      database('authors_posts').where('post_id', '=', articleId).del()
+      .then(() => {
+        const insertArray = _.map(newContributors, author_id => ({
+          post_id: articleId,
+          author_id,
+        }));
+        database('authors_posts').insert(insertArray).then(() => {
+          database.select('slug')
+          .from('authors_posts')
+          .innerJoin('authors', 'authors.id', '=', 'authors_posts.author_id')
+          .where('post_id', '=', articleId)
+          .then(rows => resolve(rows.map(row => row.slug)));
+        });
+      });
+    });
+  }
+
   updateGhostFields(jsonGraphArg) {
     return new Promise((resolve) => {
       const updatesCalled = Object.keys(jsonGraphArg).length;

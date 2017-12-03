@@ -180,6 +180,30 @@ export default [
     ),
   },
   {
+    // Get Media Contributor information from article
+    route: "articles['bySlug'][{keys:slugs}]['mediaContributors'][{integers:indices}]",
+    get: (pathSet) => (
+      new Promise((resolve) => {
+        db.articleMediaContributorQuery(pathSet.slugs).then((data) => {
+          // We receive the data as an object with keys equalling article slugs
+          // and values being an array of media contributor slugs in no particular order
+          const results = [];
+          _.forEach(data, (authorSlugArray, postSlug) => {
+            pathSet.indices.forEach((index) => {
+              if (index < authorSlugArray.length) {
+                results.push({
+                  path: ['articles', 'bySlug', postSlug, 'authors', index],
+                  value: $ref(['authors', 'bySlug', authorSlugArray[index]]),
+                });
+              }
+            });
+          });
+          resolve(results);
+        });
+      })
+    ),
+  },
+  {
     route: "articles['bySlug'][{keys:slugs}]['interactiveData']['html', 'js', 'css']",
     // Get interactive article meta data
     get: (pathSet) => (
@@ -227,6 +251,41 @@ export default [
             results.push({
               path: ['articles', 'bySlug', articleSlug, 'authors', index],
               value: $ref(['authors', 'bySlug', slug]),
+            });
+          });
+          resolve(results);
+        });
+      });
+    },
+  },
+  {
+    // Add Media Contributors to an article
+    route: "articles['bySlug'][{keys:slugs}]['mediaContributors']['updateMediaContributors']",
+    call: (callPath, args) => {
+      // the falcor.model.call only takes a path not a pathset
+      // so it is not possible to call this function for more
+      // than 1 article at a time, therefore we know keys:slugs is length 1
+      if (callPath.slugs > 1) {
+        throw new Error(
+          'updateMediaContributors falcor function was called' +
+           'illegally with more than 1 article slug'
+        );
+      }
+      return new Promise((resolve) => {
+        const articleId = args[0];
+        const newMediaContributors = args[1];
+        const articleSlug = callPath.slugs[0];
+        db.updateMediaContributors(articleId, newMediaContributors).then((data) => {
+          const results = [];
+          // Invalidate all the old data
+          results.push({
+            path: ['articles', 'bySlug', articleSlug, 'mediaContributors'],
+            invalidated: true,
+          });
+          data.forEach((slug, index) => {
+            results.push({
+              path: ['articles', 'bySlug', articleSlug, 'mediaContributors', index],
+              value: $ref(['mediaContributors', 'bySlug', slug]),
             });
           });
           resolve(results);
