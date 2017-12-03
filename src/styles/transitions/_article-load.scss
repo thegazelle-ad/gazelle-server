@@ -17,7 +17,7 @@
     linear-gradient($transition-grey 17px, transparent 0),
     linear-gradient($transition-grey 17px, transparent 0);
   background-size:
-    60% 100%,
+    40% 100%,
     55% 100%,
     90% 100%,
     10% 100%,
@@ -47,15 +47,14 @@
 }
 
 .article__image-load:empty {
-  width: 1800px;
+  left: 0;
+  right: 0;
   height: 600px;
-  margin-left: -500px;
-  overflow-x: hidden;
   background-image:
     linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 90%),
-    linear-gradient($transition-grey 700px, transparent 0);
+    linear-gradient($transition-grey 600px, transparent 0);
   background-size:
-    60% 100%,
+    40% 100%,
     100% 100%;
   background-position:
     -90% 0%,
@@ -84,7 +83,7 @@
     linear-gradient($transition-grey 18px, transparent 0),
     linear-gradient($transition-grey 18px, transparent 0);
   background-size:
-    60% 33.3%,
+    40% 33.3%,
     50% 33.3%,
     75% 33.3%,
     95% 33.3%,
@@ -116,17 +115,8 @@
   }
 }
 
-@media screen and (max-width: 550px){
-	.article__header-load {
-    animation: title-transition 1s infinite linear !important;
-	}
-
-  .article__image-load {
-    animation: title-transition 1s infinite linear !important;
-	}
-
-  .article__body-load {
-    animation: text-transition 1s infinite linear !important;
-  }
-
+@media (min-width: 750px) {
+    .article__image-load {
+        margin: 0 calc(375px - 50vw);
+    }
 }
