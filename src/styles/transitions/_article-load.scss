@@ -1,24 +1,23 @@
 .article-load {
-  max-width: 1000px;
-  height: 1400px;
+  max-width: 750px;
+  height: 1325px;
   display: block;
   margin: auto;
   padding-top: 20px;
 }
 
 .article__header-load:empty {
-  width: 750px;
   height: 120px;
   margin: auto;
   background-image:
-    linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 90%),
     linear-gradient($transition-grey 42px, transparent 0),
     linear-gradient($transition-grey 19px, transparent 0),
     linear-gradient($transition-grey 17px, transparent 0),
     linear-gradient($transition-grey 17px, transparent 0),
     linear-gradient($transition-grey 17px, transparent 0);
   background-size:
-    40% 100%,
+    60% 100%,
     55% 100%,
     90% 100%,
     10% 100%,
@@ -48,14 +47,15 @@
 }
 
 .article__image-load:empty {
-  width: 2000px;
-  height: 700px;
-  margin-left: -300px;
+  width: 1800px;
+  height: 600px;
+  margin-left: -500px;
+  overflow-x: hidden;
   background-image:
-    linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 90%),
     linear-gradient($transition-grey 700px, transparent 0);
   background-size:
-    40% 100%,
+    60% 100%,
     100% 100%;
   background-position:
     -90% 0%,
@@ -72,13 +72,11 @@
   }
 }
 
-
 .article__body-load:empty {
-  width: 700px;
   height: 590px;
   margin: auto;
   background-image:
-    linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 90%),
     linear-gradient($transition-grey 18px, transparent 0),
     linear-gradient($transition-grey 18px, transparent 0),
     linear-gradient($transition-grey 18px, transparent 0),
@@ -86,7 +84,7 @@
     linear-gradient($transition-grey 18px, transparent 0),
     linear-gradient($transition-grey 18px, transparent 0);
   background-size:
-    40% 33.3%,
+    60% 33.3%,
     50% 33.3%,
     75% 33.3%,
     95% 33.3%,
@@ -116,4 +114,19 @@
       0% 130px,
       0% 155px;
   }
+}
+
+@media screen and (max-width: 550px){
+	.article__header-load {
+    animation: title-transition 1s infinite linear !important;
+	}
+
+  .article__image-load {
+    animation: title-transition 1s infinite linear !important;
+	}
+
+  .article__body-load {
+    animation: text-transition 1s infinite linear !important;
+  }
+
 }
