@@ -10,11 +10,10 @@ import s3 from 's3';
 // Needed for receiving the multi-part file upload
 import multer from 'multer';
 // Our own custom config
-import s3Config from '../../config/s3.config.js';
+import s3Config from 'config/s3.config.js';
 
 /* Helper libraries */
 import fs from 'fs';
-import path from 'path';
 import { exec } from 'child_process';
 // Helps us parse post requests from falcor
 import bodyParser from 'body-parser';
@@ -105,7 +104,7 @@ export default function runAdminServer(serverFalcorModel) {
   });
 
   /* Image Uploader */
-  const uploadDir = path.join(__dirname, '../../tmp');
+  const uploadDir = `${process.env.ROOT_DIRECTORY}/tmp`;
 
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
