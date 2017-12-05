@@ -1,4 +1,10 @@
-FROM circleci/node:7.10
+FROM circleci/node:9.3.0
+
+# We update to npm 5.6.0 since 5.5 breaks node 9
+# This weird workaround is taken from https://github.com/npm/npm/issues/15611
+RUN sudo npm install npm@5.6.0
+RUN sudo rm -rf /usr/local/lib/node_modules package.json package-lock.json
+RUN sudo mv node_modules /usr/local/lib
 
 RUN sudo apt-get install mysql-client
 

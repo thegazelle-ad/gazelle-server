@@ -211,7 +211,7 @@ export default function runAdminServer(serverFalcorModel) {
   }
 
 
-  const port = isCI || !process.env.EDITOR_PORT ? 4000 : process.env.EDITOR_PORT;
+  const port = isCI || !process.env.ADMIN_PORT ? 4000 : process.env.ADMIN_PORT;
   app.listen(port, err => {
     if (err) {
       console.error(err); // eslint-disable-line no-console
