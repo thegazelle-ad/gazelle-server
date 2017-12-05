@@ -12,8 +12,6 @@ import Navigation from 'components/Navigation';
 import Footer from 'components/Footer';
 import Loader from 'components/Loader';
 
-import 'styles/main.scss';
-
 export default class AppController extends FalcorController {
   componentDidMount() {
     super.componentDidMount();

@@ -125,12 +125,10 @@ export default class EditorArticleListController extends FalcorController {
                 fields={[]}
                 showPubDate
               />
-              {/* eslint-disable react/jsx-no-bind */}
               <EditorList
                 elements={data}
                 createElement={this.createListElement}
               />
-              {/* eslint-enable react/jsx-no-bind */}
               <RaisedButton
                 label="Previous Page"
                 primary

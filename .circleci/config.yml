@@ -3,11 +3,11 @@ working_directory: &working_directory
 
 docker_no_database: &docker_no_database
   docker:
-    - image: thegazelle/gazelle-main-circleci-primary:0.0.3
+    - image: thegazelle/gazelle-main-circleci-primary:0.0.4
 
 docker_with_database: &docker_with_database
   docker:
-    - image: thegazelle/gazelle-main-circleci-primary:0.0.3
+    - image: thegazelle/gazelle-main-circleci-primary:0.0.4
     - image: mariadb:10.1
       environment:
         MYSQL_ROOT_PASSWORD: circleci_test_gazelle
@@ -57,14 +57,14 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
+            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
       - run: npm install
 
       - save_cache:
           paths:
             - node_modules
-          key: v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
+          key: v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
   unit_test:
     <<: *defaults
@@ -77,7 +77,7 @@ jobs:
             - v1-repo-{{ checksum ".circle-sha" }}
       - restore_cache:
           keys:
-            - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
+            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
       - run: npm run test:unit
 
@@ -92,7 +92,7 @@ jobs:
             - v1-repo-{{ checksum ".circle-sha" }}
       - restore_cache:
           keys:
-            - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
+            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
       - run: npm run lint
 
@@ -107,7 +107,7 @@ jobs:
             - v1-repo-{{ checksum ".circle-sha" }}
       - restore_cache:
           keys:
-            - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
+            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
       - restore_cache:
           keys:
             - v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}
@@ -130,7 +130,7 @@ jobs:
             - v1-repo-{{ checksum ".circle-sha" }}
       - restore_cache:
           keys:
-            - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
+            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
       - restore_cache:
           keys:
             - v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}
@@ -169,7 +169,7 @@ jobs:
             - v1-repo-{{ checksum ".circle-sha" }}
       - restore_cache:
           keys:
-            - v2-dependencies-{{ arch }}-{{ checksum "npm-shrinkwrap.json" }}
+            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
       - restore_cache:
           keys:
             - v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}

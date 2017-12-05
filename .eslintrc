@@ -11,8 +11,8 @@
     },
     "import/resolver": {
       "webpack": {
-        config: "webpack.config.js",
-        config-index: 1
+        config: "webpack/webpack.dev.config.js",
+        config-index: 0
       }
     }
   },
