@@ -27,7 +27,6 @@ import {
   hash,
   googleClientID,
   googleWhitelist,
-  googleDevWhitelist,
 } from 'lib/utilities';
 import { md5Hash, compressJPEG, deleteFile } from 'lib/server-utilities';
 
@@ -45,6 +44,7 @@ export default function runAdminServer(serverFalcorModel) {
         <link rel="stylesheet" type="text/css" href="/admin.css?h=${cssHash}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="google-signin-client_id" content="${googleClientID}">
+        <script src="https://apis.google.com/js/platform.js" onload="GoogleAPILoaded=true" async defer></script>
       </head>
       <body>
         <div id="main">
@@ -235,8 +235,9 @@ export default function runAdminServer(serverFalcorModel) {
       const email = content.email;
 
       if (aud.trim() === googleClientID) {
-        // if valid email address, complete login
-        if (isDevelopment && googleDevWhitelist.indexOf(email) !== -1) {
+        // in dev mode, allow any valid email address
+        // in production, require email to be in whitelist (defined in utilities.js)
+        if (isDevelopment) {
           res.sendStatus(200);
         } else if (googleWhitelist.indexOf(email) !== -1) {
           res.sendStatus(200);

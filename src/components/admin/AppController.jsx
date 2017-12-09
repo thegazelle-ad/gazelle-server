@@ -151,10 +151,15 @@ export default class AppController extends BaseComponent {
   }
 
   signOut() {
-    const auth = window.gapi.auth2.getAuthInstance();
-    auth.signOut().then(() => {
-      browserHistory.push('/login');
-    });
+    if (!window.gapi.auth2) {
+      alert('(Dev Mode) Cannot sign out before sign in. Visit /login first.');
+    } else {
+      const auth = window.gapi.auth2.getAuthInstance();
+      auth.signOut().then(() => {
+        auth.disconnect();
+        browserHistory.push('/login');
+      });
+    }
   }
 
   toggleRestartPasswordModal() {

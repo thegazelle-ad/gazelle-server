@@ -281,5 +281,4 @@ export function filterByEnvironment(development, beta, production) {
 
 export const googleClientID = '870681894101-ce7tdp6h9fvt2jfrqaaalim1s2n48ie3.apps.googleusercontent.com'; // eslint-disable-line max-len
 export const googleWhitelist = ['tjk343@nyu.edu', 'ks3583@nyu.edu', 'kw1553@nyu.edu', 'hct245@nyu.edu', 'zmm228@nyu.edu', 'ego225@nyu.edu']; // eslint-disable-line max-len
-export const googleDevWhitelist = ['xt405@nyu.edu', 'arantzardzm@nyu.edu', 'an2208@nyu.edu', 'isa230@nyu.edu', 'jaisal.friedman@nyu.edu', 'joaquin.kunkel@nyu.edu', 'tjk343@nyu.edu', 'ks3583@nyu.edu', 'kw1553@nyu.edu', 'hct245@nyu.edu', 'zmm228@nyu.edu', 'ego225@nyu.edu']; // eslint-disable-line max-len
 

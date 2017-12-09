@@ -4,40 +4,45 @@ import { browserHistory } from 'react-router';
 import { googleClientID } from 'lib/utilities';
 import _ from 'lodash';
 
-const style = {
+const styles = {
   button: {
     marginTop: 36,
   },
 };
 
+
 export default class Login extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
-      gapiReady: false,
+      GoogleAPIReady: false,
     };
     this.handleRedirect = this.handleRedirect.bind(this);
-    this.onSignIn = this.onSignIn.bind(this);
     this.onSignInSuccess = this.onSignInSuccess.bind(this);
   }
 
   componentDidMount() {
-    const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/platform.js';
-    document.body.appendChild(script);
-
-    script.onload = () => {
-      window.gapi.load('auth2', () => {
-        this.setState({
-          gapiReady: true,
-        });
-        if (!window.gapi.auth2.getAuthInstance()) {
-          window.gapi.auth2.init({
-            client_id: googleClientID,
+    const interval = setInterval(() => {
+      // GoogleAPILoaded is a global var, set to true when Google platform.js script loaded
+      if (GoogleAPILoaded) { // eslint-disable-line no-undef
+        this.renderButton();
+        window.gapi.load('auth2', () => {
+          this.setState({
+            GoogleAPIReady: true,
           });
-        }
-      });
-    };
+
+          const auth = window.gapi.auth2.getAuthInstance();
+          if (!auth || !auth.isSignedIn.get()) {
+            window.gapi.auth2.init({
+              client_id: googleClientID,
+            });
+          } else { // detects user has signed in
+            this.onSignInSuccess(auth.currentUser.get());
+          }
+        });
+        clearInterval(interval);
+      }
+    }, 100);
   }
 
   handleRedirect() {
@@ -75,18 +80,26 @@ export default class Login extends BaseComponent {
     alert(`Google Login Failed.\n${response.error}`);
   }
 
-  onSignIn() {
-    if (this.state.gapiReady) {
-      const auth = window.gapi.auth2.getAuthInstance();
-      auth.signIn().then(res => this.onSignInSuccess(res), err => this.onSignInFailure(err));
-    } else {
-      alert('Google API is not ready. Try again.');
-    }
+  renderButton() {
+    window.gapi.signin2.render('my-signin2', {
+      scope: 'profile email',
+      longtitle: true,
+      onsuccess: this.onSignInSuccess,
+      onfailure: this.onSignInFailure,
+    });
   }
 
   render() {
+    const fade = this.state.GoogleAPIReady ? 1 : 0.5;
     return (
-      <div className="g-signin2" onClick={this.onSignIn} style={style.button}></div>
+      <div
+        id="my-signin2"
+        style={{
+          ...styles.button,
+          opacity: fade,
+        }}
+      >
+      </div>
     );
   }
 }
