@@ -44,6 +44,10 @@ export default function runAdminServer(serverFalcorModel) {
         <link rel="stylesheet" type="text/css" href="/admin.css?h=${cssHash}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="google-signin-client_id" content="${googleClientID}">
+        <script>
+          // In order to avoid 'undefined has no property X' errors
+          window.THE_GAZELLE = {};
+        </script>
         <script src="https://apis.google.com/js/platform.js" onload="GoogleAPILoaded=true" async defer></script>
       </head>
       <body>

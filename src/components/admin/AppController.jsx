@@ -156,6 +156,7 @@ export default class AppController extends BaseComponent {
     } else {
       const auth = window.gapi.auth2.getAuthInstance();
       auth.signOut().then(() => {
+        // revokes all of the scopes that the user granted
         auth.disconnect();
         browserHistory.push('/login');
       });
