@@ -249,7 +249,7 @@ export function stringToInt(str) {
 
 // Environment functions and constants
 export const isProduction = process.env.NODE_ENV === 'production';
-export const isStaging = process.env.NODE_ENV === 'beta';
+export const isStaging = process.env.NODE_ENV === 'staging';
 export const isCI = process.env.CI === 'true' && process.env.CIRCLECI === 'true';
 export const isDevelopment = !isProduction && !isStaging;
 

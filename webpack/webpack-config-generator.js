@@ -29,7 +29,7 @@ const generateWebpackConfig = (config) => {
       ADMIN_PORT = 8002;
       break;
 
-    case 'beta':
+    case 'staging':
       MAIN_PORT = 8003;
       ADMIN_PORT = 8004;
       break;
@@ -57,10 +57,10 @@ const generateWebpackConfig = (config) => {
       break;
 
     case 'main-client':
-      entry = getAbsolute('src/client-scripts/gazelle-client.js');
+      entry = getAbsolute('src/client-scripts/main-client.js');
       output = {
         path: getAbsolute('static/build'),
-        filename: 'client.js',
+        filename: 'main-client.js',
       };
       target = 'web';
       break;
@@ -69,7 +69,7 @@ const generateWebpackConfig = (config) => {
       entry = getAbsolute('src/client-scripts/admin-client.js');
       output = {
         path: getAbsolute('static/build'),
-        filename: 'editor-client.js',
+        filename: 'admin-client.js',
       };
       target = 'web';
       break;

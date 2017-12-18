@@ -148,7 +148,7 @@ jobs:
           keys:
             - v1-build-{{ arch }}-{{ .Revision }}
 
-      - run: npm run build-production
+      - run: npm run build:production
 
       - save_cache:
           paths:
