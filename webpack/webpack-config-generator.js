@@ -1,4 +1,4 @@
-const webpack = require("webpack");
+const webpack = require('webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
@@ -18,7 +18,11 @@ const getAbsolute = relativePath => path.resolve(ROOT_DIRECTORY, relativePath);
 const generateWebpackConfig = (config) => {
   // Initialized shared config variables based on environment and
   // what type of compilation we're doing. This also simultaneously validates the arguments
-  let entry, output, target, MAIN_PORT, ADMIN_PORT;
+  let entry;
+  let output;
+  let target;
+  let MAIN_PORT;
+  let ADMIN_PORT;
   switch (config.NODE_ENV) {
     case 'production':
       MAIN_PORT = 8001;
@@ -49,7 +53,7 @@ const generateWebpackConfig = (config) => {
         path: getAbsolute('build'),
         filename: 'server.js',
       };
-      target = 'node'
+      target = 'node';
       break;
 
     case 'main-client':
@@ -169,17 +173,17 @@ const generateWebpackConfig = (config) => {
                         config.type === 'server'
                           // This is for the node server
                           ? {
-                              node: 'current',
-                              /**
-                               * We want this behaviour but it's only in beta right now,
-                               * we can uncomment this when we upgrade to v7 of babel
-                               *
-                               * // Disable the default behaviour of finding
-                               * // browserslist key in package.json
-                               * browsers: '',
-                               */
-                              browsers: '> 1%, last 2 versions, Firefox ESR',
-                            }
+                            node: 'current',
+                            /**
+                             * We want this behaviour but it's only in beta right now,
+                             * we can uncomment this when we upgrade to v7 of babel
+                             *
+                             * // Disable the default behaviour of finding
+                             * // browserslist key in package.json
+                             * browsers: '',
+                             */
+                            browsers: '> 1%, last 2 versions, Firefox ESR',
+                          }
                           /**
                            * We want this behaviour but it's only in beta right now,
                            * we can uncomment this when we upgrade to v7 of babel
@@ -188,7 +192,7 @@ const generateWebpackConfig = (config) => {
                            * // Here we simply let preset-env find the browserlist key
                            * : undefined
                            */
-                             : { browsers: '> 1%, last 2 versions, Firefox ESR' }
+                         : { browsers: '> 1%, last 2 versions, Firefox ESR' }
                       ),
                     },
                   ],
@@ -206,40 +210,40 @@ const generateWebpackConfig = (config) => {
         /**
          * Transpile and compile SCSS to one minified, autoprefixed, vanilla css file
          */
-        {
-          test: /\.scss$/,
-          exclude: getAbsolute('node_modules'),
+      {
+        test: /\.scss$/,
+        exclude: getAbsolute('node_modules'),
 
-          loader: extractScss.extract([
-            // Convert css to JS module which Webpack can handle and we can extract to a file
-            {
-              loader: 'css-loader',
-              options: {
-                minimize: config.NODE_ENV !== undefined,
-                sourceMap: true,
-              },
+        loader: extractScss.extract([
+          // Convert css to JS module which Webpack can handle and we can extract to a file
+          {
+            loader: 'css-loader',
+            options: {
+              minimize: config.NODE_ENV !== undefined,
+              sourceMap: true,
             },
-            // Transpile CSSNext features and autoprefix
-            {
-              loader: 'postcss-loader',
-              options: {
-                config: {
-                  path: getAbsolute('webpack/postcss.config.js'),
-                },
-                sourceMap: true,
+          },
+          // Transpile CSSNext features and autoprefix
+          {
+            loader: 'postcss-loader',
+            options: {
+              config: {
+                path: getAbsolute('webpack/postcss.config.js'),
               },
+              sourceMap: true,
             },
-            // Converts scss to css
-            {
-              loader: 'sass-loader',
-              options: {
-                sourceMap: true,
-              },
+          },
+          // Converts scss to css
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true,
             },
-          ]),
-        }) : []),
+          },
+        ]),
+      }) : []),
     },
-  }
+  };
 };
 
 module.exports = generateWebpackConfig;
