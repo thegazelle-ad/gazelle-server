@@ -32,7 +32,7 @@ export default function runAdminServer(serverFalcorModel) {
     <html>
       <head>
         <title>Gazelle Editor Tools</title>
-        <link rel="stylesheet" href="/pure-min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
         <link rel="stylesheet" type="text/css" href="/admin.css?h=${cssHash}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
       </head>
