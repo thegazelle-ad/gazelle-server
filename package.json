@@ -16,7 +16,7 @@
     "test:unit": "jest --testPathPattern='.*__tests__/(?!end-to-end/).*\\.test\\.js'",
     "test:e2e": "jest --testPathPattern='__tests__/end-to-end/.*\\.test\\.js' --runInBand",
     "lint": "eslint --max-warnings 0 '{src,__tests__}/**/*.{js,jsx}'",
-    "precommit": "git stash --keep-index; lint-staged; PRECOMMIT_PASSED=$(echo $?); git stash pop; exit $PRECOMMIT_PASSED"
+    "precommit": "TEMP_STASH_OUTPUT=$(git stash --keep-index); if [ \"$TEMP_STASH_OUTPUT\" != 'No local changes to save' ]; then lint-staged; PRECOMMIT_PASSED=$(echo $?); MUTE=$(git stash pop); exit $PRECOMMIT_PASSED; fi; exit 0;"
   },
   "lint-staged": {
     "*.js": "eslint --max-warnings 0",
