@@ -14,25 +14,14 @@
     "build:production": "webpack --config webpack/webpack.production.config.js --bail",
     "build:staging": "webpack --config webpack/webpack.staging.config.js --bail",
     "build:emulate-ci": "CI=true CIRCLECI=true npm run build:production",
-    "test:unit": "jest --testPathPattern='.*__tests__/(?!end-to-end/).*\\.test\\.js'",
-    "test:e2e": "jest --testPathPattern='__tests__/end-to-end/.*\\.test\\.js' --runInBand",
+    "test:unit": "jest --config='__tests__/config/jest.unit.config.js' --testLocationInResults",
+    "test:e2e": "jest --config='__tests__/config/jest.e2e.config.js' --testLocationInResults --runInBand",
     "lint": "eslint --max-warnings 0 '{src,__tests__,webpack}/**/*.{js,jsx}'",
     "precommit": "TEMP_STASH_OUTPUT=$(git stash --keep-index); if [ \"$TEMP_STASH_OUTPUT\" != 'No local changes to save' ]; then lint-staged; PRECOMMIT_PASSED=$(echo $?); MUTE=$(git stash pop); exit $PRECOMMIT_PASSED; fi; exit 0;"
   },
   "lint-staged": {
     "*.js": "eslint --max-warnings 0",
-    "*": "jest --bail --findRelatedTests"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "jsx"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "./src",
-      "."
-    ]
+    "*": "npm run test:unit -- --bail --findRelatedTests"
   },
   "browserslist": [
     "> 1%",
@@ -72,7 +61,7 @@
     "eslint-plugin-react": "^5.1.1",
     "extract-text-webpack-plugin": "^3.0.2",
     "husky": "^0.14.3",
-    "jest": "^21.2.1",
+    "jest": "^22.1.0",
     "lint-staged": "^5.0.0",
     "nightmare": "^2.10.0",
     "node-sass": "^4.7.2",
