@@ -24,14 +24,14 @@ import { md5Hash, compressJPEG, deleteFile } from 'lib/server-utilities';
 
 export default function runAdminServer(serverFalcorModel) {
   // Create MD5 hash of static files for better cache performance
-  const clientScriptHash = md5Hash('./static/build/editor-client.js');
+  const clientScriptHash = md5Hash('./static/build/admin-client.js');
   const cssHash = md5Hash('./static/admin.css');
 
   const htmlString = `
     <!DOCTYPE html>
     <html>
       <head>
-        <title>Gazelle Editor Tools</title>
+        <title>The Gazelle's Admin Interface</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
         <link rel="stylesheet" type="text/css" href="/admin.css?h=${cssHash}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -40,7 +40,7 @@ export default function runAdminServer(serverFalcorModel) {
         <div id="main">
           loading...
         </div>
-        <script src="/build/editor-client.js?h=${clientScriptHash}"></script>
+        <script src="/build/admin-client.js?h=${clientScriptHash}"></script>
       </body>
     </html>
   `;
@@ -219,6 +219,6 @@ export default function runAdminServer(serverFalcorModel) {
     }
 
     // eslint-disable-next-line no-console
-    console.log(`Editor tools server started on port ${port}`);
+    console.log(`Admin tools server started on port ${port}`);
   });
 }

@@ -31,9 +31,9 @@ import { md5Hash } from 'lib/server-utilities';
 import { injectModelCreateElement } from 'lib/falcor/falcor-utilities';
 
 
-export default function runGazelleServer(serverFalcorModel) {
+export default function runMainServer(serverFalcorModel) {
   // Create MD5 hash of static files for better cache performance
-  const clientScriptHash = md5Hash('./static/build/client.js');
+  const clientScriptHash = md5Hash('./static/build/main-client.js');
   const cssHash = md5Hash('./static/build/main.css');
 
   const buildHtmlString = (body, cache) => {
@@ -61,7 +61,7 @@ export default function runGazelleServer(serverFalcorModel) {
             <script>
               var _initialCache = ${JSON.stringify(cache)};
             </script>
-            <script src="/static/build/client.js?h=${clientScriptHash}"></script>
+            <script src="/static/build/main-client.js?h=${clientScriptHash}"></script>
           </body>
         </html>`
     );

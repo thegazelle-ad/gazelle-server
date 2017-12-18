@@ -10,9 +10,10 @@
   "scripts": {
     "start": "node ./build/server.js",
     "build": "webpack --config webpack/webpack.dev.config.js",
-    "build-production": "webpack --config webpack/webpack.production.config.js --bail",
-    "build-beta": "webpack --config webpack/webpack.beta.config.js --bail",
-    "build-emulate-ci": "CI=true CIRCLECI=true npm run build-production",
+    "build:watch": "npm run build -- -w",
+    "build:production": "webpack --config webpack/webpack.production.config.js --bail",
+    "build:staging": "webpack --config webpack/webpack.staging.config.js --bail",
+    "build:emulate-ci": "CI=true CIRCLECI=true npm run build:production",
     "test:unit": "jest --testPathPattern='.*__tests__/(?!end-to-end/).*\\.test\\.js'",
     "test:e2e": "jest --testPathPattern='__tests__/end-to-end/.*\\.test\\.js' --runInBand",
     "lint": "eslint --max-warnings 0 '{src,__tests__,webpack}/**/*.{js,jsx}'",
