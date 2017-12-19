@@ -1,5 +1,4 @@
 export const ENTER_UNICODE = '\u000d';
-export const SIMPLE_TEST_TIMEOUT = 10 * 1000;
 const NIGHTMARE_ACTION_TIMEOUT = (process.env.CIRCLECI ? 6 : 2) * 1000;
 export const NIGHTMARE_CONFIG = {
   waitTimeout: NIGHTMARE_ACTION_TIMEOUT,
