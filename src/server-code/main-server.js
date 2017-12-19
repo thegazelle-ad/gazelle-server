@@ -14,7 +14,7 @@ import FalcorController from 'lib/falcor/FalcorController';
 // Serverside rendering functions
 import { match, RouterContext } from 'react-router';
 // Our custom routes for thegazelle.org
-import mainRoutes from 'lib/routes';
+import routes from 'routes/main-routes';
 
 /* Express Server Software */
 import express from 'express';
@@ -162,7 +162,7 @@ export default function runMainServer(serverFalcorModel) {
 
   if (isStaging) {
     app.get('/login', (req, res) => {
-      match({ routes: mainRoutes, location: req.url },
+      match({ routes, location: req.url },
         (error, redirectLocation, renderProps) => {
           if (error) {
             res.status(500).send(error.message);
@@ -193,7 +193,7 @@ export default function runMainServer(serverFalcorModel) {
     });
   } else {
     app.get('*', (req, res) => {
-      match({ routes: mainRoutes, location: req.url },
+      match({ routes, location: req.url },
         (error, redirectLocation, renderProps) => {
           if (error) {
             res.status(500).send(error.message);

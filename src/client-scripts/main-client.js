@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, browserHistory } from 'react-router';
 import falcor from 'falcor';
-import routes from 'lib/routes';
+import routes from 'routes/main-routes';
 import { injectModelCreateElement } from 'lib/falcor/falcor-utilities';
 import HttpDataSource from 'falcor-http-datasource';
 import { setIsClient } from 'lib/utilities';
