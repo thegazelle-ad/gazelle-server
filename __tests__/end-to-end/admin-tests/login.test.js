@@ -1,13 +1,10 @@
 import Nightmare from 'nightmare';
 
 import {
-  SIMPLE_TEST_TIMEOUT,
   NIGHTMARE_CONFIG,
   ENTER_UNICODE,
 } from '__tests__/end-to-end/e2e-constants';
 import { HOST } from './e2e-admin-constants';
-
-jest.setTimeout(SIMPLE_TEST_TIMEOUT);
 
 function testLoginRedirect(nightmare, path, useButton = false) {
   const passwordInputSelector = 'input[type="password"]';

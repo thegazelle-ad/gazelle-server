@@ -1,0 +1,2 @@
+const SIMPLE_TEST_TIMEOUT = 10 * 1000;
+jest.setTimeout(SIMPLE_TEST_TIMEOUT);

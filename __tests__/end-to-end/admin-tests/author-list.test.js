@@ -1,13 +1,10 @@
 import Nightmare from 'nightmare';
 
 import {
-  SIMPLE_TEST_TIMEOUT,
   NIGHTMARE_CONFIG,
   ENTER_UNICODE,
 } from '__tests__/end-to-end/e2e-constants';
 import { getLoggedInState, restartServer, isVisible } from './e2e-admin-utilities';
-
-jest.setTimeout(SIMPLE_TEST_TIMEOUT);
 
 describe('Admin interface author list', () => {
   let nightmare = null;

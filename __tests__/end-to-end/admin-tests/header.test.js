@@ -2,12 +2,9 @@ import Nightmare from 'nightmare';
 
 import { getLoggedInState } from './e2e-admin-utilities';
 import {
-  SIMPLE_TEST_TIMEOUT,
   NIGHTMARE_CONFIG,
   ENTER_UNICODE,
 } from '__tests__/end-to-end/e2e-constants';
-
-jest.setTimeout(SIMPLE_TEST_TIMEOUT);
 
 describe('Admin header', () => {
   let nightmare = null;
