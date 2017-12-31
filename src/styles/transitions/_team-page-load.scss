@@ -1,0 +1,188 @@
+body{
+	background-color: $background-grey;
+}
+
+.team-page-load {
+	width: 1000px;
+	height: 780px;
+	display: block;
+	margin: auto;
+	padding-top: 20px;
+}
+
+.team-page__title-load:empty {
+	width: 1000px;
+	height: 30px;
+	margin: auto;
+	background-image:
+		linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%),
+		linear-gradient($transition-grey 30px, transparent 0);
+	background-size:
+		20% 100%, 260px 100%;
+	background-position:
+		-90% 0%, 50% 0%;
+	background-repeat: repeat-y;
+	animation: title-transition 2s infinite linear;
+}
+ 
+@keyframes title-transition {
+	to {
+		background-position:
+			140% 0%, 50% 0%;
+	}
+}
+
+.team-page__member-load:empty {
+	height: 720px; 
+
+	background-image: 
+		linear-gradient(90deg, rgba(250, 250, 250, 0), rgba(250, 250, 250, 0.5) 50%, rgba(250, 250, 250, 0) 100%),
+
+		linear-gradient($transition-grey 1px, transparent 0),
+		linear-gradient($transition-grey 20px, transparent 0),
+		linear-gradient($transition-grey 12px, transparent 0),
+		linear-gradient(#ffffff 70px, transparent 0),
+		linear-gradient($transition-grey 290px, transparent 0),
+
+		linear-gradient($transition-grey 1px, transparent 0),
+		linear-gradient($transition-grey 20px, transparent 0),
+		linear-gradient($transition-grey 12px, transparent 0),
+		linear-gradient(#ffffff 70px, transparent 0),
+		linear-gradient($transition-grey 290px, transparent 0),
+
+		linear-gradient($transition-grey 1px, transparent 0),
+		linear-gradient($transition-grey 20px, transparent 0),
+		linear-gradient($transition-grey 12px, transparent 0),
+		linear-gradient(#ffffff 70px, transparent 0),
+		linear-gradient($transition-grey 290px, transparent 0),
+
+		linear-gradient($transition-grey 1px, transparent 0),
+		linear-gradient($transition-grey 20px, transparent 0),
+		linear-gradient($transition-grey 12px, transparent 0),
+		linear-gradient(#ffffff 70px, transparent 0),
+		linear-gradient($transition-grey 290px, transparent 0);
+
+	background-size:
+		20% 50%,
+		220px 50%, 180px 50%, 140px 50%, 219.5px 50%, 220px 50%,
+		220px 50%, 180px 50%, 140px 50%, 219.5px 50%, 220px 50%,
+		220px 50%, 180px 50%, 140px 50%, 219.5px 50%, 220px 50%,
+		220px 50%, 180px 50%, 140px 50%, 219.5px 50%, 220px 50%;
+
+	background-position:
+		-90% 0%,
+		42px 330px, 62px 277px, 82px 305px, 42px 260px, 42px 40px,
+		274px 330px, 294px 277px, 314px 305px, 274px 260px, 274px 40px,
+		506px 330px, 526px 277px, 546px 305px, 506px 260px, 506px 40px,
+		738px 330px, 758px 277px, 778px 305px, 738px 260px, 738px 40px;
+
+	background-repeat: repeat-y;
+	animation: text-transition 2s infinite linear;
+}
+
+@keyframes text-transition {
+	to {
+		background-position:
+			140% 0%, 
+			42px 330px, 62px 277px, 82px 305px, 42px 260px, 42px 40px,
+			274px 330px, 294px 277px, 314px 305px, 274px 260px, 274px 40px,
+			506px 330px, 526px 277px, 546px 305px, 506px 260px, 506px 40px,
+			738px 330px, 758px 277px, 778px 305px, 738px 260px, 738px 40px;
+	}
+}
+
+@media screen and (max-width: 1025px){
+	.team-page-load {
+		width: 768px;
+	}
+	.team-page__title-load {
+		width: 768px !important;
+	}
+	.team-page__member-load {
+		width: 768px !important;
+		background-image: 
+			linear-gradient(90deg, rgba(250, 250, 250, 0), rgba(250, 250, 250, 0.5) 50%, rgba(250, 250, 250, 0) 100%),
+
+			linear-gradient($transition-grey 1px, transparent 0),
+			linear-gradient($transition-grey 20px, transparent 0),
+			linear-gradient($transition-grey 12px, transparent 0),
+			linear-gradient(#ffffff 70px, transparent 0),
+			linear-gradient($transition-grey 290px, transparent 0),
+
+			linear-gradient($transition-grey 1px, transparent 0),
+			linear-gradient($transition-grey 20px, transparent 0),
+			linear-gradient($transition-grey 12px, transparent 0),
+			linear-gradient(#ffffff 70px, transparent 0),
+			linear-gradient($transition-grey 290px, transparent 0),
+
+			linear-gradient($transition-grey 1px, transparent 0),
+			linear-gradient($transition-grey 20px, transparent 0),
+			linear-gradient($transition-grey 12px, transparent 0),
+			linear-gradient(#ffffff 70px, transparent 0),
+			linear-gradient($transition-grey 290px, transparent 0),
+
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0) !important;
+	}
+}
+
+@media screen and (max-width: 750px){
+	.team-page-load {
+		width: 536px;
+	}
+	.team-page__title-load {
+		width: 536px !important;
+	}
+	.team-page__member-load {
+		width: 536px !important;
+		background-image: 
+			linear-gradient(90deg, rgba(250, 250, 250, 0), rgba(250, 250, 250, 0.5) 50%, rgba(250, 250, 250, 0) 100%),
+
+			linear-gradient($transition-grey 1px, transparent 0),
+			linear-gradient($transition-grey 20px, transparent 0),
+			linear-gradient($transition-grey 12px, transparent 0),
+			linear-gradient(#ffffff 70px, transparent 0),
+			linear-gradient($transition-grey 290px, transparent 0),
+
+			linear-gradient($transition-grey 1px, transparent 0),
+			linear-gradient($transition-grey 20px, transparent 0),
+			linear-gradient($transition-grey 12px, transparent 0),
+			linear-gradient(#ffffff 70px, transparent 0),
+			linear-gradient($transition-grey 290px, transparent 0),
+
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0) !important;
+	}
+}
+
+@media screen and (max-width: 550px){
+	.team-page-load {
+		width: 304px;
+	}
+	.team-page__title-load {
+		width: 304px !important;
+	}
+	.team-page__member-load {
+		width: 304px !important;
+		background-image: 
+			linear-gradient(90deg, rgba(250, 250, 250, 0), rgba(250, 250, 250, 0.5) 50%, rgba(250, 250, 250, 0) 100%),
+
+			linear-gradient($transition-grey 1px, transparent 0),
+			linear-gradient($transition-grey 20px, transparent 0),
+			linear-gradient($transition-grey 12px, transparent 0),
+			linear-gradient(#ffffff 70px, transparent 0),
+			linear-gradient($transition-grey 290px, transparent 0),
+
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0),
+			linear-gradient($background-grey 0px, transparent 0) !important;
+	}
+}

@@ -1,6 +1,7 @@
 .featured-article {
   max-width: $column-1;
   .article-preview {
+    margin-bottom: 0.5rem;
     max-width: $column-1;
     display: flex;
     // Center featured article content vertically and horizontally
@@ -16,7 +17,7 @@
 
     &__content {
       max-width: $column-3-1;
-      padding-left: 1.3rem;
+      padding: 1.1rem;
       &__category-header {
         display: block;
       }
@@ -48,7 +49,8 @@
 
       &__content {
         max-width: $column-1;
-        padding-left: 0;
+        padding: 0.6rem;
+        //padding-left: 0;
         font-size: inherit;
       }
     }

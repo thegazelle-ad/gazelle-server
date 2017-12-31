@@ -6,6 +6,7 @@ import { viewArticle, isArticleViewed } from 'lib/utilities';
 import Article from 'components/Article';
 import FalcorController from 'lib/falcor/FalcorController';
 import NotFound from 'components/NotFound';
+import ArticleLoad from 'transitions/ArticleLoad';
 
 export default class ArticleController extends FalcorController {
   static getFalcorPathSets(params) {
@@ -131,11 +132,6 @@ export default class ArticleController extends FalcorController {
         </div>
       );
     }
-
-    return (
-      <div>
-        Loading
-      </div>
-    );
+    return <ArticleLoad />;
   }
 }
