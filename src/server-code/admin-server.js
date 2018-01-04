@@ -23,8 +23,8 @@ import request from 'request';
 /* Our own helper functions */
 import {
   isDevelopment,
-  filterByEnvironment,
   hash,
+  isCI,
   googleClientID,
   googleWhitelist,
 } from 'lib/utilities';
@@ -48,7 +48,7 @@ export default function runAdminServer(serverFalcorModel) {
           // In order to avoid 'undefined has no property X' errors
           window.THE_GAZELLE = {};
         </script>
-        <script src="https://apis.google.com/js/platform.js" onload="GoogleAPILoaded=true" async defer></script>
+        <script src="https://apis.google.com/js/platform.js" onload='window.THE_GAZELLE.googleAPILoaded=true' async defer></script>
       </head>
       <body>
         <div id="main">

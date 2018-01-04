@@ -22,12 +22,13 @@ export default class Login extends BaseComponent {
   }
 
   componentDidMount() {
+    super.componentDidMount();
     const interval = setInterval(() => {
       // GoogleAPILoaded is a global var, set to true when Google platform.js script loaded
-      if (GoogleAPILoaded) { // eslint-disable-line no-undef
+      if (window.THE_GAZELLE.googleAPILoaded) { // eslint-disable-line no-undef
         this.renderButton();
         window.gapi.load('auth2', () => {
-          this.setState({
+          this.safeSetState({
             GoogleAPIReady: true,
           });
 

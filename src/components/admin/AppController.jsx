@@ -6,6 +6,7 @@ import { browserHistory } from 'react-router';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import AppBar from 'material-ui/AppBar';
+import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
@@ -151,15 +152,17 @@ export default class AppController extends BaseComponent {
   }
 
   signOut() {
-    if (!window.gapi.auth2) {
-      alert('(Dev Mode) Cannot sign out before sign in. Visit /login first.');
-    } else {
-      const auth = window.gapi.auth2.getAuthInstance();
-      auth.signOut().then(() => {
-        // revokes all of the scopes that the user granted
-        auth.disconnect();
-        browserHistory.push('/login');
-      });
+    if (window.THE_GAZELLE.googleAPILoaded) {
+      if (!window.gapi.auth2) {
+        alert('(Dev Mode) Cannot sign out before sign in. Visit /login first.');
+      } else {
+        const auth = window.gapi.auth2.getAuthInstance();
+        auth.signOut().then(() => {
+          // revokes all of the scopes that the user granted
+          auth.disconnect();
+          browserHistory.push('/login');
+        });
+      }
     }
   }
 
