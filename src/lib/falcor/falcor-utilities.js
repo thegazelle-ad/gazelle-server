@@ -2,6 +2,7 @@ import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
 import update from 'react-addons-update';
+import falcor from 'falcor';
 
 import { followPath } from 'lib/utilities';
 
@@ -388,3 +389,17 @@ export const mapGhostNames = (falcorName) => {
       return falcorName;
   }
 };
+
+export function cleanupFalcorKeys(obj) {
+  if (obj === null || (typeof obj) !== 'object' || obj.cleanupFalcorKeysMetaSeen) return obj;
+  const ret = {};
+  // In order to handle circular objects, the key name is convoluted to make sure it's unique
+  obj.cleanupFalcorKeysMetaSeen = true; // eslint-disable-line no-param-reassign
+  falcor.keys(obj).forEach(key => {
+    if (key === 'cleanupFalcorKeysMetaSeen') return;
+    ret[key] = cleanupFalcorKeys(obj[key]);
+  });
+  // Cleanup to not have mutated the object
+  delete obj.cleanupFalcorKeysMetaSeen; // eslint-disable-line no-param-reassign
+  return ret;
+}

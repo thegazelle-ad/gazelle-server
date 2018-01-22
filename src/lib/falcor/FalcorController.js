@@ -4,6 +4,7 @@ import {
   expandCache,
   pathSetsInCache,
   validateFalcorPathSets,
+  cleanupFalcorKeys,
 } from 'lib/falcor/falcor-utilities';
 import BaseComponent from 'lib/BaseComponent';
 import { setLoading, signalLeaving } from 'lib/loader';
@@ -61,7 +62,7 @@ export default class FalcorController extends BaseComponent {
     if (data) {
       this.safeSetState({
         ready: true,
-        data,
+        data: cleanupFalcorKeys(data),
       });
     } else {
       if (process.env.NODE_ENV !== 'production') {
@@ -77,7 +78,7 @@ export default class FalcorController extends BaseComponent {
       });
     }
     if (callback) {
-      callback(data);
+      callback(cleanupFalcorKeys(data));
     }
   }
 
@@ -113,7 +114,7 @@ export default class FalcorController extends BaseComponent {
         Object.assign(stateToSet, {
           ready: true,
           fetching: false,
-          data: x.json,
+          data: cleanupFalcorKeys(x.json),
         });
         this.safeSetState(stateToSet);
       } else {
@@ -131,7 +132,7 @@ export default class FalcorController extends BaseComponent {
         this.safeSetState(stateToSet);
       }
       if (callback) {
-        callback(x.json);
+        callback(cleanupFalcorKeys(x.json));
       }
     })
     .catch((e) => {

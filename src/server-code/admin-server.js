@@ -10,30 +10,29 @@ import s3 from 's3';
 // Needed for receiving the multi-part file upload
 import multer from 'multer';
 // Our own custom config
-import s3Config from '../../config/s3.config.js';
+import s3Config from 'config/s3.config.js';
 
 /* Helper libraries */
 import fs from 'fs';
-import path from 'path';
 import { exec } from 'child_process';
 // Helps us parse post requests from falcor
 import bodyParser from 'body-parser';
 
 /* Our own helper functions */
-import { isDevelopment, filterByEnvironment, hash } from 'lib/utilities';
+import { isDevelopment, hash, isCI } from 'lib/utilities';
 import { md5Hash, compressJPEG, deleteFile } from 'lib/server-utilities';
 
 export default function runAdminServer(serverFalcorModel) {
   // Create MD5 hash of static files for better cache performance
-  const clientScriptHash = md5Hash('./static/build/editor-client.js');
+  const clientScriptHash = md5Hash('./static/build/admin-client.js');
   const cssHash = md5Hash('./static/admin.css');
 
   const htmlString = `
     <!DOCTYPE html>
     <html>
       <head>
-        <title>Gazelle Editor Tools</title>
-        <link rel="stylesheet" href="/pure-min.css">
+        <title>The Gazelle's Admin Interface</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
         <link rel="stylesheet" type="text/css" href="/admin.css?h=${cssHash}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
       </head>
@@ -41,7 +40,7 @@ export default function runAdminServer(serverFalcorModel) {
         <div id="main">
           loading...
         </div>
-        <script src="/build/editor-client.js?h=${clientScriptHash}"></script>
+        <script src="/build/admin-client.js?h=${clientScriptHash}"></script>
       </body>
     </html>
   `;
@@ -51,6 +50,7 @@ export default function runAdminServer(serverFalcorModel) {
 
   // This is for parsing post requests
   app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+  app.use(bodyParser.json());
 
   // For connecting the client to our falcor server
   app.use('/model.json', FalcorServer.dataSourceRoute(() => (
@@ -75,45 +75,36 @@ export default function runAdminServer(serverFalcorModel) {
   app.use(allowCrossDomain);
 
   /* Restart Servers command */
-  const PATH_NAME = filterByEnvironment(
-    `${__dirname}/scripts/restart-servers.sh`,
-    '~/gazelle-beta/scripts/restart-servers.sh',
-    '~/gazelle-production/scripts/restart-servers.sh'
-  );
+  const PATH_NAME = `${process.env.ROOT_DIRECTORY}/scripts/restart-servers.sh`;
 
   let isRestarted = false;
 
-  app.get('/restartserver', (req, res) => {
-    if (isDevelopment) {
-      res.status(200).send('start');
-      return;
-    }
-
-    const password = req.query.password;
+  app.post('/restart-server', (req, res) => {
+    const password = req.body.password;
     if ((typeof password) !== 'string' || password.length < 1) {
-      res.status(401).send('invalid');
+      res.sendStatus(401);
     } else if (hash(password) === 'eaafc81d7868e1c203ecc90f387acfa4c24d1027134b0bfda6fd7c536efc5d8dd5718609a407dbfcd41e747aec331153d47733153afb7c125c558acba3fb6bcd') { // eslint-disable-line max-len
       isRestarted = true;
-      res.status(200).send('start');
+      res.sendStatus(200);
       exec(PATH_NAME, (err) => {
         if (err) {
           if (process.env.NODE_ENV !== 'production') {
             console.error(err); // eslint-disable-line no-console
           }
-          res.status(500).send('error');
+          // In the case of an error isRestarted will stay true and so the ping will fail correctly
         }
       });
     } else {
-      res.status(401).send('invalid');
+      res.sendStatus(401);
     }
   });
 
-  app.get('/isrestarted', (req, res) => {
+  app.get('/is-restarted', (req, res) => {
     res.status(200).send(isRestarted);
   });
 
   /* Image Uploader */
-  const uploadDir = path.join(__dirname, '../../tmp');
+  const uploadDir = `${process.env.ROOT_DIRECTORY}/tmp`;
 
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
@@ -220,13 +211,14 @@ export default function runAdminServer(serverFalcorModel) {
   }
 
 
-  app.listen(process.env.EDITOR_PORT || 4000, err => {
+  const port = isCI || !process.env.ADMIN_PORT ? 4000 : process.env.ADMIN_PORT;
+  app.listen(port, err => {
     if (err) {
       console.error(err); // eslint-disable-line no-console
       return;
     }
 
     // eslint-disable-next-line no-console
-    console.log(`Editor tools server started on port ${process.env.EDITOR_PORT || 4000}`);
+    console.log(`Admin tools server started on port ${port}`);
   });
 }

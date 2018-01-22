@@ -1,8 +1,25 @@
-defaults: &defaults
+working_directory: &working_directory
   working_directory: ~/gazelle-server
-  docker:
-    - image: circleci/node:7.10
 
+docker_no_database: &docker_no_database
+  docker:
+    - image: thegazelle/gazelle-main-circleci-primary:0.0.4
+
+docker_with_database: &docker_with_database
+  docker:
+    - image: thegazelle/gazelle-main-circleci-primary:0.0.4
+    - image: mariadb:10.1
+      environment:
+        MYSQL_ROOT_PASSWORD: circleci_test_gazelle
+        MYSQL_DATABASE: the_gazelle
+
+defaults: &defaults
+  <<: *working_directory
+  <<: *docker_no_database
+
+defaults_with_database: &defaults_with_database
+  <<: *working_directory
+  <<: *docker_with_database
 
 version: 2
 jobs:
@@ -13,7 +30,7 @@ jobs:
 
       # Complete setup
       - run: |
-          cp config/database.config.example.js config/database.config.js
+          sed 's/"password",$/"circleci_test_gazelle",/' config/database.config.example.js > config/database.config.js
           cp config/s3.config.example.js config/s3.config.js
           cp config/ghost.config.example.js config/ghost.config.js
 
@@ -40,16 +57,16 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v2-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
       - run: npm install
 
       - save_cache:
           paths:
             - node_modules
-          key: v2-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+          key: v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
-  build:
+  unit_test:
     <<: *defaults
     steps:
       - run:
@@ -58,31 +75,11 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ checksum ".circle-sha" }}
-
       - restore_cache:
           keys:
-            - v2-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
-      # Complete config
-      - run: ./scripts/get-ghost-config.sh
-      # Test that we can build without errors
-      - run: npm run build-production
-
-  test:
-    <<: *defaults
-    steps:
-      - run:
-          name: save SHA to a file
-          command: echo $CIRCLE_SHA1 > .circle-sha
-      - restore_cache:
-          keys:
-            - v1-repo-{{ checksum ".circle-sha" }}
-
-      - restore_cache:
-          keys:
-            - v2-dependencies-{{ checksum "npm-shrinkwrap.json" }}
-
-      - run: npm test
+      - run: npm run test:unit
 
   lint:
     <<: *defaults
@@ -93,20 +90,138 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ checksum ".circle-sha" }}
-
       - restore_cache:
           keys:
-            - v2-dependencies-{{ checksum "npm-shrinkwrap.json" }}
+            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
       - run: npm run lint
 
-  prep_deploy:
+  fetch_test_database:
+    <<: *defaults
+    steps:
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
+      - restore_cache:
+          keys:
+            - v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}
+
+      - run: ./scripts/circleci/fetch-test-database.sh
+
+      - save_cache:
+          paths:
+            - scripts/circleci/helpers/test.dump
+          key: v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}
+
+  build:
+    <<: *defaults_with_database
+    steps:
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
+      - restore_cache:
+          keys:
+            - v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}
+
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+
+      - run: ./scripts/circleci/load-test-database.sh
+
+      # Complete config
+      - run: ./scripts/get-ghost-config.sh
+
+      - restore_cache:
+          keys:
+            - v1-build-{{ arch }}-{{ .Revision }}
+
+      - run: npm run build:production
+
+      - save_cache:
+          paths:
+            - build
+            - static/build
+          key: v1-build-{{ arch }}-{{ .Revision }}
+
+  end_to_end_tests:
+    <<: *defaults_with_database
+    steps:
+      - attach_workspace:
+          at: ~/.ssh
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
+      - restore_cache:
+          keys:
+            - v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}
+      - restore_cache:
+          keys:
+            - v1-build-{{ arch }}-{{ .Revision }}
+
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+
+      - run: ./scripts/circleci/load-test-database.sh
+
+      - run:
+          name: Clone Ghost repo
+          command: |
+            cd ~
+            git clone git@github.com:thegazelle-ad/database-and-ghost-blog-server.git
+
+      - restore_cache:
+          keys:
+            - v1-ghost-dependencies-and-config-{{ arch }}-{{ checksum "~/database-and-ghost-blog-server/package.json" }}
+
+      - run:
+          name: Setup Ghost
+          command: |
+            cd ~/database-and-ghost-blog-server
+            sed "s/'password'/'circleci_test_gazelle'/" config.example.js > config.js
+            . ~/.nvm/nvm.sh
+            npm install --production
+
+      - save_cache:
+          paths:
+            - ~/database-and-ghost-blog-server/node_modules
+            - ~/database-and-ghost-blog-server/config.js
+          key: v1-ghost-dependencies-and-config-{{ arch }}-{{ checksum "~/database-and-ghost-blog-server/package.json" }}
+
+      # Actually run the tests
+      - run: ./scripts/circleci/run-end-to-end-tests.sh
+
+  prep_ssh:
     <<: *defaults
     steps:
       # Setup known_hosts so the VM allows ssh access without the prompt
       - run:
           name: Add server ssh key to known_hosts
-          command: mkdir -p ~/.ssh && echo '|1|lngQecMeLZI49/+fr5Ee0gOWaKE=|arylHILm4qsNJewDKKwFKOijBxE= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLONO0airQQL9d1rOZzT/p3SBH8acSYaN4N8qJezd/0UbnF8SBi+m1wB2nay5o0HQBQTM6O+MKXDwzYec886K78=' >> ~/.ssh/known_hosts
+          command: mkdir -p ~/.ssh && echo "$GAZELLE_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+
+      - run:
+          name: Add Github RSA key to known_hosts
+          command: ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+
       - persist_to_workspace:
           root: ~/.ssh
           paths:
@@ -120,7 +235,7 @@ jobs:
 
       - run:
           name: Deploy to staging
-          command: ssh gazelle@51.15.130.216 ./deployment/update-beta.sh
+          command: ssh "$STAGING_USER@STAGING_IP" deployment-resources/scripts/update-source.sh
 
   deploy_production:
     <<: *defaults
@@ -130,41 +245,54 @@ jobs:
 
       - run:
           name: Deploy to production
-          command: ssh gazelle@51.15.130.216 ./deployment/update-production.sh
+          command: ssh "$PRODUCTION_USER@PRODUCTION_IP" deployment-resources/scripts/update-source.sh
 
 workflows:
   version: 2
   build_test_deploy:
     jobs:
       - checkout_code
+
+      - prep_ssh
+
       - install_dependencies:
           requires:
             - checkout_code
-      - build:
-          requires:
-            - install_dependencies
-      - test:
+
+      - unit_test:
           requires:
             - install_dependencies
       - lint:
           requires:
             - install_dependencies
-      - prep_deploy
-      - deploy_staging:
+      - fetch_test_database:
+          requires:
+            - install_dependencies
+
+      - build:
+          requires:
+            - fetch_test_database
+      - end_to_end_tests:
           requires:
             - build
-            - test
+            - prep_ssh
+
+      # Deployment related
+      - deploy_staging:
+          requires:
+            - unit_test
             - lint
-            - prep_deploy
+            - end_to_end_tests
+            - prep_ssh
           filters:
             branches:
               only: master
       - deploy_production:
           requires:
-            - build
-            - test
+            - unit_test
             - lint
-            - prep_deploy
+            - end_to_end_tests
+            - prep_ssh
           filters:
             branches:
               only: stable

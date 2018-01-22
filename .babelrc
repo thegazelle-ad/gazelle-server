@@ -1,4 +1,16 @@
+/**
+ * This file is exclusively for the use of babel-jest and for running our tests.
+ * Our main source code has all the babel config specified in the webpack config
+ */
 {
-  "presets": ["es2015", "react"],
-  "plugins": ["transform-object-rest-spread"]
+  presets: [
+    [
+      'env',
+      {
+        targets: { node: 'current' },
+      },
+    ],
+    'react',
+  ],
+  plugins: ['transform-object-rest-spread'],
 }

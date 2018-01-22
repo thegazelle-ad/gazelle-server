@@ -1,26 +1,33 @@
 {
   "name": "the-gazelle",
   "version": "1.0.0",
+  "engines": {
+    "node": "~9.3.0",
+    "npm": "~5.6.0"
+  },
   "description": "Minimal starter kit for React, Falcor, and Universal rendering with ES6",
   "main": "server.js",
   "scripts": {
     "start": "node ./build/server.js",
-    "build-production": "./node_modules/.bin/webpack -p --config ./webpack.production.config.js --bail",
-    "build-beta": "./node_modules/.bin/webpack -p --config ./webpack.beta.config.js --bail",
-    "test": "jest",
-    "lint": "eslint '{src,__tests__}/**/*.{js,jsx}'"
+    "build": "webpack --config webpack/webpack.dev.config.js",
+    "build:watch": "npm run build -- -w",
+    "build:production": "webpack --config webpack/webpack.production.config.js --bail",
+    "build:staging": "webpack --config webpack/webpack.staging.config.js --bail",
+    "build:emulate-ci": "CI=true CIRCLECI=true npm run build:production",
+    "test:unit": "jest --config='__tests__/config/jest.unit.config.js' --testLocationInResults",
+    "test:e2e": "jest --config='__tests__/config/jest.e2e.config.js' --testLocationInResults --runInBand",
+    "lint": "eslint --max-warnings 0 '{src,__tests__,webpack}/**/*.{js,jsx}'",
+    "precommit": "TEMP_STASH_OUTPUT=$(git stash --keep-index); if [ \"$TEMP_STASH_OUTPUT\" != 'No local changes to save' ]; then lint-staged; PRECOMMIT_PASSED=$(echo $?); MUTE=$(git stash pop); exit $PRECOMMIT_PASSED; fi; exit 0;"
   },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "jsx"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "./src"
-    ],
-    "testRegex": "__tests__/.*\\.test\\.js$"
+  "lint-staged": {
+    "*.js": "eslint --max-warnings 0",
+    "*": "npm run test:unit -- --bail --findRelatedTests"
   },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "Firefox ESR"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thegazelle-ad/gazelle-front-end.git"
@@ -38,58 +45,54 @@
   },
   "homepage": "https://github.com/thegazelle-ad/gazelle-front-end#readme",
   "devDependencies": {
-    "babel-cli": "^6.10.1",
-    "babel-core": "^6.4.5",
-    "babel-jest": "^20.0.3",
-    "babel-loader": "^6.2.1",
-    "babel-plugin-lodash": "^3.2.4",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-polyfill": "^6.9.1",
-    "babel-preset-es2015": "^6.3.13",
-    "babel-preset-react": "^6.3.13",
-    "css-loader": "^0.23.1",
+    "babel-core": "^6.26.0",
+    "babel-jest": "^21.2.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.7",
     "eslint": "^2.12.0",
     "eslint-config-airbnb": "^9.0.1",
-    "eslint-import-resolver-webpack": "^0.3.0",
-    "eslint-loader": "^1.5.0",
+    "eslint-import-resolver-webpack": "^0.8.3",
+    "eslint-loader": "^1.9.0",
     "eslint-plugin-import": "^1.8.1",
     "eslint-plugin-jsx-a11y": "^1.4.2",
     "eslint-plugin-react": "^5.1.1",
-    "extract-text-webpack-plugin": "^1.0.1",
-    "file-loader": "^0.9.0",
-    "jest": "^20.0.4",
-    "node-sass": "^4.5.3",
-    "null-loader": "^0.1.1",
-    "postcss-cssnext": "^2.7.0",
-    "postcss-loader": "^0.9.1",
-    "sass-loader": "^4.0.0",
-    "source-map-support": "^0.4.0",
-    "style-loader": "^0.13.1",
-    "url-loader": "^0.5.7",
-    "webpack": "^1.13.1",
-    "webpack-node-externals": "^1.2.0"
+    "extract-text-webpack-plugin": "^3.0.2",
+    "husky": "^0.14.3",
+    "jest": "^22.1.0",
+    "lint-staged": "^5.0.0",
+    "nightmare": "^2.10.0",
+    "node-sass": "^4.7.2",
+    "postcss-cssnext": "^3.0.2",
+    "postcss-loader": "^2.0.9",
+    "regenerator-runtime": "^0.11.1",
+    "sass-loader": "^6.0.6",
+    "uglifyjs-webpack-plugin": "^1.1.4",
+    "webpack": "^3.10.0",
+    "webpack-node-externals": "^1.6.0"
   },
   "dependencies": {
+    "aws-sdk": "^2.169.0",
     "bluebird": "^3.5.0",
     "body-parser": "^1.15.2",
     "child_process": "^1.0.2",
     "classnames": "^2.2.5",
     "compression": "^1.6.2",
     "express": "^4.13.4",
-    "falcor": "^0.1.17",
-    "falcor-express": "^0.1.2",
+    "falcor": "^1.0.3",
+    "falcor-express": "^0.1.4",
     "falcor-http-datasource": "^0.1.3",
-    "falcor-router": "^0.4.0",
+    "falcor-router": "^0.8.1",
     "google-auth-library": "^0.9.8",
     "googleapis": "^12.4.0",
-    "history": "^3.0.0",
     "imagemin": "^5.3.1",
     "imagemin-jpeg-recompress": "^5.1.0",
-    "knex": "^0.11.10",
+    "knex": "^0.14.2",
     "lodash": "^4.13.1",
     "material-ui": "^0.17.1",
     "moment": "^2.14.1",
-    "mongodb": "^2.1.18",
     "multer": "^1.3.0",
     "mysql": "^2.11.1",
     "react": "^15.4.2",
@@ -101,6 +104,7 @@
     "react-router": "^2.4.1",
     "react-tap-event-plugin": "^2.0.1",
     "s3": "^4.4.0",
+    "source-map-support": "^0.5.0",
     "stable": "^0.1.5"
   }
 }

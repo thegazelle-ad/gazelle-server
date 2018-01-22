@@ -9,7 +9,7 @@ import { filterByEnvironment, isDevelopment, isStaging, isProduction } from 'lib
 export const development = () => {
   describe('filterByEnvironment', () => {
     it('works with three arguments', () => {
-      expect(filterByEnvironment('dev', 'beta', 'prod')).toBe('dev');
+      expect(filterByEnvironment('dev', 'staging', 'prod')).toBe('dev');
     });
 
     it('works with two arguments', () => {
@@ -40,10 +40,10 @@ export const development = () => {
   });
 };
 
-export const beta = () => {
+export const staging = () => {
   describe('filterByEnvironment', () => {
     it('works with three arguments', () => {
-      expect(filterByEnvironment('dev', 'beta', 'prod')).toBe('beta');
+      expect(filterByEnvironment('dev', 'staging', 'prod')).toBe('staging');
     });
 
     it('works with two arguments', () => {
@@ -77,7 +77,7 @@ export const beta = () => {
 export const production = () => {
   describe('filterByEnvironment', () => {
     it('works with three arguments', () => {
-      expect(filterByEnvironment('dev', 'beta', 'prod')).toBe('prod');
+      expect(filterByEnvironment('dev', 'staging', 'prod')).toBe('prod');
     });
 
     it('works with two arguments', () => {
