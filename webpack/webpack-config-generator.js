@@ -25,13 +25,9 @@ const generateWebpackConfig = (config) => {
   let ADMIN_PORT;
   switch (config.NODE_ENV) {
     case 'production':
+    case 'staging':
       MAIN_PORT = 8001;
       ADMIN_PORT = 8002;
-      break;
-
-    case 'staging':
-      MAIN_PORT = 8003;
-      ADMIN_PORT = 8004;
       break;
 
     default:
