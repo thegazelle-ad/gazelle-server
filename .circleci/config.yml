@@ -216,7 +216,7 @@ jobs:
       # Setup known_hosts so the VM allows ssh access without the prompt
       - run:
           name: Add server ssh key to known_hosts
-          command: mkdir -p ~/.ssh && echo '|1|lngQecMeLZI49/+fr5Ee0gOWaKE=|arylHILm4qsNJewDKKwFKOijBxE= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLONO0airQQL9d1rOZzT/p3SBH8acSYaN4N8qJezd/0UbnF8SBi+m1wB2nay5o0HQBQTM6O+MKXDwzYec886K78=' >> ~/.ssh/known_hosts
+          command: mkdir -p ~/.ssh && echo "$GAZELLE_KNOWN_HOSTS" >> ~/.ssh/known_hosts
 
       - run:
           name: Add Github RSA key to known_hosts
@@ -235,7 +235,7 @@ jobs:
 
       - run:
           name: Deploy to staging
-          command: ssh gazelle@51.15.130.216 ./deployment/update-beta.sh
+          command: ssh "$STAGING_USER@STAGING_IP" deployment-resources/scripts/update-source.sh
 
   deploy_production:
     <<: *defaults
@@ -245,7 +245,7 @@ jobs:
 
       - run:
           name: Deploy to production
-          command: ssh gazelle@51.15.130.216 ./deployment/update-production.sh
+          command: ssh "$PRODUCTION_USER@PRODUCTION_IP" deployment-resources/scripts/update-source.sh
 
 workflows:
   version: 2
