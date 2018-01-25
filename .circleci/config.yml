@@ -215,8 +215,8 @@ jobs:
     steps:
       # Setup known_hosts so the VM allows ssh access without the prompt
       - run:
-          name: Add server ssh key to known_hosts
-          command: mkdir -p ~/.ssh && echo "$GAZELLE_SERVER_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+          name: Add server ssh keys to known_hosts
+          command: mkdir -p ~/.ssh && ssh-keyscan -t rsa "$GAZELLE_SERVER_STAGING_IP" "$GAZELLE_SERVER_PRODUCTION_IP" >> ~/.ssh/known_hosts
 
       - run:
           name: Add Github RSA key to known_hosts
