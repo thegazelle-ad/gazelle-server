@@ -235,7 +235,7 @@ jobs:
 
       - run:
           name: Deploy to staging
-          command: ssh "$GAZELLE_SERVER_STAGING_USER@GAZELLE_SERVER_STAGING_IP" deployment-resources/scripts/update-source.sh
+          command: ssh "$GAZELLE_SERVER_STAGING_USER@$GAZELLE_SERVER_STAGING_IP" deployment-resources/scripts/update-source.sh
 
   deploy_production:
     <<: *defaults
@@ -245,7 +245,7 @@ jobs:
 
       - run:
           name: Deploy to production
-          command: ssh "$GAZELLE_SERVER_PRODUCTION_USER@GAZELLE_SERVER_PRODUCTION_IP" deployment-resources/scripts/update-source.sh
+          command: ssh "$GAZELLE_SERVER_PRODUCTION_USER@$GAZELLE_SERVER_PRODUCTION_IP" deployment-resources/scripts/update-source.sh
 
 workflows:
   version: 2
