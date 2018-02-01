@@ -17,7 +17,7 @@ export default class ArchivesController extends FalcorController {
   static getFalcorPathSets() {
     return [
       // Returns 150 archived issues
-      ['issues', 'byNumber', { length: 150 }, ['issueNumber', 'published_at']],
+      ['issues', 'byNumber', { length: 150 }, ['issueNumber', 'name', 'published_at']],
     ];
   }
 

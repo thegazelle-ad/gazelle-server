@@ -10,7 +10,7 @@ export default class Archives extends BaseComponent {
       this.props.archivesData.map(issue => (
         <div key={issue.issueNumber} className="archives__issue-item">
           <Link to={`/issue/${issue.issueNumber}`}>
-            <h1 className="archives__issue-item__issue-number">{`Issue ${issue.issueNumber}`}</h1>
+            <h1 className="archives__issue-item__issue-name">{`${issue.name}`}</h1>
             <p className="archives__issue-item__publication-date">
               {moment(issue.published_at).format('MMM DD, YYYY')}
             </p>
