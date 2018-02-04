@@ -7,8 +7,8 @@ import FalcorController from 'lib/falcor/FalcorController';
 import Helmet from 'react-helmet'; // Add meta tags for pre-Ghost release
 
 // Import components
-import TeamPage from 'components/TeamPage';
-import NotFound from 'components/NotFound';
+import TeamPage from 'components/main/TeamPage';
+import NotFound from 'components/main/NotFound';
 import TeamPageLoad from 'transitions/TeamPageLoad';
 
 export default class TeamPageController extends FalcorController {

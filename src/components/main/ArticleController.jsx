@@ -5,7 +5,7 @@ import { viewArticle, isArticleViewed } from 'lib/utilities';
 // Components
 import Article from 'components/main/Article';
 import FalcorController from 'lib/falcor/FalcorController';
-import NotFound from 'components/NotFound';
+import NotFound from 'components/main/NotFound';
 import ArticleLoad from 'transitions/ArticleLoad';
 
 export default class ArticleController extends FalcorController {
