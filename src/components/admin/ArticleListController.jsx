@@ -85,7 +85,7 @@ export default class ArticleListController extends FalcorController {
             <p>
               <span style={{ color: darkBlack }}>
                 {publishedDate}
-              </span> {" -- "}
+              </span> {article.teaser ? ' -- ' : null}
               {article.teaser}
             </p>
           }
