@@ -31,6 +31,7 @@ const styles = {
 };
 
 const ARTICLE_FIELDS = ['title', 'teaser', 'category', 'image', 'slug', 'html'];
+const AUTHOR_FIELDS = ['id', 'name', 'slug'];
 
 export default class MainIssueController extends FalcorController {
   constructor(props) {
@@ -68,6 +69,7 @@ export default class MainIssueController extends FalcorController {
         { length: 50 },
         'authors',
         0,
+        AUTHOR_FIELDS,
       ],
       [
         'issues', 'byNumber',
@@ -81,6 +83,7 @@ export default class MainIssueController extends FalcorController {
         'featured',
         'authors',
         0,
+        AUTHOR_FIELDS,
       ],
       [
         'issues', 'byNumber',
@@ -96,6 +99,7 @@ export default class MainIssueController extends FalcorController {
         { length: 10 },
         'authors',
         0,
+        AUTHOR_FIELDS,
       ],
       ['issues', 'byNumber', this.props.params.issueNumber, ['id', 'published_at', 'name']],
     ];

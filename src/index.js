@@ -25,7 +25,7 @@ if (isProduction) {
 
 // Shared serverModel
 const serverModel = new falcor.Model({
-  source: new FalcorRouter(),
+  source: new FalcorRouter({ maxPaths: 1000 * 1000 }),
   // maxSize is 400 MB in production and 80 MB when in development or staging mode
   maxSize: filterByEnvironment(400 * 1000 * 1000, 80 * 1000 * 1000),
   collectRatio: 0.75,
