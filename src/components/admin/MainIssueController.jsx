@@ -1,6 +1,7 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
+import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -103,6 +104,7 @@ export default class MainIssueController extends FalcorController {
         window.alert('There was an error getting the issue data from the database ' +
           'please contact the developers');
       } else {
+        x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
         // Check validity of the issue before publishing it
         const issueNumber = this.props.params.issueNumber;
         const issue = x.json.issues.byNumber[issueNumber];

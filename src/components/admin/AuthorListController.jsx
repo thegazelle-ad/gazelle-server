@@ -4,6 +4,7 @@ import { slugifyAuthor } from 'lib/utilities';
 import { browserHistory } from 'react-router';
 import SearchBar from './SearchBar';
 import { updateFieldValue } from './lib/form-field-updaters';
+import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -87,6 +88,7 @@ export default class AuthorListController extends FalcorController {
     // Check if the slug is already taken
     this.props.model.get(['authors', 'bySlug', slug, 'slug']).then((x) => {
       if (x) {
+        x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
         // Something was found, which means the slug is taken
         window.alert('This slug is already taken, please change to another one');
         return;
