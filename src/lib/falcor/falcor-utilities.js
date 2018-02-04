@@ -403,3 +403,16 @@ export function cleanupFalcorKeys(obj) {
   delete obj.cleanupFalcorKeysMetaSeen; // eslint-disable-line no-param-reassign
   return ret;
 }
+
+export function cleanupJsonGraphArg(jsonGraphArg) {
+  if (jsonGraphArg.hasOwnProperty('$type')) {
+    // Then this is the final part we can substitute
+    return jsonGraphArg.value;
+  }
+  // Else we recurse
+  const ret = {};
+  Object.keys(jsonGraphArg).forEach(key => {
+    ret[key] = cleanupJsonGraphArg(jsonGraphArg[key]);
+  });
+  return ret;
+}

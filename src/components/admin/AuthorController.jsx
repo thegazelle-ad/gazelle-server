@@ -3,6 +3,7 @@ import { browserHistory } from 'react-router';
 import FalcorController from 'lib/falcor/FalcorController';
 import { debounce, markdownLength } from 'lib/utilities';
 import { updateFieldValue } from './lib/form-field-updaters';
+import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
 
 // material-ui
 import Dialog from 'material-ui/Dialog';
@@ -201,6 +202,7 @@ export default class AuthorController extends FalcorController {
       // Make sure this slug is not already taken since we operate with unique slugs
       this.props.model.get(['authors', 'bySlug', this.state.slug, 'slug']).then((x) => {
         if (x) {
+          x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
           // This slug is already taken as something was returned
           window.alert('The slug you chose is already taken, please change it');
           this.safeSetState({ saving: false });

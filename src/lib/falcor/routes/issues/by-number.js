@@ -2,6 +2,7 @@ import falcor from 'falcor';
 import _ from 'lodash';
 
 import DbFunctions from 'lib/db';
+import { cleanupJsonGraphArg } from 'lib/falcor/falcor-utilities';
 
 const db = new DbFunctions();
 const $ref = falcor.Model.ref;
@@ -164,6 +165,7 @@ export default [
     },
     set: (jsonGraphArg) => (
       new Promise((resolve) => {
+        jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
         const issueNumber = Object.keys(jsonGraphArg.issues.byNumber)[0];
         const issueObject = jsonGraphArg.issues.byNumber[issueNumber];
         db.updateIssueData(jsonGraphArg).then((flag) => {

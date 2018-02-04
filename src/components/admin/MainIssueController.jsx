@@ -1,6 +1,7 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
+import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -30,6 +31,7 @@ const styles = {
 };
 
 const ARTICLE_FIELDS = ['title', 'teaser', 'category', 'image', 'slug', 'html'];
+const AUTHOR_FIELDS = ['id', 'name', 'slug'];
 
 export default class MainIssueController extends FalcorController {
   constructor(props) {
@@ -67,6 +69,7 @@ export default class MainIssueController extends FalcorController {
         { length: 50 },
         'authors',
         0,
+        AUTHOR_FIELDS,
       ],
       [
         'issues', 'byNumber',
@@ -80,6 +83,7 @@ export default class MainIssueController extends FalcorController {
         'featured',
         'authors',
         0,
+        AUTHOR_FIELDS,
       ],
       [
         'issues', 'byNumber',
@@ -95,6 +99,7 @@ export default class MainIssueController extends FalcorController {
         { length: 10 },
         'authors',
         0,
+        AUTHOR_FIELDS,
       ],
       ['issues', 'byNumber', this.props.params.issueNumber, ['id', 'published_at', 'name']],
     ];
@@ -103,6 +108,7 @@ export default class MainIssueController extends FalcorController {
         window.alert('There was an error getting the issue data from the database ' +
           'please contact the developers');
       } else {
+        x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
         // Check validity of the issue before publishing it
         const issueNumber = this.props.params.issueNumber;
         const issue = x.json.issues.byNumber[issueNumber];

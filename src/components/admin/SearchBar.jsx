@@ -5,6 +5,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import { updateFieldValue } from 'components/admin/lib/form-field-updaters';
+import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
 
 // material-ui
 import TextField from 'material-ui/TextField';
@@ -74,6 +75,7 @@ export default class SearchBar extends BaseComponent {
           this.safeSetState({ searchSuggestions: [] });
           return;
         }
+        x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
         let suggestions = x.json.search;
         if (this.props.mode === 'articles') {
           suggestions = suggestions.posts[query];

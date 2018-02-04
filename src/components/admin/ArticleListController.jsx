@@ -71,6 +71,12 @@ export default class ArticleListController extends FalcorController {
 
   createListElement(article) {
     const page = this.props.params.page;
+    let publishedDate;
+    if (article.published_at) {
+      publishedDate = moment(article.published_at).format('MMM DD, YYYY');
+    } else {
+      publishedDate = 'Unpublished';
+    }
     return (
       <Link to={`/articles/page/${page}/slug/${article.slug}`} key={article.slug}>
         <ListItem
@@ -78,8 +84,8 @@ export default class ArticleListController extends FalcorController {
           secondaryText={
             <p>
               <span style={{ color: darkBlack }}>
-                {moment(article.published_at).format('MMM DD, YYYY')}
-              </span> {" -- "}
+                {publishedDate}
+              </span> {article.teaser ? ' -- ' : null}
               {article.teaser}
             </p>
           }
