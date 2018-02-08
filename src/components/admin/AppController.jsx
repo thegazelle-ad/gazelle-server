@@ -20,6 +20,7 @@ import Navigation from 'components/admin/Navigation';
 
 // Custom utilities
 import { updateFieldValue } from './lib/form-field-updaters';
+import { isCI } from 'lib/utilities';
 
 export default class AppController extends BaseComponent {
   constructor(props) {
@@ -152,6 +153,10 @@ export default class AppController extends BaseComponent {
   }
 
   signOut() {
+    // if CI, just blindly redirect
+    if (isCI) {
+      browserHistory.push('/login');
+    }
     if (window.THE_GAZELLE.googleAPILoaded) {
       if (!window.gapi.auth2) {
         alert('(Dev Mode) Cannot sign out before sign in. Visit /login first.');

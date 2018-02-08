@@ -26,14 +26,14 @@ describe('Admin header', () => {
 
     const headerMenuButtonSelector = `${headerSelector}-menu-button`;
     const signOutSelector = `${headerSelector}-sign-out-button`;
-    const loginPageSelector = '#login-page';
+    const loginButtonSelector = '#my-signin2';
     return getLoggedInState(nightmare, '')
       .wait(headerMenuButtonSelector)
       // mouseup for Material UI quirk
       .mouseup(headerMenuButtonSelector)
       .wait(signOutSelector)
       .click(signOutSelector)
-      .wait(loginPageSelector)
+      .wait(loginButtonSelector)
       .path()
       .end()
       .then(path => {
