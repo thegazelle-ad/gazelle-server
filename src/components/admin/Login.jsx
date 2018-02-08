@@ -1,7 +1,7 @@
 import BaseComponent from 'lib/BaseComponent';
 import React from 'react';
 import { browserHistory } from 'react-router';
-import { googleClientID } from 'lib/utilities';
+import { googleClientID, isCI } from 'lib/utilities';
 import _ from 'lodash';
 
 const styles = {
@@ -18,6 +18,7 @@ export default class Login extends BaseComponent {
       GoogleAPIReady: false,
     };
     this.handleRedirect = this.handleRedirect.bind(this);
+    this.handleLoginCI = this.handleLoginCI.bind(this);
     this.onSignInSuccess = this.onSignInSuccess.bind(this);
   }
 
@@ -57,6 +58,13 @@ export default class Login extends BaseComponent {
       });
     }
     browserHistory.push(url);
+  }
+
+  handleLoginCI() {
+    // if CI, just let it login without interacting with Google Login popup window
+    if (isCI) {
+      this.handleRedirect();
+    }
   }
 
   onSignInSuccess(response) {
@@ -99,6 +107,7 @@ export default class Login extends BaseComponent {
           ...styles.button,
           opacity: fade,
         }}
+        onClick={this.handleLoginCI}
       >
       </div>
     );

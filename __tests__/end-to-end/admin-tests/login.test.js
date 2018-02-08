@@ -2,17 +2,15 @@ import Nightmare from 'nightmare';
 
 import {
   NIGHTMARE_CONFIG,
-  ENTER_UNICODE,
 } from '__tests__/end-to-end/e2e-constants';
 import { HOST } from './e2e-admin-constants';
 
-function testLoginRedirect(nightmare, path, useButton = false) {
-  const passwordInputSelector = 'input[type="password"]';
-  const passwordSubmitSelector = 'button[type="submit"]';
+function testLoginRedirect(nightmare, path) {
+  const googleLoginSelector = 'div.abcRioButtonContentWrapper';
   // The default is because the '/' path actually also redirects to '/articles/page/1'
   const redirectedPath = !path || path === '/login' ? '/articles/page/1' : path;
 
-  const passwordEnteredState =
+  const loginState =
     nightmare
     // We use this to detect client-side errors in rendering
     .on('page', (type, message, stack) => {
@@ -20,19 +18,11 @@ function testLoginRedirect(nightmare, path, useButton = false) {
       throw new Error(`${message}\nstack trace: ${stack}`);
     })
     .goto(`${HOST}${path}`)
-    // Wait for the input element to render
-    .wait(passwordInputSelector)
-    // Write password
-    .insert(passwordInputSelector, process.env.CIRCLECI_ADMIN_PASSWORD);
+    // Wait for the google login button to render
+    .wait(googleLoginSelector)
+    .click(googleLoginSelector);
 
-  let passwordSubmittedState;
-  if (useButton) {
-    passwordSubmittedState = passwordEnteredState.click(passwordSubmitSelector);
-  } else {
-    passwordSubmittedState = passwordEnteredState.type(passwordInputSelector, ENTER_UNICODE);
-  }
-
-  return passwordSubmittedState
+  return loginState
     // Wait until we've rendered the target page
     .wait(expectedEndPath => window.location.pathname === expectedEndPath, redirectedPath)
     .end();
@@ -62,10 +52,5 @@ describe('Admin login', () => {
   it(
     'redirects correctly to non-front page',
     () => testLoginRedirect(nightmare, '/authors')
-  );
-  // Until now we only submitted by enter so we also check that submitting with button works
-  it(
-    'login works with using button',
-    () => testLoginRedirect(nightmare, '', true)
   );
 });
