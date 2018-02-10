@@ -10,7 +10,7 @@ function testLoginRedirect(nightmare, path) {
   // The default is because the '/' path actually also redirects to '/articles/page/1'
   const redirectedPath = !path || path === '/login' ? '/articles/page/1' : path;
 
-  const loginState =
+  return
     nightmare
     // We use this to detect client-side errors in rendering
     .on('page', (type, message, stack) => {
@@ -20,9 +20,7 @@ function testLoginRedirect(nightmare, path) {
     .goto(`${HOST}${path}`)
     // Wait for the google login button to render
     .wait(googleLoginSelector)
-    .click(googleLoginSelector);
-
-  return loginState
+    .click(googleLoginSelector)
     // Wait until we've rendered the target page
     .wait(expectedEndPath => window.location.pathname === expectedEndPath, redirectedPath)
     .end();

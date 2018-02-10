@@ -86,7 +86,9 @@ export default class Login extends BaseComponent {
   }
 
   onSignInFailure(response) {
-    alert(`Google Login Failed.\n${response.error}`);
+    if (response.error !== 'popup_closed_by_user') {
+      alert(`Google Login Failed.\n${response.error}`);
+    }
   }
 
   renderButton() {
@@ -101,14 +103,16 @@ export default class Login extends BaseComponent {
   render() {
     const fade = this.state.GoogleAPIReady ? 1 : 0.5;
     return (
-      <div
-        id="my-signin2"
-        style={{
-          ...styles.button,
-          opacity: fade,
-        }}
-        onClick={this.handleLoginCI}
-      >
+      <div id="login-page">
+        <div
+          id="my-signin2"
+          style={{
+            ...styles.button,
+            opacity: fade,
+          }}
+          onClick={this.handleLoginCI}
+        >
+        </div>
       </div>
     );
   }
