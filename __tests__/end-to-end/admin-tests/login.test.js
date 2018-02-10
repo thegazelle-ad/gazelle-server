@@ -10,8 +10,7 @@ function testLoginRedirect(nightmare, path) {
   // The default is because the '/' path actually also redirects to '/articles/page/1'
   const redirectedPath = !path || path === '/login' ? '/articles/page/1' : path;
 
-  return
-    nightmare
+  return nightmare
     // We use this to detect client-side errors in rendering
     .on('page', (type, message, stack) => {
       if (type !== 'error') return;
