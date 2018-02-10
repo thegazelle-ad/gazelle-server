@@ -1,10 +1,12 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
+import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
 import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
 
 const styles = {
   paper: {
@@ -27,9 +29,14 @@ const styles = {
   publishingButtons: {
     margin: 12,
   },
+  nameField: {
+    fontSize: '1.5em',
+    fontWeight: 'bold',
+  },
 };
 
 const ARTICLE_FIELDS = ['title', 'teaser', 'category', 'image', 'slug', 'html'];
+const AUTHOR_FIELDS = ['id', 'name', 'slug'];
 
 export default class MainIssueController extends FalcorController {
   constructor(props) {
@@ -41,7 +48,9 @@ export default class MainIssueController extends FalcorController {
     });
   }
   static getFalcorPathSets(params) {
-    return ['issues', 'byNumber', params.issueNumber, 'published_at'];
+    return [
+      ['issues', 'byNumber', params.issueNumber, ['published_at', 'name']],
+    ];
   }
 
   publishIssue() {
@@ -67,6 +76,7 @@ export default class MainIssueController extends FalcorController {
         { length: 50 },
         'authors',
         0,
+        AUTHOR_FIELDS,
       ],
       [
         'issues', 'byNumber',
@@ -80,6 +90,7 @@ export default class MainIssueController extends FalcorController {
         'featured',
         'authors',
         0,
+        AUTHOR_FIELDS,
       ],
       [
         'issues', 'byNumber',
@@ -95,6 +106,7 @@ export default class MainIssueController extends FalcorController {
         { length: 10 },
         'authors',
         0,
+        AUTHOR_FIELDS,
       ],
       ['issues', 'byNumber', this.props.params.issueNumber, ['id', 'published_at', 'name']],
     ];
@@ -103,6 +115,7 @@ export default class MainIssueController extends FalcorController {
         window.alert('There was an error getting the issue data from the database ' +
           'please contact the developers');
       } else {
+        x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
         // Check validity of the issue before publishing it
         const issueNumber = this.props.params.issueNumber;
         const issue = x.json.issues.byNumber[issueNumber];
@@ -195,8 +208,24 @@ export default class MainIssueController extends FalcorController {
       const published = Boolean(
         this.state.data.issues.byNumber[this.props.params.issueNumber].published_at
       );
+      const issueName = this.state.data.issues.byNumber[this.props.params.issueNumber].name;
+
       return (
         <div style={styles.tabs}>
+          <TextField
+            name="name"
+            type="text"
+            defaultValue={issueName}
+            style={styles.nameField}
+          />
+          <br />
+          <RaisedButton
+            type="submit"
+            label="Change Issue Name"
+            primary
+            style={styles.buttons}
+          />
+          <br />
           <RaisedButton
             label={
               !published
