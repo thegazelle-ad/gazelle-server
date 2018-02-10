@@ -20,6 +20,7 @@ import Navigation from 'components/admin/Navigation';
 
 // Custom utilities
 import { updateFieldValue } from './lib/form-field-updaters';
+import { isCI } from 'lib/utilities';
 
 export default class AppController extends BaseComponent {
   constructor(props) {
@@ -152,7 +153,22 @@ export default class AppController extends BaseComponent {
   }
 
   signOut() {
-    browserHistory.push('/login');
+    // if CI, just blindly redirect
+    if (isCI) {
+      browserHistory.push('/login');
+    }
+    if (window.THE_GAZELLE.googleAPILoaded) {
+      if (!window.gapi.auth2) {
+        alert('(Dev Mode) Cannot sign out before sign in. Visit /login first.');
+      } else {
+        const auth = window.gapi.auth2.getAuthInstance();
+        auth.signOut().then(() => {
+          // revokes all of the scopes that the user granted
+          auth.disconnect();
+          browserHistory.push('/login');
+        });
+      }
+    }
   }
 
   toggleRestartPasswordModal() {
@@ -210,7 +226,7 @@ export default class AppController extends BaseComponent {
             title={"Admin Interface"}
             iconElementRight={this.isLoggedIn() ?
               <LoggedIn /> :
-              <FlatButton label="Sign In" />}
+              null}
             showMenuIconButton={false}
           />
 
