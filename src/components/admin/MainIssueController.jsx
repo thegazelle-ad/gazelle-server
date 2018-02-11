@@ -45,7 +45,10 @@ export default class MainIssueController extends FalcorController {
     super(props);
     this.publishIssue = this.publishIssue.bind(this);
     this.unpublishIssue = this.unpublishIssue.bind(this);
-    this.updateFieldValue = updateFieldValue.bind(this, 'name', undefined);
+    this.fieldUpdaters = {
+      name: updateFieldValue.bind(this, 'name', undefined),
+    };
+    this.handleSaveChanges = this.handleSaveChanges.bind(this);
     this.safeSetState({
       publishing: false,
       name: '',
@@ -63,10 +66,40 @@ export default class MainIssueController extends FalcorController {
       }
     }, 500);
   }
+
   static getFalcorPathSets(params) {
     return [
-      ['issues', 'byNumber', params.issueNumber, ['published_at', 'name']],
+      ['issues', 'byNumber', params.issueNumber, ['name']],
     ];
+  }
+
+  componentWillMount() {
+    const falcorCallback = (data) => {
+      const name = data.issues.byNumber[this.props.params.issueNumber].name || '';
+      this.safeSetState({ name });
+    };
+    super.componentWillMount(falcorCallback);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const falcorCallback = (data) => {
+      const name = data.issues.byNumber[this.props.params.issueNumber].name || '';
+      this.safeSetState({ name });
+    };
+    super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
+    this.safeSetState({
+      changed: false,
+      saving: false,
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.isSameIssueName(prevProps, this.props) &&
+        this.formHasUpdated(prevState, this.state) &&
+        this.state.ready) {
+      // The update wasn't due to a change in issue
+      this.debouncedHandleFormStateChanges();
+    }
   }
 
   publishIssue() {
@@ -234,13 +267,44 @@ export default class MainIssueController extends FalcorController {
     return this.isFormFieldChanged(prevState.name, state.name);
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.isSameIssueName(prevProps, this.props) &&
-      this.formHasUpdated(prevState, this.state) &&
-      this.state.ready) {
-      // The update wasn't due to a change in article
-      this.debouncedHandleFormStateChanges();
+  handleSaveChanges(event) {
+    event.preventDefault();
+
+    const issueNumber = this.props.params.issueNumber;
+
+    if (!this.isFormChanged()) {
+      throw new Error(
+        'Tried to save changes but there were no changes. ' +
+        'the save changes button is supposed to be disabled in this case'
+      );
     }
+
+    const resetState = () => {
+      this.safeSetState({
+        changed: false,
+      });
+      // This is purely so the 'saved' message can be seen by the user for a second
+      setTimeout(() => { this.safeSetState({ saving: false }); }, 1000);
+    };
+
+    // Build the jsonGraphEnvelope
+    const jsonGraphEnvelope = {
+      paths: [
+        ['issues', 'byNumber', issueNumber, ['published_at', 'name', 'issueNumber']],
+      ],
+      jsonGraph: {
+        issues: {
+          byNumber: {
+            [issueNumber]: {},
+          },
+        },
+      },
+    };
+    // Fill in the data
+    jsonGraphEnvelope.jsonGraph.issues.byNumber[issueNumber].name = this.state.name;
+    // Update the values
+    this.falcorUpdate(jsonGraphEnvelope, undefined, resetState);
+    this.safeSetState({ saving: true });
   }
 
   render() {
@@ -270,21 +334,25 @@ export default class MainIssueController extends FalcorController {
 
       return (
         <div style={styles.tabs}>
-          <TextField
-            name="name"
-            type="text"
-            defaultValue={issueName}
-            style={styles.nameField}
-            onChange={this.updateFieldValue}
-          />
-          <br />
-          <RaisedButton
-            type="submit"
-            label={changedStateMessage}
-            primary
-            style={styles.buttons}
-            disabled={!this.state.changed}
-          />
+          <form onSubmit={this.handleSaveChanges}>
+            <TextField
+              name="name"
+              type="text"
+              floatingLabelText="Issue Name"
+              defaultValue={issueName}
+              style={styles.nameField}
+              onChange={this.fieldUpdaters.name}
+              fullWidth
+            />
+            <br />
+            <RaisedButton
+              type="submit"
+              label={changedStateMessage}
+              primary
+              style={styles.buttons}
+              disabled={!this.state.changed || this.state.saving}
+            />
+          </form>
           <br />
           <RaisedButton
             label={
