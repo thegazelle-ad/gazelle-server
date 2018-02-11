@@ -156,8 +156,26 @@ export default class MainIssueController extends FalcorController {
               return false;
             }
           }
+          if (/<a.*?href\s*?=\s*?["'](?!http).*?>/.test(article.html)) {
+            if (!window.confirm(
+              `${article.title} is in non-absolute format,
+              which means that it does not have http(s):// in front of it. ` +
+              'This problem will cause the link to break in the' +
+              'browser due to something called relative links.' +
+              'It will be misinterpreted and it will simply add the' +
+              'link written to the end of the URL.' +
+              'The easiest way to get a correct link is to copy it' +
+              'from your browsers URL bar, remember to prefer https over http.' +
+              'Do you want to override our warning and continue publishing?'
+              )
+            ) {
+              return false;
+            }
+          }
           return true;
         });
+
+
         if (!articlesValid) {
           return;
         }
