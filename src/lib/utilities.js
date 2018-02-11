@@ -278,3 +278,6 @@ export function filterByEnvironment(development, beta, production) {
   }
   return development;
 }
+
+export const robotsTxt = 'User-agent: *\n Disallow: /';
+

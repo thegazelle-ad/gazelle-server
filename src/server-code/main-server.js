@@ -26,10 +26,9 @@ import compression from 'compression';
 import bodyParser from 'body-parser';
 
 /* Our helper functions */
-import { isStaging, isCI } from 'lib/utilities';
+import { isStaging, isCI, robotsTxt } from 'lib/utilities';
 import { md5Hash } from 'lib/server-utilities';
 import { injectModelCreateElement } from 'lib/falcor/falcor-utilities';
-
 
 export default function runMainServer(serverFalcorModel) {
   // Create MD5 hash of static files for better cache performance
@@ -159,9 +158,12 @@ export default function runMainServer(serverFalcorModel) {
       ' the contents of our lovely newspaper.'
     );
   });
-
+  app.get('/robots.txt', (req, res) => {
+    res.send(robotsTxt);
+  }
+  );
   if (isStaging) {
-    app.get('/login', (req, res) => {
+    app.get('*', (req, res) => {
       match({ routes, location: req.url },
         (error, redirectLocation, renderProps) => {
           if (error) {
@@ -187,9 +189,6 @@ export default function runMainServer(serverFalcorModel) {
           }
         }
       );
-    });
-    app.get(/(?!\/login)/, (req, res) => {
-      res.redirect(307, `/login?url=${req.url}`);
     });
   } else {
     app.get('*', (req, res) => {
@@ -220,7 +219,6 @@ export default function runMainServer(serverFalcorModel) {
       );
     });
   }
-
   // To start server with PORT=3000 default: run `npm start`
   // NOTE: On Linux systems, any port below 1024 requires root access (`sudo` command)
   // To run on port 80:
