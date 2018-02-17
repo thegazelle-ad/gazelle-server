@@ -1,73 +1,118 @@
 import BaseComponent from 'lib/BaseComponent';
 import React from 'react';
 import { browserHistory } from 'react-router';
-import { hash } from 'lib/utilities';
+import { googleClientID, isCI } from 'lib/utilities';
 import _ from 'lodash';
 
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
-
 const styles = {
-  buttons: {
-    marginTop: 12,
-    marginBottom: 24,
+  button: {
+    marginTop: 36,
   },
 };
+
 
 export default class Login extends BaseComponent {
   constructor(props) {
     super(props);
-    this.safeSetState({
-      passwordValue: '',
-    });
-    this.handlePasswordChange = this.handlePasswordChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.state = {
+      GoogleAPIReady: false,
+    };
+    this.handleRedirect = this.handleRedirect.bind(this);
+    this.handleLoginCI = this.handleLoginCI.bind(this);
+    this.onSignInSuccess = this.onSignInSuccess.bind(this);
   }
 
-  handlePasswordChange(e) {
-    this.safeSetState({
-      passwordValue: e.target.value,
-    });
-  }
+  componentDidMount() {
+    super.componentDidMount();
+    const interval = setInterval(() => {
+      // GoogleAPILoaded is a global var, set to true when Google platform.js script loaded
+      if (window.THE_GAZELLE.googleAPILoaded) { // eslint-disable-line no-undef
+        this.renderButton();
+        window.gapi.load('auth2', () => {
+          this.safeSetState({
+            GoogleAPIReady: true,
+          });
 
-  handleSubmit(e) {
-    e.preventDefault();
-    const pass = e.target.password.value;
-    // eslint-disable-next-line max-len
-    if (hash(pass) !== 'eaafc81d7868e1c203ecc90f387acfa4c24d1027134b0bfda6fd7c536efc5d8dd5718609a407dbfcd41e747aec331153d47733153afb7c125c558acba3fb6bcd') {
-      window.alert('Incorrect password');
-      e.target.password.value = ''; // eslint-disable-line no-param-reassign
-    } else {
-      // Otherwise it is correct and we let the site redirect the client
-      let url = this.props.location.query.url || '';
-      if (url) {
-        _.forEach(this.props.location.query, (q, name) => {
-          if (name !== 'url') {
-            url = `${url}&${name}=${q}`;
+          const auth = window.gapi.auth2.getAuthInstance();
+          if (!auth || !auth.isSignedIn.get()) {
+            window.gapi.auth2.init({
+              client_id: googleClientID,
+            });
+          } else { // detects user has signed in
+            this.onSignInSuccess(auth.currentUser.get());
           }
         });
+        clearInterval(interval);
       }
-      browserHistory.push(url);
+    }, 100);
+  }
+
+  handleRedirect() {
+    // Add additional query params to new url
+    let url = this.props.location.query.url || '';
+    if (url) {
+      _.forEach(this.props.location.query, (q, name) => {
+        if (name !== 'url') {
+          url = `${url}&${name}=${q}`;
+        }
+      });
+    }
+    browserHistory.push(url);
+  }
+
+  handleLoginCI() {
+    // if CI, just let it login without interacting with Google Login popup window
+    if (isCI) {
+      this.handleRedirect();
     }
   }
 
+  onSignInSuccess(response) {
+    const token = { data: response.getAuthResponse().id_token };
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/googlelogin');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+        this.handleRedirect();
+      } else if (xhr.readyState === XMLHttpRequest.DONE) {
+        alert(`Google Login Failed.\n${xhr.status}: ${xhr.statusText}`);
+      }
+    };
+
+    xhr.send(JSON.stringify(token));
+  }
+
+  onSignInFailure(response) {
+    if (response.error !== 'popup_closed_by_user') {
+      alert(`Google Login Failed.\n${response.error}`);
+    }
+  }
+
+  renderButton() {
+    window.gapi.signin2.render('my-signin2', {
+      scope: 'profile email',
+      longtitle: true,
+      onsuccess: this.onSignInSuccess,
+      onfailure: this.onSignInFailure,
+    });
+  }
+
   render() {
+    const fade = this.state.GoogleAPIReady ? 1 : 0.5;
     return (
       <div id="login-page">
-        <form onSubmit={this.handleSubmit}>
-          <TextField
-            name="password"
-            type="password"
-            floatingLabelText="Password"
-            autoFocus
-          /><br /><br />
-          <RaisedButton
-            type="submit"
-            label="Enter Admin Interface"
-            primary
-            style={styles.button}
-          />
-        </form>
+        <div
+          id="my-signin2"
+          style={{
+            ...styles.button,
+            opacity: fade,
+          }}
+          onClick={this.handleLoginCI}
+        >
+        </div>
       </div>
     );
   }
