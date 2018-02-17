@@ -69,7 +69,7 @@ export default class MainIssueController extends FalcorController {
 
   static getFalcorPathSets(params) {
     return [
-      ['issues', 'byNumber', params.issueNumber, ['name']],
+      ['issues', 'byNumber', params.issueNumber, ['name', 'published_at']],
     ];
   }
 
