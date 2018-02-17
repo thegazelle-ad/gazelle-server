@@ -172,6 +172,7 @@ export default class MainIssueController extends FalcorController {
               return false;
             }
           }
+
           return true;
         });
 
