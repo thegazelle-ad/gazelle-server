@@ -27,7 +27,9 @@ import {
   isCI,
   googleClientID,
   googleWhitelist,
+  nothingAllowedRobotsTxt,
 } from 'lib/utilities';
+
 import { md5Hash, compressJPEG, deleteFile } from 'lib/server-utilities';
 
 export default function runAdminServer(serverFalcorModel) {
@@ -204,12 +206,15 @@ export default function runAdminServer(serverFalcorModel) {
     }
   });
 
+  app.get('/robots.txt', (req, res) => {
+    res.status(200).type('txt').send(nothingAllowedRobotsTxt);
+  });
+
   if (!isDevelopment) {
     // If we are in staging or production we redirect to a forced login
     app.get('/login', (req, res) => {
       res.status(200).send(htmlString);
     });
-
     app.get(/(?!\/restartserver|\/login|\/upload).*/, (req, res) => {
       res.redirect(307, `/login?url=${req.url}`);
     });
