@@ -157,15 +157,15 @@ export default class MainIssueController extends FalcorController {
             }
           }
           if (/<a.*?href\s*?=\s*?["'](?!http).*?>/.test(article.html)) {
+            const url = article.html.match(/<a.*?href\s*?=\s*?["'](?!http)(.*?)["'] *?>/)[1];
             if (!window.confirm(
-              `${article.title} is in non-absolute format,
-              which means that it does not have http(s):// in front of it. ` +
-              'This problem will cause the link to break in the' +
-              'browser due to something called relative links.' +
-              'It will be misinterpreted and it will simply add the' +
-              'link written to the end of the URL.' +
-              'The easiest way to get a correct link is to copy it' +
-              'from your browsers URL bar, remember to prefer https over http.' +
+              `${article.title} with URL ${url} is in non-absolute format, ` +
+              'which means that it does not have http(s):// in front of it, ' +
+              'which will break the link. ' +
+              'It will be misinterpreted and it will simply add the ' +
+              'link written to the end of the URL. ' +
+              'The easiest way to get a correct link is to copy it ' +
+              'from your browsers URL bar, remember to prefer https over http. ' +
               'Do you want to override our warning and continue publishing?'
               )
             ) {
