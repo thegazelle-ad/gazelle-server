@@ -156,6 +156,27 @@ export default class IssueListController extends FalcorController {
 
       const data = this.state.data.issues.byNumber;
 
+      let savingScreen = null;
+      if (this.state.saving) {
+        savingScreen = (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              width: '100%',
+              height: '100%',
+              opacity: 0.5,
+              zIndex: 10,
+              backgroundColor: 'black',
+            }}
+          >
+            <div className="circular-progress">
+              <CircularProgress />
+            </div>
+          </div>);
+      }
+
       return (
         <div>
           <h1>Issues</h1>
@@ -186,6 +207,9 @@ export default class IssueListController extends FalcorController {
                       }).reverse()
                     }
                   </DropDownMenu>
+                </div>
+                <div>
+                {savingScreen}
                 </div>
               </Tab>
               <Tab label="ADD NEW" icon={<AddIssue />}>

@@ -257,6 +257,28 @@ export default class AuthorController extends FalcorController {
         }
       }
 
+      let savingScreen = null;
+      if (this.state.saving) {
+        savingScreen = (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              width: '100%',
+              height: '100%',
+              opacity: 0.5,
+              zIndex: 10,
+              backgroundColor: 'black',
+            }}
+          >
+            <div className="circular-progress">
+              <CircularProgress />
+            </div>
+          </div>);
+      }
+
+
       return (
         <Dialog
           title="Author Profile"
@@ -264,6 +286,9 @@ export default class AuthorController extends FalcorController {
           autoScrollBodyContent
           onRequestClose={this.handleDialogClose}
         >
+          <div>
+          {savingScreen}
+          </div>
           <div id={ID} style={styles.authorProfile}>
             <h3>Author Profile: {this.state.name}</h3>
             <Divider />
