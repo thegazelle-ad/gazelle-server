@@ -1386,9 +1386,19 @@ ${JSON.stringify(issuesToUpdate)}`);
   updateIssueData(jsonGraphArg) {
     return new Promise((resolve) => {
       const issueNumber = Object.keys(jsonGraphArg.issues.byNumber)[0];
-      const value = jsonGraphArg.issues.byNumber[issueNumber].published_at;
+      const issueObject = jsonGraphArg.issues.byNumber[issueNumber];
+      const updateObject = {};
+      if (issueObject.hasOwnProperty('name') && issueObject.name) {
+        updateObject.name = issueObject.name;
+      }
+      if (issueObject.hasOwnProperty('published_at') && issueObject.published_at) {
+        updateObject.published_at = issueObject.published_at;
+      }
+      if (issueObject.hasOwnProperty('issueNumber') && issueObject.issueNumber) {
+        updateObject.issue_order = issueObject.issueNumber;
+      }
       database('issues').where('issue_order', '=', issueNumber)
-      .update('published_at', value)
+      .update(updateObject)
       .then(() => {
         resolve(true);
       });
