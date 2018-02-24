@@ -83,7 +83,7 @@ export default class MainIssueController extends FalcorController {
 
   componentWillReceiveProps(nextProps) {
     const falcorCallback = (data) => {
-      const name = data.issues.byNumber[this.props.params.issueNumber].name || '';
+      const name = data.issues.byNumber[nextProps.params.issueNumber].name || '';
       this.safeSetState({ name });
     };
     super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
@@ -290,7 +290,7 @@ export default class MainIssueController extends FalcorController {
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
       paths: [
-        ['issues', 'byNumber', issueNumber, ['published_at', 'name', 'issueNumber']],
+        ['issues', 'byNumber', issueNumber, ['name']],
       ],
       jsonGraph: {
         issues: {
@@ -315,7 +315,6 @@ export default class MainIssueController extends FalcorController {
       const published = Boolean(
         this.state.data.issues.byNumber[this.props.params.issueNumber].published_at
       );
-      const issueName = this.state.data.issues.byNumber[this.props.params.issueNumber].name;
 
       let changedStateMessage;
       if (!this.state.changed) {
@@ -339,7 +338,7 @@ export default class MainIssueController extends FalcorController {
               name="name"
               type="text"
               floatingLabelText="Issue Name"
-              defaultValue={issueName}
+              value={this.state.name}
               style={styles.nameField}
               onChange={this.fieldUpdaters.name}
               fullWidth
