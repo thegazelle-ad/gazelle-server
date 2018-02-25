@@ -14,8 +14,6 @@ export default class ImagePreview extends BaseComponent {
   constructor() {
     super();
     this.state = {
-      autoHideDuration: 4000,
-      message: 'Link copied to clipboard',
       open: false,
     };
 
@@ -43,7 +41,7 @@ export default class ImagePreview extends BaseComponent {
     document.body.appendChild(textField);
     textField.select();
     document.execCommand('copy');
-    this.setState({ open: true });
+    this.safeSetState({ open: true });
     textField.remove();
   }
 
@@ -68,6 +66,13 @@ export default class ImagePreview extends BaseComponent {
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
         borderRadius: '2px',
         overflowWrap: 'break-word',
+        height: '50%',
+        width: '30%',
+        margin: '10px',
+      },
+      imageThumbnail: {
+        width: '100%',
+        height: '50%',
       },
       cardText: {
         padding: '0.8rem',
@@ -77,6 +82,9 @@ export default class ImagePreview extends BaseComponent {
       },
       copyLink: {
         marginTop: '0.3rem',
+      },
+      previewError: {
+        color: 'red',
       },
     };
 
@@ -127,7 +135,7 @@ export default class ImagePreview extends BaseComponent {
         );
       }
     } else if (errorMessage) {
-      messageComponent = <div className="preview_error">Error: {errorMessage}</div>;
+      messageComponent = <div style={styles.previewError}>Error: {errorMessage}</div>;
     } else {
       messageComponent = null;
     }
@@ -136,7 +144,7 @@ export default class ImagePreview extends BaseComponent {
     if (url) {
       component = (
         <div className="imagePreview" style={styles.imagePreview}>
-          <img alt={`preview of ${name}`} src={url} />
+          <img alt={`preview of ${name}`} src={url} style={styles.imageThumbnail} />
           <div style={styles.cardText}>
             {name}
             <br />
@@ -160,8 +168,8 @@ export default class ImagePreview extends BaseComponent {
           </div>
           <Snackbar
             open={this.state.open}
-            message={this.state.message}
-            autoHideDuration={this.state.autoHideDuration}
+            message={"Link copied to clipboard"}
+            autoHideDuration={4000}
             onActionTouchTap={this.handleActionTouchTap}
             onRequestClose={this.handleRequestClose}
           />

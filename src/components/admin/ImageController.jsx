@@ -64,8 +64,9 @@ export default class ImageUploader extends BaseComponent {
     xhr.onload = () => {
       const response = xhr.response;
       if (response.split(' ')[0] === 'success') {
-        const amazonURL = `https://s3.amazonaws.com/thegazelle/${response.split(' ')[1]}`;
-        this.handleUploadTerminated(fileObject.metaData.name, 2, amazonURL);
+        // const URL = `https://s3.amazonaws.com/thegazelle/${response.split(' ')[1]}`;
+        const URL = response.split(' ')[1];
+        this.handleUploadTerminated(fileObject.metaData.name, 2, URL);
       } else {
         let errorMessage;
         if (response === 'Error uploading') {
@@ -201,19 +202,29 @@ export default class ImageUploader extends BaseComponent {
   }
 
   changeImageNameOpen(name) {
-    this.setState({
+    this.safeSetState({
       changeNameOpen: true,
       imgName: name,
+      nameInput: name,
     });
   }
 
   changeImageName() {
     const imgName = this.state.imgName;
+    const re = /(?:\.([^.]+))?$/;
+    const ext = re.exec(imgName)[1];
+    const nameInput = this.state.nameInput;
     const index = this.state.files.findIndex(fileObject => fileObject.metaData.name === imgName);
     if (index !== -1) {
       const newFiles = update(this.state.files, {
         [index]: {
-          metaData: { $merge: { name: this.state.nameInput } },
+          metaData: { $merge:
+            /* This bit adds the file extension to the new image name if the user doesn't
+            provide it. It will also correct the extension if the user provides the wrong one. */
+            { name: nameInput.lastIndexOf('.') !== -1
+              ? nameInput.substring(0, nameInput.lastIndexOf('.')).concat('.', ext)
+            : nameInput.concat('.', ext) },
+          },
         },
       });
       this.safeSetState({
@@ -323,16 +334,22 @@ export default class ImageUploader extends BaseComponent {
       buttonText: {
         margin: '0rem 0.3rem',
       },
+      imageSubmit: {
+        marginBottom: 30,
+      },
+      heading: {
+        fontFamily: 'Roboto',
+      },
     };
 
 
     return (
       <div>
-        <h1>Images</h1>
+        <h1 style={styles.heading}>Images</h1>
         <Divider />
         <Paper style={styles.paper} zDepth={2} >
           <form
-            className="image-submit pure-form pure-form-stacked"
+            style={styles.imageSubmit}
             onSubmit={this.handleUpload}
           >
             <Tabs>
@@ -355,6 +372,8 @@ export default class ImageUploader extends BaseComponent {
                     labelPosition="before"
                     style={styles.button}
                     containerElement="label"
+                    backgroundColor="#b5effc"
+                    hoverColor="#f4f7f9"
                     disabled={this.state.uploading}
                   >
                     <input
@@ -404,12 +423,12 @@ export default class ImageUploader extends BaseComponent {
           modal
           open={this.state.changeNameOpen}
         >
-          Please enter a new name (and remember to keep the extension) for the image:
+          Please enter a new name for the image:
           <br />
           <TextField
             name="newName"
             onChange={(event) => {
-              this.setState({ nameInput: event.target.value });
+              this.safeSetState({ nameInput: event.target.value });
             }}
           />
         </Dialog>

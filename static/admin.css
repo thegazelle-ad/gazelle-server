@@ -14,10 +14,6 @@ a:visited:not(.active-link) {
   color: #0000EE;
 }
 
-.image-submit {
-  margin-bottom: 30;
-}
-
 .imgPreviewList {
   margin: 15px 15px;
   border-left: 1px solid gray;
@@ -29,17 +25,6 @@ a:visited:not(.active-link) {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
-}
-
-.imagePreview {
-  height: 50%;
-  width: 30%;
-  margin: 10px;
-}
-
-.imagePreview img {
-  width: 100%;
-  height: 50%;
 }
 
 .previewText {
@@ -65,10 +50,6 @@ a:visited:not(.active-link) {
 }
 
 .previewURL {
-}
-
-.preview_error {
-  color: red;
 }
 
 .circular-progress {
