@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { browserHistory, Link } from 'react-router';
 import { updateFieldValue } from './lib/form-field-updaters';
 import { stringToInt } from 'lib/utilities';
+import LoadingOverlay from './LoadingOverlay';
 
 // material-ui
 import Paper from 'material-ui/Paper';
@@ -187,6 +188,7 @@ export default class IssueListController extends FalcorController {
                     }
                   </DropDownMenu>
                 </div>
+                {this.state.saving ? <LoadingOverlay /> : null}
               </Tab>
               <Tab label="ADD NEW" icon={<AddIssue />}>
                 <div style={styles.tabs}>

@@ -5,6 +5,7 @@ import List from 'components/admin/List';
 import _ from 'lodash';
 import update from 'react-addons-update';
 import { formatDate } from 'lib/utilities';
+import LoadingOverlay from './LoadingOverlay';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -567,6 +568,7 @@ export default class IssueArticleController extends FalcorController {
             Featured Articles (please add exactly 1)
           </h4>
           <div>
+            {this.state.saving ? <LoadingOverlay /> : null}
             <button
               type="button"
               className="pure-button"

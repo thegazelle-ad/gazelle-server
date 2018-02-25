@@ -5,12 +5,14 @@ import { debounce, markdownLength } from 'lib/utilities';
 import { updateFieldValue } from './lib/form-field-updaters';
 import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
 
+
 // material-ui
 import Dialog from 'material-ui/Dialog';
 import CircularProgress from 'material-ui/CircularProgress';
 import Divider from 'material-ui/Divider';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import LoadingOverlay from './LoadingOverlay';
 
 const MAX_BIOGRAPHY_LENGTH = 400;
 
@@ -264,6 +266,7 @@ export default class AuthorController extends FalcorController {
           autoScrollBodyContent
           onRequestClose={this.handleDialogClose}
         >
+          {this.state.saving ? <LoadingOverlay /> : null}
           <div id={ID} style={styles.authorProfile}>
             <h3>Author Profile: {this.state.name}</h3>
             <Divider />
