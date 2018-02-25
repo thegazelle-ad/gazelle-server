@@ -11,6 +11,7 @@ export default class InteractiveArticle extends FalcorController {
     this.safeSetState({
       didEval: false,
     });
+    this.evaluateJavascript = this.evaluateJavascript.bind(this);
   }
 
   static getFalcorPathSets(params) {
@@ -25,19 +26,35 @@ export default class InteractiveArticle extends FalcorController {
     ];
   }
 
+  evaluateJavascript() {
+    const articleData = this.state.data.articles.bySlug[this.props.params.articleSlug];
+    // eslint-disable-next-line no-eval
+    eval(articleData.interactiveData.js || '');
+    this.safeSetState({ didEval: true });
+  }
+
+  componentDidMount() {
+    super.componentDidMount();
+    if (this.state.ready && this.state.data && document.getElementById('interactive-root')) {
+      this.evaluateJavascript();
+    }
+  }
+
+  componentDidUpdate() {
+    if (
+      this.state.ready &&
+      this.state.data &&
+      !this.state.didEval &&
+      document.getElementById('interactive-root')
+    ) {
+      this.evaluateJavascript();
+    }
+  }
+
   render() {
     if (this.state.ready) {
       if (!this.state.data) {
         return <NotFound />;
-      }
-
-      if (!this.state.didEval) {
-        const articleData = this.state.data.articles.bySlug[this.props.params.articleSlug];
-
-        // eslint-disable-next-line no-eval
-        eval(articleData.interactiveData.js || '');
-
-        this.safeSetState({ didEval: true });
       }
 
       const articleSlug = this.props.params.articleSlug;
@@ -68,7 +85,7 @@ export default class InteractiveArticle extends FalcorController {
         { property: 'og:site_name', content: 'The Gazelle' },
       ];
       const reactHtml = {
-        __html: interactiveCode.html,
+        __html: `<div id="interactive-root">${interactiveCode.html}</div>`,
       };
       return (
         <div>
