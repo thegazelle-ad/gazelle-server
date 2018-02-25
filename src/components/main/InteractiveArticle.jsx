@@ -5,6 +5,7 @@ import NotFound from 'components/main/NotFound';
 import InteractiveArticleLoad from 'transitions/InteractiveArticleLoad';
 
 export default class InteractiveArticle extends FalcorController {
+
   static getFalcorPathSets(params) {
     return [
       // Fetch article metadata
@@ -12,8 +13,15 @@ export default class InteractiveArticle extends FalcorController {
         ['title', 'teaser', 'slug', 'image', 'published_at']],
       // Fetch interactive article html/js/css
       // For now we only use the html part, the js and css parts are for further improvements
-      ['articles', 'bySlug', params.articleSlug, 'interactiveData', ['html', 'js', 'css']],
+      ['articles', 'bySlug', params.articleSlug, 'interactiveData',
+        ['html', 'js', 'css']],
     ];
+  }
+
+  // Execute the JavaScript on component mount
+  componentDidMount() {
+    // eslint-disable-next-line no-eval
+    eval(this.state.data.articles.bySlug[this.props.params.articleSlug].interactiveData.js);
   }
 
   render() {
