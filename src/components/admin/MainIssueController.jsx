@@ -68,9 +68,7 @@ export default class MainIssueController extends FalcorController {
   }
 
   static getFalcorPathSets(params) {
-    return [
-      ['issues', 'byNumber', params.issueNumber, ['name', 'published_at']],
-    ];
+    return ['issues', 'byNumber', params.issueNumber, ['name', 'published_at']];
   }
 
   componentWillMount() {
@@ -94,7 +92,7 @@ export default class MainIssueController extends FalcorController {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.isSameIssueName(prevProps, this.props) &&
+    if (this.isSameIssue(prevProps, this.props) &&
         this.formHasUpdated(prevState, this.state) &&
         this.state.ready) {
       // The update wasn't due to a change in issue
@@ -259,8 +257,8 @@ export default class MainIssueController extends FalcorController {
     return changedFlag;
   }
 
-  isSameIssueName(prevProps, props) {
-    return prevProps.params.slug === props.params.slug;
+  isSameIssue(prevProps, props) {
+    return prevProps.params.issueNumber === props.params.issueNumber;
   }
 
   formHasUpdated(prevState, state) {
@@ -362,7 +360,7 @@ export default class MainIssueController extends FalcorController {
             primary
             style={styles.publishingButtons}
             onTouchTap={this.publishIssue}
-            disabled={published}
+            disabled={published || this.state.changed || this.state.saving}
           />
           <RaisedButton
             label={
@@ -373,7 +371,7 @@ export default class MainIssueController extends FalcorController {
             secondary
             style={styles.publishingButtons}
             onTouchTap={this.unpublishIssue}
-            disabled={!published}
+            disabled={!published || this.state.changed || this.state.saving}
           />
           {this.state.publishing
           ? <h4>Publishing...</h4>

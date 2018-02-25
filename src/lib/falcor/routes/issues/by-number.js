@@ -179,6 +179,10 @@ export default [
               value,
             });
           });
+          results.push({
+            path: ['issues', 'latest'],
+            invalidated: true,
+          });
           resolve(results);
         });
       })

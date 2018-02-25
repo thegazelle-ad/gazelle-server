@@ -1391,7 +1391,8 @@ ${JSON.stringify(issuesToUpdate)}`);
       if (issueObject.hasOwnProperty('name') && issueObject.name) {
         updateObject.name = issueObject.name;
       }
-      if (issueObject.hasOwnProperty('published_at') && issueObject.published_at) {
+      if (issueObject.hasOwnProperty('published_at') &&
+        (issueObject.published_at || issueObject.published_at === null)) {
         updateObject.published_at = issueObject.published_at;
       }
       if (issueObject.hasOwnProperty('issueNumber') && issueObject.issueNumber) {
