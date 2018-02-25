@@ -32,8 +32,10 @@ export default class InteractiveArticle extends FalcorController {
       }
 
       if (this.state.didEval) {
+        const articleData = this.state.data.articles.bySlug[this.props.params.articleSlug];
+
         // eslint-disable-next-line no-eval
-        eval(this.state.data.articles.bySlug[this.props.params.articleSlug].interactiveData.js);
+        eval(articleData.interactiveData.js || '');
 
         this.safeSetState({ didEval: true });
       }
