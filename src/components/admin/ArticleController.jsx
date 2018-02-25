@@ -7,6 +7,7 @@ import { debounce } from 'lib/utilities';
 import update from 'react-addons-update';
 import moment from 'moment';
 import { updateFieldValue } from 'components/admin/lib/form-field-updaters';
+import LoadingOverlay from './LoadingOverlay';
 
 // material-ui
 import Dialog from 'material-ui/Dialog';
@@ -355,27 +356,6 @@ export default class ArticleController extends FalcorController {
         }
       }
 
-      let savingScreen = null;
-      if (this.state.saving) {
-        savingScreen = (
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              width: '100%',
-              height: '100%',
-              opacity: 0.5,
-              zIndex: 10,
-              backgroundColor: 'black',
-            }}
-          >
-            <div className="circular-progress">
-              <CircularProgress />
-            </div>
-          </div>);
-      }
-
       return (
         <Dialog
           title="Article Editor"
@@ -384,9 +364,7 @@ export default class ArticleController extends FalcorController {
           autoScrollBodyContent
           onRequestClose={this.handleDialogClose}
         >
-          <div>
-          {savingScreen}
-          </div>
+        {this.state.saving ? <LoadingOverlay /> : null}
           <h2>{article.title}</h2>
           <Divider />
           <TextField

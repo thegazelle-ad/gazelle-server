@@ -19,6 +19,7 @@ import Description from 'material-ui/svg-icons/action/description';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 import CircularProgress from 'material-ui/CircularProgress';
+import LoadingOverlay from './LoadingOverlay';
 
 const styles = {
   paper: {
@@ -155,28 +156,6 @@ export default class IssueListController extends FalcorController {
       const baseUrl = `/issues/${currentIssueNumber}`;
 
       const data = this.state.data.issues.byNumber;
-
-      let savingScreen = null;
-      if (this.state.saving) {
-        savingScreen = (
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              width: '100%',
-              height: '100%',
-              opacity: 0.5,
-              zIndex: 10,
-              backgroundColor: 'black',
-            }}
-          >
-            <div className="circular-progress">
-              <CircularProgress />
-            </div>
-          </div>);
-      }
-
       return (
         <div>
           <h1>Issues</h1>
@@ -208,9 +187,7 @@ export default class IssueListController extends FalcorController {
                     }
                   </DropDownMenu>
                 </div>
-                <div>
-                {savingScreen}
-                </div>
+                {this.state.saving ? <LoadingOverlay /> : null}
               </Tab>
               <Tab label="ADD NEW" icon={<AddIssue />}>
                 <div style={styles.tabs}>

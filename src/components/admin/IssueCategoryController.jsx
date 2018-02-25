@@ -3,10 +3,12 @@ import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
 import update from 'react-addons-update';
 
+
 // material-ui
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 import CircularProgress from 'material-ui/CircularProgress';
+import LoadingOverlay from './LoadingOverlay';
 
 const styles = {
   paper: {
@@ -173,26 +175,6 @@ export default class IssueCategoryController extends FalcorController {
           changedStateMessage = 'Saving';
         }
       }
-      let savingScreen = null;
-      if (this.state.saving) {
-        savingScreen = (
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              width: '100%',
-              height: '100%',
-              opacity: 0.5,
-              zIndex: 10,
-              backgroundColor: 'black',
-            }}
-          >
-            <div className="circular-progress">
-              <CircularProgress />
-            </div>
-          </div>);
-      }
 
       return (
         <div style={styles.tabs}>
@@ -207,9 +189,7 @@ export default class IssueCategoryController extends FalcorController {
                 at this point all articles you want in the issue should be already added.
               </p>
             </div>
-            <div>
-            {savingScreen}
-            </div>
+            {this.state.saving ? <LoadingOverlay /> : null}
           </Paper>
           <br />
           <h3>Categories</h3>

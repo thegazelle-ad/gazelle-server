@@ -5,6 +5,7 @@ import List from 'components/admin/List';
 import _ from 'lodash';
 import update from 'react-addons-update';
 import { formatDate } from 'lib/utilities';
+import LoadingOverlay from './LoadingOverlay';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -549,27 +550,6 @@ export default class IssueArticleController extends FalcorController {
           changedStateStyle.color = '#65e765';
         }
       }
-      let savingScreen = null;
-      if (this.state.saving) {
-        savingScreen = (
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              width: '100%',
-              height: '100%',
-              opacity: 0.5,
-              zIndex: 10,
-              backgroundColor: 'black',
-            }}
-          >
-            <div className="circular-progress">
-              <CircularProgress />
-            </div>
-          </div>);
-      }
-
       return (
         <div style={styles.tabs}>
           <button
@@ -588,9 +568,7 @@ export default class IssueArticleController extends FalcorController {
             Featured Articles (please add exactly 1)
           </h4>
           <div>
-            <div>
-            {savingScreen}
-            </div>
+            {this.state.saving ? <LoadingOverlay /> : null}
             <button
               type="button"
               className="pure-button"
