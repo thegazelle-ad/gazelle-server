@@ -4,6 +4,7 @@ import FalcorController from 'lib/falcor/FalcorController';
 import { debounce, markdownLength } from 'lib/utilities';
 import { updateFieldValue } from './lib/form-field-updaters';
 import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
+import LoadingOverlay from './LoadingOverlay';
 
 // material-ui
 import Dialog from 'material-ui/Dialog';
@@ -264,6 +265,7 @@ export default class AuthorController extends FalcorController {
           autoScrollBodyContent
           onRequestClose={this.handleDialogClose}
         >
+          {this.state.saving ? <LoadingOverlay /> : null}
           <div id={ID} style={styles.authorProfile}>
             <h3>Author Profile: {this.state.name}</h3>
             <Divider />

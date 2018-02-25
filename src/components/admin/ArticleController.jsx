@@ -7,6 +7,7 @@ import { debounce } from 'lib/utilities';
 import update from 'react-addons-update';
 import moment from 'moment';
 import { updateFieldValue } from 'components/admin/lib/form-field-updaters';
+import LoadingOverlay from './LoadingOverlay';
 
 // material-ui
 import Dialog from 'material-ui/Dialog';
@@ -363,6 +364,7 @@ export default class ArticleController extends FalcorController {
           autoScrollBodyContent
           onRequestClose={this.handleDialogClose}
         >
+        {this.state.saving ? <LoadingOverlay /> : null}
           <h2>{article.title}</h2>
           <Divider />
           <TextField
