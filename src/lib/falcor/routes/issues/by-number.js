@@ -180,13 +180,6 @@ export default [
             });
           });
           resolve(results);
-          // resolve([{
-          //   path: ['issues', 'byNumber', parseInt(issueNumber, 10), 'published_at'],
-          //   value: issueObject.published_at,
-          // }, {
-          //   path: ['issues', 'latest'],
-          //   invalidated: true,
-          // }]);
         });
       })
     ),
