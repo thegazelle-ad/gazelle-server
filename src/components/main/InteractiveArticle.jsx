@@ -6,6 +6,13 @@ import InteractiveArticleLoad from 'transitions/InteractiveArticleLoad';
 
 export default class InteractiveArticle extends FalcorController {
 
+  constructor(props) {
+    super(props);
+    this.safeSetState({
+      didEval: false,
+    });
+  }
+
   static getFalcorPathSets(params) {
     return [
       // Fetch article metadata
@@ -18,17 +25,19 @@ export default class InteractiveArticle extends FalcorController {
     ];
   }
 
-  // Execute the JavaScript on component mount
-  componentDidMount() {
-    // eslint-disable-next-line no-eval
-    eval(this.state.data.articles.bySlug[this.props.params.articleSlug].interactiveData.js);
-  }
-
   render() {
     if (this.state.ready) {
       if (!this.state.data) {
         return <NotFound />;
       }
+
+      if (this.state.didEval) {
+        // eslint-disable-next-line no-eval
+        eval(this.state.data.articles.bySlug[this.props.params.articleSlug].interactiveData.js);
+
+        this.safeSetState({ didEval: true });
+      }
+
       const articleSlug = this.props.params.articleSlug;
       const publishDate = this.state.data.articles.bySlug[articleSlug].published_at;
       if (!publishDate) {
