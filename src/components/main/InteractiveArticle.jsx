@@ -31,7 +31,7 @@ export default class InteractiveArticle extends FalcorController {
         return <NotFound />;
       }
 
-      if (this.state.didEval) {
+      if (!this.state.didEval) {
         const articleData = this.state.data.articles.bySlug[this.props.params.articleSlug];
 
         // eslint-disable-next-line no-eval
