@@ -79,7 +79,7 @@ export default [
       new Promise((resolve) => {
         const teamObject = args[0];
         if (!(teamObject.hasOwnProperty('slug') && teamObject.hasOwnProperty('name'))) {
-          throw new Error('When creating an team you must provide both name and slug');
+          throw new Error('When creating a team you must provide both name and slug');
         }
         db.addTeam(teamObject).then((flag) => {
           if (!flag) {

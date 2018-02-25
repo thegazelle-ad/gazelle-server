@@ -90,8 +90,7 @@ export default function runAdminServer(serverFalcorModel) {
 
   app.use(allowCrossDomain);
 
-  /* Restart Servers command */
-  const PATH_NAME = `${process.env.ROOT_DIRECTORY}/scripts/restart-servers.sh`;
+  const RESTART_SERVERS_PATH_NAME = `${process.env.ROOT_DIRECTORY}/scripts/restart-servers.sh`;
 
   let isRestarted = false;
 
@@ -102,7 +101,7 @@ export default function runAdminServer(serverFalcorModel) {
     } else if (hash(password) === 'eaafc81d7868e1c203ecc90f387acfa4c24d1027134b0bfda6fd7c536efc5d8dd5718609a407dbfcd41e747aec331153d47733153afb7c125c558acba3fb6bcd') { // eslint-disable-line max-len
       isRestarted = true;
       res.sendStatus(200);
-      exec(PATH_NAME, (err) => {
+      exec(RESTART_SERVERS_PATH_NAME, (err) => {
         if (err) {
           if (process.env.NODE_ENV !== 'production') {
             console.error(err); // eslint-disable-line no-console
