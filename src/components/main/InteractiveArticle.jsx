@@ -5,6 +5,15 @@ import NotFound from 'components/main/NotFound';
 import InteractiveArticleLoad from 'transitions/InteractiveArticleLoad';
 
 export default class InteractiveArticle extends FalcorController {
+
+  constructor(props) {
+    super(props);
+    this.safeSetState({
+      didEval: false,
+    });
+    this.evaluateJavascript = this.evaluateJavascript.bind(this);
+  }
+
   static getFalcorPathSets(params) {
     return [
       // Fetch article metadata
@@ -12,8 +21,34 @@ export default class InteractiveArticle extends FalcorController {
         ['title', 'teaser', 'slug', 'image', 'published_at']],
       // Fetch interactive article html/js/css
       // For now we only use the html part, the js and css parts are for further improvements
-      ['articles', 'bySlug', params.articleSlug, 'interactiveData', ['html', 'js', 'css']],
+      ['articles', 'bySlug', params.articleSlug, 'interactiveData',
+        ['html', 'js', 'css']],
     ];
+  }
+
+  evaluateJavascript() {
+    const articleData = this.state.data.articles.bySlug[this.props.params.articleSlug];
+    // eslint-disable-next-line no-eval
+    eval(articleData.interactiveData.js || '');
+    this.safeSetState({ didEval: true });
+  }
+
+  componentDidMount() {
+    super.componentDidMount();
+    if (this.state.ready && this.state.data && document.getElementById('interactive-root')) {
+      this.evaluateJavascript();
+    }
+  }
+
+  componentDidUpdate() {
+    if (
+      this.state.ready &&
+      this.state.data &&
+      !this.state.didEval &&
+      document.getElementById('interactive-root')
+    ) {
+      this.evaluateJavascript();
+    }
   }
 
   render() {
@@ -21,6 +56,7 @@ export default class InteractiveArticle extends FalcorController {
       if (!this.state.data) {
         return <NotFound />;
       }
+
       const articleSlug = this.props.params.articleSlug;
       const publishDate = this.state.data.articles.bySlug[articleSlug].published_at;
       if (!publishDate) {
@@ -49,7 +85,7 @@ export default class InteractiveArticle extends FalcorController {
         { property: 'og:site_name', content: 'The Gazelle' },
       ];
       const reactHtml = {
-        __html: interactiveCode.html,
+        __html: `<div id="interactive-root">${interactiveCode.html}</div>`,
       };
       return (
         <div>

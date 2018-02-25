@@ -1558,8 +1558,10 @@ ${JSON.stringify(issuesToUpdate)}`);
 
   getLatestSemester() {
     return new Promise((resolve) => {
-      database.select('name', knex.raw("MAX('date') as date"))
+      database.select('name')
       .from('semesters')
+      .orderBy('date', 'DESC')
+      .limit(1)
       .then((rows) => {
         if (rows.length !== 1) {
           throw new Error('Problems fetching latest semester');

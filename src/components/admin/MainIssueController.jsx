@@ -210,6 +210,23 @@ export default class MainIssueController extends FalcorController {
               return false;
             }
           }
+          const absoluteUrlRegex = /<a.*?href\s*?=\s*?["'](?!http)(.*?)["'] *?>/;
+          if (absoluteUrlRegex.test(article.html)) {
+            const url = article.html.match(absoluteUrlRegex)[1];
+            if (!window.confirm(
+              `The URL ${url} in the article ${article.title} is in non-absolute format, ` +
+              'which means that it does not have http(s):// in front of it, ' +
+              'which will break the link. ' +
+              'It will be misinterpreted and it will simply add the ' +
+              'link written to the end of the URL. ' +
+              'The easiest way to get a correct link is to copy it ' +
+              "from your browser's URL bar, remember to prefer https over http. " +
+              'Do you want to override our warning and continue publishing?'
+              )
+            ) {
+              return false;
+            }
+          }
           return true;
         });
         if (!articlesValid) {
