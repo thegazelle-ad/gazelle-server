@@ -20,8 +20,14 @@ export default class LoadingOverlay extends BaseComponent {
       >
         <div
           className="circular-progress"
-          style={{ margin: 0, position: 'absolute',
-        top: '50%', left: '50%', marginRight: '-50%', transform: 'translate(-50%, -50%)' }}
+          style={{
+            margin: 0,
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+          }}
         >
           <CircularProgress />
         </div>

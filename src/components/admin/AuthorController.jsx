@@ -5,7 +5,6 @@ import { debounce, markdownLength } from 'lib/utilities';
 import { updateFieldValue } from './lib/form-field-updaters';
 import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
 
-
 // material-ui
 import Dialog from 'material-ui/Dialog';
 import CircularProgress from 'material-ui/CircularProgress';
