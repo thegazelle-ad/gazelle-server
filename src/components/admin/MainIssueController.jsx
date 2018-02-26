@@ -4,11 +4,13 @@ import _ from 'lodash';
 import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
 import { updateFieldValue } from './lib/form-field-updaters';
 import { debounce } from 'lib/utilities';
+import moment from 'moment';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import DatePicker from 'material-ui/DatePicker';
 
 const styles = {
   paper: {
@@ -52,6 +54,7 @@ export default class MainIssueController extends FalcorController {
     this.safeSetState({
       publishing: false,
       name: '',
+      published_at: null,
       changed: false,
       saving: false,
     });
@@ -65,6 +68,10 @@ export default class MainIssueController extends FalcorController {
         this.safeSetState({ changed: changedFlag });
       }
     }, 500);
+
+    this.handleDateChange = (event, date) => {
+      this.safeSetState({ published_at: date });
+    };
   }
 
   static getFalcorPathSets(params) {
@@ -74,7 +81,9 @@ export default class MainIssueController extends FalcorController {
   componentWillMount() {
     const falcorCallback = (data) => {
       const name = data.issues.byNumber[this.props.params.issueNumber].name || '';
-      this.safeSetState({ name });
+      const publishedAt =
+        new Date(data.issues.byNumber[this.props.params.issueNumber].published_at) || null;
+      this.safeSetState({ name, published_at: publishedAt });
     };
     super.componentWillMount(falcorCallback);
   }
@@ -82,7 +91,9 @@ export default class MainIssueController extends FalcorController {
   componentWillReceiveProps(nextProps) {
     const falcorCallback = (data) => {
       const name = data.issues.byNumber[nextProps.params.issueNumber].name || '';
-      this.safeSetState({ name });
+      const publishedAt =
+        new Date(data.issues.byNumber[nextProps.params.issueNumber].published_at) || null;
+      this.safeSetState({ name, published_at: publishedAt });
     };
     super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
     this.safeSetState({
@@ -253,7 +264,10 @@ export default class MainIssueController extends FalcorController {
 
   isFormChanged() {
     const falcorData = this.state.data.issues.byNumber[this.props.params.issueNumber];
-    const changedFlag = this.isFormFieldChanged(this.state.name, falcorData.name);
+    const publishedAt = moment(this.state.published_at).valueOf();
+    const changedFlag =
+      this.isFormFieldChanged(this.state.name, falcorData.name) ||
+      this.isFormFieldChanged(publishedAt, falcorData.published_at);
     return changedFlag;
   }
 
@@ -262,7 +276,8 @@ export default class MainIssueController extends FalcorController {
   }
 
   formHasUpdated(prevState, state) {
-    return this.isFormFieldChanged(prevState.name, state.name);
+    return (this.isFormFieldChanged(prevState.name, state.name) ||
+      this.isFormFieldChanged(prevState.published_at, state.published_at));
   }
 
   handleSaveChanges(event) {
@@ -288,7 +303,7 @@ export default class MainIssueController extends FalcorController {
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
       paths: [
-        ['issues', 'byNumber', issueNumber, ['name']],
+        ['issues', 'byNumber', issueNumber, 'name'],
       ],
       jsonGraph: {
         issues: {
@@ -300,6 +315,8 @@ export default class MainIssueController extends FalcorController {
     };
     // Fill in the data
     jsonGraphEnvelope.jsonGraph.issues.byNumber[issueNumber].name = this.state.name;
+    // jsonGraphEnvelope.jsonGraph.issues.byNumber[issueNumber].published_at =
+    // this.state.published_at;
     // Update the values
     this.falcorUpdate(jsonGraphEnvelope, undefined, resetState);
     this.safeSetState({ saving: true });
@@ -340,6 +357,14 @@ export default class MainIssueController extends FalcorController {
               style={styles.nameField}
               onChange={this.fieldUpdaters.name}
               fullWidth
+            />
+            <br />
+            <DatePicker
+              floatingLabelText="Published At"
+              firstDayOfWeek={0}
+              value={this.state.published_at}
+              onChange={this.handleDateChange}
+              disabled={!published}
             />
             <br />
             <RaisedButton
