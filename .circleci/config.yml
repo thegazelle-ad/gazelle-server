@@ -114,7 +114,7 @@ jobs:
 
       - run:
           name: Get needed dependencies for fetch database
-          command: '[[ -f scripts/circleci/helpers/test.dump ]] && npm i -g googleapis@12.4.0 google-auth-library@0.*'
+          command: '[[ -f scripts/circleci/helpers/test.dump ]] && npm i googleapis@12.4.0 google-auth-library@0.*'
 
       - run:
           name: Fetch test database
