@@ -303,7 +303,7 @@ export default class MainIssueController extends FalcorController {
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
       paths: [
-        ['issues', 'byNumber', issueNumber, 'name'],
+        ['issues', 'byNumber', issueNumber, ['published_at', 'name']],
       ],
       jsonGraph: {
         issues: {
@@ -314,9 +314,10 @@ export default class MainIssueController extends FalcorController {
       },
     };
     // Fill in the data
+    const publishedAt = moment(this.state.published_at).format('YYYY-MM-DD');
+    jsonGraphEnvelope.jsonGraph.issues.byNumber[issueNumber].published_at =
+      publishedAt;
     jsonGraphEnvelope.jsonGraph.issues.byNumber[issueNumber].name = this.state.name;
-    // jsonGraphEnvelope.jsonGraph.issues.byNumber[issueNumber].published_at =
-    // this.state.published_at;
     // Update the values
     this.falcorUpdate(jsonGraphEnvelope, undefined, resetState);
     this.safeSetState({ saving: true });
