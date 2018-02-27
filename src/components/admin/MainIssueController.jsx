@@ -72,6 +72,7 @@ export default class MainIssueController extends FalcorController {
     this.handleDateChange = (event, date) => {
       this.safeSetState({ published_at: date });
     };
+    this.disableDate = this.disableDate.bind(this);
   }
 
   static getFalcorPathSets(params) {
@@ -323,6 +324,10 @@ export default class MainIssueController extends FalcorController {
     this.safeSetState({ saving: true });
   }
 
+  disableDate(date) {
+    return (moment(date) > moment());
+  }
+
   render() {
     if (this.state.ready) {
       if (!this.state.data) {
@@ -363,6 +368,7 @@ export default class MainIssueController extends FalcorController {
             <DatePicker
               floatingLabelText="Published At"
               firstDayOfWeek={0}
+              shouldDisableDate={this.disableDate}
               value={this.state.published_at}
               onChange={this.handleDateChange}
               disabled={!published}
