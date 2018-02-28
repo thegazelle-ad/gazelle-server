@@ -90,7 +90,7 @@ export default class AppController extends BaseComponent {
           // If it fails in any way including unexpected status codes or communication crash
           // we just try again
           counter += 1;
-          if (counter <= 5) {
+          if (counter <= 10) {
             setTimeout(isRestarted, 500);
           } else {
             window.alert(
