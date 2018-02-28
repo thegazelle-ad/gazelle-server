@@ -284,15 +284,15 @@ workflows:
             - prep_ssh
 
       # Deployment related
-      #       - deploy_staging:
-      #           requires:
-      #             - unit_test
-      #             - lint
-      #             - end_to_end_tests
-      #             - prep_ssh
-      #           filters:
-      #             branches:
-      #               only: master
+      - deploy_staging:
+          requires:
+            - unit_test
+            - lint
+            - end_to_end_tests
+            - prep_ssh
+          filters:
+            branches:
+              only: master
       - deploy_production:
           requires:
             - unit_test
