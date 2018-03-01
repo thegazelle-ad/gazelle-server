@@ -127,7 +127,17 @@ export default class ImageUploader extends BaseComponent {
   handleInputChange(e) {
     e.preventDefault();
     const files = e.target.files;
-    const fileArray = _.map(files, file => ({ file, metaData: { name: file.name } }));
+    const tooLargeFileNames = [];
+    const filteredFiles = _.filter(files, file => {
+      if ((file.size / 1024) > 300) {
+        tooLargeFileNames.push(file);
+        return false;
+      }
+      return true;
+    });
+
+    const fileArray = filteredFiles.map(file => ({ file, metaData: { name: file.name } }));
+
     let newFiles = this.state.files.concat(fileArray);
     newFiles = _.uniqBy(newFiles, fileObject => fileObject.metaData.name);
     this.safeSetState({
@@ -137,6 +147,14 @@ export default class ImageUploader extends BaseComponent {
     fileArray.forEach((file) => {
       this.addImagePreviewUrl(file);
     });
+
+    if (tooLargeFileNames.length !== 0) {
+      let names = '\n';
+      tooLargeFileNames.forEach((file) => {
+        names = names.concat(` ${file.name} (${(file.size / 1024).toFixed(2)} KB)\n`);
+      });
+      alert(`The following exceeded the maximum upload size: ${names}`);
+    }
 
     // Reset to "No Files Chosen" in the input element instead of saying "10 files" or so
     e.target.parentNode.parentNode.parentNode.parentNode.parentNode.reset();
