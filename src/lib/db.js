@@ -1393,7 +1393,7 @@ ${JSON.stringify(issuesToUpdate)}`);
       }
       if (issueObject.hasOwnProperty('published_at') &&
         (issueObject.published_at || issueObject.published_at === null)) {
-        updateObject.published_at = issueObject.published_at;
+        updateObject.published_at = formatDate(new Date(issueObject.published_at));
       }
       if (issueObject.hasOwnProperty('issueNumber') && issueObject.issueNumber) {
         updateObject.issue_order = issueObject.issueNumber;

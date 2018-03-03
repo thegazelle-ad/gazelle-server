@@ -49,11 +49,13 @@ export default class MainIssueController extends FalcorController {
     this.unpublishIssue = this.unpublishIssue.bind(this);
     this.fieldUpdaters = {
       name: updateFieldValue.bind(this, 'name', undefined),
+      issueNumber: updateFieldValue.bind(this, 'issueNumber', undefined),
     };
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
     this.safeSetState({
       publishing: false,
       name: '',
+      issueNumber: '',
       published_at: null,
       changed: false,
       saving: false,
@@ -72,29 +74,30 @@ export default class MainIssueController extends FalcorController {
     this.handleDateChange = (event, date) => {
       this.safeSetState({ published_at: date });
     };
-    this.disableDate = this.disableDate.bind(this);
   }
 
   static getFalcorPathSets(params) {
-    return ['issues', 'byNumber', params.issueNumber, ['name', 'published_at']];
+    return ['issues', 'byNumber', params.issueNumber, ['name', 'published_at', 'issueNumber']];
   }
 
   componentWillMount() {
     const falcorCallback = (data) => {
-      const name = data.issues.byNumber[this.props.params.issueNumber].name || '';
-      const publishedAt =
-        new Date(data.issues.byNumber[this.props.params.issueNumber].published_at) || null;
-      this.safeSetState({ name, published_at: publishedAt });
+      const issue = data.issues.byNumber[this.props.params.issueNumber];
+      const name = issue.name || '';
+      const publishedAt = new Date(issue.published_at) || null;
+      const issueNumber = issue.issueNumber || '';
+      this.safeSetState({ name, published_at: publishedAt, issueNumber });
     };
     super.componentWillMount(falcorCallback);
   }
 
   componentWillReceiveProps(nextProps) {
     const falcorCallback = (data) => {
-      const name = data.issues.byNumber[nextProps.params.issueNumber].name || '';
-      const publishedAt =
-        new Date(data.issues.byNumber[nextProps.params.issueNumber].published_at) || null;
-      this.safeSetState({ name, published_at: publishedAt });
+      const issue = data.issues.byNumber[nextProps.params.issueNumber];
+      const name = issue.name || '';
+      const publishedAt = new Date(issue.published_at) || null;
+      const issueNumber = issue.issueNumber || '';
+      this.safeSetState({ name, published_at: publishedAt, issueNumber });
     };
     super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
     this.safeSetState({
@@ -282,10 +285,10 @@ export default class MainIssueController extends FalcorController {
 
   isFormChanged() {
     const falcorData = this.state.data.issues.byNumber[this.props.params.issueNumber];
-    const publishedAt = moment(this.state.published_at).valueOf();
     const changedFlag =
       this.isFormFieldChanged(this.state.name, falcorData.name) ||
-      this.isFormFieldChanged(publishedAt, falcorData.published_at);
+      this.isFormFieldChanged(this.state.published_at.getTime(), falcorData.published_at) ||
+      this.isFormFieldChanged(parseInt(this.state.issueNumber, 10), falcorData.issueNumber);
     return changedFlag;
   }
 
@@ -294,14 +297,18 @@ export default class MainIssueController extends FalcorController {
   }
 
   formHasUpdated(prevState, state) {
-    return (this.isFormFieldChanged(prevState.name, state.name) ||
-      this.isFormFieldChanged(prevState.published_at, state.published_at));
+    return (
+      this.isFormFieldChanged(prevState.name, state.name) ||
+      this.isFormFieldChanged(prevState.published_at, state.published_at) ||
+      this.isFormFieldChanged(prevState.issueNumber, state.issueNumber));
   }
 
   handleSaveChanges(event) {
     event.preventDefault();
 
     const issueNumber = this.props.params.issueNumber;
+    const falcorData = this.state.data.issues.byNumber[issueNumber];
+    const parsedIssueNumber = parseInt(this.state.issueNumber, 10);
 
     if (!this.isFormChanged()) {
       throw new Error(
@@ -310,6 +317,15 @@ export default class MainIssueController extends FalcorController {
       );
     }
 
+    if (this.isFormFieldChanged(parsedIssueNumber, falcorData.issueNumber)) {
+      if (!window.confirm('You are about to change the issue number, ' +
+        'which could cause duplicate issues in the numbering of the database, ' +
+        'among other things. It is strongly recommended not to change the ' +
+        'issue number unless it is very crucial. Are you sure you wish to continue?'
+        )) {
+        return;
+      }
+    }
     const resetState = () => {
       this.safeSetState({
         changed: false,
@@ -321,7 +337,7 @@ export default class MainIssueController extends FalcorController {
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
       paths: [
-        ['issues', 'byNumber', issueNumber, ['published_at', 'name']],
+        ['issues', 'byNumber', issueNumber, ['published_at', 'name', 'issueNumber']],
       ],
       jsonGraph: {
         issues: {
@@ -332,10 +348,11 @@ export default class MainIssueController extends FalcorController {
       },
     };
     // Fill in the data
-    const publishedAt = moment(this.state.published_at).format('YYYY-MM-DD');
     jsonGraphEnvelope.jsonGraph.issues.byNumber[issueNumber].published_at =
-      publishedAt;
+      this.state.published_at.getTime();
     jsonGraphEnvelope.jsonGraph.issues.byNumber[issueNumber].name = this.state.name;
+    jsonGraphEnvelope.jsonGraph.issues.byNumber[issueNumber].issueNumber =
+      parsedIssueNumber;
     // Update the values
     this.falcorUpdate(jsonGraphEnvelope, undefined, resetState);
     this.safeSetState({ saving: true });
@@ -380,6 +397,13 @@ export default class MainIssueController extends FalcorController {
               style={styles.nameField}
               onChange={this.fieldUpdaters.name}
               fullWidth
+            />
+            <br />
+            <TextField
+              name="number"
+              floatingLabelText="Issue Number"
+              value={this.state.issueNumber}
+              onChange={this.fieldUpdaters.issueNumber}
             />
             <br />
             <DatePicker
