@@ -2,6 +2,7 @@ import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
 import update from 'react-addons-update';
+import LoadingOverlay from './LoadingOverlay';
 
 // material-ui
 import Divider from 'material-ui/Divider';
@@ -187,6 +188,7 @@ export default class IssueCategoryController extends FalcorController {
                 at this point all articles you want in the issue should be already added.
               </p>
             </div>
+            {this.state.saving ? <LoadingOverlay /> : null}
           </Paper>
           <br />
           <h3>Categories</h3>
