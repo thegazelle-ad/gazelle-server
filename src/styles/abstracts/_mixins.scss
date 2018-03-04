@@ -190,9 +190,12 @@
 }
 
 @mixin full-width {
+
   position: relative;
   object-fit: cover;
   margin-right: -0.5rem; // Override #main right margin
   width: 100vw;
+  max-height:1000px;
+  float:left;
   left: calc(-50vw + 50%);
 }
