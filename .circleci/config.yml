@@ -112,7 +112,13 @@ jobs:
           keys:
             - v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}
 
-      - run: ./scripts/circleci/fetch-test-database.sh
+      - run:
+          name: Get needed dependencies for fetch database
+          command: '[[ -f scripts/circleci/helpers/test.dump ]] && npm i googleapis@12.4.0 google-auth-library@0.*'
+
+      - run:
+          name: Fetch test database
+          command: '[[ -f scripts/circleci/helpers/test.dump ]] && ./scripts/circleci/fetch-test-database.sh'
 
       - save_cache:
           paths:
@@ -278,15 +284,15 @@ workflows:
             - prep_ssh
 
       # Deployment related
-      #       - deploy_staging:
-      #           requires:
-      #             - unit_test
-      #             - lint
-      #             - end_to_end_tests
-      #             - prep_ssh
-      #           filters:
-      #             branches:
-      #               only: master
+      - deploy_staging:
+          requires:
+            - unit_test
+            - lint
+            - end_to_end_tests
+            - prep_ssh
+          filters:
+            branches:
+              only: master
       - deploy_production:
           requires:
             - unit_test
