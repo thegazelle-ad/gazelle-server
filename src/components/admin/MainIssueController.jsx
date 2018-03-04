@@ -407,12 +407,12 @@ export default class MainIssueController extends FalcorController {
             />
             <br />
             <DatePicker
+              disabled={!published}
               floatingLabelText="Published At"
               firstDayOfWeek={0}
               shouldDisableDate={this.disableDate}
               value={this.state.published_at}
               onChange={this.handleDateChange}
-              disabled={!published}
             />
             <br />
             <RaisedButton
