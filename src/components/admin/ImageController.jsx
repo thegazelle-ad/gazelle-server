@@ -15,6 +15,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
+import Snackbar from 'material-ui/Snackbar';
 
 export default class ImageUploader extends BaseComponent {
   constructor() {
@@ -26,6 +27,8 @@ export default class ImageUploader extends BaseComponent {
       changeNameOpen: false,
       nameInput: '',
       imgName: '',
+      wrongExtension: false,
+      attemptedExt: '',
     });
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleUpload = this.handleUpload.bind(this);
@@ -64,7 +67,6 @@ export default class ImageUploader extends BaseComponent {
     xhr.onload = () => {
       const response = xhr.response;
       if (response.split(' ')[0] === 'success') {
-        // const URL = `https://s3.amazonaws.com/thegazelle/${response.split(' ')[1]}`;
         const URL = response.split(' ')[1];
         this.handleUploadTerminated(fileObject.metaData.name, 2, URL);
       } else {
@@ -204,6 +206,7 @@ export default class ImageUploader extends BaseComponent {
   changeImageNameOpen(name) {
     this.safeSetState({
       changeNameOpen: true,
+      wrongExtension: false,
       imgName: name,
       nameInput: name,
     });
@@ -212,18 +215,17 @@ export default class ImageUploader extends BaseComponent {
   changeImageName() {
     const imgName = this.state.imgName;
     const re = /(?:\.([^.]+))?$/;
-    const ext = re.exec(imgName)[1];
+    const oldExt = re.exec(imgName)[1];
     const nameInput = this.state.nameInput;
+    const newExt = nameInput.lastIndexOf('.') !== -1 ? re.exec(nameInput)[1] : null;
     const index = this.state.files.findIndex(fileObject => fileObject.metaData.name === imgName);
     if (index !== -1) {
       const newFiles = update(this.state.files, {
         [index]: {
           metaData: { $merge:
-            /* This bit adds the file extension to the new image name if the user doesn't
-            provide it. It will also correct the extension if the user provides the wrong one. */
             { name: nameInput.lastIndexOf('.') !== -1
-              ? nameInput.substring(0, nameInput.lastIndexOf('.')).concat('.', ext)
-            : nameInput.concat('.', ext) },
+              ? nameInput.substring(0, nameInput.lastIndexOf('.')).concat('.', oldExt)
+            : nameInput.concat('.', oldExt) },
           },
         },
       });
@@ -231,11 +233,15 @@ export default class ImageUploader extends BaseComponent {
         files: newFiles,
       });
     }
-    this.setState({ changeNameOpen: false });
+    this.safeSetState({
+      wrongExtension: newExt !== null && newExt !== oldExt,
+      changeNameOpen: false,
+      attemptedExt: newExt,
+    });
   }
 
   changeImageNameClose() {
-    this.setState({ changeNameOpen: false });
+    this.safeSetState({ changeNameOpen: false });
   }
 
   postUploadReset() {
@@ -427,11 +433,20 @@ export default class ImageUploader extends BaseComponent {
           <br />
           <TextField
             name="newName"
+            defaultValue={this.state.nameInput}
             onChange={(event) => {
               this.safeSetState({ nameInput: event.target.value });
             }}
           />
         </Dialog>
+        <Snackbar
+          open={this.state.wrongExtension}
+          message={`To change the image's extension to .
+          ${this.state.attemptedExt}, please convert it externally and re-upload.`}
+          autoHideDuration={6000}
+          onActionTouchTap={this.handleActionTouchTap}
+          onRequestClose={this.handleRequestClose}
+        />
       </div>
     );
   }
