@@ -2,6 +2,7 @@ import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
 import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
+import { checkForHttp, checkForAbsoluteUrlRegex } from './lib/article-validators';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -146,7 +147,7 @@ export default class MainIssueController extends FalcorController {
             window.alert(`${article.title} has no authors. Please correct this`);
             return false;
           }
-          if (/http(?!s)/.test(article.html)) {
+          if (checkForHttp(article.html)) {
             if (!window.confirm(
                 `${article.title} has a non https link in it's body. ` +
                 'please make sure this link is not an image/video etc. being loaded in. ' +
@@ -157,7 +158,7 @@ export default class MainIssueController extends FalcorController {
             }
           }
           const absoluteUrlRegex = /<a.*?href\s*?=\s*?["'](?!http)(.*?)["'] *?>/;
-          if (absoluteUrlRegex.test(article.html)) {
+          if (checkForAbsoluteUrlRegex(article.html)) {
             const url = article.html.match(absoluteUrlRegex)[1];
             if (!window.confirm(
               `The URL ${url} in the article ${article.title} is in non-absolute format, ` +
