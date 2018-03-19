@@ -147,7 +147,7 @@ export default class MainIssueController extends FalcorController {
             window.alert(`${article.title} has no authors. Please correct this`);
             return false;
           }
-          if (checkForHttp(article.html)) {
+          if (!checkForHttp(article.html)) { // if the function returns true, the url is correct
             if (!window.confirm(
                 `${article.title} has a non https link in it's body. ` +
                 'please make sure this link is not an image/video etc. being loaded in. ' +
@@ -157,8 +157,8 @@ export default class MainIssueController extends FalcorController {
               return false;
             }
           }
-          const absoluteUrlRegex = /<a.*?href\s*?=\s*?["'](?!http)(.*?)["'] *?>/;
-          if (checkForAbsoluteUrlRegex(article.html)) {
+          const absoluteUrlRegex = /<a.*?href\s*?=\s*?["']http(.*?)["'] *?>/;
+          if (!checkForAbsoluteUrlRegex(article.html)) { // true = correct url
             const url = article.html.match(absoluteUrlRegex)[1];
             if (!window.confirm(
               `The URL ${url} in the article ${article.title} is in non-absolute format, ` +
