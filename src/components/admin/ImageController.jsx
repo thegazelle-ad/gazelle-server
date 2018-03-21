@@ -31,6 +31,7 @@ export default class ImageUploader extends BaseComponent {
       attemptedExt: '',
     });
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleRequestClose = this.handleRequestClose.bind(this);
     this.handleUpload = this.handleUpload.bind(this);
     this.deleteImagePreview = this.deleteImagePreview.bind(this);
     this.addImagePreviewUrl = this.addImagePreviewUrl.bind(this);
@@ -58,6 +59,10 @@ export default class ImageUploader extends BaseComponent {
       uploading: true,
       files: newFiles,
     });
+  }
+
+  handleRequestClose() {
+    this.safeSetState({ wrongExtension: false });
   }
 
   uploadFile(fileObject) {
@@ -237,6 +242,8 @@ export default class ImageUploader extends BaseComponent {
       wrongExtension: newExt !== null && newExt !== oldExt,
       changeNameOpen: false,
       attemptedExt: newExt,
+      nameInput: '',
+      newExt: '',
     });
   }
 
