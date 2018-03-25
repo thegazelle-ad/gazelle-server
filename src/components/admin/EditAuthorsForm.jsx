@@ -1,14 +1,17 @@
 /* eslint react/jsx-no-bind: 0 */
 
 import React from 'react';
+import update from 'react-addons-update';
+import _ from 'lodash';
+
 import BaseComponent from 'lib/BaseComponent';
 import SearchBar from 'components/admin/SearchBar';
-import _ from 'lodash';
+
 
 // material-ui
 import Chip from 'material-ui/Chip';
 
-class AuthorChip extends BaseComponent {
+class ObjectChip extends BaseComponent {
   constructor(props) {
     super(props);
     this.onClick = this.onClick.bind(this);
@@ -30,25 +33,50 @@ class AuthorChip extends BaseComponent {
   }
 }
 
-export default class EditAuthorsForm extends BaseComponent {
+export default class EditObjectsForm extends BaseComponent {
   constructor(props) {
     super(props);
     this.safeSetState({
-      addAuthorValue: '',
-      authorAutocomplete: [],
+      addObjectValue: '',
+      objectAutocomplete: [],
     });
-    this.handleClickAddAuthor = this.handleClickAddAuthor.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleClickAdd = this.handleClickAdd.bind(this);
   }
 
   componentDidUpdate(prevProps) {
     if (!this.props.disabled &&
-      this.props.authors !== prevProps.authors) {
+      this.props.objects !== prevProps.objects) {
       this.props.onChange();
     }
   }
 
-  handleClickAddAuthor(author) {
-    this.props.handleAddAuthor(author.id, author.name);
+  handleClickAdd(object) {
+    // disable this if saving
+    if (this.props.disabled) return;
+
+    const id = object.id;
+    const name = object.name;
+    const alreadyAdded = this.props.objects.find(baseObject => baseObject.id === id) !== undefined;
+
+    if (alreadyAdded) {
+      window.alert('Already added');
+      return;
+    }
+    const newObjects = update(this.props.objects, { $push: [{ id, name }] });
+    this.props.onUpdate(newObjects);
+  }
+
+  handleDelete(id) {
+    // disabled this if saving
+    if (this.props.disabled) return;
+
+    const index = this.props.objects.findIndex(object => object.id === id);
+    if (index === -1) {
+      throw new Error('The author you are trying to delete cannot be found');
+    }
+    const newObjects = update(this.props.objects, { $splice: [[index, 1]] });
+    this.props.onUpdate(newObjects);
   }
 
   render() {
@@ -59,37 +87,37 @@ export default class EditAuthorsForm extends BaseComponent {
       },
     };
 
-    const authorChips = this.props.authors.length > 0 ?
-      _.map(this.props.authors, (author) => (
-        <AuthorChip
-          key={author.id}
-          id={author.id}
-          onDelete={this.props.handleDeleteAuthor}
+    const objectChips = this.props.objects.length > 0 ?
+      _.map(this.props.objects, (object) => (
+        <ObjectChip
+          key={object.id}
+          id={object.id}
+          onDelete={this.handleDelete}
           style={{ margin: 4 }}
         >
-          {author.name}
-        </AuthorChip>
+          {object.name}
+        </ObjectChip>
       )) : null;
 
-    const noAuthorsMessage = (
+    const noObjectsMessage = (
       <span style={{ color: 'rgba(0, 0, 0, 0.3)' }}>
-        No authors are currently assigned to this article
+        `No {this.props.mode.toLowerCase()} are currently assigned to this article`
       </span>
     );
 
     return (
       <div>
         <br />
-        <p style={{ marginTop: 0, marginBottom: 10 }}>Authors</p>
+        <p style={{ marginTop: 0, marginBottom: 10 }}>{this.props.mode}</p>
         <div style={styles.wrapper} >
-          {authorChips || noAuthorsMessage}
+          {objectChips || noObjectsMessage}
         </div>
         <SearchBar
           model={this.props.model}
-          mode="authors"
+          mode={this.props.mode.toLowerCase()}
           fields={['id']}
           length={3}
-          handleClick={this.handleClickAddAuthor}
+          handleClick={this.handleClickAdd}
         />
       </div>
     );
