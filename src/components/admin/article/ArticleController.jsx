@@ -8,9 +8,10 @@ import FalcorController from 'lib/falcor/FalcorController';
 
 // Custom Components
 import { updateFieldValue } from 'components/admin/lib/form-field-updaters';
-import UnpublishButton from 'components/admin/article/components/UnpublishButton.jsx';
 import EditAuthorsForm from 'components/admin/EditAuthorsForm';
 import LoadingOverlay from 'components/admin/LoadingOverlay';
+import UnpublishButton from 'components/admin/article/components/UnpublishButton.jsx';
+import CategorySelector from 'components/admin/article/components/CategorySelector';
 
 // material-ui
 import Dialog from 'material-ui/Dialog';
@@ -18,8 +19,6 @@ import CircularProgress from 'material-ui/CircularProgress';
 import RaisedButton from 'material-ui/RaisedButton';
 import Divider from 'material-ui/Divider';
 import TextField from 'material-ui/TextField';
-import MenuItem from 'material-ui/MenuItem';
-import SelectField from 'material-ui/SelectField';
 
 const MAX_TEASER_LENGTH = 156;
 
@@ -337,25 +336,12 @@ export default class ArticleController extends FalcorController {
             floatingLabelText="Title"
             fullWidth
           />
-          <SelectField
-            floatingLabelText="Category"
-            maxHeight={400}
-            value={chosenCategory}
-            onChange={this.fieldUpdaters.category}
+          <CategorySelector
+            chosenCategory={chosenCategory}
+            update={this.fieldUpdaters.category}
             disabled={this.state.saving}
-            autoWidth={false}
-            style={{ width: 200 }}
-          >
-            {
-              _.map(categories, category => (
-                <MenuItem
-                  value={category.slug}
-                  key={category.slug}
-                  primaryText={category.name}
-                />
-              ))
-            }
-          </SelectField>
+            categories={categories}
+          />
           <TextField
             name="image"
             value={this.state.image}
