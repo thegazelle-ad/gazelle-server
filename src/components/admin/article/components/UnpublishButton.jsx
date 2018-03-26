@@ -1,11 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import BaseComponent from 'lib/BaseComponent';
 import RaisedButton from 'material-ui/RaisedButton';
 import Warning from 'material-ui/svg-icons/alert/warning';
 
-export default class UnpublishButton extends BaseComponent {
+export default class UnpublishButton extends React.Component {
   constructor(props) {
     super(props);
     this.unpublish = this.unpublish.bind(this);
@@ -55,3 +55,10 @@ export default class UnpublishButton extends BaseComponent {
     );
   }
 }
+
+UnpublishButton.propTypes = {
+  slug: PropTypes.string.isRequired,
+  save: PropTypes.func.isRequired,
+  published_at: PropTypes.number.isRequired,
+  style: PropTypes.object.isRequired,
+};

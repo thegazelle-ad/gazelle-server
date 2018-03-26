@@ -1,17 +1,17 @@
 /* eslint react/jsx-no-bind: 0 */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import update from 'react-addons-update';
 import _ from 'lodash';
 
-import BaseComponent from 'lib/BaseComponent';
 import { capFirstLetter } from 'lib/utilities';
 import SearchBar from 'components/admin/SearchBar';
 
 // material-ui
 import Chip from 'material-ui/Chip';
 
-class ObjectChip extends BaseComponent {
+class ObjectChip extends React.PureComponent {
   constructor(props) {
     super(props);
     this.onClick = this.onClick.bind(this);
@@ -34,7 +34,7 @@ class ObjectChip extends BaseComponent {
 }
 
 
-export default class SearchableSelector extends React.PureComponent {
+export default class SearchableSelector extends React.Component {
   constructor(props) {
     super(props);
     this.handleDelete = this.handleDelete.bind(this);
@@ -120,3 +120,12 @@ export default class SearchableSelector extends React.PureComponent {
     );
   }
 }
+
+SearchableSelector.propTypes = {
+  disabled: PropTypes.bool,
+  objects: PropTypes.array.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onUpdate: PropTypes.func.isRequired,
+  mode: PropTypes.string.isRequired,
+  model: PropTypes.object.isRequired,
+};
