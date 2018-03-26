@@ -379,17 +379,6 @@ export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
   return update(oldData, dataUpdates);
 }
 
-export const mapGhostNames = (falcorName) => {
-  switch (falcorName) {
-    case 'teaser':
-      return 'meta_description';
-    case 'issueNumber':
-      return 'issue_order';
-    default:
-      return falcorName;
-  }
-};
-
 export function cleanupFalcorKeys(obj) {
   if (obj === null || (typeof obj) !== 'object' || obj.cleanupFalcorKeysMetaSeen) return obj;
   const ret = {};
