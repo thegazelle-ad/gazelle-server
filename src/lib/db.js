@@ -2,11 +2,18 @@
 // We disable camelcase here due to SQL naming conventions
 import knex from 'knex';
 import stable from 'stable';
-import knexConnectionObject from 'knexfile';
+import databaseConnectionConfig from 'config/database.config';
 import _ from 'lodash';
 import { formatDate, formatDateTime } from 'lib/utilities';
 
-const database = knex(knexConnectionObject);
+const database = knex({
+  client: 'mysql',
+  connection: databaseConnectionConfig,
+  pool: {
+    min: 10,
+    max: 50,
+  },
+});
 
 export function authorQuery(slugs, columns) {
   // parameters are both expected to be arrays
@@ -74,9 +81,9 @@ export function authorArticleQuery(slugs) {
     .from('authors')
     .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
     .innerJoin('articles', 'articles.id', '=', 'article_id')
-    .whereNotNull('gazelle_published_at')
+    .whereNotNull('published_at')
     .whereIn('authors.slug', slugs)
-    .orderBy('gazelle_published_at', 'desc')
+    .orderBy('published_at', 'desc')
     .then((rows) => {
       // rows is an array of objects with keys authorSlug and articleSlug
       const data = {};
@@ -137,11 +144,11 @@ export async function articleQuery(slugs, columns) {
     if (col === 'category') {
       return 'categories.slug as category';
     }
-    return col;
+    return `articles.${col}`;
   });
   // In order to be able to identify the rows we get back we need to include the slug
-  if (!processedColumns.includes('slug')) {
-    processedColumns.push('slug');
+  if (!processedColumns.includes('articles.slug')) {
+    processedColumns.push('articles.slug');
   }
   return await database.select(...processedColumns)
     .from('articles')
@@ -299,8 +306,8 @@ export function categoryArticleQuery(slugs) {
     .from('articles')
     .innerJoin('categories', 'categories.id', '=', 'articles.category_id')
     .whereIn('categories.slug', slugs)
-    .whereNotNull('gazelle_published_at')
-    .orderBy('gazelle_published_at', 'desc')
+    .whereNotNull('published_at')
+    .orderBy('published_at', 'desc')
     .then((rows) => {
       // rows is an array of objects with keys articleSlug and categorySlug
       const data = {};
@@ -618,7 +625,7 @@ export function trendingQuery() {
       database.select('slug')
       .from('articles')
       .innerJoin('issues_posts_order', 'issues_posts_order.article_id', '=', 'articles.id')
-      .whereNotNull('gazelle_published_at')
+      .whereNotNull('published_at')
       .where('issue_id', '=', latestIssueId)
       .orderBy('views', 'DESC')
       .limit(10)
@@ -649,7 +656,7 @@ export function relatedArticleQuery(slugs) {
       .from('articles')
       .leftJoin('posts_tags', 'posts_tags.article_id', '=', 'articles.id')
       .innerJoin('issues_posts_order', 'issues_posts_order.article_id', '=', 'articles.id')
-      .whereNotNull('gazelle_published_at')
+      .whereNotNull('published_at')
       // We need the non-arrow function here to have the `this` object passed
       .where(function () { // eslint-disable-line
         this.where('issues_posts_order.issue_id', '=', latestIssueId).orWhereIn('slug', slugs);
@@ -760,7 +767,7 @@ export function searchPostsQuery(queries, min, max) {
       .from('articles')
       .leftJoin('articles', 'articles.id', '=', 'articles.id')
       .where('title', 'like', `%${query}%`)
-      .orderByRaw('ISNULL(gazelle_published_at) DESC, gazelle_published_at DESC')
+      .orderByRaw('ISNULL(published_at) DESC, published_at DESC')
       .limit(max - min + 1)
       .offset(min)
       .then((rows) => {
@@ -1204,7 +1211,7 @@ export function updateIssueArticles(issueNumber, featuredArticles, picks, mainAr
                   }).map(article => article.id);
 
                   database('articles').whereIn('id', toPublish)
-                  .update('gazelle_published_at', formatDateTime(date))
+                  .update('published_at', formatDateTime(date))
                   .then(() => {
                     resolve(results);
                   });
@@ -1236,7 +1243,7 @@ export function updateIssueData(jsonGraphArg) {
 export function publishIssue(issue_id) {
   return new Promise((resolve) => {
     // We first find all unpublished articles in the issue
-    database.select('articles.id', 'slug', 'gazelle_published_at')
+    database.select('articles.id', 'slug', 'published_at')
     .from('articles')
     .innerJoin('issues_posts_order', 'articles.id', '=', 'issues_posts_order.article_id')
     .where('issue_id', '=', issue_id)
@@ -1261,7 +1268,7 @@ export function publishIssue(issue_id) {
       const currentTime = formatDateTime(dateObject);
       database('articles')
       .whereIn('id', toPublish)
-      .update({ gazelle_published_at: currentTime })
+      .update({ published_at: currentTime })
       .then(() => {
         // Now we can publish the issue
         const currentDate = formatDate(dateObject);

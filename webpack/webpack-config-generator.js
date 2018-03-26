@@ -193,7 +193,7 @@ const generateWebpackConfig = (config) => {
                     },
                   ],
                 ],
-                plugins: ['transform-object-rest-spread'],
+                plugins: ['transform-object-rest-spread', 'array-includes'],
                 minified: config.NODE_ENV !== undefined,
               },
             },
