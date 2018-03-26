@@ -319,12 +319,6 @@ export default class ArticleController extends FalcorController {
             floatingLabelText="Title"
             fullWidth
           />
-          <ImageField
-            image={this.state.image}
-            disabled={this.state.saving}
-            updateImage={this.updateImage}
-          />
-          <br />
           <ListSelector
             type="Category"
             chosenType={this.state.category || 'none'}
@@ -332,6 +326,12 @@ export default class ArticleController extends FalcorController {
             disabled={this.state.saving}
             types={categories}
           /><br />
+          <ImageField
+            image={this.state.image}
+            disabled={this.state.saving}
+            updateImage={this.updateImage}
+          />
+          <br />
           <MaxLenTextField
             name="teaser"
             value={this.state.teaser}

@@ -1,11 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 
-import BaseComponent from 'lib/BaseComponent';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
-export default class ListSelector extends BaseComponent {
+export default class ListSelector extends React.Component {
   constructor(props) {
     super(props);
     this.onChange = this.onChange.bind(this);
@@ -39,3 +39,11 @@ export default class ListSelector extends BaseComponent {
     );
   }
 }
+
+ListSelector.propTypes = {
+  types: PropTypes.object.isRequired,
+  type: PropTypes.string,
+  disabled: PropTypes.bool,
+  update: PropTypes.func,
+  chosenType: PropTypes.string,
+};

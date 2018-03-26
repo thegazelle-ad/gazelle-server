@@ -1,9 +1,9 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import { capFirstLetter } from 'lib/utilities';
 import TextField from 'material-ui/TextField';
 
-export default class MaxLenTextField extends React.PureComponent {
+export default class MaxLenTextField extends React.Component {
   constructor(props) {
     super(props);
     this.onChange = this.onChange.bind(this);
@@ -30,3 +30,11 @@ export default class MaxLenTextField extends React.PureComponent {
     );
   }
 }
+
+MaxLenTextField.propTypes = {
+  maxLen: PropTypes.number.isRequired,
+  onUpdate: PropTypes.func.isRequired,
+  value: PropTypes.string,
+  disabled: PropTypes.bool,
+  name: PropTypes.string,
+};
