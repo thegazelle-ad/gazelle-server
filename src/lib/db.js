@@ -1589,3 +1589,8 @@ export function getSemesterTeams(semesterName, teamIndices) {
     })
   ));
 }
+
+export async function getNumArticles() {
+  const rows = await database.select('COUNT(*) as numArticles').from('articles');
+  return rows[0].numArticles;
+}
