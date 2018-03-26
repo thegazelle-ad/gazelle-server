@@ -1,3 +1,6 @@
+/* This is what allows babel to transpile async functions */
+import 'regenerator-runtime/runtime';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, browserHistory } from 'react-router';

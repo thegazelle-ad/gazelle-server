@@ -1,3 +1,6 @@
+/* This is what allows babel to transpile async functions */
+import 'regenerator-runtime/runtime';
+
 /* Falcor */
 import falcor from 'falcor';
 // The custom falcor code we write
