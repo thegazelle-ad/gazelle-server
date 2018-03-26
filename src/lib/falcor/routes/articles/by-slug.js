@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import {
   articleQuery,
-  updatePostMeta,
+  updateArticles,
   articleIssueQuery,
   articleAuthorQuery,
   interactiveArticleQuery,
@@ -19,7 +19,7 @@ export default [
   {
     // Get custom article data from MariaDB
     route: "articles['bySlug'][{keys:slugs}]['id', 'image_url', 'slug', 'title', 'markdown', 'html', 'teaser', 'category', 'published_at', 'views', 'is_interactive']", // eslint-disable-line max-len
-    get: async (pathSet) => {
+    get: async pathSet => {
       const requestedFields = pathSet[3];
       const data = await articleQuery(pathSet.slugs, requestedFields);
       const results = data.map(article => {
@@ -37,30 +37,23 @@ export default [
       }).flatten();
       return results;
     },
-    set: (jsonGraphArg) => (
-      new Promise((resolve) => {
-        jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
-        const articles = jsonGraphArg.articles.bySlug;
-        const slugs = Object.keys(articles);
-        const results = [];
-        updatePostMeta(articles)
-        .then((flag) => {
-          if (!flag) {
-            throw new Error('For unknown reasons updatePostMeta returned a non-true flag');
-          }
-          slugs.forEach((slug) => {
-            const slugObject = articles[slug];
-            _.forEach(slugObject, (value, field) => {
-              results.push({
-                path: ['articles', 'bySlug', slug, field],
-                value,
-              });
-            });
+    set: async jsonGraphArg => {
+      jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
+      const articles = jsonGraphArg.articles.bySlug;
+      const flag = await updateArticles(articles);
+      if (!flag) {
+        throw new Error('For unknown reasons updatePostMeta returned a non-true flag');
+      }
+      const results = articles.map((article) => (
+        _.map(article, (value, field) => {
+          results.push({
+            path: ['articles', 'bySlug', article.slug, field],
+            value,
           });
-          resolve(results);
-        });
-      })
-    ),
+        })
+      )).flatten();
+      return results;
+    },
   },
   {
     // Get issueNumber from database

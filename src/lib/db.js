@@ -815,137 +815,6 @@ export function updateAuthors(articleId, newAuthors) {
   });
 }
 
-export function updateGhostFields(jsonGraphArg) {
-  return new Promise((resolve) => {
-    const updatesCalled = Object.keys(jsonGraphArg).length;
-    let updatesReturned = 0;
-    _.forEach(jsonGraphArg, (article, slug) => {
-      const acceptedFields = {
-        image_url: true,
-        teaser: true,
-      };
-      const updateObject = {};
-      _.forEach(article, (value, field) => {
-        if (!acceptedFields[field]) {
-          throw new Error('updateGhostFields is only configured to update image_url or teaser, ' +
-'you cannot update', field);
-        } else {
-          updateObject[field] = value;
-        }
-      });
-      database('articles')
-      .where('slug', '=', slug)
-      .update(updateObject)
-      .then((data) => {
-        if (data !== 1) {
-          throw new Error('error updating ghost field of article with slug:', slug);
-        }
-        updatesReturned++;
-        if (updatesReturned >= updatesCalled) {
-          // Just resolving to show everything went as planned
-          resolve(true);
-        }
-      });
-    });
-  });
-}
-
-export function updatePostMeta(jsonGraphArg) {
-  return new Promise((resolve) => {
-    const updatesCalled = Object.keys(jsonGraphArg).length;
-    let updatesReturned = 0;
-    const categorySlugsToFind = [];
-    const articlesWithChangedCategory = [];
-    _.forEach(jsonGraphArg, (article, slug) => {
-      Object.keys(article).forEach((field) => {
-        if (field === 'category') {
-          categorySlugsToFind.push(article[field]);
-          articlesWithChangedCategory.push(slug);
-        }
-      });
-    });
-    database.select('id', 'slug')
-    .from('categories')
-    .whereIn('slug', categorySlugsToFind)
-    .then((categoryRows) => {
-      const articleSlugs = Object.keys(jsonGraphArg);
-      database.select('id', 'slug')
-      .from('articles')
-      .whereIn('slug', articleSlugs)
-      .then((articleRows) => {
-        _.forEach(jsonGraphArg, (article, slug) => {
-          const updateObject = {};
-          _.forEach(article, (value, field) => {
-            if (field === 'category') {
-              const category = categoryRows.find(row => row.slug === value);
-              if (!category) {
-                throw new Error(`Can't find ${value} as a category to add`);
-              }
-              updateObject.category_id = category.id;
-            } else if (field === 'published_at') {
-              updateObject.gazelle_published_at = value;
-            } else {
-              updateObject[field] = value;
-            }
-          });
-
-          const articleObject = articleRows.find(row => row.slug === slug);
-          if (!articleObject) {
-            throw new Error(`Can't find ${slug} as an article to update`);
-          }
-
-          // We default to insert, with a conditional statement to update
-          // if that id already exists to handle the case where we haven't yet
-          // created a meta data row for that post
-          const insertObject = Object.assign({}, updateObject, { id: articleObject.id });
-          const insertQuery = database('articles').insert(insertObject).toString();
-          // Using a fixed array of keys to make sure we have the same order every time
-          const fields = Object.keys(updateObject);
-          let rawUpdateQuery = '';
-          fields.forEach((field) => {
-            rawUpdateQuery += ` ${field} = :${field}`;
-          });
-          const query = `${insertQuery} ON DUPLICATE KEY UPDATE\
-${database.raw(rawUpdateQuery, updateObject)}`;
-
-          database.raw(query)
-          .then((data) => {
-            if (data.length < 1 || data[0].constructor.name !== 'OkPacket') {
-              throw new Error(`Problems updating meta data of article: ${slug}`);
-            }
-            updatesReturned++;
-            if (updatesReturned >= updatesCalled) {
-              // If categories changed make sure issue data is still consistent
-              if (articlesWithChangedCategory.length > 0) {
-                database.distinct('issue_id').select()
-                .from('issues_posts_order')
-                .innerJoin('articles', 'articles.id', '=', 'issues_posts_order.article_id')
-                .whereIn('articles.slug', articlesWithChangedCategory)
-                .then((issueRows) => {
-                  const issuesToUpdate = issueRows.map(row => row.issue_id);
-                  // If the articles were actually published in any issues
-                  if (issuesToUpdate.length > 0) {
-                    this.orderArticlesInIssues(issuesToUpdate).then((flag) => {
-                      if (flag !== true) {
-                        throw new Error(`error while reordering articles in issues: \
-${JSON.stringify(issuesToUpdate)}`);
-                      }
-                      resolve(true);
-                    });
-                  } else {
-                    // Nothing to fix
-                    resolve(true);
-                  }
-                });
-              }
-            }
-          });
-        });
-      });
-    });
-  });
-}
-
 export function orderArticlesInIssues(issues) {
   // Issues is assumed to be an array of integers where
   // the integers are the ids of issues
@@ -1570,4 +1439,84 @@ export function getSemesterTeams(semesterName, teamIndices) {
 export async function getNumArticles() {
   const rows = await database.select('COUNT(*) as numArticles').from('articles');
   return rows[0].numArticles;
+}
+
+/**
+ * Updates which category an article belongs to
+ * @param {Object} jsonGraphArg - An object of type { [slugs]: articleUpdateObject[] }
+ * @returns {Promise<string[]>} - Slugs of the articles that had their category changed
+ */
+async function updateArticleCategories(jsonGraphArg) {
+  const articleCategoryPairs = _.map(jsonGraphArg, (articleUpdater, slug) => {
+    if (articleUpdater.hasOwnProperty('category')) {
+      return {
+        articleSlug: slug,
+        categorySlug: articleUpdater.category,
+      };
+    }
+    return null;
+  }).filter(x => x);
+  if (articleCategoryPairs.length === 0) {
+    return [];
+  }
+
+  const categorySlugs = _.uniq(articleCategoryPairs.map(x => x.categorySlug));
+  // Get the ids of each of the categories as that's what we'll have to update the foreign key with
+  const categoryRows = await database.select('slug', 'id').from('categories')
+    .whereIn('slug', categorySlugs);
+
+  const categorySlugToID = {};
+
+  categoryRows.forEach(row => {
+    categorySlugToID[row.slug] = row.id;
+  });
+
+  const updatePromises = articleCategoryPairs.map(pair => {
+    const categoryID = categorySlugToID[pair.categorySlug];
+    const updateObject = { category_id: categoryID };
+    return database('articles').where('slug', '=', pair.articleSlug)
+      .update(updateObject);
+  });
+  await Promise.all(updatePromises);
+  return articleCategoryPairs.map(x => x.articleSlug);
+}
+
+/**
+ * Updates articles directly tied to an article
+ * @param {Object} jsonGraphArg - An object of type { [slugs]: articleUpdateObject[] }
+ * @returns {Promise<boolean>} - Whether the update was a success
+ */
+export async function updateArticles(jsonGraphArg) {
+  const updatePromises = _.map(jsonGraphArg, (articleUpdater, slug) => {
+    const processedArticleUpdater = {
+      ...articleUpdater,
+    };
+    // We only store a foreign key to the categories table so we won't update it in this query
+    delete processedArticleUpdater.category;
+    return database('articles').where('slug', '=', slug)
+      .update(processedArticleUpdater);
+  });
+  updatePromises.push(updateArticleCategories(jsonGraphArg));
+  const returnValues = await Promise.all(updatePromises);
+  const articlesWithChangedCategory = returnValues[returnValues.length - 1];
+  // If categories changed make sure issue data is still consistent
+  if (articlesWithChangedCategory.length > 0) {
+    const issueRows = await database.distinct('issue_id').select()
+      .from('issues_posts_order')
+      .innerJoin('articles', 'articles.id', '=', 'issues_posts_order.article_id')
+      .whereIn('articles.slug', articlesWithChangedCategory);
+
+    const issuesToUpdate = issueRows.map(row => row.issue_id);
+    // If the articles were actually published in any issues
+    if (issuesToUpdate.length > 0) {
+      const flag = await orderArticlesInIssues(issuesToUpdate)
+      if (!flag) {
+        const msg = `error while reordering articles in issues: ${JSON.stringify(issuesToUpdate)}`;
+        throw new Error(msg);
+      }
+    }
+  }
+
+  // It hasn't thrown an error yet so it must have been a success
+  return true;
 }
