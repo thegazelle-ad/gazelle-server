@@ -70,7 +70,7 @@ export function authorArticleQuery(slugs) {
   // as keys and values being arrays of article slugs
   // sorted by most recent article first.
   return new Promise((resolve) => {
-    database.select('articles.slug as postSlug', 'authors.slug as authorSlug')
+    database.select('articles.slug as articleSlug', 'authors.slug as authorSlug')
     .from('authors')
     .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
     .innerJoin('articles', 'articles.id', '=', 'article_id')
@@ -78,15 +78,15 @@ export function authorArticleQuery(slugs) {
     .whereIn('authors.slug', slugs)
     .orderBy('gazelle_published_at', 'desc')
     .then((rows) => {
-      // rows is an array of objects with keys authorSlug and postSlug
+      // rows is an array of objects with keys authorSlug and articleSlug
       const data = {};
       rows.forEach((row) => {
         // This will input them in chronological order as
         // the query was structured as so.
         if (!data.hasOwnProperty(row.authorSlug)) {
-          data[row.authorSlug] = [row.postSlug];
+          data[row.authorSlug] = [row.articleSlug];
         } else {
-          data[row.authorSlug].push(row.postSlug);
+          data[row.authorSlug].push(row.articleSlug);
         }
       });
       // database.destroy();
@@ -206,22 +206,22 @@ export function articleAuthorQuery(slugs) {
   // The function returns an object with article slugs
   // as keys and values being arrays of author slugs.
   return new Promise((resolve) => {
-    database.select('articles.slug as postSlug', 'authors.slug as authorSlug')
+    database.select('articles.slug as articleSlug', 'authors.slug as authorSlug')
     .from('authors')
     .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
     .innerJoin('articles', 'articles.id', '=', 'article_id')
     .whereIn('articles.slug', slugs)
     .orderBy('authors_posts.id', 'asc')
     .then((rows) => {
-      // rows is an array of objects with keys authorSlug and postSlug
+      // rows is an array of objects with keys authorSlug and articleSlug
       const data = {};
       rows.forEach((row) => {
         // This will input them in ascending order by id (which represents time they were
         // inserted as author of that article) as the query was structured so.
-        if (!data.hasOwnProperty(row.postSlug)) {
-          data[row.postSlug] = [row.authorSlug];
+        if (!data.hasOwnProperty(row.articleSlug)) {
+          data[row.articleSlug] = [row.authorSlug];
         } else {
-          data[row.postSlug].push(row.authorSlug);
+          data[row.articleSlug].push(row.authorSlug);
         }
       });
       // database.destroy();
@@ -307,22 +307,22 @@ export function categoryArticleQuery(slugs) {
   // Will return object where keys are category slugs
   // and values are arrays of articles from newest to oldest
   return new Promise((resolve) => {
-    database.select('articles.slug as postSlug', 'categories.slug as catSlug')
+    database.select('articles.slug as articleSlug', 'categories.slug as categorySlug')
     .from('articles')
     .innerJoin('categories', 'categories.id', '=', 'articles.category_id')
     .whereIn('categories.slug', slugs)
     .whereNotNull('gazelle_published_at')
     .orderBy('gazelle_published_at', 'desc')
     .then((rows) => {
-      // rows is an array of objects with keys postSlug and catSlug
+      // rows is an array of objects with keys articleSlug and categorySlug
       const data = {};
       rows.forEach((row) => {
         // This will input them in chronological order as
         // the query was structured as so.
-        if (!data.hasOwnProperty(row.catSlug)) {
-          data[row.catSlug] = [row.postSlug];
+        if (!data.hasOwnProperty(row.categorySlug)) {
+          data[row.categorySlug] = [row.articleSlug];
         } else {
-          data[row.catSlug].push(row.postSlug);
+          data[row.categorySlug].push(row.articleSlug);
         }
       });
       // database.destroy();
@@ -516,7 +516,7 @@ export function issueCategoryArticleQuery(issueNumbers) {
     .whereIn('issues.issue_order', issueNumbers)
     .andWhere('type', '=', 0)
     .orderBy('posts_order', 'ASC')
-    .then((postRows) => {
+    .then((articleRows) => {
       database.select('issue_order', 'categories_order', 'issues_categories_order.category_id')
       .from('issues')
       .innerJoin('issues_categories_order', 'issues.id', '=', 'issues_categories_order.issue_id')
@@ -525,7 +525,7 @@ export function issueCategoryArticleQuery(issueNumbers) {
       .then((categoryRows) => {
         const results = {};
         const categoriesHashMap = {};
-        postRows.forEach((postRow) => {
+        articleRows.forEach((postRow) => {
           // I make a lot of assumptions about correctness of data returned here
           const issueNumber = postRow.issue_order;
           // Here I handle finding the corresponding category row and thereby the order
@@ -557,7 +557,7 @@ export function issueCategoryArticleQuery(issueNumbers) {
           }
           // Continue with rest of constants
           const postIndex = postRow.posts_order;
-          const postSlug = postRow.slug;
+          const articleSlug = postRow.slug;
           if (!results.hasOwnProperty(issueNumber)) {
             results[issueNumber] = [];
           }
@@ -568,7 +568,7 @@ export function issueCategoryArticleQuery(issueNumbers) {
             throw new Error('Incorrect data returned from database regarding getting ' +
 'articles in an issue. Articles either not existing or not ordered correctly');
           }
-          results[issueNumber][categoryIndex].push(postSlug);
+          results[issueNumber][categoryIndex].push(articleSlug);
         });
         // Check all categories are there and ordering is correct
         _.forEach(results, (categoryArray, issueNumber) => {
@@ -634,11 +634,11 @@ export function trendingQuery() {
       .where('issue_id', '=', latestIssueId)
       .orderBy('views', 'DESC')
       .limit(10)
-      .then((postRows) => {
+      .then((articleRows) => {
         // At the moment if there were less than 5-7 articles in the issue
         // there wouldn't be enough to show, it is very easy to implement that it
         // just continues with the second-newest issue, it depends on what editors want
-        resolve(postRows);
+        resolve(articleRows);
       })
       .catch((e) => {
         throw new Error(e);
@@ -666,9 +666,9 @@ export function relatedArticleQuery(slugs) {
       .where(function () { // eslint-disable-line
         this.where('issues_posts_order.issue_id', '=', latestIssueId).orWhereIn('slug', slugs);
       })
-      .then((postRows) => {
+      .then((articleRows) => {
         const articles = {};
-        postRows.forEach((post) => {
+        articleRows.forEach((post) => {
           const slug = post.slug;
           if (!articles[slug]) {
             articles[slug] = post;
@@ -979,12 +979,12 @@ export function orderArticlesInIssues(issues) {
         .where('issue_id', '=', issue_id)
         .orderBy('category_id', 'ASC')
         .orderBy('issues_posts_order.posts_order', 'ASC')
-        .then((postRows) => {
+        .then((articleRows) => {
           let lastCategory = null;
           let order = 0;
           const toUpdate = [];
           const newCategories = [];
-          postRows.forEach((row) => {
+          articleRows.forEach((row) => {
             if (lastCategory !== row.category_id) {
               lastCategory = row.category_id;
               order = 0;
