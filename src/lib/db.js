@@ -1477,6 +1477,7 @@ async function updateArticleCategories(jsonGraphArg) {
     return database('articles').where('slug', '=', pair.articleSlug)
       .update(updateObject);
   });
+  // eslint-disable-next-line
   await Promise.all(updatePromises);
   return articleCategoryPairs.map(x => x.articleSlug);
 }
@@ -1509,7 +1510,7 @@ export async function updateArticles(jsonGraphArg) {
     const issuesToUpdate = issueRows.map(row => row.issue_id);
     // If the articles were actually published in any issues
     if (issuesToUpdate.length > 0) {
-      const flag = await orderArticlesInIssues(issuesToUpdate)
+      const flag = await orderArticlesInIssues(issuesToUpdate);
       if (!flag) {
         const msg = `error while reordering articles in issues: ${JSON.stringify(issuesToUpdate)}`;
         throw new Error(msg);
