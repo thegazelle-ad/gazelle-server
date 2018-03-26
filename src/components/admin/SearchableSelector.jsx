@@ -5,8 +5,8 @@ import update from 'react-addons-update';
 import _ from 'lodash';
 
 import BaseComponent from 'lib/BaseComponent';
+import { capFirstLetter } from 'lib/utilities';
 import SearchBar from 'components/admin/SearchBar';
-
 
 // material-ui
 import Chip from 'material-ui/Chip';
@@ -33,13 +33,10 @@ class ObjectChip extends BaseComponent {
   }
 }
 
-export default class EditObjectsForm extends BaseComponent {
+
+export default class SearchableSelector extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.safeSetState({
-      addObjectValue: '',
-      objectAutocomplete: [],
-    });
     this.handleDelete = this.handleDelete.bind(this);
     this.handleClickAdd = this.handleClickAdd.bind(this);
   }
@@ -101,20 +98,20 @@ export default class EditObjectsForm extends BaseComponent {
 
     const noObjectsMessage = (
       <span style={{ color: 'rgba(0, 0, 0, 0.3)' }}>
-        `No {this.props.mode.toLowerCase()} are currently assigned to this article`
+        `No {this.props.mode} are currently assigned to this article`
       </span>
     );
 
     return (
       <div>
         <br />
-        <p style={{ marginTop: 0, marginBottom: 10 }}>{this.props.mode}</p>
+        <p style={{ marginTop: 0, marginBottom: 10 }}>{capFirstLetter(this.props.mode)}</p>
         <div style={styles.wrapper} >
           {objectChips || noObjectsMessage}
         </div>
         <SearchBar
           model={this.props.model}
-          mode={this.props.mode.toLowerCase()}
+          mode={this.props.mode}
           fields={['id']}
           length={3}
           handleClick={this.handleClickAdd}

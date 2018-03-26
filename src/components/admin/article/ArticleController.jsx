@@ -73,7 +73,6 @@ export default class ArticleController extends FalcorController {
       );
     }
 
-
     Promise.all(updatePromises).then(() => {
       // Reset state after save is done
       this.safeSetState({
@@ -369,7 +368,7 @@ export default class ArticleController extends FalcorController {
             onUpdate={this.updateAuthors}
             disabled={this.state.saving}
             model={this.props.model}
-            mode="Authors"
+            mode="authors"
             disabled={this.state.saving}
           />
           <br />
