@@ -92,6 +92,10 @@ export default class ArticleController extends FalcorController {
     });
   }
 
+  updateTeaser(teaser) {
+    this.safeSetState({ teaser });
+  }
+
   static getFalcorPathSets(params) {
     return [
       [
@@ -350,18 +354,13 @@ export default class ArticleController extends FalcorController {
             onChange={this.fieldUpdaters.image}
             fullWidth
           /><br />
-          <TextField
-            name="teaser"
-            floatingLabelText={
-              `Teaser (${this.state.teaser.length} of ${MAX_TEASER_LENGTH} characters)`
-            }
-            value={this.state.teaser}
-            disabled={this.state.saving}
-            onChange={this.fieldUpdaters.teaser}
-            multiLine
-            rows={2}
-            fullWidth
-          /><br />
+	  <MaxLengthField
+	      name="teaser"
+	      value={this.state.teaser}
+	      maxLen={MAX_TEASER_LENGTH}
+	      onUpdate={this.updateTeaser}
+	  />
+	  <br />
           <SearchableSelector
             objects={this.state.authors}
             onChange={this.debouncedHandleFormStateChanges}
