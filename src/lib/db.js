@@ -2,19 +2,10 @@
 // We disable camelcase here due to SQL naming conventions
 import knex from 'knex';
 import stable from 'stable';
-import databaseConfig from 'config/database.config';
+import knexConnectionObject from 'knexfile';
 import { mapGhostNames } from 'lib/falcor/falcor-utilities';
 import _ from 'lodash';
 import { formatDate, formatDateTime } from 'lib/utilities';
-
-const knexConnectionObject = {
-  client: 'mysql',
-  connection: databaseConfig,
-  pool: {
-    min: 10,
-    max: 50,
-  },
-};
 
 const database = knex(knexConnectionObject);
 

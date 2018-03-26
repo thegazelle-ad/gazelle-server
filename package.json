@@ -92,7 +92,7 @@
     "falcor-router": "^0.8.1",
     "imagemin": "^5.3.1",
     "imagemin-jpeg-recompress": "^5.1.0",
-    "knex": "^0.14.2",
+    "knex": "^0.14.4",
     "lodash": "^4.13.1",
     "material-ui": "^0.17.1",
     "moment": "^2.14.1",

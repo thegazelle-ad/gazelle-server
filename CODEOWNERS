@@ -13,12 +13,12 @@
 # Zane has ownership of the styles folder
 src/styles/*   @zanemountcastle
 
-# Zane has ownership of the components file (but not the editor subfolder
+# Emil has ownership of the components file (but not the main subfolder
 # which will be overwritten in the following definition)
-src/components/* @zanemountcastle
+src/components/*   @emilgoldsmith
 
-# Emil has ownership over the editor components
-src/components/editor/*   @emilgoldsmith
+# Zane has ownership over the main components
+src/components/main/* @zanemountcastle
 
 # Emil has ownership over the lib folder
 src/lib/*          @emilgoldsmith
