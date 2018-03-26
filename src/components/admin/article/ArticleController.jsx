@@ -9,18 +9,16 @@ import FalcorController from 'lib/falcor/FalcorController';
 // Custom Components
 import SearchableSelector from 'components/admin/SearchableSelector';
 import LoadingOverlay from 'components/admin/LoadingOverlay';
+import SaveButton from 'components/admin/article/components/SaveButton';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton.jsx';
-import CategorySelector from 'components/admin/article/components/ListSelector';
+import ListSelector from 'components/admin/article/components/ListSelector';
 import MaxLenTextField from 'components/admin/article/components/MaxLenTextField';
 
 // material-ui
 import Dialog from 'material-ui/Dialog';
 import CircularProgress from 'material-ui/CircularProgress';
-import RaisedButton from 'material-ui/RaisedButton';
 import Divider from 'material-ui/Divider';
 import TextField from 'material-ui/TextField';
-
-const MAX_TEASER_LENGTH = 156;
 
 export default class ArticleController extends FalcorController {
   constructor(props) {
@@ -279,7 +277,6 @@ export default class ArticleController extends FalcorController {
       },
     };
 
-
     if (this.state.ready) {
       if (!this.state.data || !this.state.data.articles.bySlug) {
         return <div><p>Error: No articles match this slug</p></div>;
@@ -289,35 +286,15 @@ export default class ArticleController extends FalcorController {
       const article = this.state.data.articles.bySlug[slug];
 
       // If it is a new article it won't have any meta data yet so we use the default
-      const chosenCategory = this.state.category || 'none';
-
       const categories = this.state.data.categories.byIndex;
       categories.none = { name: 'none', slug: 'none' };
 
-      let changedStateMessage;
-      const changedStateStyle = {};
-      if (!this.state.changed) {
-        if (!this.state.saving) {
-          changedStateMessage = 'No Changes';
-        } else {
-          changedStateMessage = 'Saved';
-          changedStateStyle.color = 'green';
-        }
-      } else if (!this.state.saving) {
-        changedStateMessage = 'Save Changes';
-        changedStateStyle.color = 'red';
-      } else {
-        changedStateMessage = 'Saving';
-        changedStateStyle.color = '#65e765';
-      }
-
       const actionButtons = [
-        <RaisedButton
-          label={changedStateMessage}
-          primary
-          style={styles.buttons}
+        <SaveButton
           onClick={this.handleSaveChanges}
-          disabled={!this.state.changed || this.state.saving}
+          style={styles.buttons}
+          saving={this.state.saving}
+          changed={this.state.changed}
         />,
       ];
 
@@ -339,9 +316,9 @@ export default class ArticleController extends FalcorController {
             floatingLabelText="Title"
             fullWidth
           />
-          <CategorySelector
+          <ListSelector
             type="Category"
-            chosenType={chosenCategory}
+            chosenType={this.state.category || 'none'}
             update={this.updateCategory}
             disabled={this.state.saving}
             types={categories}
@@ -357,7 +334,7 @@ export default class ArticleController extends FalcorController {
           <MaxLenTextField
             name="teaser"
             value={this.state.teaser}
-            maxLen={MAX_TEASER_LENGTH}
+            maxLen={156}
             onUpdate={this.updateTeaser}
           />
           <br />
