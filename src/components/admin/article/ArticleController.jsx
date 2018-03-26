@@ -11,7 +11,7 @@ import { updateFieldValue } from 'components/admin/lib/form-field-updaters';
 import EditAuthorsForm from 'components/admin/EditAuthorsForm';
 import LoadingOverlay from 'components/admin/LoadingOverlay';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton.jsx';
-import CategorySelector from 'components/admin/article/components/CategorySelector';
+import CategorySelector from 'components/admin/article/components/ListSelector';
 
 // material-ui
 import Dialog from 'material-ui/Dialog';
@@ -337,10 +337,11 @@ export default class ArticleController extends FalcorController {
             fullWidth
           />
           <CategorySelector
-            chosenCategory={chosenCategory}
+            type="Category"
+            chosenType={chosenCategory}
             update={this.fieldUpdaters.category}
             disabled={this.state.saving}
-            categories={categories}
+            types={categories}
           />
           <TextField
             name="image"
