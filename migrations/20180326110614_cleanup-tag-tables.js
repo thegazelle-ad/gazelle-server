@@ -5,7 +5,7 @@ exports.up = async knex => {
       table.dropColumn('sort_order');
     }),
     knex.schema.alterTable('tags', table => {
-      const tablesToDrop = [
+      const columnsToDrop = [
         'uuid',
         'description',
         'image',
@@ -18,7 +18,7 @@ exports.up = async knex => {
         'updated_at',
         'updated_by',
       ]
-      tablesToDrop.forEach(name => table.dropColumn(name));
+      columnsToDrop.forEach(name => table.dropColumn(name));
     })
   ]);
 };

@@ -48,7 +48,7 @@ exports.up = async knex => {
       ...postRow,
       ...metaRow,
     };
-  }).filter(row => row);
+  });
 
   // We need to split them up in chunks or mysql throws errors because of too big single request
   const chunkSize = 100;
