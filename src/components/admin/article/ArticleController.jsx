@@ -7,12 +7,12 @@ import { debounce } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 
 // Custom Components
-import SearchableSelector from 'components/admin/SearchableSelector';
+import SearchableSelector from 'components/admin/form-components/SearchableSelector';
 import LoadingOverlay from 'components/admin/LoadingOverlay';
 import SaveButton from 'components/admin/article/components/SaveButton';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton.jsx';
-import ListSelector from 'components/admin/article/components/ListSelector';
-import MaxLenTextField from 'components/admin/article/components/MaxLenTextField';
+import ListSelector from 'components/admin/form-components/ListSelector';
+import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
 
 // material-ui
 import Dialog from 'material-ui/Dialog';
