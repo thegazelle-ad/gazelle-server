@@ -126,6 +126,6 @@ SearchableSelector.propTypes = {
   objects: PropTypes.array.isRequired,
   onChange: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,
-  mode: PropTypes.string.isRequired,
-  model: PropTypes.object.isRequired,
+  mode: SearchBar.propTypes.mode,
+  model: SearchBar.propTypes.model,
 };
