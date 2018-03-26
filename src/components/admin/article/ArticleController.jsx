@@ -8,7 +8,7 @@ import FalcorController from 'lib/falcor/FalcorController';
 
 // Custom Components
 import { updateFieldValue } from 'components/admin/lib/form-field-updaters';
-import EditAuthorsForm from 'components/admin/EditAuthorsForm';
+import SearchableSelector from 'components/admin/SearchableSelector';
 import LoadingOverlay from 'components/admin/LoadingOverlay';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton.jsx';
 import CategorySelector from 'components/admin/article/components/ListSelector';
@@ -363,7 +363,7 @@ export default class ArticleController extends FalcorController {
             rows={2}
             fullWidth
           /><br />
-          <EditAuthorsForm
+          <SearchableSelector
             objects={this.state.authors}
             onChange={this.debouncedHandleFormStateChanges}
             onUpdate={this.updateAuthors}
