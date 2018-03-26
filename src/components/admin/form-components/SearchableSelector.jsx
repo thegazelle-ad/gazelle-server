@@ -43,7 +43,7 @@ export default class SearchableSelector extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (!this.props.disabled &&
-      this.props.objects !== prevProps.objects) {
+      this.props.value !== prevProps.value) {
       this.props.onChange();
     }
   }
@@ -54,13 +54,13 @@ export default class SearchableSelector extends React.Component {
 
     const id = object.id;
     const name = object.name;
-    const alreadyAdded = this.props.objects.find(baseObject => baseObject.id === id) !== undefined;
+    const alreadyAdded = this.props.value.find(baseObject => baseObject.id === id) !== undefined;
 
     if (alreadyAdded) {
       window.alert('Already added');
       return;
     }
-    const newObjects = update(this.props.objects, { $push: [{ id, name }] });
+    const newObjects = update(this.props.value, { $push: [{ id, name }] });
     this.props.onUpdate(newObjects);
   }
 
@@ -68,11 +68,11 @@ export default class SearchableSelector extends React.Component {
     // disabled this if saving
     if (this.props.disabled) return;
 
-    const index = this.props.objects.findIndex(object => object.id === id);
+    const index = this.props.value.findIndex(object => object.id === id);
     if (index === -1) {
       throw new Error('The author you are trying to delete cannot be found');
     }
-    const newObjects = update(this.props.objects, { $splice: [[index, 1]] });
+    const newObjects = update(this.props.value, { $splice: [[index, 1]] });
     this.props.onUpdate(newObjects);
   }
 
@@ -84,8 +84,8 @@ export default class SearchableSelector extends React.Component {
       },
     };
 
-    const objectChips = this.props.objects.length > 0 ?
-      _.map(this.props.objects, (object) => (
+    const objectChips = this.props.value.length > 0 ?
+      _.map(this.props.value, object => (
         <ObjectChip
           key={object.id}
           id={object.id}
@@ -123,7 +123,7 @@ export default class SearchableSelector extends React.Component {
 
 SearchableSelector.propTypes = {
   disabled: PropTypes.bool,
-  objects: PropTypes.array.isRequired,
+  value: PropTypes.array.isRequired,
   onChange: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,
   mode: SearchBar.propTypes.mode,

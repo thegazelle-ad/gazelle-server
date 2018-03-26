@@ -11,8 +11,10 @@ import SearchableSelector from 'components/admin/form-components/SearchableSelec
 import LoadingOverlay from 'components/admin/LoadingOverlay';
 import SaveButton from 'components/admin/article/components/SaveButton';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton.jsx';
+import ImageField from 'components/admin/article/components/ImageField';
 import ListSelector from 'components/admin/form-components/ListSelector';
 import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
+
 
 // material-ui
 import Dialog from 'material-ui/Dialog';
@@ -316,20 +318,18 @@ export default class ArticleController extends FalcorController {
             floatingLabelText="Title"
             fullWidth
           />
+          <ImageField
+            image={this.state.image}
+            disabled={this.state.saving}
+            updateImage={this.updateImage}
+          />
+          <br />
           <ListSelector
             type="Category"
             chosenType={this.state.category || 'none'}
             update={this.updateCategory}
             disabled={this.state.saving}
             types={categories}
-          />
-          <TextField
-            name="image"
-            value={this.state.image}
-            floatingLabelText="Image (Remember to use https:// not http://)"
-            disabled={this.state.saving}
-            onChange={this.updateImage}
-            fullWidth
           /><br />
           <MaxLenTextField
             name="teaser"
@@ -339,7 +339,7 @@ export default class ArticleController extends FalcorController {
           />
           <br />
           <SearchableSelector
-            objects={this.state.authors}
+            value={this.state.authors}
             onChange={this.debouncedHandleFormStateChanges}
             onUpdate={this.updateAuthors}
             disabled={this.state.saving}
