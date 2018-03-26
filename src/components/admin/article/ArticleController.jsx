@@ -7,11 +7,11 @@ import { debounce } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 
 // Custom Components
-import { updateFieldValue } from 'components/admin/lib/form-field-updaters';
 import SearchableSelector from 'components/admin/SearchableSelector';
 import LoadingOverlay from 'components/admin/LoadingOverlay';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton.jsx';
 import CategorySelector from 'components/admin/article/components/ListSelector';
+import MaxLenTextField from 'components/admin/article/components/MaxLenTextField';
 
 // material-ui
 import Dialog from 'material-ui/Dialog';
@@ -30,15 +30,9 @@ export default class ArticleController extends FalcorController {
     this.handleDialogClose = this.handleDialogClose.bind(this);
     this.isFormChanged = this.isFormChanged.bind(this);
     this.updateAuthors = this.updateAuthors.bind(this);
-    this.fieldUpdaters = {
-      teaser: updateFieldValue.bind(this, 'teaser', {
-        trim: MAX_TEASER_LENGTH,
-      }),
-      category: updateFieldValue.bind(this, 'category', {
-        isMaterialSelect: true,
-      }),
-      image: updateFieldValue.bind(this, 'image', undefined),
-    };
+    this.updateTeaser = this.updateTeaser.bind(this);
+    this.updateImage = this.updateImage.bind(this);
+    this.updateCategory = this.updateCategory.bind(this);
     this.safeSetState({
       changed: false,
       saving: false,
@@ -66,10 +60,10 @@ export default class ArticleController extends FalcorController {
 
     if (processedAuthors !== null) {
       updatePromises.push(this.falcorCall(
-          ['articles', 'bySlug', articleSlug, 'authors', 'updateAuthors'],
-          [falcorData.id, processedAuthors],
-          [['name'], ['slug']]
-        )
+        ['articles', 'bySlug', articleSlug, 'authors', 'updateAuthors'],
+        [falcorData.id, processedAuthors],
+        [['name'], ['slug']]
+      )
       );
     }
 
@@ -86,14 +80,20 @@ export default class ArticleController extends FalcorController {
     });
   }
 
-  updateAuthors(newAuthors) {
-    this.safeSetState({
-      authors: newAuthors,
-    });
+  updateAuthors(authors) {
+    this.safeSetState({ authors });
   }
 
   updateTeaser(teaser) {
     this.safeSetState({ teaser });
+  }
+
+  updateImage(image) {
+    this.safeSetState({ image });
+  }
+
+  updateCategory(category) {
+    this.safeSetState({ category });
   }
 
   static getFalcorPathSets(params) {
@@ -178,7 +178,7 @@ export default class ArticleController extends FalcorController {
 
     if (!this.isFormChanged()) {
       throw new Error('Tried to save changes but there were no changes. ' +
-        'the save changes button is supposed to be disabled in this case'
+                      'the save changes button is supposed to be disabled in this case'
       );
     }
 
@@ -342,7 +342,7 @@ export default class ArticleController extends FalcorController {
           <CategorySelector
             type="Category"
             chosenType={chosenCategory}
-            update={this.fieldUpdaters.category}
+            update={this.updateCategory}
             disabled={this.state.saving}
             types={categories}
           />
@@ -351,16 +351,16 @@ export default class ArticleController extends FalcorController {
             value={this.state.image}
             floatingLabelText="Image (Remember to use https:// not http://)"
             disabled={this.state.saving}
-            onChange={this.fieldUpdaters.image}
+            onChange={this.updateImage}
             fullWidth
           /><br />
-	  <MaxLengthField
-	      name="teaser"
-	      value={this.state.teaser}
-	      maxLen={MAX_TEASER_LENGTH}
-	      onUpdate={this.updateTeaser}
-	  />
-	  <br />
+          <MaxLenTextField
+            name="teaser"
+            value={this.state.teaser}
+            maxLen={MAX_TEASER_LENGTH}
+            onUpdate={this.updateTeaser}
+          />
+          <br />
           <SearchableSelector
             objects={this.state.authors}
             onChange={this.debouncedHandleFormStateChanges}
