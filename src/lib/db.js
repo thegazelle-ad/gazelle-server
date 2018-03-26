@@ -3,7 +3,6 @@
 import knex from 'knex';
 import stable from 'stable';
 import knexConnectionObject from 'knexfile';
-import { mapGhostNames } from 'lib/falcor/falcor-utilities';
 import _ from 'lodash';
 import { formatDate, formatDateTime } from 'lib/utilities';
 
@@ -71,24 +70,23 @@ export function authorArticleQuery(slugs) {
   // as keys and values being arrays of article slugs
   // sorted by most recent article first.
   return new Promise((resolve) => {
-    database.select('posts.slug as postSlug', 'authors.slug as authorSlug')
+    database.select('articles.slug as articleSlug', 'authors.slug as authorSlug')
     .from('authors')
     .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
-    .innerJoin('posts', 'posts.id', '=', 'post_id')
-    .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
+    .innerJoin('articles', 'articles.id', '=', 'article_id')
     .whereNotNull('gazelle_published_at')
     .whereIn('authors.slug', slugs)
     .orderBy('gazelle_published_at', 'desc')
     .then((rows) => {
-      // rows is an array of objects with keys authorSlug and postSlug
+      // rows is an array of objects with keys authorSlug and articleSlug
       const data = {};
       rows.forEach((row) => {
         // This will input them in chronological order as
         // the query was structured as so.
         if (!data.hasOwnProperty(row.authorSlug)) {
-          data[row.authorSlug] = [row.postSlug];
+          data[row.authorSlug] = [row.articleSlug];
         } else {
-          data[row.authorSlug].push(row.postSlug);
+          data[row.authorSlug].push(row.articleSlug);
         }
       });
       // database.destroy();
@@ -131,9 +129,9 @@ export function infoPagesQuery(slugs, columns) {
 export function articleQuery(slugs, columns) {
   // parameters are both expected to be arrays
   // first one with article slugs to fetch
-  // second one which columns to fetch from the posts_meta table
+  // second one which columns to fetch from the articles table
   return new Promise((resolve) => {
-    // we join with posts table to find slug, and always return slug
+    // we join with articles table to find slug, and always return slug
     let processedColumns = columns.map((col) => {
       // make it compatible for the sql query
       if (col === 'category') {
@@ -147,12 +145,11 @@ export function articleQuery(slugs, columns) {
     // Use concat to make a copy, if you just push
     // it will change pathSet in the falcorPath
     // as objects are passed by reference
-    processedColumns = processedColumns.concat(['posts.slug as slug']);
+    processedColumns = processedColumns.concat(['articles.slug as slug']);
     database.select(...processedColumns)
-    .from('posts')
-    .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
-    .innerJoin('categories', 'posts_meta.category_id', '=', 'categories.id')
-    .whereIn('posts.slug', slugs)
+    .from('articles')
+    .innerJoin('categories', 'articles.category_id', '=', 'categories.id')
+    .whereIn('articles.slug', slugs)
     .then((rows) => {
       // database.destroy();
       resolve(rows);
@@ -167,12 +164,12 @@ export function articleQuery(slugs, columns) {
 export function articleIssueQuery(slugs) {
   // the parameter is the slugs the issueNumber is being requested from
   return new Promise((resolve) => {
-    database.select('issue_order as issueNumber', 'posts.slug as slug')
-    .from('posts')
-    .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
+    database.select('issue_order as issueNumber', 'articles.slug as slug')
+    .from('articles')
+    .innerJoin('issues_posts_order', 'issues_posts_order.article_id', '=', 'articles.id')
     .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issue_id')
-    .whereIn('posts.slug', slugs)
-    .orderBy('posts.slug')
+    .whereIn('articles.slug', slugs)
+    .orderBy('articles.slug')
     .then((rows) => {
       // We always want to return the first issue the article was published in
       // and no more (currently we don't support falcor fetching all issues an
@@ -209,23 +206,22 @@ export function articleAuthorQuery(slugs) {
   // The function returns an object with article slugs
   // as keys and values being arrays of author slugs.
   return new Promise((resolve) => {
-    database.select('posts.slug as postSlug', 'authors.slug as authorSlug')
+    database.select('articles.slug as articleSlug', 'authors.slug as authorSlug')
     .from('authors')
     .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
-    .innerJoin('posts', 'posts.id', '=', 'post_id')
-    .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
-    .whereIn('posts.slug', slugs)
+    .innerJoin('articles', 'articles.id', '=', 'article_id')
+    .whereIn('articles.slug', slugs)
     .orderBy('authors_posts.id', 'asc')
     .then((rows) => {
-      // rows is an array of objects with keys authorSlug and postSlug
+      // rows is an array of objects with keys authorSlug and articleSlug
       const data = {};
       rows.forEach((row) => {
         // This will input them in ascending order by id (which represents time they were
         // inserted as author of that article) as the query was structured so.
-        if (!data.hasOwnProperty(row.postSlug)) {
-          data[row.postSlug] = [row.authorSlug];
+        if (!data.hasOwnProperty(row.articleSlug)) {
+          data[row.articleSlug] = [row.authorSlug];
         } else {
-          data[row.postSlug].push(row.authorSlug);
+          data[row.articleSlug].push(row.authorSlug);
         }
       });
       // database.destroy();
@@ -260,9 +256,8 @@ export function interactiveArticleQuery(slugs, columns) {
   return new Promise((resolve) => {
     const processedColumns = columns.map(col => `interactive_meta.${col}`);
     database.select('slug', ...processedColumns)
-    .from('posts')
-    .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
-    .leftJoin('interactive_meta', 'interactive_meta.id', '=', 'posts.id')
+    .from('articles')
+    .leftJoin('interactive_meta', 'interactive_meta.id', '=', 'articles.id')
     .whereIn('slug', slugs)
     .then(rows => resolve(rows))
     .catch((e) => { throw new Error(e); });
@@ -312,23 +307,22 @@ export function categoryArticleQuery(slugs) {
   // Will return object where keys are category slugs
   // and values are arrays of articles from newest to oldest
   return new Promise((resolve) => {
-    database.select('posts.slug as postSlug', 'categories.slug as catSlug')
-    .from('posts')
-    .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
-    .innerJoin('categories', 'categories.id', '=', 'posts_meta.category_id')
+    database.select('articles.slug as articleSlug', 'categories.slug as categorySlug')
+    .from('articles')
+    .innerJoin('categories', 'categories.id', '=', 'articles.category_id')
     .whereIn('categories.slug', slugs)
     .whereNotNull('gazelle_published_at')
     .orderBy('gazelle_published_at', 'desc')
     .then((rows) => {
-      // rows is an array of objects with keys postSlug and catSlug
+      // rows is an array of objects with keys articleSlug and categorySlug
       const data = {};
       rows.forEach((row) => {
         // This will input them in chronological order as
         // the query was structured as so.
-        if (!data.hasOwnProperty(row.catSlug)) {
-          data[row.catSlug] = [row.postSlug];
+        if (!data.hasOwnProperty(row.categorySlug)) {
+          data[row.categorySlug] = [row.articleSlug];
         } else {
-          data[row.catSlug].push(row.postSlug);
+          data[row.categorySlug].push(row.articleSlug);
         }
       });
       // database.destroy();
@@ -415,9 +409,9 @@ export function teamAuthorQuery(slugs) {
 export function featuredArticleQuery(issueNumbers) {
   // Get the featured articles from all the issueNumbers
   return new Promise((resolve) => {
-    database.select('posts.slug', 'issue_order')
-    .from('posts')
-    .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
+    database.select('articles.slug', 'issue_order')
+    .from('articles')
+    .innerJoin('issues_posts_order', 'issues_posts_order.article_id', '=', 'articles.id')
     .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issue_id')
     .whereIn('issues.issue_order', issueNumbers)
     .andWhere('type', '=', 1)
@@ -435,9 +429,9 @@ export function featuredArticleQuery(issueNumbers) {
 export function editorPickQuery(issueNumbers) {
   // Get the editor's picks from all the issueNumbers
   return new Promise((resolve) => {
-    database.select('posts.slug', 'issue_order')
-    .from('posts')
-    .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
+    database.select('articles.slug', 'issue_order')
+    .from('articles')
+    .innerJoin('issues_posts_order', 'issues_posts_order.article_id', '=', 'articles.id')
     .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issue_id')
     .whereIn('issues.issue_order', issueNumbers)
     .andWhere('type', '=', 2)
@@ -515,15 +509,14 @@ export function issueCategoryQuery(issueNumbers, fields) {
 export function issueCategoryArticleQuery(issueNumbers) {
   // get the categories from each issueNumber
   return new Promise((resolve) => {
-    database.select('issue_order', 'posts.slug', 'posts_order', 'posts_meta.category_id')
+    database.select('issue_order', 'articles.slug', 'posts_order', 'articles.category_id')
     .from('issues')
     .innerJoin('issues_posts_order', 'issues_posts_order.issue_id', '=', 'issues.id')
-    .innerJoin('posts', 'posts.id', '=', 'issues_posts_order.post_id')
-    .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
+    .innerJoin('articles', 'articles.id', '=', 'issues_posts_order.article_id')
     .whereIn('issues.issue_order', issueNumbers)
     .andWhere('type', '=', 0)
     .orderBy('posts_order', 'ASC')
-    .then((postRows) => {
+    .then((articleRows) => {
       database.select('issue_order', 'categories_order', 'issues_categories_order.category_id')
       .from('issues')
       .innerJoin('issues_categories_order', 'issues.id', '=', 'issues_categories_order.issue_id')
@@ -532,7 +525,7 @@ export function issueCategoryArticleQuery(issueNumbers) {
       .then((categoryRows) => {
         const results = {};
         const categoriesHashMap = {};
-        postRows.forEach((postRow) => {
+        articleRows.forEach((postRow) => {
           // I make a lot of assumptions about correctness of data returned here
           const issueNumber = postRow.issue_order;
           // Here I handle finding the corresponding category row and thereby the order
@@ -553,7 +546,7 @@ export function issueCategoryArticleQuery(issueNumbers) {
             if (!categoriesHashMap.hasOwnProperty[issueNumber]) {
               categoriesHashMap[issueNumber] = {};
             }
-            // Since we did the previous check it must not also have the posts key
+            // Since we did the previous check it must not also have the articles key
             if (categoriesHashMap[issueNumber].hasOwnProperty(postRow.category_id)) {
               throw new Error('Problem with if else statement in dbIssueCategoryArticleQuery');
             }
@@ -564,7 +557,7 @@ export function issueCategoryArticleQuery(issueNumbers) {
           }
           // Continue with rest of constants
           const postIndex = postRow.posts_order;
-          const postSlug = postRow.slug;
+          const articleSlug = postRow.slug;
           if (!results.hasOwnProperty(issueNumber)) {
             results[issueNumber] = [];
           }
@@ -575,7 +568,7 @@ export function issueCategoryArticleQuery(issueNumbers) {
             throw new Error('Incorrect data returned from database regarding getting ' +
 'articles in an issue. Articles either not existing or not ordered correctly');
           }
-          results[issueNumber][categoryIndex].push(postSlug);
+          results[issueNumber][categoryIndex].push(articleSlug);
         });
         // Check all categories are there and ordering is correct
         _.forEach(results, (categoryArray, issueNumber) => {
@@ -635,18 +628,17 @@ export function trendingQuery() {
       const latestIssueId = issueRows[0].id;
 
       database.select('slug')
-      .from('posts')
-      .innerJoin('posts_meta', 'posts_meta.id', '=', 'posts.id')
-      .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
+      .from('articles')
+      .innerJoin('issues_posts_order', 'issues_posts_order.article_id', '=', 'articles.id')
       .whereNotNull('gazelle_published_at')
       .where('issue_id', '=', latestIssueId)
       .orderBy('views', 'DESC')
       .limit(10)
-      .then((postRows) => {
+      .then((articleRows) => {
         // At the moment if there were less than 5-7 articles in the issue
         // there wouldn't be enough to show, it is very easy to implement that it
         // just continues with the second-newest issue, it depends on what editors want
-        resolve(postRows);
+        resolve(articleRows);
       })
       .catch((e) => {
         throw new Error(e);
@@ -664,37 +656,36 @@ export function relatedArticleQuery(slugs) {
     .limit(1)
     .then((issueRows) => {
       const latestIssueId = issueRows[0].id;
-      database.select('tag_id', 'posts.slug',
+      database.select('tag_id', 'articles.slug',
         'issues_posts_order.issue_id', 'category_id')
-      .from('posts')
-      .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
-      .leftJoin('posts_tags', 'posts_tags.post_id', '=', 'posts.id')
-      .innerJoin('issues_posts_order', 'issues_posts_order.post_id', '=', 'posts.id')
+      .from('articles')
+      .leftJoin('posts_tags', 'posts_tags.article_id', '=', 'articles.id')
+      .innerJoin('issues_posts_order', 'issues_posts_order.article_id', '=', 'articles.id')
       .whereNotNull('gazelle_published_at')
       // We need the non-arrow function here to have the `this` object passed
       .where(function () { // eslint-disable-line
         this.where('issues_posts_order.issue_id', '=', latestIssueId).orWhereIn('slug', slugs);
       })
-      .then((postRows) => {
-        const posts = {};
-        postRows.forEach((post) => {
+      .then((articleRows) => {
+        const articles = {};
+        articleRows.forEach((post) => {
           const slug = post.slug;
-          if (!posts[slug]) {
-            posts[slug] = post;
-            posts[slug].tags = [];
+          if (!articles[slug]) {
+            articles[slug] = post;
+            articles[slug].tags = [];
           }
           // We could have several instances of the same article if it
           // exists in different issues, but it would only be relevant for the
           // target articles and therefore it's not a problem as we never iterate
           // through the target articles' tags.
           if (post.tag_id) {
-            posts[slug].tags.push(post.tag_id);
+            articles[slug].tags.push(post.tag_id);
           }
         });
 
         const results = {};
         slugs.forEach((slug) => {
-          const post = posts[slug];
+          const post = articles[slug];
           if (post === undefined) {
             // Most likely this means a garbage URL was accessed
             if (process.env.NODEENV !== 'production') {
@@ -704,7 +695,7 @@ export function relatedArticleQuery(slugs) {
           } else {
             // update amount of tags in common with current post
             // and whether the category is the same
-            _.forEach(posts, (currentPost) => {
+            _.forEach(articles, (currentPost) => {
               let cnt = 0;
               currentPost.tags.forEach((currentTag) => {
                 if (post.tags.find(postTag => postTag === currentTag)) {
@@ -717,15 +708,15 @@ export function relatedArticleQuery(slugs) {
               currentPost.categoryInCommon = currentPost.category_id === post.category_id;
             });
 
-            const ranking = Object.keys(posts).filter(currentSlug => (
-              posts[currentSlug].issue_id === latestIssueId && currentSlug !== post.slug
+            const ranking = Object.keys(articles).filter(currentSlug => (
+              articles[currentSlug].issue_id === latestIssueId && currentSlug !== post.slug
             ));
             if (ranking.length < 3) {
-              throw new Error('Less than three posts to qualify as related posts');
+              throw new Error('Less than three articles to qualify as related articles');
             }
             stable.inplace(ranking, (slugA, slugB) => {
-              const a = posts[slugA];
-              const b = posts[slugB];
+              const a = articles[slugA];
+              const b = articles[slugB];
               if (a.tagsInCommon !== b.tagsInCommon) {
                 // This puts a before b if a has more tags in common
                 return b.tagsInCommon - a.tagsInCommon;
@@ -739,7 +730,7 @@ export function relatedArticleQuery(slugs) {
               return 0;
             });
             // since the sort is stable we know we should always get the
-            // same values, also if there are no posts with related tags
+            // same values, also if there are no articles with related tags
             // or categories. It should still be deterministic which article
             // is the first unrelated one in the order
             results[slug] = ranking.slice(0, 3);
@@ -778,8 +769,8 @@ export function searchPostsQuery(queries, min, max) {
     const results = {};
     queries.forEach((query) => {
       database.select('slug')
-      .from('posts')
-      .leftJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
+      .from('articles')
+      .leftJoin('articles', 'articles.id', '=', 'articles.id')
       .where('title', 'like', `%${query}%`)
       .orderByRaw('ISNULL(gazelle_published_at) DESC, gazelle_published_at DESC')
       .limit(max - min + 1)
@@ -819,17 +810,17 @@ export function searchTeamsQuery(queries, min, max) {
 // Suggestion: rename to updateArticleAuthors
 export function updateAuthors(articleId, newAuthors) {
   return new Promise((resolve) => {
-    database('authors_posts').where('post_id', '=', articleId).del()
+    database('authors_posts').where('article_id', '=', articleId).del()
     .then(() => {
       const insertArray = _.map(newAuthors, author_id => ({
-        post_id: articleId,
+        article_id: articleId,
         author_id,
       }));
       database('authors_posts').insert(insertArray).then(() => {
         database.select('slug')
         .from('authors_posts')
         .innerJoin('authors', 'authors.id', '=', 'authors_posts.author_id')
-        .where('post_id', '=', articleId)
+        .where('article_id', '=', articleId)
         .then(rows => resolve(rows.map(row => row.slug)));
       });
     });
@@ -842,19 +833,19 @@ export function updateGhostFields(jsonGraphArg) {
     let updatesReturned = 0;
     _.forEach(jsonGraphArg, (article, slug) => {
       const acceptedFields = {
-        image: true,
+        image_url: true,
         teaser: true,
       };
       const updateObject = {};
       _.forEach(article, (value, field) => {
         if (!acceptedFields[field]) {
-          throw new Error('updateGhostFields is only configured to update image or teaser, ' +
+          throw new Error('updateGhostFields is only configured to update image_url or teaser, ' +
 'you cannot update', field);
         } else {
-          updateObject[mapGhostNames(field)] = value;
+          updateObject[field] = value;
         }
       });
-      database('posts')
+      database('articles')
       .where('slug', '=', slug)
       .update(updateObject)
       .then((data) => {
@@ -891,7 +882,7 @@ export function updatePostMeta(jsonGraphArg) {
     .then((categoryRows) => {
       const articleSlugs = Object.keys(jsonGraphArg);
       database.select('id', 'slug')
-      .from('posts')
+      .from('articles')
       .whereIn('slug', articleSlugs)
       .then((articleRows) => {
         _.forEach(jsonGraphArg, (article, slug) => {
@@ -919,7 +910,7 @@ export function updatePostMeta(jsonGraphArg) {
           // if that id already exists to handle the case where we haven't yet
           // created a meta data row for that post
           const insertObject = Object.assign({}, updateObject, { id: articleObject.id });
-          const insertQuery = database('posts_meta').insert(insertObject).toString();
+          const insertQuery = database('articles').insert(insertObject).toString();
           // Using a fixed array of keys to make sure we have the same order every time
           const fields = Object.keys(updateObject);
           let rawUpdateQuery = '';
@@ -940,8 +931,8 @@ ${database.raw(rawUpdateQuery, updateObject)}`;
               if (articlesWithChangedCategory.length > 0) {
                 database.distinct('issue_id').select()
                 .from('issues_posts_order')
-                .innerJoin('posts', 'posts.id', '=', 'issues_posts_order.post_id')
-                .whereIn('posts.slug', articlesWithChangedCategory)
+                .innerJoin('articles', 'articles.id', '=', 'issues_posts_order.article_id')
+                .whereIn('articles.slug', articlesWithChangedCategory)
                 .then((issueRows) => {
                   const issuesToUpdate = issueRows.map(row => row.issue_id);
                   // If the articles were actually published in any issues
@@ -983,17 +974,17 @@ export function orderArticlesInIssues(issues) {
       .then((categoryRows) => {
         database.select('issues_posts_order.id as id', 'category_id', 'posts_order')
         .from('issues_posts_order')
-        .innerJoin('posts_meta', 'posts_meta.id', '=', 'issues_posts_order.post_id')
+        .innerJoin('articles', 'articles.id', '=', 'issues_posts_order.article_id')
         .where('type', '=', 0)
         .where('issue_id', '=', issue_id)
         .orderBy('category_id', 'ASC')
         .orderBy('issues_posts_order.posts_order', 'ASC')
-        .then((postRows) => {
+        .then((articleRows) => {
           let lastCategory = null;
           let order = 0;
           const toUpdate = [];
           const newCategories = [];
-          postRows.forEach((row) => {
+          articleRows.forEach((row) => {
             if (lastCategory !== row.category_id) {
               lastCategory = row.category_id;
               order = 0;
@@ -1146,7 +1137,7 @@ export function updateIssueArticles(issueNumber, featuredArticles, picks, mainAr
             articlesInsert.push({
               issue_id,
               type: 1,
-              post_id: article.id,
+              article_id: article.id,
               posts_order: index,
             });
           });
@@ -1155,7 +1146,7 @@ export function updateIssueArticles(issueNumber, featuredArticles, picks, mainAr
             articlesInsert.push({
               issue_id,
               type: 2,
-              post_id: article.id,
+              article_id: article.id,
               posts_order: index,
             });
           });
@@ -1187,7 +1178,7 @@ export function updateIssueArticles(issueNumber, featuredArticles, picks, mainAr
             articlesInsert.push({
               issue_id,
               type: 0,
-              post_id: article.id,
+              article_id: article.id,
               posts_order: articleIssueOrder,
             });
             articleIssueOrder++;
@@ -1355,7 +1346,7 @@ export function updateIssueArticles(issueNumber, featuredArticles, picks, mainAr
                     return false;
                   }).map(article => article.id);
 
-                  database('posts_meta').whereIn('id', toPublish)
+                  database('articles').whereIn('id', toPublish)
                   .update('gazelle_published_at', formatDateTime(date))
                   .then(() => {
                     resolve(results);
@@ -1388,10 +1379,9 @@ export function updateIssueData(jsonGraphArg) {
 export function publishIssue(issue_id) {
   return new Promise((resolve) => {
     // We first find all unpublished articles in the issue
-    database.select('posts.id', 'slug', 'gazelle_published_at')
-    .from('posts')
-    .innerJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
-    .innerJoin('issues_posts_order', 'posts.id', '=', 'issues_posts_order.post_id')
+    database.select('articles.id', 'slug', 'gazelle_published_at')
+    .from('articles')
+    .innerJoin('issues_posts_order', 'articles.id', '=', 'issues_posts_order.article_id')
     .where('issue_id', '=', issue_id)
     .then((articles) => {
       const dateObject = new Date();
@@ -1412,7 +1402,7 @@ export function publishIssue(issue_id) {
         }
       });
       const currentTime = formatDateTime(dateObject);
-      database('posts_meta')
+      database('articles')
       .whereIn('id', toPublish)
       .update({ gazelle_published_at: currentTime })
       .then(() => {
@@ -1433,7 +1423,7 @@ export function addIssue(issueObject) {
   return new Promise((resolve) => {
     const insertObject = {};
     _.forEach(issueObject, (value, key) => {
-      insertObject[mapGhostNames(key)] = value;
+      insertObject[key] = value;
     });
     database('issues').insert(insertObject).then(() => {
       resolve(true);
@@ -1478,9 +1468,8 @@ export function updateIssueCategories(issueNumber, idArray) {
 
 export function addView(slug) {
   return new Promise((resolve) => {
-    database.select('posts.id', 'views')
-    .from('posts')
-    .innerJoin('posts_meta', 'posts_meta.id', '=', 'posts.id')
+    database.select('articles.id', 'views')
+    .from('articles')
     .where('slug', '=', slug)
     .then((rows) => {
       if (rows.length === 0) {
@@ -1489,7 +1478,7 @@ export function addView(slug) {
         const row = rows[0];
         const views = row.views + 1;
         const id = row.id;
-        database('posts_meta')
+        database('articles')
         .where('id', '=', id)
         .update('views', views)
         .then(() => {

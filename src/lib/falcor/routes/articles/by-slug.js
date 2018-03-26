@@ -2,7 +2,7 @@ import falcor from 'falcor';
 import _ from 'lodash';
 
 import * as db from 'lib/db';
-import { mapGhostNames, cleanupJsonGraphArg } from 'lib/falcor/falcor-utilities';
+import { cleanupJsonGraphArg } from 'lib/falcor/falcor-utilities';
 import { ghostArticleQuery } from 'lib/ghost-api';
 
 const $ref = falcor.Model.ref;
@@ -10,7 +10,7 @@ const $ref = falcor.Model.ref;
 export default [
   {
     // Get article data from Ghost API
-    route: "articles['bySlug'][{keys:slugs}]['id', 'image', 'slug', 'title', 'markdown', 'html', 'teaser']", // eslint-disable-line max-len
+    route: "articles['bySlug'][{keys:slugs}]['id', 'image_url', 'slug', 'title', 'markdown', 'html', 'teaser']", // eslint-disable-line max-len
     get: (pathSet) => (
       new Promise((resolve) => {
         const requestedFields = pathSet[3];
@@ -21,7 +21,7 @@ export default [
         query += '&fields=slug';
         requestedFields.forEach((field) => {
           if (field !== 'slug') {
-            query += `,${mapGhostNames(field)}`;
+            query += `,${field}`;
           }
         });
         query += `&limit=${pathSet.slugs.length}`;
@@ -30,7 +30,7 @@ export default [
           const results = [];
           posts.forEach((article) => {
             requestedFields.forEach((field) => {
-              const ghostField = mapGhostNames(field);
+              const ghostField = field;
               results.push({
                 path: ['articles', 'bySlug', article.slug, field],
                 value: article[ghostField],
