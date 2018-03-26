@@ -126,39 +126,27 @@ export function infoPagesQuery(slugs, columns) {
   });
 }
 
-export function articleQuery(slugs, columns) {
-  // parameters are both expected to be arrays
-  // first one with article slugs to fetch
-  // second one which columns to fetch from the articles table
-  return new Promise((resolve) => {
-    // we join with articles table to find slug, and always return slug
-    let processedColumns = columns.map((col) => {
-      // make it compatible for the sql query
-      if (col === 'category') {
-        return 'categories.slug as category';
-      } if (col === 'published_at') {
-        return 'gazelle_published_at as published_at';
-      }
-      return col;
-    });
-    // Put slug there so we know what we fetched
-    // Use concat to make a copy, if you just push
-    // it will change pathSet in the falcorPath
-    // as objects are passed by reference
-    processedColumns = processedColumns.concat(['articles.slug as slug']);
-    database.select(...processedColumns)
+/**
+ * Fetches direct meta data of articles from the articles database table
+ * @param {string[]} slugs - Array of slugs of articles to fetch
+ * @param {string[]} columns - Which columns of the articles table to fetch
+ */
+export async function articleQuery(slugs, columns) {
+  const processedColumns = columns.map((col) => {
+    // make it compatible for the sql query
+    if (col === 'category') {
+      return 'categories.slug as category';
+    }
+    return col;
+  });
+  // In order to be able to identify the rows we get back we need to include the slug
+  if (!processedColumns.includes('slug')) {
+    processedColumns.push('slug');
+  }
+  return await database.select(...processedColumns)
     .from('articles')
     .innerJoin('categories', 'articles.category_id', '=', 'categories.id')
-    .whereIn('articles.slug', slugs)
-    .then((rows) => {
-      // database.destroy();
-      resolve(rows);
-    })
-    .catch((e) => {
-      // database.destroy();
-      throw new Error(e);
-    });
-  });
+    .whereIn('articles.slug', slugs);
 }
 
 export function articleIssueQuery(slugs) {
