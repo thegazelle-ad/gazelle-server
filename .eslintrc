@@ -38,6 +38,25 @@
   },
   "rules": {
     "no-alert": "off",
-    "no-use-before-define": "off"
+    "no-use-before-define": "off",
+    "valid-jsdoc": ["error", {
+      "prefer": {
+        "arg": "param",
+        "argument": "param",
+        "class": "constructor",
+        "return": "returns",
+        "virtual": "abstract"
+      },
+      "preferType": {
+        "Boolean": "boolean",
+        "Number": "number",
+        "object": "Object",
+        "String": "string"
+      },
+      "requireReturn": false,
+      "requireReturnType": true,
+      "requireReturnDescription": false,
+      "requireParamDescription": false
+    }]
   }
 }

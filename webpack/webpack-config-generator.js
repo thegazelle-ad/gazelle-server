@@ -14,6 +14,8 @@ const getAbsolute = relativePath => path.resolve(ROOT_DIRECTORY, relativePath);
  *   type: one of 'server', 'admin-client', 'main-client',
  *   compileScss: boolean
  * }
+ * @param {Object} config
+ * @returns {Object[]}
  */
 const generateWebpackConfig = (config) => {
   // Initialized shared config variables based on environment and

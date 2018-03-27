@@ -137,6 +137,7 @@ export function infoPagesQuery(slugs, columns) {
  * Fetches direct meta data of articles from the articles database table
  * @param {string[]} slugs - Array of slugs of articles to fetch
  * @param {string[]} columns - Which columns of the articles table to fetch
+ * @returns {Promise<Object[]>}
  */
 export async function articleQuery(slugs, columns) {
   const processedColumns = columns.map((col) => {

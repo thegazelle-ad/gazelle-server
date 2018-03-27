@@ -32,7 +32,12 @@ export default [
   },
 ];
 
-/** Throws an error if invalid, otherwise finishes silently */
+/**
+ * Throws an error if invalid, otherwise finishes silently
+ * @param {number} pageLengths
+ * @param {number} pageIndices
+ * @param {number} indicesOnPage
+ */
 function validatePaginationQuery(pageLengths, pageIndices, indicesOnPage) {
   if (pageLengths.length !== 1) {
     throw new Error("We only allow passing a single pageLength at a time to articles['byPage']");
