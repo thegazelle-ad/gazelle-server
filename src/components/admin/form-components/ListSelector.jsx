@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -24,7 +23,7 @@ export default class ListSelector extends React.Component {
         style={{ width: 200 }}
       >
         {
-          _.map(this.props.elements, type => (
+          this.props.elements.map(type => (
             <MenuItem
               value={type.slug}
               key={type.slug}
@@ -38,7 +37,12 @@ export default class ListSelector extends React.Component {
 }
 
 ListSelector.propTypes = {
-  elements: PropTypes.object.isRequired,
+  elements: PropTypes.arrayOf(
+    PropTypes.shape({
+      slug: PropTypes.string,
+      name: PropTypes.string,
+    })
+  ).isRequired,
   label: PropTypes.string,
   disabled: PropTypes.bool,
   update: PropTypes.func,
