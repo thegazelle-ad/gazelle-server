@@ -117,6 +117,9 @@ export default class FalcorController extends BaseComponent {
           data: cleanupFalcorKeys(x.json),
         });
         this.safeSetState(stateToSet);
+        if (callback) {
+          callback(cleanupFalcorKeys(x.json));
+        }
       } else {
         const err = new Error(
           `FalcorPathSets: ${JSON.stringify(processedFalcorPathSets)} returned no data.`
@@ -130,9 +133,6 @@ export default class FalcorController extends BaseComponent {
           data: null,
         });
         this.safeSetState(stateToSet);
-      }
-      if (callback) {
-        callback(cleanupFalcorKeys(x.json));
       }
     })
     .catch((e) => {

@@ -9,7 +9,7 @@ const $ref = falcor.Model.ref;
 export default [
   {
     // eslint-disable-next-line max-len
-    route: "authors['bySlug'][{keys:slugs}]['id', 'name', 'image', 'biography', 'slug', 'job_title']",
+    route: "authors['bySlug'][{keys:slugs}]['id', 'name', 'image_url', 'biography', 'slug', 'job_title']",
     get: (pathSet) => (
       new Promise((resolve) => {
         const requestedFields = pathSet[3];

@@ -99,7 +99,6 @@ exports.up = async knex => {
   await knex.schema.dropTable('posts');
 };
 
-
 exports.down = knex => {
   // It is too bothersome to write the reverse migration here, so I simply won't <.<
 };
