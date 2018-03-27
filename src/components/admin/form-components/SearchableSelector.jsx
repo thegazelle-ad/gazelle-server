@@ -1,5 +1,3 @@
-/* eslint react/jsx-no-bind: 0 */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'react-addons-update';
@@ -14,11 +12,7 @@ import Chip from 'material-ui/Chip';
 class ObjectChip extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.onClick = this.onClick.bind(this);
-  }
-
-  onClick() {
-    this.props.onDelete(this.props.id);
+    this.onClick = () => this.props.onDelete(this.props.id);
   }
 
   render() {
@@ -70,7 +64,10 @@ export default class SearchableSelector extends React.Component {
 
     const index = this.props.value.findIndex(object => object.id === id);
     if (index === -1) {
-      throw new Error('The author you are trying to delete cannot be found');
+      throw new Error(
+        'You tried to delete an object not currently selected. ' +
+        "This shouldn't happen, please let the developers know that it did."
+      );
     }
     const newObjects = update(this.props.value, { $splice: [[index, 1]] });
     this.props.onUpdate(newObjects);

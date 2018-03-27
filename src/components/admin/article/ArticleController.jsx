@@ -305,10 +305,10 @@ export default class ArticleController extends FalcorController {
           />
           <ListSelector
             type="Category"
-            chosenType={this.state.category}
+            chosenElement={this.state.category}
             update={this.updateCategory}
             disabled={this.state.saving}
-            types={categories}
+            elements={categories}
           /><br />
           <ImageUrlField
             image={this.state.image}

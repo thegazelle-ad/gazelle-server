@@ -8,11 +8,7 @@ import MenuItem from 'material-ui/MenuItem';
 export default class ListSelector extends React.Component {
   constructor(props) {
     super(props);
-    this.onChange = this.onChange.bind(this);
-  }
-
-  onChange(event, ...restArgs) {
-    this.props.update(restArgs[1]);
+    this.onChange = (event, index, value) => this.props.update(value);
   }
 
   render() {
@@ -20,14 +16,14 @@ export default class ListSelector extends React.Component {
       <SelectField
         floatingLabelText={this.props.type}
         maxHeight={400}
-        value={this.props.chosenType || 'none'}
+        value={this.props.chosenElement || 'none'}
         onChange={this.onChange}
         disabled={this.props.disabled}
         autoWidth={false}
         style={{ width: 200 }}
       >
         {
-          _.map(this.props.types, type => (
+          _.map(this.props.elements, type => (
             <MenuItem
               value={type.slug}
               key={type.slug}
@@ -41,9 +37,9 @@ export default class ListSelector extends React.Component {
 }
 
 ListSelector.propTypes = {
-  types: PropTypes.object.isRequired,
+  elements: PropTypes.object.isRequired,
   type: PropTypes.string,
   disabled: PropTypes.bool,
   update: PropTypes.func,
-  chosenType: PropTypes.string,
+  chosenElement: PropTypes.string,
 };

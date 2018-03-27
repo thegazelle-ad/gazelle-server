@@ -25,7 +25,7 @@ const withValidate = (...validators) => (WrappedField) => {
           {...originalProps}
         />);
     } else {
-      ReturnedComponent = (<WrappedField {...originalProps} />);
+      ReturnedComponent = <WrappedField {...originalProps} />;
     }
     return ReturnedComponent;
   };
