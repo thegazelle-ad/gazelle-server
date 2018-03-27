@@ -654,7 +654,7 @@ export function relatedArticleQuery(slugs) {
       database.select('tag_id', 'articles.slug',
         'issues_posts_order.issue_id', 'category_id')
       .from('articles')
-      .leftJoin('posts_tags', 'posts_tags.article_id', '=', 'articles.id')
+      .leftJoin('articles_tags', 'articles_tags.article_id', '=', 'articles.id')
       .innerJoin('issues_posts_order', 'issues_posts_order.article_id', '=', 'articles.id')
       .whereNotNull('published_at')
       // We need the non-arrow function here to have the `this` object passed
