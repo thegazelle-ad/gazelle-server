@@ -14,7 +14,7 @@ import UnpublishButton from 'components/admin/article/components/UnpublishButton
 import ImageUrlField from 'components/admin/article/components/ImageUrlField';
 import ListSelector from 'components/admin/form-components/ListSelector';
 import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
-
+import { MAX_TEASER_LENGTH } from 'components/admin/lib/max-field-lengths';
 
 // material-ui
 import Dialog from 'material-ui/Dialog';
@@ -319,7 +319,7 @@ export default class ArticleController extends FalcorController {
           <MaxLenTextField
             name="teaser"
             value={this.state.teaser}
-            maxLen={156}
+            maxLen={MAX_TEASER_LENGTH}
             onUpdate={this.updateTeaser}
           />
           <br />
