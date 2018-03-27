@@ -1,6 +1,9 @@
 # Project
 This project aims at rectifying and improving parts of the Gazelle CMS to enhance the workflow for publishing by reducing time spent on unnecessary tasks. The project is closely linked to the Gazelle and so the existing codebase will be expanded and refactored. All work is linked to tickets and milestones which can be found on the [issues page](https://github.com/thegazelle-ad/gazelle-server/labels/SWE%20final%20project) and will take place on the [swe-final-project branch](https://github.com/thegazelle-ad/gazelle-server/tree/swe-final-project). 
 
+# Developers
+This project is developed by Emil Goldsmith Olesen, Frederik Brinck Jensen, and William Held
+
 # Progress
 Progress is tracked using milestones. Currently, the following milestones are being worked on
 
