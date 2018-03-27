@@ -304,7 +304,7 @@ export default class ArticleController extends FalcorController {
             fullWidth
           />
           <ListSelector
-            type="Category"
+            label="Category"
             chosenElement={this.state.category}
             update={this.updateCategory}
             disabled={this.state.saving}

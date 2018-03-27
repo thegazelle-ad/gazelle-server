@@ -1,5 +1,5 @@
 /*
- * File to store and export the maximum values for any text fields
+ * File to store and export reusable constant values
  */
 
 /*

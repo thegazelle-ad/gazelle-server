@@ -12,9 +12,10 @@ export default class ListSelector extends React.Component {
   }
 
   render() {
+    /* TODO - Design decision on default values */
     return (
       <SelectField
-        floatingLabelText={this.props.type}
+        floatingLabelText={this.props.label}
         maxHeight={400}
         value={this.props.chosenElement || 'none'}
         onChange={this.onChange}
@@ -38,7 +39,7 @@ export default class ListSelector extends React.Component {
 
 ListSelector.propTypes = {
   elements: PropTypes.object.isRequired,
-  type: PropTypes.string,
+  label: PropTypes.string,
   disabled: PropTypes.bool,
   update: PropTypes.func,
   chosenElement: PropTypes.string,
