@@ -766,7 +766,6 @@ export function searchPostsQuery(queries, min, max) {
     queries.forEach((query) => {
       database.select('slug')
       .from('articles')
-      .leftJoin('articles', 'articles.id', '=', 'articles.id')
       .where('title', 'like', `%${query}%`)
       .orderByRaw('ISNULL(published_at) DESC, published_at DESC')
       .limit(max - min + 1)
@@ -1445,7 +1444,7 @@ export function getSemesterTeams(semesterName, teamIndices) {
 }
 
 export async function getNumArticles() {
-  const rows = await database.select('COUNT(*) as numArticles').from('articles');
+  const rows = await database('articles').count('* as numArticles');
   return rows[0].numArticles;
 }
 

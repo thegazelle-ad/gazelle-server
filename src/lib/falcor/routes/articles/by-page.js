@@ -1,7 +1,7 @@
 import falcor from 'falcor';
 import _ from 'lodash';
 
-import { getPaginatedArticles } from 'lib/db';
+import { getPaginatedArticle } from 'lib/db';
 
 const $ref = falcor.Model.ref;
 
@@ -22,7 +22,7 @@ export default [
       const pageLength = pathSet.pageLengths[0];
       const pageIndex = pathSet.pageIndices[0];
 
-      const articles = await getPaginatedArticles(pageLength, pageIndex);
+      const articles = await getPaginatedArticle(pageLength, pageIndex);
       const results = articles.map((singleArticle, index) => ({
         path: ['articles', 'byPage', pageLength, pageIndex, index],
         value: $ref(['articles', 'bySlug', singleArticle.slug]),
@@ -33,10 +33,10 @@ export default [
 ];
 
 /**
- * Throws an error if invalid, otherwise finishes silently
  * @param {number} pageLengths
  * @param {number} pageIndices
  * @param {number} indicesOnPage
+ * @throws if invalid, otherwise it'll finish silently
  */
 function validatePaginationQuery(pageLengths, pageIndices, indicesOnPage) {
   if (pageLengths.length !== 1) {
