@@ -115,7 +115,7 @@ export default class ArticleController extends FalcorController {
       const image = article.image || '';
       const authors = _.map(article.authors, author => author);
 
-      this.safeSetoState({
+      this.safeSetState({
         teaser, category, image, authors,
       });
     };
@@ -273,7 +273,7 @@ export default class ArticleController extends FalcorController {
       const article = this.state.data.articles.bySlug[slug];
 
       // If it is a new article it won't have any meta data yet so we use the default
-      const categories = _.map(this.state.data.categories.byIndex);
+      const categories = _.toArray(this.state.data.categories.byIndex);
       categories.push({ name: 'none', slug: 'none' });
 
       const actionButtons = [
