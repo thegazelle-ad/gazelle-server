@@ -109,7 +109,7 @@ const generateWebpackConfig = (config) => {
         getAbsolute('src'),
         getAbsolute('.'),
       ],
-      extensions: ['.js', '.jsx'],
+      extensions: ['.js', '.jsx', '.json5'],
     },
 
     // This makes webpack not bundle in node_modules but leave the require statements
@@ -202,6 +202,13 @@ const generateWebpackConfig = (config) => {
             // Lint all that is compiled, notice the order so eslint runs before babel
             'eslint-loader',
           ],
+        },
+        {
+          test: /\.json5$/,
+          exclude: [
+            getAbsolute('node_modules'),
+          ],
+          loader: 'json5-loader',
         },
       // Only add the scss loaders if we're actually compiling it
       ].concat(config.compileScss ? (
