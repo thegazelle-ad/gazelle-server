@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ValidatedImage } from 'components/admin/form-components/validated-fields';
+import { ValidatedHttpsUrlField } from 'components/admin/form-components/validated-fields';
 
 const ImageUrlField = (props) => {
   const onChange = (event) => {
@@ -9,7 +9,7 @@ const ImageUrlField = (props) => {
   };
 
   return (
-    <ValidatedImage
+    <ValidatedHttpsUrlField
       name="image"
       value={props.image}
       floatingLabelText="Image (Remember to use https:// not http://)"

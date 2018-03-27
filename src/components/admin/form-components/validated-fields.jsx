@@ -6,10 +6,10 @@ import withValidate from 'components/admin/form-components/withValidate';
 export const hasHttps = (value) => {
   if (value && value.length > 4 && value.substr(0, 5) !== 'https') {
     return (
-      'You are saving an image without using https.'
+      'This url requires that you use https.'
     );
   }
   return null;
 };
 
-export const ValidatedImage = withValidate(hasHttps)(TextField);
+export const ValidatedHttpsUrlField = withValidate(hasHttps)(TextField);

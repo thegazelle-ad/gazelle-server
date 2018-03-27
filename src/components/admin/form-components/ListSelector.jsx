@@ -20,7 +20,7 @@ export default class ListSelector extends React.Component {
       <SelectField
         floatingLabelText={this.props.type}
         maxHeight={400}
-        value={this.props.chosenType}
+        value={this.props.chosenType || 'none'}
         onChange={this.onChange}
         disabled={this.props.disabled}
         autoWidth={false}

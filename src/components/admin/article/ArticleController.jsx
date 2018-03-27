@@ -11,7 +11,7 @@ import SearchableSelector from 'components/admin/form-components/SearchableSelec
 import LoadingOverlay from 'components/admin/LoadingOverlay';
 import SaveButton from 'components/admin/article/components/SaveButton';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton.jsx';
-import ImageField from 'components/admin/article/components/ImageField';
+import ImageUrlField from 'components/admin/article/components/ImageUrlField';
 import ListSelector from 'components/admin/form-components/ListSelector';
 import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
 
@@ -29,10 +29,10 @@ export default class ArticleController extends FalcorController {
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
     this.handleDialogClose = this.handleDialogClose.bind(this);
     this.isFormChanged = this.isFormChanged.bind(this);
-    this.updateAuthors = this.updateAuthors.bind(this);
-    this.updateTeaser = this.updateTeaser.bind(this);
-    this.updateImage = this.updateImage.bind(this);
-    this.updateCategory = this.updateCategory.bind(this);
+    this.updateAuthors = (authors) => this.safeSetState({ authors });
+    this.updateTeaser = (teaser) => this.safeSetState({ teaser });
+    this.updateImage = (image) => this.safeSetState({ image });
+    this.updateCategory = (category) => this.safeSetState({ category });
     this.safeSetState({
       changed: false,
       saving: false,
@@ -78,22 +78,6 @@ export default class ArticleController extends FalcorController {
       // This is purely so the 'saved' message can be seen by the user for a second
       setTimeout(() => { this.safeSetState({ saving: false }); }, 1000);
     });
-  }
-
-  updateAuthors(authors) {
-    this.safeSetState({ authors });
-  }
-
-  updateTeaser(teaser) {
-    this.safeSetState({ teaser });
-  }
-
-  updateImage(image) {
-    this.safeSetState({ image });
-  }
-
-  updateCategory(category) {
-    this.safeSetState({ category });
   }
 
   static getFalcorPathSets(params) {
@@ -321,12 +305,12 @@ export default class ArticleController extends FalcorController {
           />
           <ListSelector
             type="Category"
-            chosenType={this.state.category || 'none'}
+            chosenType={this.state.category}
             update={this.updateCategory}
             disabled={this.state.saving}
             types={categories}
           /><br />
-          <ImageField
+          <ImageUrlField
             image={this.state.image}
             disabled={this.state.saving}
             updateImage={this.updateImage}
