@@ -44,13 +44,11 @@ export default [
       if (!flag) {
         throw new Error('For unknown reasons updatePostMeta returned a non-true flag');
       }
-      const results = articles.map((article) => (
-        _.map(article, (value, field) => {
-          results.push({
-            path: ['articles', 'bySlug', article.slug, field],
-            value,
-          });
-        })
+      const results = _.map(articles, (singleArticle, slug) => (
+        _.map(singleArticle, (value, field) => ({
+          path: ['articles', 'bySlug', slug, field],
+          value,
+        }))
       )).flatten();
       return results;
     },
