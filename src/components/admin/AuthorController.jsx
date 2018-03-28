@@ -234,7 +234,7 @@ export default class AuthorController extends FalcorController {
       this.isFormFieldChanged(this.state.name, falcorData.name) ||
       this.isFormFieldChanged(this.state.slug, falcorData.slug) ||
       this.isFormFieldChanged(this.state.jobTitle, falcorData.job_title) ||
-      this.isFormFieldChanged(this.state.imageUrl, falcorData.imageUrl) ||
+      this.isFormFieldChanged(this.state.imageUrl, falcorData.image_url) ||
       this.isFormFieldChanged(this.state.biography, falcorData.biography);
     return changedFlag;
   }

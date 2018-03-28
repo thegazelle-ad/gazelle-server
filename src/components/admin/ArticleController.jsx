@@ -168,7 +168,7 @@ export default class ArticleController extends FalcorController {
     }
 
     if (this.state.imageUrl.length > 4 && this.state.imageUrl.substr(0, 5) !== 'https') {
-      if (!window.confirm('You are saving an image_url without using https. ' +
+      if (!window.confirm('You are saving an image without using https. ' +
         'This can be correct in a few cases but is mostly not. Are you sure ' +
         ' you wish to continue saving?')) {
         return;

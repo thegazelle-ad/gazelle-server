@@ -1454,6 +1454,8 @@ export async function getNumArticles() {
  * @returns {Promise<string[]>} - Slugs of the articles that had their category changed
  */
 async function updateArticleCategories(jsonGraphArg) {
+  // This variable filters out all articles that don't have a category update requested
+  // and then structures them in pairs of article and category slugs as seen below
   const articleCategoryPairs = _.map(jsonGraphArg, (articleUpdater, slug) => {
     if (articleUpdater.hasOwnProperty('category')) {
       return {
@@ -1462,7 +1464,7 @@ async function updateArticleCategories(jsonGraphArg) {
       };
     }
     return null;
-  }).filter(x => x);
+  }).filter(x => x !== null);
   if (articleCategoryPairs.length === 0) {
     return [];
   }
