@@ -159,7 +159,7 @@ const generateWebpackConfig = (config) => {
 
           use: [
             // Babel for transpiling ESNext in production and React always,
-            getBabelLoader(config.NODE_ENV),
+            getBabelLoader(config.NODE_ENV, config.type),
             // Lint all that is compiled, notice the order so eslint runs before babel
             'eslint-loader',
           ],
@@ -240,7 +240,9 @@ function getBabelLoader(nodeEnv, type) {
     ]);
   }
 
-  const plugins = isDev ? [] : ['transform-object-rest-spread', 'array-includes'];
+  const plugins = !isDev && type !== 'server'
+  ? ['transform-object-rest-spread', 'array-includes']
+  : [];
 
   return {
     loader: 'babel-loader',
