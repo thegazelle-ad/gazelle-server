@@ -19,7 +19,7 @@ export default class TeamPageController extends FalcorController {
         { length: 10 },
         'members',
         { length: 50 },
-        ['name', 'slug', 'job_title', 'image'],
+        ['name', 'slug', 'job_title', 'image_url'],
       ],
     ];
   }

@@ -30,9 +30,8 @@ jobs:
 
       # Complete setup
       - run: |
-          sed 's/"password",$/"circleci_test_gazelle",/' config/database.config.example.js > config/database.config.js
+          sed 's/"password",$/"circleci_test_gazelle",/' config/database.config.example.json5 > config/database.config.json5
           cp config/s3.config.example.js config/s3.config.js
-          cp config/ghost.config.example.js config/ghost.config.js
 
       # Cache it
       - run:
@@ -147,9 +146,6 @@ jobs:
 
       - run: ./scripts/circleci/load-test-database.sh
 
-      # Complete config
-      - run: ./scripts/get-ghost-config.sh
-
       - restore_cache:
           keys:
             - v1-build-{{ arch }}-{{ .Revision }}
@@ -188,30 +184,6 @@ jobs:
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
       - run: ./scripts/circleci/load-test-database.sh
-
-      - run:
-          name: Clone Ghost repo
-          command: |
-            cd ~
-            git clone git@github.com:thegazelle-ad/database-and-ghost-blog-server.git
-
-      - restore_cache:
-          keys:
-            - v1-ghost-dependencies-and-config-{{ arch }}-{{ checksum "~/database-and-ghost-blog-server/package.json" }}
-
-      - run:
-          name: Setup Ghost
-          command: |
-            cd ~/database-and-ghost-blog-server
-            sed "s/'password'/'circleci_test_gazelle'/" config.example.js > config.js
-            . ~/.nvm/nvm.sh
-            npm install --production
-
-      - save_cache:
-          paths:
-            - ~/database-and-ghost-blog-server/node_modules
-            - ~/database-and-ghost-blog-server/config.js
-          key: v1-ghost-dependencies-and-config-{{ arch }}-{{ checksum "~/database-and-ghost-blog-server/package.json" }}
 
       # Actually run the tests
       - run: ./scripts/circleci/run-end-to-end-tests.sh

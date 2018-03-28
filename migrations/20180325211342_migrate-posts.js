@@ -2,7 +2,7 @@
 exports.up = async knex => {
   // Create the new table where relevant posts and posts_meta will go in
   await knex.schema.createTable('articles', table => {
-    table.increments('id').primary().unique().notNullable();
+    table.increments('id').primary().unsigned().unique().notNullable();
     table.string('slug', 150).unique().notNullable();
     table.string('title', 150).notNullable();
     table.text('markdown', 'mediumtext');
@@ -10,6 +10,7 @@ exports.up = async knex => {
     table.string('image_url');
     table.string('teaser');
     table.integer('views').unsigned().notNullable().defaultTo(0);
+    table.dateTime('created_at').notNullable();
     table.dateTime('published_at');
     table.boolean('is_interactive').notNullable().defaultTo(false);
     table.integer('category_id').unsigned().references('id').inTable('categories')
@@ -33,6 +34,7 @@ exports.up = async knex => {
     html: row.html,
     image_url: row.image,
     teaser: row.meta_description,
+    created_at: row.created_at,
   }));
   const convertedMetaRows = metaRows.map(row => ({
     id: row.id,
@@ -96,7 +98,6 @@ exports.up = async knex => {
   await knex.schema.dropTable('posts_meta');
   await knex.schema.dropTable('posts');
 };
-
 
 exports.down = knex => {
   // It is too bothersome to write the reverse migration here, so I simply won't <.<

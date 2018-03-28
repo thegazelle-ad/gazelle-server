@@ -18,7 +18,7 @@ export default class ArticleController extends FalcorController {
         'articles',
         'bySlug',
         params.articleSlug,
-        ['title', 'teaser', 'html', 'published_at', 'issueNumber', 'category', 'slug', 'image'],
+        ['title', 'teaser', 'html', 'published_at', 'issueNumber', 'category', 'slug', 'image_url'],
       ],
       ['articles', 'bySlug', params.articleSlug, 'authors', { length: 10 }, ['name', 'slug']],
 
@@ -29,7 +29,7 @@ export default class ArticleController extends FalcorController {
         params.articleSlug,
         'related',
         { length: 2 },
-        ['title', 'teaser', 'image', 'issueNumber', 'category', 'slug'],
+        ['title', 'teaser', 'image_url', 'issueNumber', 'category', 'slug'],
       ],
       [
         'articles', 'bySlug', params.articleSlug,
@@ -41,7 +41,7 @@ export default class ArticleController extends FalcorController {
       ],
 
       // Fetch first five Trending articles
-      ['trending', { length: 6 }, ['title', 'issueNumber', 'category', 'slug', 'image']],
+      ['trending', { length: 6 }, ['title', 'issueNumber', 'category', 'slug', 'image_url']],
       ['trending', { length: 6 }, 'authors', { length: 10 }, ['name', 'slug']],
 
     ];
@@ -88,7 +88,7 @@ export default class ArticleController extends FalcorController {
       const trendingData = this.state.data.trending;
       const relatedArticlesData = articleData.related;
       // make sure article meta image has default
-      const articleMetaImage = articleData.image || 'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
+      const articleMetaImage = articleData.image_url || 'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
       const meta = [
         // Search results
         { name: 'description', content: this.props.teaser },
@@ -120,7 +120,7 @@ export default class ArticleController extends FalcorController {
             published_at={articleData.published_at}
             html={articleData.html}
             authors={articleData.authors}
-            featuredImage={articleData.image}
+            featuredImage={articleData.image_url}
             url={
               `thegazelle.org/issue/${articleData.issueNumber}/` +
               `${articleData.category}/${articleData.slug}`

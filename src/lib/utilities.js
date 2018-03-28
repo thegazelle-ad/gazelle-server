@@ -231,6 +231,8 @@ export function isPlainObject(element) {
 
 /**
  * Taken from https://stackoverflow.com/questions/767486/how-do-you-check-if-a-variable-is-an-array-in-javascript
+ * @param {any} candidate
+ * @returns {boolean}
  */
 export function isArray(candidate) {
   return candidate.constructor === Array;
@@ -238,6 +240,8 @@ export function isArray(candidate) {
 
 /**
  * Taken from https://stackoverflow.com/questions/5999998/how-can-i-check-if-a-javascript-variable-is-function-type
+ * @param {any} candidate
+ * @returns {boolean}
  */
 export function isFunction(candidate) {
   return typeof candidate === 'function';
@@ -286,4 +290,3 @@ export const nothingAllowedRobotsTxt = 'User-agent: *\nDisallow: /\n';
 
 export const googleClientID = '235485701704-vqb1qkp8lk1hbdhcmjm5jmtocaur3mq7.apps.googleusercontent.com'; // eslint-disable-line max-len
 export const googleWhitelist = ['tjk343@nyu.edu', 'ks3583@nyu.edu', 'kw1553@nyu.edu', 'hct245@nyu.edu', 'zmm228@nyu.edu', 'ego225@nyu.edu']; // eslint-disable-line max-len
-
