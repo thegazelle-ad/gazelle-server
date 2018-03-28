@@ -88,7 +88,7 @@ export default class SearchBar extends BaseComponent {
         query,
           { length: this.props.length },
       ].concat(pathSet)
-      ), ['search', this.props.category, query, { length: this.props.length }, fields]);
+      ), [['search', this.props.category, query, { length: this.props.length }, fields]]);
 
       this.props.model.get(...pathSets)
       .then((x) => {
@@ -103,7 +103,8 @@ export default class SearchBar extends BaseComponent {
           ? x.json.search.posts[query]
           : x.json.search[this.props.category][query];
 
-        this.safeSetState({ searchSuggestions: suggestions });
+        const suggestionsArray = _.map(suggestions, value => value);
+        this.safeSetState({ searchSuggestions: suggestionsArray });
       });
     }, this.props.debounceTime || 250);
   }
@@ -148,14 +149,14 @@ export default class SearchBar extends BaseComponent {
               this.props.enableAdd &&
               this.state.searchValue &&
               this.state.searchSuggestions.length === 0 &&
-              (slug = slugify(this.props.category, this.searchValue)) &&
+              (slug = slugify(this.props.category, this.state.searchValue)) &&
               (
                 <div className={`search-bar-result search-bar-${this.props.category}`} key={slug}>
                   {/* eslint-disable react/jsx-no-bind */}
                   <MenuItem
                     leftIcon={<ContentAdd />}
                     primaryText={this.state.searchValue}
-                    onClick={this.onClick.bind(this, { value: this.searchValue, slug })}
+                    onClick={this.handleClick.bind(this, { value: this.state.searchValue, slug })}
                     disabled={this.props.disabled}
                   />
                   {/* eslint-enable react/jsx-no-bind */}
@@ -166,7 +167,8 @@ export default class SearchBar extends BaseComponent {
               this.state.searchSuggestions.map(
                 (item) => menuComponent(item, this.props, this.handleClick.bind(this, item))
               )
-              /* eslint-enable react/jsx-no-bind */ }
+              /* eslint-enable react/jsx-no-bind */
+            }
           </Menu>
         </div>
       </div>
