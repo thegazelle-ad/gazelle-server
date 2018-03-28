@@ -52,8 +52,8 @@ export default class BaseComponent extends React.Component {
    * it won't throw errors.
    * See [the React docs]{@link https://facebook.github.io/react/docs/react-component.html#setstate}
    * for more details about this.setState
-   * @arg {(Object|Function)} updater
-   * @arg {Function} cb - We don't support this callback due to working with Falcor
+   * @param {(Object|Function)} updater
+   * @param {Function} cb - We don't support this callback due to working with Falcor
    */
   safeSetState(updater, cb) {
     if (cb) {

@@ -14,15 +14,15 @@ export default class ArticlePreview extends BaseComponent {
       // We don't use standard url for interactive articles
       url = `/interactive/${article.slug}`;
     }
-    if (!article.image) { // Article image default
-      article.image = 'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
+    if (!article.image_url) { // Article image default
+      article.image_url = 'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
     }
     return (
       <div className="article-preview">
         <Link to={url}>
           <img
             className="article-preview__featured-image"
-            src={article.image}
+            src={article.image_url}
             alt="featured"
           />
         </Link>

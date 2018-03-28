@@ -37,7 +37,7 @@ export default class ArticleController extends FalcorController {
       category: updateFieldValue.bind(this, 'category', {
         isMaterialSelect: true,
       }),
-      image: updateFieldValue.bind(this, 'image', undefined),
+      imageUrl: updateFieldValue.bind(this, 'imageUrl', undefined),
     };
     this.safeSetState({
       changed: false,
@@ -45,7 +45,7 @@ export default class ArticleController extends FalcorController {
       authors: [],
       teaser: '',
       category: '',
-      image: '',
+      imageUrl: '',
     });
 
     this.debouncedHandleFormStateChanges = debounce(() => {
@@ -97,7 +97,7 @@ export default class ArticleController extends FalcorController {
       [
         'articles', 'bySlug',
         params.slug,
-        ['title', 'category', 'teaser', 'image', 'id', 'published_at'],
+        ['title', 'category', 'teaser', 'image_url', 'id', 'published_at'],
       ],
       ['articles', 'bySlug', params.slug, 'authors', { length: 10 }, ['id', 'name']],
       ['categories', 'byIndex', { length: 30 }, ['name', 'slug']],
@@ -109,11 +109,11 @@ export default class ArticleController extends FalcorController {
       const article = data.articles.bySlug[this.props.params.slug];
       const teaser = article.teaser || '';
       const category = article.category || '';
-      const image = article.image || '';
+      const imageUrl = article.image_url || '';
       const authors = _.map(article.authors, author => author);
 
       this.safeSetState({
-        teaser, category, image, authors,
+        teaser, category, imageUrl, authors,
       });
     };
     super.componentWillMount(falcorCallback);
@@ -124,11 +124,11 @@ export default class ArticleController extends FalcorController {
       const article = data.articles.bySlug[this.props.params.slug];
       const teaser = article.teaser || '';
       const category = article.category || '';
-      const image = article.image || '';
+      const imageUrl = article.image_url || '';
       const authors = _.map(article.authors, author => author);
 
       this.safeSetState({
-        teaser, category, image, authors,
+        teaser, category, imageUrl, authors,
       });
     };
     super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
@@ -147,7 +147,7 @@ export default class ArticleController extends FalcorController {
       this.isFormFieldChanged(prevState.authors, state.authors) ||
       this.isFormFieldChanged(prevState.teaser, state.teaser) ||
       this.isFormFieldChanged(prevState.category, state.category) ||
-      this.isFormFieldChanged(prevState.image, state.image)
+      this.isFormFieldChanged(prevState.imageUrl, state.imageUrl)
     );
   }
 
@@ -202,7 +202,7 @@ export default class ArticleController extends FalcorController {
       return;
     }
 
-    if (this.state.image.length > 4 && this.state.image.substr(0, 5) !== 'https') {
+    if (this.state.imageUrl.length > 4 && this.state.imageUrl.substr(0, 5) !== 'https') {
       if (!window.confirm('You are saving an image without using https. ' +
                           'This can be correct in a few cases but is mostly not. Are you sure ' +
                           ' you wish to continue saving?')) {
@@ -218,7 +218,9 @@ export default class ArticleController extends FalcorController {
     }
 
     const shouldUpdateCategory = this.state.category;
-    const fields = shouldUpdateCategory ? ['teaser', 'image', 'category'] : ['teaser', 'image'];
+    const fields = shouldUpdateCategory ?
+      ['teaser', 'image_url', 'category'] :
+      ['teaser', 'image_url'];
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
       paths: [
@@ -234,7 +236,7 @@ export default class ArticleController extends FalcorController {
     };
     // Fill in the data
     jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].teaser = this.state.teaser;
-    jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].image = this.state.image;
+    jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].image_url = this.state.imageUrl;
     if (shouldUpdateCategory) {
       jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].category = this.state.category;
     }
@@ -261,7 +263,7 @@ export default class ArticleController extends FalcorController {
     const changedFlag =
       this.isFormFieldChanged(this.state.teaser, falcorData.teaser) ||
       this.isFormFieldChanged(this.state.category, falcorData.category) ||
-      this.isFormFieldChanged(this.state.image, falcorData.image) ||
+      this.isFormFieldChanged(this.state.imageUrl, falcorData.image_url) ||
       this.areAuthorsChanged(this.state.authors, falcorData.authors);
     return changedFlag;
   }
@@ -343,11 +345,11 @@ export default class ArticleController extends FalcorController {
             types={categories}
           />
           <TextField
-            name="image"
-            value={this.state.image}
+            name="imageUrl"
+            value={this.state.imageUrl}
             floatingLabelText="Image (Remember to use https:// not http://)"
             disabled={this.state.saving}
-            onChange={this.fieldUpdaters.image}
+            onChange={this.fieldUpdaters.imageUrl}
             fullWidth
           /><br />
           <TextField

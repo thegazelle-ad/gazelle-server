@@ -2,7 +2,10 @@
 'use strict';
 
 const path = require('path');
-const databaseConnectionConfig = require(path.join(__dirname, 'config/database.config.js'));
+const fs = require('fs');
+const JSON5 = require('json5');
+const databaseConnectionJSON5String = fs.readFileSync(path.join(__dirname, 'config/database.config.json5'));
+const databaseConnectionConfig = JSON5.parse(databaseConnectionJSON5String);
 
 module.exports = {
   client: 'mysql',

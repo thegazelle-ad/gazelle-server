@@ -37,7 +37,7 @@ export default class AuthorController extends FalcorController {
       name: updateFieldValue.bind(this, 'name', undefined),
       slug: updateFieldValue.bind(this, 'slug', undefined),
       jobTitle: updateFieldValue.bind(this, 'jobTitle', undefined),
-      image: updateFieldValue.bind(this, 'image', undefined),
+      imageUrl: updateFieldValue.bind(this, 'imageUrl', undefined),
       biography: updateFieldValue.bind(this, 'biography', {
         trim: MAX_BIOGRAPHY_LENGTH,
       }),
@@ -48,7 +48,7 @@ export default class AuthorController extends FalcorController {
       name: '',
       slug: '',
       jobTitle: '',
-      image: '',
+      imageUrl: '',
       biography: '',
     });
 
@@ -65,7 +65,7 @@ export default class AuthorController extends FalcorController {
 
   static getFalcorPathSets(params) {
     return [
-      ['authors', 'bySlug', params.slug, ['name', 'image', 'biography', 'slug', 'job_title']],
+      ['authors', 'bySlug', params.slug, ['name', 'image_url', 'biography', 'slug', 'job_title']],
     ];
   }
 
@@ -73,14 +73,14 @@ export default class AuthorController extends FalcorController {
     const falcorCallback = (data) => {
       const name = data.authors.bySlug[this.props.params.slug].name || '';
       const slug = data.authors.bySlug[this.props.params.slug].slug || '';
-      const image = data.authors.bySlug[this.props.params.slug].image || '';
+      const imageUrl = data.authors.bySlug[this.props.params.slug].image_url || '';
       const jobTitle = data.authors.bySlug[this.props.params.slug].job_title || '';
       const biography = data.authors.bySlug[this.props.params.slug].biography || '';
 
       this.safeSetState({
         name,
         slug,
-        image,
+        imageUrl,
         jobTitle,
         biography,
       });
@@ -92,14 +92,14 @@ export default class AuthorController extends FalcorController {
     const falcorCallback = (data) => {
       const name = data.authors.bySlug[this.props.params.slug].name || '';
       const slug = data.authors.bySlug[this.props.params.slug].slug || '';
-      const image = data.authors.bySlug[this.props.params.slug].image || '';
+      const imageUrl = data.authors.bySlug[this.props.params.slug].image_url || '';
       const jobTitle = data.authors.bySlug[this.props.params.slug].job_title || '';
       const biography = data.authors.bySlug[this.props.params.slug].biography || '';
 
       this.safeSetState({
         name,
         slug,
-        image,
+        imageUrl,
         jobTitle,
         biography,
       });
@@ -119,7 +119,7 @@ export default class AuthorController extends FalcorController {
     return (
       this.isFormFieldChanged(prevState.name, state.name) ||
       this.isFormFieldChanged(prevState.slug, state.slug) ||
-      this.isFormFieldChanged(prevState.image, state.image) ||
+      this.isFormFieldChanged(prevState.imageUrl, state.imageUrl) ||
       this.isFormFieldChanged(prevState.jobTitle, state.jobTitle) ||
       this.isFormFieldChanged(prevState.biography, state.biography)
     );
@@ -167,7 +167,10 @@ export default class AuthorController extends FalcorController {
       // Build the jsonGraphEnvelope
       const jsonGraphEnvelope = {
         paths: [
-          ['authors', 'bySlug', authorSlug, ['name', 'slug', 'job_title', 'image', 'biography']],
+          [
+            'authors', 'bySlug', authorSlug,
+            ['name', 'slug', 'job_title', 'image_url', 'biography'],
+          ],
         ],
         jsonGraph: {
           authors: {
@@ -182,7 +185,7 @@ export default class AuthorController extends FalcorController {
       jsonGraphEnvelope.jsonGraph.authors.bySlug[authorSlug].name = this.state.name;
       jsonGraphEnvelope.jsonGraph.authors.bySlug[authorSlug].slug = this.state.slug;
       jsonGraphEnvelope.jsonGraph.authors.bySlug[authorSlug].job_title = this.state.jobTitle;
-      jsonGraphEnvelope.jsonGraph.authors.bySlug[authorSlug].image = this.state.image;
+      jsonGraphEnvelope.jsonGraph.authors.bySlug[authorSlug].image_url = this.state.imageUrl;
       jsonGraphEnvelope.jsonGraph.authors.bySlug[authorSlug].biography = this.state.biography;
 
       // Update the values
@@ -231,7 +234,7 @@ export default class AuthorController extends FalcorController {
       this.isFormFieldChanged(this.state.name, falcorData.name) ||
       this.isFormFieldChanged(this.state.slug, falcorData.slug) ||
       this.isFormFieldChanged(this.state.jobTitle, falcorData.job_title) ||
-      this.isFormFieldChanged(this.state.image, falcorData.image) ||
+      this.isFormFieldChanged(this.state.imageUrl, falcorData.image_url) ||
       this.isFormFieldChanged(this.state.biography, falcorData.biography);
     return changedFlag;
   }
@@ -289,11 +292,11 @@ export default class AuthorController extends FalcorController {
                 onChange={this.fieldUpdaters.jobTitle}
               /><br />
               <TextField
-                name="image"
-                value={this.state.image}
+                name="image_url"
+                value={this.state.imageUrl}
                 floatingLabelText="Image (Remember to use https:// not http://)"
                 disabled={this.state.saving}
-                onChange={this.fieldUpdaters.image}
+                onChange={this.fieldUpdaters.imageUrl}
                 fullWidth
               /><br />
               <TextField

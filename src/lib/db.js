@@ -2,11 +2,18 @@
 // We disable camelcase here due to SQL naming conventions
 import knex from 'knex';
 import stable from 'stable';
-import knexConnectionObject from 'knexfile';
+import databaseConnectionConfig from 'config/database.config';
 import _ from 'lodash';
 import moment from 'moment';
 
-const database = knex(knexConnectionObject);
+const database = knex({
+  client: 'mysql',
+  connection: databaseConnectionConfig,
+  pool: {
+    min: 10,
+    max: 50,
+  },
+});
 
 export function authorQuery(slugs, columns) {
   // parameters are both expected to be arrays
@@ -74,9 +81,9 @@ export function authorArticleQuery(slugs) {
     .from('authors')
     .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
     .innerJoin('articles', 'articles.id', '=', 'article_id')
-    .whereNotNull('gazelle_published_at')
+    .whereNotNull('published_at')
     .whereIn('authors.slug', slugs)
-    .orderBy('gazelle_published_at', 'desc')
+    .orderBy('published_at', 'desc')
     .then((rows) => {
       // rows is an array of objects with keys authorSlug and articleSlug
       const data = {};
@@ -126,39 +133,28 @@ export function infoPagesQuery(slugs, columns) {
   });
 }
 
-export function articleQuery(slugs, columns) {
-  // parameters are both expected to be arrays
-  // first one with article slugs to fetch
-  // second one which columns to fetch from the articles table
-  return new Promise((resolve) => {
-    // we join with articles table to find slug, and always return slug
-    let processedColumns = columns.map((col) => {
-      // make it compatible for the sql query
-      if (col === 'category') {
-        return 'categories.slug as category';
-      } if (col === 'published_at') {
-        return 'gazelle_published_at as published_at';
-      }
-      return col;
-    });
-    // Put slug there so we know what we fetched
-    // Use concat to make a copy, if you just push
-    // it will change pathSet in the falcorPath
-    // as objects are passed by reference
-    processedColumns = processedColumns.concat(['articles.slug as slug']);
-    database.select(...processedColumns)
+/**
+ * Fetches direct meta data of articles from the articles database table
+ * @param {string[]} slugs - Array of slugs of articles to fetch
+ * @param {string[]} columns - Which columns of the articles table to fetch
+ * @returns {Promise<Object[]>}
+ */
+export async function articleQuery(slugs, columns) {
+  const processedColumns = columns.map((col) => {
+    // make it compatible for the sql query
+    if (col === 'category') {
+      return 'categories.slug as category';
+    }
+    return `articles.${col}`;
+  });
+  // In order to be able to identify the rows we get back we need to include the slug
+  if (!processedColumns.includes('articles.slug')) {
+    processedColumns.push('articles.slug');
+  }
+  return await database.select(...processedColumns)
     .from('articles')
     .innerJoin('categories', 'articles.category_id', '=', 'categories.id')
-    .whereIn('articles.slug', slugs)
-    .then((rows) => {
-      // database.destroy();
-      resolve(rows);
-    })
-    .catch((e) => {
-      // database.destroy();
-      throw new Error(e);
-    });
-  });
+    .whereIn('articles.slug', slugs);
 }
 
 export function articleIssueQuery(slugs) {
@@ -311,8 +307,8 @@ export function categoryArticleQuery(slugs) {
     .from('articles')
     .innerJoin('categories', 'categories.id', '=', 'articles.category_id')
     .whereIn('categories.slug', slugs)
-    .whereNotNull('gazelle_published_at')
-    .orderBy('gazelle_published_at', 'desc')
+    .whereNotNull('published_at')
+    .orderBy('published_at', 'desc')
     .then((rows) => {
       // rows is an array of objects with keys articleSlug and categorySlug
       const data = {};
@@ -630,7 +626,7 @@ export function trendingQuery() {
       database.select('slug')
       .from('articles')
       .innerJoin('issues_posts_order', 'issues_posts_order.article_id', '=', 'articles.id')
-      .whereNotNull('gazelle_published_at')
+      .whereNotNull('published_at')
       .where('issue_id', '=', latestIssueId)
       .orderBy('views', 'DESC')
       .limit(10)
@@ -659,9 +655,9 @@ export function relatedArticleQuery(slugs) {
       database.select('tag_id', 'articles.slug',
         'issues_posts_order.issue_id', 'category_id')
       .from('articles')
-      .leftJoin('posts_tags', 'posts_tags.article_id', '=', 'articles.id')
+      .leftJoin('articles_tags', 'articles_tags.article_id', '=', 'articles.id')
       .innerJoin('issues_posts_order', 'issues_posts_order.article_id', '=', 'articles.id')
-      .whereNotNull('gazelle_published_at')
+      .whereNotNull('published_at')
       // We need the non-arrow function here to have the `this` object passed
       .where(function () { // eslint-disable-line
         this.where('issues_posts_order.issue_id', '=', latestIssueId).orWhereIn('slug', slugs);
@@ -770,9 +766,8 @@ export function searchPostsQuery(queries, min, max) {
     queries.forEach((query) => {
       database.select('slug')
       .from('articles')
-      .leftJoin('articles', 'articles.id', '=', 'articles.id')
       .where('title', 'like', `%${query}%`)
-      .orderByRaw('ISNULL(gazelle_published_at) DESC, gazelle_published_at DESC')
+      .orderByRaw('ISNULL(published_at) DESC, published_at DESC')
       .limit(max - min + 1)
       .offset(min)
       .then((rows) => {
@@ -822,137 +817,6 @@ export function updateAuthors(articleId, newAuthors) {
         .innerJoin('authors', 'authors.id', '=', 'authors_posts.author_id')
         .where('article_id', '=', articleId)
         .then(rows => resolve(rows.map(row => row.slug)));
-      });
-    });
-  });
-}
-
-export function updateGhostFields(jsonGraphArg) {
-  return new Promise((resolve) => {
-    const updatesCalled = Object.keys(jsonGraphArg).length;
-    let updatesReturned = 0;
-    _.forEach(jsonGraphArg, (article, slug) => {
-      const acceptedFields = {
-        image_url: true,
-        teaser: true,
-      };
-      const updateObject = {};
-      _.forEach(article, (value, field) => {
-        if (!acceptedFields[field]) {
-          throw new Error('updateGhostFields is only configured to update image_url or teaser, ' +
-'you cannot update', field);
-        } else {
-          updateObject[field] = value;
-        }
-      });
-      database('articles')
-      .where('slug', '=', slug)
-      .update(updateObject)
-      .then((data) => {
-        if (data !== 1) {
-          throw new Error('error updating ghost field of article with slug:', slug);
-        }
-        updatesReturned++;
-        if (updatesReturned >= updatesCalled) {
-          // Just resolving to show everything went as planned
-          resolve(true);
-        }
-      });
-    });
-  });
-}
-
-export function updatePostMeta(jsonGraphArg) {
-  return new Promise((resolve) => {
-    const updatesCalled = Object.keys(jsonGraphArg).length;
-    let updatesReturned = 0;
-    const categorySlugsToFind = [];
-    const articlesWithChangedCategory = [];
-    _.forEach(jsonGraphArg, (article, slug) => {
-      Object.keys(article).forEach((field) => {
-        if (field === 'category') {
-          categorySlugsToFind.push(article[field]);
-          articlesWithChangedCategory.push(slug);
-        }
-      });
-    });
-    database.select('id', 'slug')
-    .from('categories')
-    .whereIn('slug', categorySlugsToFind)
-    .then((categoryRows) => {
-      const articleSlugs = Object.keys(jsonGraphArg);
-      database.select('id', 'slug')
-      .from('articles')
-      .whereIn('slug', articleSlugs)
-      .then((articleRows) => {
-        _.forEach(jsonGraphArg, (article, slug) => {
-          const updateObject = {};
-          _.forEach(article, (value, field) => {
-            if (field === 'category') {
-              const category = categoryRows.find(row => row.slug === value);
-              if (!category) {
-                throw new Error(`Can't find ${value} as a category to add`);
-              }
-              updateObject.category_id = category.id;
-            } else if (field === 'published_at') {
-              updateObject.gazelle_published_at = value;
-            } else {
-              updateObject[field] = value;
-            }
-          });
-
-          const articleObject = articleRows.find(row => row.slug === slug);
-          if (!articleObject) {
-            throw new Error(`Can't find ${slug} as an article to update`);
-          }
-
-          // We default to insert, with a conditional statement to update
-          // if that id already exists to handle the case where we haven't yet
-          // created a meta data row for that post
-          const insertObject = Object.assign({}, updateObject, { id: articleObject.id });
-          const insertQuery = database('articles').insert(insertObject).toString();
-          // Using a fixed array of keys to make sure we have the same order every time
-          const fields = Object.keys(updateObject);
-          let rawUpdateQuery = '';
-          fields.forEach((field) => {
-            rawUpdateQuery += ` ${field} = :${field}`;
-          });
-          const query = `${insertQuery} ON DUPLICATE KEY UPDATE\
-${database.raw(rawUpdateQuery, updateObject)}`;
-
-          database.raw(query)
-          .then((data) => {
-            if (data.length < 1 || data[0].constructor.name !== 'OkPacket') {
-              throw new Error(`Problems updating meta data of article: ${slug}`);
-            }
-            updatesReturned++;
-            if (updatesReturned >= updatesCalled) {
-              // If categories changed make sure issue data is still consistent
-              if (articlesWithChangedCategory.length > 0) {
-                database.distinct('issue_id').select()
-                .from('issues_posts_order')
-                .innerJoin('articles', 'articles.id', '=', 'issues_posts_order.article_id')
-                .whereIn('articles.slug', articlesWithChangedCategory)
-                .then((issueRows) => {
-                  const issuesToUpdate = issueRows.map(row => row.issue_id);
-                  // If the articles were actually published in any issues
-                  if (issuesToUpdate.length > 0) {
-                    this.orderArticlesInIssues(issuesToUpdate).then((flag) => {
-                      if (flag !== true) {
-                        throw new Error(`error while reordering articles in issues: \
-${JSON.stringify(issuesToUpdate)}`);
-                      }
-                      resolve(true);
-                    });
-                  } else {
-                    // Nothing to fix
-                    resolve(true);
-                  }
-                });
-              }
-            }
-          });
-        });
       });
     });
   });
@@ -1347,7 +1211,7 @@ export function updateIssueArticles(issueNumber, featuredArticles, picks, mainAr
                   }).map(article => article.id);
 
                   database('articles').whereIn('id', toPublish)
-                  .update('gazelle_published_at', moment(date).format('YYYY-MM-DD HH:mm:ss'))
+                  .update('published_at', moment(date).format('YYYY-MM-DD HH:mm:ss'))
                   .then(() => {
                     resolve(results);
                   });
@@ -1390,7 +1254,7 @@ export function updateIssueData(jsonGraphArg) {
 export function publishIssue(issue_id) {
   return new Promise((resolve) => {
     // We first find all unpublished articles in the issue
-    database.select('articles.id', 'slug', 'gazelle_published_at')
+    database.select('articles.id', 'slug', 'published_at')
     .from('articles')
     .innerJoin('issues_posts_order', 'articles.id', '=', 'issues_posts_order.article_id')
     .where('issue_id', '=', issue_id)
@@ -1415,7 +1279,7 @@ export function publishIssue(issue_id) {
       const currentTime = moment(dateObject).format('YYYY-MM-DD HH:mm:ss');
       database('articles')
       .whereIn('id', toPublish)
-      .update({ gazelle_published_at: currentTime })
+      .update({ published_at: currentTime })
       .then(() => {
         // Now we can publish the issue
         const currentDate = moment(dateObject).format('YYYY-MM-DD');
@@ -1588,4 +1452,111 @@ export function getSemesterTeams(semesterName, teamIndices) {
       resolve(rows);
     })
   ));
+}
+
+export async function getNumArticles() {
+  const rows = await database('articles').count('* as numArticles');
+  return rows[0].numArticles;
+}
+
+/**
+ * Updates which category an article belongs to
+ * @param {Object} jsonGraphArg - An object of type { [slug]: articleUpdateObject }
+ * @returns {Promise<string[]>} - Slugs of the articles that had their category changed
+ */
+async function updateArticleCategories(jsonGraphArg) {
+  // Apart from restructuring, this operation filters out all
+  // the articles that don't have a category update requested
+  const articleCategoryPairs = _.map(jsonGraphArg, (articleUpdater, slug) => {
+    if (articleUpdater.hasOwnProperty('category')) {
+      return {
+        articleSlug: slug,
+        categorySlug: articleUpdater.category,
+      };
+    }
+    return null;
+  }).filter(x => x !== null);
+  if (articleCategoryPairs.length === 0) {
+    return [];
+  }
+
+  const categorySlugs = _.uniq(articleCategoryPairs.map(x => x.categorySlug));
+  // Get the ids of each of the categories as that's what we'll have to update the foreign key with
+  const categoryRows = await database.select('slug', 'id').from('categories')
+    .whereIn('slug', categorySlugs);
+
+  const categorySlugToID = {};
+
+  categoryRows.forEach(row => {
+    categorySlugToID[row.slug] = row.id;
+  });
+
+  const updatePromises = articleCategoryPairs.map(pair => {
+    const categoryID = categorySlugToID[pair.categorySlug];
+    const updateObject = { category_id: categoryID };
+    return database('articles').where('slug', '=', pair.articleSlug)
+      .update(updateObject);
+  });
+  // eslint-disable-next-line
+  await Promise.all(updatePromises);
+  return articleCategoryPairs.map(x => x.articleSlug);
+}
+
+/**
+ * Updates articles directly tied to an article
+ * @param {Object} jsonGraphArg - An object of type { [slugs]: articleUpdateObject[] }
+ * @returns {Promise<boolean>} - Whether the update was a success
+ */
+export async function updateArticles(jsonGraphArg) {
+  const updatePromises = _.map(jsonGraphArg, (articleUpdater, slug) => {
+    const processedArticleUpdater = {
+      ...articleUpdater,
+    };
+    // We only store a foreign key to the categories table so we won't update it in this query
+    delete processedArticleUpdater.category;
+    return database('articles').where('slug', '=', slug)
+      .update(processedArticleUpdater);
+  });
+  updatePromises.push(updateArticleCategories(jsonGraphArg));
+  const returnValues = await Promise.all(updatePromises);
+  const articlesWithChangedCategory = returnValues[returnValues.length - 1];
+  // If categories changed make sure issue data is still consistent
+  if (articlesWithChangedCategory.length > 0) {
+    const issueRows = await database.distinct('issue_id').select()
+      .from('issues_posts_order')
+      .innerJoin('articles', 'articles.id', '=', 'issues_posts_order.article_id')
+      .whereIn('articles.slug', articlesWithChangedCategory);
+
+    const issuesToUpdate = issueRows.map(row => row.issue_id);
+    // If the articles were actually published in any issues
+    if (issuesToUpdate.length > 0) {
+      const flag = await orderArticlesInIssues(issuesToUpdate);
+      if (!flag) {
+        const msg = `error while reordering articles in issues: ${JSON.stringify(issuesToUpdate)}`;
+        throw new Error(msg);
+      }
+    }
+  }
+
+  // It hasn't thrown an error yet so it must have been a success
+  return true;
+}
+
+/**
+ * @typedef PaginationArticle
+ * @param {string} slug - The slug of the article
+ */
+/**
+ * Fetches a page of articles where pages are a given length
+ * @param {number} pageLength - Length of page to be fetched
+ * @param {number} pageIndex - Which page to fetch of size pageLength
+ * @returns {Promise<PaginationArticle[]>} - An array of articles on the page
+ */
+export async function getPaginatedArticle(pageLength, pageIndex) {
+  const offset = pageLength * pageIndex;
+  const articles = await database.select('slug').from('articles')
+    .orderBy('created_at', 'DESC')
+    .limit(pageLength)
+    .offset(offset);
+  return articles;
 }

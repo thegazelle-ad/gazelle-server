@@ -40,7 +40,7 @@ const styles = {
   },
 };
 
-const ARTICLE_FIELDS = ['title', 'teaser', 'category', 'image', 'slug', 'html'];
+const ARTICLE_FIELDS = ['title', 'teaser', 'category', 'image_url', 'slug', 'html'];
 const AUTHOR_FIELDS = ['id', 'name', 'slug'];
 
 export default class MainIssueController extends FalcorController {
