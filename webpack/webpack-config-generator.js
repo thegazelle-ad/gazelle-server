@@ -224,41 +224,21 @@ const generateWebpackConfig = (config) => {
  */
 function getBabelLoader(nodeEnv, type) {
   const isDev = nodeEnv === undefined;
-  const presets = (isDev
-    ? ['react']
-    : [
-      'react',
-      [
-        'env',
-        {
-          targets: (
-            type === 'server'
-              // This is for the node server
-              ? {
-                node: 'current',
-                /**
-                 * We want this behaviour but it's only in beta right now,
-                 * we can uncomment this whe we upgrade to v7 of babel
-                 *
-                 * // Disable the default behaviour of finding
-                 * // browserslist key in package.json
-                 * browsers: '',
-                 */
-              }
-              /**
-               * We want this behaviour but it's only in beta right now,
-               * we can uncomment this when we upgrade to v7 of babel
-               *
-               * // If not node, then it is 'web' and therefore our client scripts
-               * // Here we simply let preset-env find the browserlist key
-               * : undefined
-               */
-            : { browsers: '> 1%, last 2 versions, Firefox ESR' }
-          ),
-        },
-      ],
-    ]
-  );
+  const presets = ['react'];
+  if (!isDev && type !== 'server') {
+    // We are not in dev so we need to support legacy browsers
+    presets.push([
+      'env',
+      {
+        /**
+         * We want to actually just leave this out and let babel find the common
+         * browserslist config stored in package.json but this behaviour is only in beta
+         * so we can uncomment this when we upgrade to v7 of babel
+         */
+        targets: { browsers: '> 1%, last 2 versions, Firefox ESR' },
+      },
+    ]);
+  }
 
   const plugins = isDev ? [] : ['transform-object-rest-spread', 'array-includes'];
 
