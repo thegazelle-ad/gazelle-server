@@ -1450,12 +1450,12 @@ export async function getNumArticles() {
 
 /**
  * Updates which category an article belongs to
- * @param {Object} jsonGraphArg - An object of type { [slugs]: articleUpdateObject[] }
+ * @param {Object} jsonGraphArg - An object of type { [slug]: articleUpdateObject }
  * @returns {Promise<string[]>} - Slugs of the articles that had their category changed
  */
 async function updateArticleCategories(jsonGraphArg) {
-  // This variable filters out all articles that don't have a category update requested
-  // and then structures them in pairs of article and category slugs as seen below
+  // Apart from restructuring, this operation filters out all
+  // the articles that don't have a category update requested
   const articleCategoryPairs = _.map(jsonGraphArg, (articleUpdater, slug) => {
     if (articleUpdater.hasOwnProperty('category')) {
       return {
