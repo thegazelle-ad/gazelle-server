@@ -1,6 +1,6 @@
 import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
-import { capFirstLetter, debounce } from 'lib/utilities';
+import { capFirstLetter, slugify, debounce } from 'lib/utilities';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -11,6 +11,7 @@ import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
 import TextField from 'material-ui/TextField';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 
 const requiredFields = {};
 
@@ -131,6 +132,7 @@ export default class SearchBar extends BaseComponent {
     const menuComponent = (this.props.category === 'articles')
       ? ArticlesSearch
       : AuthorsSearch;
+    let slug = '';
     return (
       <div className={`${searchBarClass} ${searchBarClass}-${this.props.category}`}>
         <TextField
@@ -142,6 +144,24 @@ export default class SearchBar extends BaseComponent {
         />
         <div>
           <Menu style={!this.props.fullWidth && { width: 200 }}>
+            {
+              this.props.enableAdd &&
+              this.state.searchValue &&
+              this.state.searchSuggestions.length === 0 &&
+              (slug = slugify(this.props.category, this.searchValue)) &&
+              (
+                <div className={`search-bar-result search-bar-${this.props.category}`} key={slug}>
+                  {/* eslint-disable react/jsx-no-bind */}
+                  <MenuItem
+                    leftIcon={<ContentAdd />}
+                    primaryText={this.state.searchValue}
+                    onClick={this.onClick.bind(this, { value: this.searchValue, slug })}
+                    disabled={this.props.disabled}
+                  />
+                  {/* eslint-enable react/jsx-no-bind */}
+                </div>
+              )
+            }
             { /* eslint-disable react/jsx-no-bind */
               this.state.searchSuggestions.map(
                 (item) => menuComponent(item, this.props, this.handleClick.bind(this, item))
@@ -165,6 +185,7 @@ SearchBar.propTypes = {
   showPubDate: React.PropTypes.bool,
   debounceTime: React.PropTypes.number,
   disabled: React.PropTypes.any,
+  enableAdd: React.PropTypes.bool,
   // Each of these will be concatenated onto the base search path
   // so don't supply the base search path
   extraPathSets: (props, propName, componentName) => {
