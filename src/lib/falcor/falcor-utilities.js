@@ -77,6 +77,14 @@ export function pathSetsInCache(cache, falcorPathSets) {
     if (!curObject.hasOwnProperty(key)) {
       return false;
     }
+    /*
+    when unpublishing, published_at value should not exist
+    but it does and it's set to null - figure out why/where
+    this if statement is a hacky way of dealing with that and I think might break other things
+    */
+    if (curObject[key] === null) {
+      return false;
+    }
     const val = curObject[key];
     if (val.$type) {
       switch (val.$type) {

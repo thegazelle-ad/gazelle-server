@@ -248,7 +248,7 @@ export default class MainIssueController extends FalcorController {
           return;
         }
         // The issue is valid, we can publish it
-        this.safeSetState({ publishing: true });
+        this.safeSetState({ publishing: true, published_at: new Date() });
         this.falcorCall(['issues', 'byNumber', issueNumber, 'publishIssue'],
           [issue.id], undefined, undefined, undefined, callback);
       }
@@ -319,9 +319,9 @@ export default class MainIssueController extends FalcorController {
 
     if (this.isFormFieldChanged(parsedIssueNumber, falcorData.issueNumber)) {
       if (!window.confirm('You are about to change the issue number, ' +
-        'which could cause duplicate issues in the numbering of the database, ' +
+        'which will change the URL to all articles in this issue, ' +
         'among other things. It is strongly recommended not to change the ' +
-        'issue number unless it is very crucial. Are you sure you wish to continue?'
+        'issue number unless it is very crucial. Are you sure you wish to proceed?'
         )) {
         return;
       }
@@ -404,6 +404,7 @@ export default class MainIssueController extends FalcorController {
               floatingLabelText="Issue Number"
               value={this.state.issueNumber}
               onChange={this.fieldUpdaters.issueNumber}
+              disabled
             />
             <br />
             <DatePicker

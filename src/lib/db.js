@@ -5,7 +5,7 @@ import stable from 'stable';
 import databaseConfig from 'config/database.config';
 import { mapGhostNames } from 'lib/falcor/falcor-utilities';
 import _ from 'lodash';
-import { formatDate, formatDateTime } from 'lib/utilities';
+import moment from 'moment';
 
 const knexConnectionObject = {
   client: 'mysql',
@@ -1366,7 +1366,7 @@ ${JSON.stringify(issuesToUpdate)}`);
                     }).map(article => article.id);
 
                     database('posts_meta').whereIn('id', toPublish)
-                    .update('gazelle_published_at', formatDateTime(date))
+                    .update('gazelle_published_at', moment(date).format('YYYY-MM-DD HH:mm:ss'))
                     .then(() => {
                       resolve(results);
                     });
@@ -1393,7 +1393,7 @@ ${JSON.stringify(issuesToUpdate)}`);
       }
       if (issueObject.hasOwnProperty('published_at') &&
         (issueObject.published_at || issueObject.published_at === null)) {
-        updateObject.published_at = formatDate(new Date(issueObject.published_at));
+        updateObject.published_at = moment(issueObject.published_at).format('YYYY-MM-DD');
       }
       if (issueObject.hasOwnProperty('issueNumber') && issueObject.issueNumber) {
         updateObject.issue_order = issueObject.issueNumber;
@@ -1432,13 +1432,13 @@ ${JSON.stringify(issuesToUpdate)}`);
             results.publishedArticles.push(article.slug);
           }
         });
-        const currentTime = formatDateTime(dateObject);
+        const currentTime = moment(dateObject).format('YYYY-MM-DD HH:mm:ss');
         database('posts_meta')
         .whereIn('id', toPublish)
         .update({ gazelle_published_at: currentTime })
         .then(() => {
           // Now we can publish the issue
-          const currentDate = formatDate(dateObject);
+          const currentDate = moment(dateObject).format('YYYY-MM-DD');
           database('issues')
           .where('id', '=', issue_id)
           .update({ published_at: currentDate })
