@@ -25,3 +25,7 @@ AuthorList.propTypes = {
     }),
   ).isRequired,
 };
+
+AuthorList.defaultProps = {
+  authors: [],
+};

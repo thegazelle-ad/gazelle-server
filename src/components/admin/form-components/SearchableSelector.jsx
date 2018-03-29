@@ -130,7 +130,7 @@ export default class SearchableSelector extends React.Component {
 SearchableSelector.propTypes = {
   value: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string.isRequired,
+      id: PropTypes.number.isRequired,
       name: PropTypes.string.isRequired,
     }),
   ).isRequired,

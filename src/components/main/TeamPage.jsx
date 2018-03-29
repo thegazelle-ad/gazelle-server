@@ -27,7 +27,7 @@ TeamPage.propTypes = {
   teamData: React.PropTypes.arrayOf(
     React.PropTypes.shape({
       teamInfo: React.PropTypes.shape({
-        name: React.propTypes.string.isRequired,
+        name: React.PropTypes.string.isRequired,
       }).isRequired,
       members: TeamMembersList.propTypes.members,
     }),

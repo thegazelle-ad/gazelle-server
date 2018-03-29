@@ -375,7 +375,7 @@ export default class ImageUploader extends BaseComponent {
           <div>
             {isUpload
               ? React.cloneElement(this.props.children, {
-                  images: imagePreviews,
+                  imageUrls: imagePreviews,
                   onChange: this.handlePreviewChange,
                 })
               : this.props.children}

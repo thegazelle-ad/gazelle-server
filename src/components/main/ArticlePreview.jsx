@@ -2,6 +2,7 @@ import React from 'react';
 import SharingButtons from 'components/main/SharingButtons';
 import { Link } from 'react-router';
 import BaseComponent from 'lib/BaseComponent';
+import _ from 'lodash';
 
 // Components
 import AuthorList from 'components/main/AuthorList';
@@ -43,7 +44,7 @@ export default class ArticlePreview extends BaseComponent {
           </Link>
           {/* Author(s) */}
           <div className="article-preview__content__authors">
-            <AuthorList authors={article.authors} />
+            <AuthorList authors={_.toArray(article.authors)} />
           </div>
 
           {/* Article teaser */}

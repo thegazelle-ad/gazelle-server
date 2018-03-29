@@ -602,7 +602,7 @@ export function issueCategoryArticleQuery(issueNumbers) {
               let categoryIndex;
               if (
                 has.call(categoriesHashMap, issueNumber) &&
-                has(categoriesHashMap[issueNumber], postRow.category_id)
+                has.call(categoriesHashMap[issueNumber], postRow.category_id)
               ) {
                 categoryIndex =
                   categoriesHashMap[issueNumber][postRow.category_id];
@@ -619,7 +619,9 @@ export function issueCategoryArticleQuery(issueNumbers) {
                   categoriesHashMap[issueNumber] = {};
                 }
                 // Since we did the previous check it must not also have the articles key
-                if (has(categoriesHashMap[issueNumber], postRow.category_id)) {
+                if (
+                  has.call(categoriesHashMap[issueNumber], postRow.category_id)
+                ) {
                   throw new Error(
                     'Problem with if else statement in dbIssueCategoryArticleQuery',
                   );
@@ -634,7 +636,7 @@ export function issueCategoryArticleQuery(issueNumbers) {
               if (!has.call(results, issueNumber)) {
                 results[issueNumber] = [];
               }
-              if (!has(results[issueNumber], categoryIndex)) {
+              if (!has.call(results[issueNumber], categoryIndex)) {
                 results[issueNumber][categoryIndex] = [];
               }
               if (results[issueNumber][categoryIndex].length !== postIndex) {

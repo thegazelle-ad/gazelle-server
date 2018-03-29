@@ -184,7 +184,7 @@ export default class IssueController extends FalcorController {
           mapLegacyIssueSlugsToIssueNumber(this.props.params.issueNumber)
         ];
       }
-      const trendingData = this.state.data.trending;
+      const trendingData = _.toArray(this.state.data.trending);
       /*
        * Category object structure:
        * {
@@ -202,7 +202,7 @@ export default class IssueController extends FalcorController {
             <Link to={`/category/${category.slug}`}>
               <h2 className="section-header">{category.name}</h2>
             </Link>
-            <ArticleList articles={category.articles} />
+            <ArticleList articles={_.toArray(category.articles)} />
           </div>
         ));
 
@@ -242,7 +242,7 @@ export default class IssueController extends FalcorController {
           <div className="issue">
             <FeaturedArticle article={issueData.featured} />
             <div className="top-articles">
-              <EditorsPicks articles={issueData.picks} />
+              <EditorsPicks articles={_.toArray(issueData.picks)} />
               <Trending articles={trendingData} />
             </div>
             {renderCategories}

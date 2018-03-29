@@ -2,6 +2,7 @@ import React from 'react';
 import ArticleList from 'components/main/ArticleList';
 import BaseComponent from 'lib/BaseComponent';
 import { parseMarkdown } from 'lib/react-utilities';
+import _ from 'lodash';
 
 export default class Author extends BaseComponent {
   render() {
@@ -24,7 +25,7 @@ export default class Author extends BaseComponent {
             </p>
           </div>
         </div>
-        <ArticleList articles={author.articles} />
+        <ArticleList articles={_.toArray(author.articles)} />
       </div>
     );
   }

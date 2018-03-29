@@ -1,6 +1,7 @@
 import React from 'react';
 import Helmet from 'react-helmet'; // Add <head> data
 import { viewArticle, isArticleViewed } from 'lib/utilities';
+import _ from 'lodash';
 
 // Components
 import Article from 'components/main/Article';
@@ -143,14 +144,14 @@ export default class ArticleController extends FalcorController {
             teaser={articleData.teaser}
             published_at={articleData.published_at}
             html={articleData.html}
-            authors={articleData.authors}
+            authors={_.toArray(articleData.authors)}
             featuredImage={articleData.image_url}
             url={
               `thegazelle.org/issue/${articleData.issueNumber}/` +
               `${articleData.category}/${articleData.slug}`
             }
-            trending={trendingData}
-            relatedArticles={relatedArticlesData}
+            trending={_.toArray(trendingData)}
+            relatedArticles={_.toArray(relatedArticlesData)}
           />
         </div>
       );

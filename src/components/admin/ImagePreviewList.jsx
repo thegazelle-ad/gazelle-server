@@ -23,6 +23,6 @@ export default class ImagePreviewList extends BaseComponent {
 // with React.cloneElement which is needed with current modularized
 // structure though.
 ImagePreviewList.propTypes = {
-  imageUrls: React.PropTypes.arrayOf(React.PropTypes.string),
+  imageUrls: React.PropTypes.arrayOf(React.PropTypes.element),
   onChange: React.PropTypes.func,
 };

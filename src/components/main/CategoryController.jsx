@@ -3,6 +3,7 @@ import FalcorController from 'lib/falcor/FalcorController';
 import Helmet from 'react-helmet';
 import ArticleList from 'components/main/ArticleList';
 import NotFound from 'components/main/NotFound';
+import _ from 'lodash';
 
 export default class CategoryController extends FalcorController {
   static getFalcorPathSets(params) {
@@ -80,7 +81,7 @@ export default class CategoryController extends FalcorController {
           <h2 className="category__header">{categoryData.name}</h2>
 
           {/* Render all articles fetched through ArticleList */}
-          <ArticleList articles={categoryData.articles} />
+          <ArticleList articles={_.toArray(categoryData.articles)} />
         </div>
       );
     }

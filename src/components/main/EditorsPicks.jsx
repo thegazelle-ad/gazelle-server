@@ -16,5 +16,5 @@ export default class EditorsPicks extends BaseComponent {
 }
 
 EditorsPicks.propTypes = {
-  articles: React.propTypes.articles,
+  articles: ArticleList.propTypes.articles,
 };

@@ -18,7 +18,7 @@ import FalcorRouter from 'lib/falcor/FalcorRouter';
 import sourcemap from 'source-map-support';
 
 /* Our helper functions */
-import { filterByEnvironment, isProduction } from 'lib/utilities';
+import { filterByEnvironment } from 'lib/utilities';
 
 /* The actual server code for the two websites */
 import runMainServer from 'server-code/main-server';
@@ -30,9 +30,7 @@ const args = ['DEVELOPMENT BUILD', 'STAGING BUILD', 'PRODUCTION BUILD'];
 console.log(filterByEnvironment(...args)); // eslint-disable-line no-console
 
 // Allow node to use sourcemaps
-if (isProduction) {
-  sourcemap.install();
-}
+sourcemap.install();
 
 // Shared serverModel
 const serverModel = new falcor.Model({
