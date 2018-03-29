@@ -206,7 +206,7 @@ export default class ArticleController extends FalcorController {
     const shouldUpdateCategory = this.state.category;
     const fields = shouldUpdateCategory ?
                    ['title', 'teaser', 'image_url', 'category'] :
-                   ['teaser', 'image_url'];
+                   ['title', 'teaser', 'image_url'];
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
       paths: [
