@@ -158,47 +158,8 @@ const generateWebpackConfig = (config) => {
           ],
 
           use: [
-            // Babel for transpiling ESNext and React
-            {
-              loader: 'babel-loader',
-              options: {
-                presets: [
-                  'react',
-                  [
-                    'env',
-                    {
-                      targets: (
-                        config.type === 'server'
-                          // This is for the node server
-                          ? {
-                            node: 'current',
-                            /**
-                             * We want this behaviour but it's only in beta right now,
-                             * we can uncomment this when we upgrade to v7 of babel
-                             *
-                             * // Disable the default behaviour of finding
-                             * // browserslist key in package.json
-                             * browsers: '',
-                             */
-                            browsers: '> 1%, last 2 versions, Firefox ESR',
-                          }
-                          /**
-                           * We want this behaviour but it's only in beta right now,
-                           * we can uncomment this when we upgrade to v7 of babel
-                           *
-                           * // If not node, then it is 'web' and therefore our client scripts
-                           * // Here we simply let preset-env find the browserlist key
-                           * : undefined
-                           */
-                         : { browsers: '> 1%, last 2 versions, Firefox ESR' }
-                      ),
-                    },
-                  ],
-                ],
-                plugins: ['transform-object-rest-spread', 'array-includes'],
-                minified: config.NODE_ENV !== undefined,
-              },
-            },
+            // Babel for transpiling ESNext in production and React always,
+            getBabelLoader(config.NODE_ENV, config.type),
             // Lint all that is compiled, notice the order so eslint runs before babel
             'eslint-loader',
           ],
@@ -250,5 +211,47 @@ const generateWebpackConfig = (config) => {
     },
   };
 };
+
+/**
+ * Build the babel loader depending on the environment. In dev we can guarantee that
+ * we use new browsers so then we don't need babel for anything but react as all the
+ * features we are using are natively implemented, this speeds up dev builds and also
+ * stops us from needing regenerator runtime imported during dev which was making
+ * debugging a pain
+ * @param {string} nodeEnv - it is 'staging' or 'production' respectively and undefined for dev
+ * @param {string} type - 'server', 'main-client' or 'admin-client' respectively
+ * @returns {Object} the loader object to be used in the module: { rules: { use: [] } } array
+ */
+function getBabelLoader(nodeEnv, type) {
+  const isDev = nodeEnv === undefined;
+  const presets = ['react'];
+  if (!isDev && type !== 'server') {
+    // We are not in dev so we need to support legacy browsers
+    presets.push([
+      'env',
+      {
+        /**
+         * We want to actually just leave this out and let babel find the common
+         * browserslist config stored in package.json but this behaviour is only in beta
+         * so we can uncomment this when we upgrade to v7 of babel
+         */
+        targets: { browsers: '> 1%, last 2 versions, Firefox ESR' },
+      },
+    ]);
+  }
+
+  const plugins = !isDev && type !== 'server'
+  ? ['transform-object-rest-spread', 'array-includes']
+  : [];
+
+  return {
+    loader: 'babel-loader',
+    options: {
+      presets,
+      plugins,
+      minified: !isDev,
+    },
+  };
+}
 
 module.exports = generateWebpackConfig;
