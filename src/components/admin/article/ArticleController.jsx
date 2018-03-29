@@ -31,7 +31,7 @@ export default class ArticleController extends FalcorController {
     this.isFormChanged = this.isFormChanged.bind(this);
     this.updateAuthors = (authors) => this.safeSetState({ authors });
     this.updateTeaser = (teaser) => this.safeSetState({ teaser });
-    this.updateImage = (image) => this.safeSetState({ image });
+    this.updateImage = (imageUrl) => this.safeSetState({ imageUrl });
     this.updateCategory = (category) => this.safeSetState({ category });
     this.safeSetState({
       changed: false,
