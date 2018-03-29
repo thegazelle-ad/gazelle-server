@@ -25,7 +25,7 @@ export default class SearchBar extends BaseComponent {
 
     this.debouncedGetSuggestions = debounce(() => {
       const query = this.state.searchValue;
-      if (!(query.trim())) {
+      if (!query.trim()) {
         this.safeSetState({ searchSuggestions: [] });
         return;
       }
@@ -41,13 +41,19 @@ export default class SearchBar extends BaseComponent {
           // Remove duplicates
           fields = _.uniq(fields);
 
-          pathSets.push(
-            ['search', 'posts', query, { length: this.props.length }, fields]
-          );
+          pathSets.push([
+            'search',
+            'posts',
+            query,
+            { length: this.props.length },
+            fields,
+          ]);
           if (this.props.extraPathSets) {
-            const extraPathSets = this.props.extraPathSets.map(pathSet => (
-              ['search', 'posts', query, { length: this.props.length }].concat(pathSet)
-            ));
+            const extraPathSets = this.props.extraPathSets.map(pathSet =>
+              ['search', 'posts', query, { length: this.props.length }].concat(
+                pathSet,
+              ),
+            );
             pathSets = pathSets.concat(extraPathSets);
           }
           break;
@@ -55,13 +61,22 @@ export default class SearchBar extends BaseComponent {
           // Add required fields and remove duplicates
           fields = _.uniq(this.props.fields.concat(['name', 'slug']));
 
-          pathSets.push(
-            ['search', 'authors', query, { length: this.props.length }, fields]
-          );
+          pathSets.push([
+            'search',
+            'authors',
+            query,
+            { length: this.props.length },
+            fields,
+          ]);
           if (this.props.extraPathSets) {
-            const extraPathSets = this.props.extraPathSets.map(pathSet => (
-              ['search', 'authors', query, { length: this.props.length }].concat(pathSet)
-            ));
+            const extraPathSets = this.props.extraPathSets.map(pathSet =>
+              [
+                'search',
+                'authors',
+                query,
+                { length: this.props.length },
+              ].concat(pathSet),
+            );
             pathSets = pathSets.concat(extraPathSets);
           }
           break;
@@ -69,8 +84,7 @@ export default class SearchBar extends BaseComponent {
           throw new Error('Invalid mode was passed to SearchBar');
       }
 
-      this.props.model.get(...pathSets)
-      .then((x) => {
+      this.props.model.get(...pathSets).then(x => {
         if (!x) {
           this.safeSetState({ searchSuggestions: [] });
           return;
@@ -122,31 +136,31 @@ export default class SearchBar extends BaseComponent {
           />
           <div>
             <Menu>
-              {
-                this.state.searchSuggestions.map((article) => {
-                  let textShown = article.title;
-                  if (this.props.showPubDate) {
-                    let date;
-                    if (article.published_at) {
-                      date = `Published: ${moment(article.published_at).format('MMM DD, YYYY')}`;
-                    } else {
-                      date = 'Unpublished';
-                    }
-                    textShown += ` - ${date}`;
+              {this.state.searchSuggestions.map(article => {
+                let textShown = article.title;
+                if (this.props.showPubDate) {
+                  let date;
+                  if (article.published_at) {
+                    date = `Published: ${moment(article.published_at).format(
+                      'MMM DD, YYYY',
+                    )}`;
+                  } else {
+                    date = 'Unpublished';
                   }
-                  return (
-                    <div className={searchResultClass} key={article.slug}>
-                      {/* eslint-disable react/jsx-no-bind */}
-                      <MenuItem
-                        primaryText={textShown}
-                        onClick={this.handleClick.bind(this, article)}
-                        disabled={this.props.disabled}
-                      />
-                      {/* eslint-enable react/jsx-no-bind */}
-                    </div>
-                  );
-                })
-              }
+                  textShown += ` - ${date}`;
+                }
+                return (
+                  <div className={searchResultClass} key={article.slug}>
+                    {/* eslint-disable react/jsx-no-bind */}
+                    <MenuItem
+                      primaryText={textShown}
+                      onClick={this.handleClick.bind(this, article)}
+                      disabled={this.props.disabled}
+                    />
+                    {/* eslint-enable react/jsx-no-bind */}
+                  </div>
+                );
+              })}
             </Menu>
           </div>
         </div>
@@ -162,39 +176,43 @@ export default class SearchBar extends BaseComponent {
           />
           <div>
             <Menu style={{ width: 200 }}>
-              {
-                this.state.searchSuggestions.map((author) => (
-                  <div className={searchResultClass} key={author.slug}>
-                    {/* eslint-disable react/jsx-no-bind */}
-                    <MenuItem
-                      primaryText={author.name}
-                      onClick={this.handleClick.bind(this, author)}
-                      disabled={this.props.disabled}
-                    />
-                    {/* eslint-enable react/jsx-no-bind */}
-                  </div>
-                ))
-              }
+              {this.state.searchSuggestions.map(author => (
+                <div className={searchResultClass} key={author.slug}>
+                  {/* eslint-disable react/jsx-no-bind */}
+                  <MenuItem
+                    primaryText={author.name}
+                    onClick={this.handleClick.bind(this, author)}
+                    disabled={this.props.disabled}
+                  />
+                  {/* eslint-enable react/jsx-no-bind */}
+                </div>
+              ))}
             </Menu>
           </div>
         </div>
       );
     }
-    return <div style={{ color: 'red' }}>Sorry, an error occured, please contact developers</div>;
+    return (
+      <div style={{ color: 'red' }}>
+        Sorry, an error occured, please contact developers
+      </div>
+    );
   }
 }
 
 /* eslint-disable consistent-return */
 SearchBar.propTypes = {
-  model: React.PropTypes.object.isRequired,
+  model: React.PropTypes.shape({
+    get: React.PropTypes.func.isRequired,
+  }).isRequired,
   fields: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
   mode: React.PropTypes.oneOf(['authors', 'articles']).isRequired,
   length: React.PropTypes.number.isRequired,
   handleClick: React.PropTypes.func.isRequired,
   showPubDate: React.PropTypes.bool,
-  style: React.PropTypes.object,
+  style: React.PropTypes.shape({}),
   debounceTime: React.PropTypes.number,
-  disabled: React.PropTypes.any,
+  disabled: React.PropTypes.bool,
   placeholder: React.PropTypes.string,
   // Each of these will be concatenated onto the base search path
   // so don't supply the base search path
@@ -205,18 +223,18 @@ SearchBar.propTypes = {
       return;
     }
     let error = new Error(
-      `Invalid prop ${propName} supplied to ${componentName}. It must be an array of pathSets.`
+      `Invalid prop ${propName} supplied to ${componentName}. It must be an array of pathSets.`,
     );
     if (!(prop instanceof Array)) {
       return error;
     }
-    const valid = prop.every((value) => {
+    const valid = prop.every(value => {
       if (!(value instanceof Array)) {
         return false;
       } else if (value[0] === 'search') {
         error = new Error(
           `Invalid prop ${propName} supplied to ${componentName}. ` +
-          'Just add the extension, do not add "search"... as this is already considered.'
+            'Just add the extension, do not add "search"... as this is already considered.',
         );
         return false;
       }

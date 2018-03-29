@@ -22,15 +22,9 @@ export default class ListSelector extends React.Component {
         autoWidth={false}
         style={{ width: 200 }}
       >
-        {
-          this.props.elements.map(type => (
-            <MenuItem
-              value={type.slug}
-              key={type.slug}
-              primaryText={type.name}
-            />
-          ))
-        }
+        {this.props.elements.map(type => (
+          <MenuItem value={type.slug} key={type.slug} primaryText={type.name} />
+        ))}
       </SelectField>
     );
   }
@@ -41,10 +35,16 @@ ListSelector.propTypes = {
     PropTypes.shape({
       slug: PropTypes.string,
       name: PropTypes.string,
-    })
+    }),
   ).isRequired,
+  update: PropTypes.func.isRequired,
   label: PropTypes.string,
   disabled: PropTypes.bool,
-  update: PropTypes.func,
   chosenElement: PropTypes.string,
+};
+
+ListSelector.defaultProps = {
+  label: '',
+  disabled: false,
+  chosenElement: undefined,
 };

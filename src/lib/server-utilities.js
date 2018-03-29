@@ -38,16 +38,16 @@ export const deleteFile = Promise.promisify(fs.unlink);
  */
 export function copyFile(source, target) {
   return new Promise((resolve, reject) => {
-    fs.exists(source, (doesExist) => {
+    fs.exists(source, doesExist => {
       if (doesExist) {
         const rd = fs.createReadStream(source);
-        rd.on('error', (error) => {
+        rd.on('error', error => {
           rd.destroy();
           reject(error);
         });
 
         const wr = fs.createWriteStream(target);
-        wr.on('error', (error) => {
+        wr.on('error', error => {
           wr.end();
           rd.destroy();
           reject(error);

@@ -18,21 +18,40 @@ export default class ArticleController extends FalcorController {
         'articles',
         'bySlug',
         params.articleSlug,
-        ['title', 'teaser', 'html', 'published_at', 'issueNumber', 'category', 'slug', 'image_url'],
+        [
+          'title',
+          'teaser',
+          'html',
+          'published_at',
+          'issueNumber',
+          'category',
+          'slug',
+          'image_url',
+        ],
       ],
-      ['articles', 'bySlug', params.articleSlug, 'authors', { length: 10 }, ['name', 'slug']],
+      [
+        'articles',
+        'bySlug',
+        params.articleSlug,
+        'authors',
+        { length: 10 },
+        ['name', 'slug'],
+      ],
 
       // Fetch two related articles
       // TODO: convert fetching by category to fetching by tag
       [
-        'articles', 'bySlug',
+        'articles',
+        'bySlug',
         params.articleSlug,
         'related',
         { length: 2 },
         ['title', 'teaser', 'image_url', 'issueNumber', 'category', 'slug'],
       ],
       [
-        'articles', 'bySlug', params.articleSlug,
+        'articles',
+        'bySlug',
+        params.articleSlug,
         'related',
         { length: 2 },
         'authors',
@@ -41,9 +60,12 @@ export default class ArticleController extends FalcorController {
       ],
 
       // Fetch first five Trending articles
-      ['trending', { length: 6 }, ['title', 'issueNumber', 'category', 'slug', 'image_url']],
+      [
+        'trending',
+        { length: 6 },
+        ['title', 'issueNumber', 'category', 'slug', 'image_url'],
+      ],
       ['trending', { length: 6 }, 'authors', { length: 10 }, ['name', 'slug']],
-
     ];
   }
 
@@ -55,7 +77,9 @@ export default class ArticleController extends FalcorController {
     // later to make this consistent for a user in general?)
     if (process.env.NODE_ENV !== 'beta' && !isArticleViewed(slug)) {
       viewArticle(slug);
-      this.props.model.call(['articles', 'bySlug', slug, 'addView'], [], [], []).then(() => {});
+      this.props.model
+        .call(['articles', 'bySlug', slug, 'addView'], [], [], [])
+        .then(() => {});
     }
   }
 
@@ -64,7 +88,9 @@ export default class ArticleController extends FalcorController {
     const slug = this.props.params.articleSlug;
     if (process.env.NODE_ENV !== 'beta' && !isArticleViewed(slug)) {
       viewArticle(slug);
-      this.props.model.call(['articles', 'bySlug', slug, 'addView'], [], [], []).then(() => {});
+      this.props.model
+        .call(['articles', 'bySlug', slug, 'addView'], [], [], [])
+        .then(() => {});
     }
   }
 
@@ -75,20 +101,21 @@ export default class ArticleController extends FalcorController {
         !this.state.data.articles.bySlug ||
         !this.state.data.articles.bySlug[this.props.params.articleSlug] ||
         !this.state.data.articles.bySlug[this.props.params.articleSlug].title ||
-        !this.state.data.articles.bySlug[this.props.params.articleSlug].issueNumber
+        !this.state.data.articles.bySlug[this.props.params.articleSlug]
+          .issueNumber
       ) {
-        return (
-          <NotFound />
-        );
+        return <NotFound />;
       }
 
-      const articleSlug = this.props.params.articleSlug;
+      const { articleSlug } = this.props.params;
       // Access data fetched via Falcor
       const articleData = this.state.data.articles.bySlug[articleSlug];
       const trendingData = this.state.data.trending;
       const relatedArticlesData = articleData.related;
       // make sure article meta image has default
-      const articleMetaImage = articleData.image_url || 'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
+      const articleMetaImage =
+        articleData.image_url ||
+        'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
       const meta = [
         // Search results
         { name: 'description', content: this.props.teaser },
@@ -110,10 +137,7 @@ export default class ArticleController extends FalcorController {
       ];
       return (
         <div>
-          <Helmet
-            meta={meta}
-            title={`${articleData.title} | The Gazelle`}
-          />
+          <Helmet meta={meta} title={`${articleData.title} | The Gazelle`} />
           <Article
             title={articleData.title}
             teaser={articleData.teaser}
@@ -132,10 +156,6 @@ export default class ArticleController extends FalcorController {
       );
     }
 
-    return (
-      <div>
-        Loading
-      </div>
-    );
+    return <div>Loading</div>;
   }
 }

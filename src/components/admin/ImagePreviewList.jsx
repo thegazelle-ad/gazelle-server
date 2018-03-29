@@ -7,15 +7,13 @@ export default class ImagePreviewList extends BaseComponent {
   }
 
   render() {
-    const { images } = this.props;
-    if (images && images.length) {
-      return <div className="imgPreviewList">{images}</div>;
+    const { imageUrls } = this.props;
+    if (imageUrls && imageUrls.length) {
+      return <div className="imgPreviewList">{imageUrls}</div>;
     }
     return (
       <div className="imgPreviewList">
-        <div className="previewText">
-          Please select image(s) for preview
-        </div>
+        <div className="previewText">Please select image(s) for preview</div>
       </div>
     );
   }
@@ -25,6 +23,6 @@ export default class ImagePreviewList extends BaseComponent {
 // with React.cloneElement which is needed with current modularized
 // structure though.
 ImagePreviewList.propTypes = {
-  images: React.PropTypes.array,
+  imageUrls: React.PropTypes.arrayOf(React.PropTypes.string),
   onChange: React.PropTypes.func,
 };

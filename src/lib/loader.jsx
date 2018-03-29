@@ -1,4 +1,4 @@
-import { isClient } from 'lib/utilities';
+import { has, isClient } from 'lib/utilities';
 import BaseComponent from 'lib/BaseComponent';
 import React from 'react';
 import classnames from 'classnames';
@@ -35,19 +35,19 @@ export function setLoading(name, isLoadingBool) {
     loadingCache[name] = true;
     // Check if we need to fire the callback
     if (loadingWasEmpty) {
-      loadingChangeCallbacks.forEach((cb) => {
+      loadingChangeCallbacks.forEach(cb => {
         cb(true);
       });
     }
   } else {
     const loadingWasEmpty = Object.keys(loadingCache).length === 0;
-    if (loadingCache.hasOwnProperty(name)) {
+    if (has.call(loadingCache, name)) {
       delete loadingCache[name];
     }
     const loadingIsEmpty = Object.keys(loadingCache).length === 0;
 
     if (!loadingWasEmpty && loadingIsEmpty) {
-      loadingChangeCallbacks.forEach((cb) => {
+      loadingChangeCallbacks.forEach(cb => {
         cb(false);
       });
     }
@@ -59,11 +59,10 @@ export function setLoading(name, isLoadingBool) {
 // This will handle calling that leaveCallback at the appropriate time (which
 // is when the data is done).
 export function signalLeaving(leaveCallback) {
-  transitionOutCallbacks.forEach((cb) => {
+  transitionOutCallbacks.forEach(cb => {
     cb(leaveCallback);
   });
 }
-
 
 // Pass a function in which will be called when the loading state has changed.
 // Callback is loadingChangeCallback(isLoading). There is currently no
@@ -72,7 +71,10 @@ export function registerLoaderCallback(newLoadingChangeCallback) {
   if (!isClient()) {
     return;
   }
-  if (!newLoadingChangeCallback || typeof newLoadingChangeCallback !== 'function') {
+  if (
+    !newLoadingChangeCallback ||
+    typeof newLoadingChangeCallback !== 'function'
+  ) {
     throw new Error('argument of registerLoaderCallback must be a function');
   }
 
@@ -85,7 +87,10 @@ export function registerTransitionOutCallback(newTransitionOutCallback) {
   if (!isClient()) {
     return;
   }
-  if (!newTransitionOutCallback || typeof newTransitionOutCallback !== 'function') {
+  if (
+    !newTransitionOutCallback ||
+    typeof newTransitionOutCallback !== 'function'
+  ) {
     throw new Error('argument of registerLoaderCallback must be a function');
   }
 
@@ -129,7 +134,11 @@ export class TransitionManager extends BaseComponent {
       case 'loading':
         break;
       case 'loadEnding':
-        this.delayedModeChange('loadEnding', 'fadingStart', TRANSITION_OUT_TIME);
+        this.delayedModeChange(
+          'loadEnding',
+          'fadingStart',
+          TRANSITION_OUT_TIME,
+        );
         break;
       case 'fadingStart':
         if (this.visibleTransitionOut) {
@@ -143,7 +152,7 @@ export class TransitionManager extends BaseComponent {
         this.delayedModeChange('fadingIn', 'rest', TRANSITION_IN_TIME);
         break;
       default:
-        // do nothing
+      // do nothing
     }
   }
 
@@ -187,7 +196,7 @@ export class TransitionManager extends BaseComponent {
           this.changeMode('loadEnding');
           break;
         default:
-          // do nothing
+        // do nothing
       }
     }
   }
@@ -198,10 +207,6 @@ export class TransitionManager extends BaseComponent {
       'load-ending': this.state.mode === 'loadEnding',
       'fading-start': this.state.mode === 'fadingStart',
     });
-    return (
-      <div className={classes}>
-        {this.props.children}
-      </div>
-    );
+    return <div className={classes}>{this.props.children}</div>;
   }
 }

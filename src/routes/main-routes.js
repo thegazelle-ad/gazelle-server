@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 import { Route, IndexRoute } from 'react-router';
 import React from 'react';
 
@@ -16,7 +17,10 @@ import SearchController from 'components/main/SearchController';
 export default [
   <Route path="/interactive/:articleSlug" component={InteractiveArticle} />,
   <Route path="/" component={AppController}>
-    <Route path="issue/:issueNumber/:articleCategory/:articleSlug" component={ArticleController} />
+    <Route
+      path="issue/:issueNumber/:articleCategory/:articleSlug"
+      component={ArticleController}
+    />
     <Route path="author/:authorSlug" component={AuthorController} />
     <Route path="issue/:issueNumber" component={IssueController} />
     <Route path="category/:category" component={CategoryController} />

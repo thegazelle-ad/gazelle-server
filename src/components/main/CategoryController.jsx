@@ -13,14 +13,16 @@ export default class CategoryController extends FalcorController {
     return [
       ['categories', 'bySlug', params.category, 'name'],
       [
-        'categories', 'bySlug',
+        'categories',
+        'bySlug',
         params.category,
         'articles',
         { length: 10 },
         ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image_url'],
       ],
       [
-        'categories', 'bySlug',
+        'categories',
+        'bySlug',
         params.category,
         'articles',
         { length: 10 },
@@ -31,17 +33,14 @@ export default class CategoryController extends FalcorController {
     ];
   }
 
-
   render() {
     if (this.state.ready) {
       if (this.state.data == null) {
-        return (
-          <NotFound />
-        );
+        return <NotFound />;
       }
-      const category = this.props.params.category;
+      const { category } = this.props.params;
       const categoryData = this.state.data.categories.bySlug[category];
-      const uppercase = (str) => {
+      const uppercase = str => {
         const array = str.split(' ');
         const newArray = [];
 
@@ -62,7 +61,10 @@ export default class CategoryController extends FalcorController {
         // Social media
         { property: 'og:title', content: 'The Gazelle' },
         { property: 'og:type', content: 'website' },
-        { property: 'og:url', content: `www.thegazelle.org/category/${categoryData.slug}` },
+        {
+          property: 'og:url',
+          content: `www.thegazelle.org/category/${categoryData.slug}`,
+        },
         {
           property: 'og:description',
           content:

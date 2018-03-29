@@ -1,18 +1,24 @@
 import React from 'react';
 import ArticleList from 'components/main/ArticleList';
 import BaseComponent from 'lib/BaseComponent';
-import { parseMarkdown } from 'lib/utilities';
+import { parseMarkdown } from 'lib/react-utilities';
 
 export default class Author extends BaseComponent {
   render() {
-    const author = this.props.author;
+    const { author } = this.props;
     return (
       <div key={author.slug} className="author">
         <div className="author__header">
-          <img className="author__header__author-image" alt="author" src={author.image_url} />
+          <img
+            className="author__header__author-image"
+            alt="author"
+            src={author.image_url}
+          />
           <div className="author__header__author-info">
             <h1 className="author__header__author-info__name">{author.name}</h1>
-            <h2 className="author__header__author-info__role">{author.job_title}</h2>
+            <h2 className="author__header__author-info__role">
+              {author.job_title}
+            </h2>
             <p className="author__header__author-info__biography">
               {parseMarkdown(author.biography)}
             </p>

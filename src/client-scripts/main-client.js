@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 /* This is what allows babel to transpile async functions */
 import 'regenerator-runtime/runtime';
 
@@ -34,7 +35,7 @@ clientModel.setCache(_initialCache); // eslint-disable-line no-undef
 ReactGA.initialize('UA-84302849-1');
 
 // Establish pageview tracking
-let logPageView = () => {
+const logPageView = () => {
   ReactGA.set({ page: window.location.pathname });
   ReactGA.pageview(window.location.pathname);
 };
@@ -46,4 +47,5 @@ ReactDOM.render(
     onUpdate={logPageView}
     createElement={injectModelCreateElement(clientModel)}
   />,
-document.getElementById('main'));
+  document.getElementById('main'),
+);

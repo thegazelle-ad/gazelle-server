@@ -23,7 +23,11 @@ describe.skip('pathSetsInCache', () => {
       b: { b: { c: 3, d: 4 } },
       c: { e: { a: 3, f: 4 }, c: { k: 5, a: 2 }, b: { a: 5 } },
     };
-    const pathSets = [['a', ['a', 'b'], ['a', 'b']], ['b', 'b', 'c'], [['c', 'c', 'k']]];
+    const pathSets = [
+      ['a', ['a', 'b'], ['a', 'b']],
+      ['b', 'b', 'c'],
+      [['c', 'c', 'k']],
+    ];
     expect(pathSetsInCache(cache, pathSets)).toBe(false);
   });
 
@@ -47,10 +51,14 @@ describe.skip('pathSetsInCache', () => {
     expect(pathSetsInCache(cache, pathSets)).toBe(true);
 
     pathSets = ['a', { from: 2, to: 4, length: 3 }];
-    expect(() => { pathSetsInCache(cache, pathSets); }).toThrow();
+    expect(() => {
+      pathSetsInCache(cache, pathSets);
+    }).toThrow();
 
     pathSets = ['a', { from: 2 }];
-    expect(() => { pathSetsInCache(cache, pathSets); }).toThrow();
+    expect(() => {
+      pathSetsInCache(cache, pathSets);
+    }).toThrow();
   });
 
   it('handles overfetching', () => {
@@ -124,9 +132,19 @@ describe.skip('pathSetsInCache', () => {
     pathSets = ['a', { from: 1, length: 10 }, 'b', ['c', 'd'], 'a'];
     expect(pathSetsInCache(cache, pathSets)).toBe(true);
 
-    cache.a.key = cache.a.key2 = cache.a.key3 = { b: { c: { a: 3 }, d: { a: 6 } } };
+    // It would be too verbose not to use multi-assign here
+    // eslint-disable-next-line no-multi-assign
+    cache.a.key = cache.a.key2 = cache.a.key3 = {
+      b: { c: { a: 3 }, d: { a: 6 } },
+    };
     // I'm actually not certain this is valid falcor syntax, but it is supported by the function.
-    pathSets = ['a', [{ length: 6 }, 'key', 'key2', 'key3'], 'b', ['c', 'd'], 'a'];
+    pathSets = [
+      'a',
+      [{ length: 6 }, 'key', 'key2', 'key3'],
+      'b',
+      ['c', 'd'],
+      'a',
+    ];
     expect(pathSetsInCache(cache, pathSets)).toBe(true);
   });
 
@@ -152,10 +170,30 @@ describe.skip('pathSetsInCache', () => {
       },
     };
 
-    let pathSet = ['articles', 'someSlug', 'authors', 0, 'articles', 0, 'authors', 0, 'biography'];
+    let pathSet = [
+      'articles',
+      'someSlug',
+      'authors',
+      0,
+      'articles',
+      0,
+      'authors',
+      0,
+      'biography',
+    ];
     expect(pathSetsInCache(cache, pathSet)).toBe(true);
 
-    pathSet = ['articles', 'someSlug', 'authors', 0, 'articles', 0, 'authors', 0, 'pubDate'];
+    pathSet = [
+      'articles',
+      'someSlug',
+      'authors',
+      0,
+      'articles',
+      0,
+      'authors',
+      0,
+      'pubDate',
+    ];
     expect(pathSetsInCache(cache, pathSet)).toBe(false);
   });
 });

@@ -8,14 +8,18 @@ import AuthorList from 'components/main/AuthorList';
 
 export default class ArticlePreview extends BaseComponent {
   render() {
-    const article = this.props.article;
-    let url = `/issue/${article.issueNumber.toString()}/${article.category}/${article.slug}`;
+    const { article } = this.props;
+    let url = `/issue/${article.issueNumber.toString()}/${article.category}/${
+      article.slug
+    }`;
     if (article.is_interactive) {
       // We don't use standard url for interactive articles
       url = `/interactive/${article.slug}`;
     }
-    if (!article.image_url) { // Article image default
-      article.image_url = 'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
+    if (!article.image_url) {
+      // Article image default
+      article.image_url =
+        'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
     }
     return (
       <div className="article-preview">
@@ -50,7 +54,6 @@ export default class ArticlePreview extends BaseComponent {
             teaser={article.teaser}
           />
         </div>
-
       </div>
     );
   }
