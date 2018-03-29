@@ -135,7 +135,7 @@ export default class ArticleController extends FalcorController {
       this.isFormFieldChanged(prevState.authors, state.authors) ||
       this.isFormFieldChanged(prevState.teaser, state.teaser) ||
       this.isFormFieldChanged(prevState.category, state.category) ||
-      this.isFormFieldChanged(prevState.image, state.image)
+      this.isFormFieldChanged(prevState.imageUrl, state.imageUrl)
     );
   }
 
@@ -190,7 +190,7 @@ export default class ArticleController extends FalcorController {
       return;
     }
 
-    if (this.state.image.length > 4 && this.state.image.substr(0, 5) !== 'https') {
+    if (this.state.imageUrl.length > 4 && this.state.imageUrl.substr(0, 5) !== 'https') {
       if (!window.confirm('You are saving an image without using https. ' +
                           'This can be correct in a few cases but is mostly not. Are you sure ' +
                           ' you wish to continue saving?')) {
@@ -222,7 +222,7 @@ export default class ArticleController extends FalcorController {
     };
     // Fill in the data
     jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].teaser = this.state.teaser;
-    jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].image = this.state.image;
+    jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].image = this.state.imageUrl;
     if (shouldUpdateCategory) {
       jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].category = this.state.category;
     }
@@ -249,7 +249,7 @@ export default class ArticleController extends FalcorController {
     const changedFlag =
       this.isFormFieldChanged(this.state.teaser, falcorData.teaser) ||
       this.isFormFieldChanged(this.state.category, falcorData.category) ||
-      this.isFormFieldChanged(this.state.image, falcorData.image) ||
+      this.isFormFieldChanged(this.state.imageUrl, falcorData.image) ||
       this.areAuthorsChanged(this.state.authors, falcorData.authors);
     return changedFlag;
   }
@@ -311,7 +311,7 @@ export default class ArticleController extends FalcorController {
             elements={categories}
           /><br />
           <ImageUrlField
-            image={this.state.image}
+            imageUrl={this.state.imageUrl}
             disabled={this.state.saving}
             updateImage={this.updateImage}
           />

@@ -10,8 +10,8 @@ const ImageUrlField = (props) => {
 
   return (
     <ValidatedHttpsUrlField
-      name="image"
-      value={props.image}
+      name="imageUrl"
+      value={props.imageUrl}
       floatingLabelText="Image (Remember to use https:// not http://)"
       disabled={props.disabled}
       onChange={onChange}
@@ -21,7 +21,7 @@ const ImageUrlField = (props) => {
 };
 
 ImageUrlField.propTypes = {
-  image: PropTypes.string,
+  imageUrl: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   updateImage: PropTypes.func.isRequired,
 };

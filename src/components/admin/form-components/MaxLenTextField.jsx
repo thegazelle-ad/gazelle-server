@@ -31,7 +31,7 @@ export default class MaxLenTextField extends React.Component {
 MaxLenTextField.propTypes = {
   maxLen: PropTypes.number.isRequired,
   onUpdate: PropTypes.func.isRequired,
-  value: PropTypes.string,
+  value: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   name: PropTypes.string,
 };
