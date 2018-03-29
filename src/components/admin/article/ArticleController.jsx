@@ -7,20 +7,20 @@ import { debounce } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 
 // Custom Components
-import { updateFieldValue } from 'components/admin/lib/form-field-updaters';
-import SearchableSelector from 'components/admin/SearchableSelector';
+import SearchableSelector from 'components/admin/form-components/SearchableSelector';
 import LoadingOverlay from 'components/admin/LoadingOverlay';
+import SaveButton from 'components/admin/article/components/SaveButton';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton.jsx';
-import CategorySelector from 'components/admin/article/components/ListSelector';
+import ImageUrlField from 'components/admin/article/components/ImageUrlField';
+import ListSelector from 'components/admin/form-components/ListSelector';
+import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
+import { MAX_TEASER_LENGTH } from 'components/admin/lib/constants';
 
 // material-ui
 import Dialog from 'material-ui/Dialog';
 import CircularProgress from 'material-ui/CircularProgress';
-import RaisedButton from 'material-ui/RaisedButton';
 import Divider from 'material-ui/Divider';
 import TextField from 'material-ui/TextField';
-
-const MAX_TEASER_LENGTH = 156;
 
 export default class ArticleController extends FalcorController {
   constructor(props) {
@@ -29,16 +29,10 @@ export default class ArticleController extends FalcorController {
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
     this.handleDialogClose = this.handleDialogClose.bind(this);
     this.isFormChanged = this.isFormChanged.bind(this);
-    this.updateAuthors = this.updateAuthors.bind(this);
-    this.fieldUpdaters = {
-      teaser: updateFieldValue.bind(this, 'teaser', {
-        trim: MAX_TEASER_LENGTH,
-      }),
-      category: updateFieldValue.bind(this, 'category', {
-        isMaterialSelect: true,
-      }),
-      imageUrl: updateFieldValue.bind(this, 'imageUrl', undefined),
-    };
+    this.updateAuthors = (authors) => this.safeSetState({ authors });
+    this.updateTeaser = (teaser) => this.safeSetState({ teaser });
+    this.updateImage = (imageUrl) => this.safeSetState({ imageUrl });
+    this.updateCategory = (category) => this.safeSetState({ category });
     this.safeSetState({
       changed: false,
       saving: false,
@@ -66,10 +60,10 @@ export default class ArticleController extends FalcorController {
 
     if (processedAuthors !== null) {
       updatePromises.push(this.falcorCall(
-          ['articles', 'bySlug', articleSlug, 'authors', 'updateAuthors'],
-          [falcorData.id, processedAuthors],
-          [['name'], ['slug']]
-        )
+        ['articles', 'bySlug', articleSlug, 'authors', 'updateAuthors'],
+        [falcorData.id, processedAuthors],
+        [['name'], ['slug']]
+      )
       );
     }
 
@@ -83,12 +77,6 @@ export default class ArticleController extends FalcorController {
       });
       // This is purely so the 'saved' message can be seen by the user for a second
       setTimeout(() => { this.safeSetState({ saving: false }); }, 1000);
-    });
-  }
-
-  updateAuthors(newAuthors) {
-    this.safeSetState({
-      authors: newAuthors,
     });
   }
 
@@ -174,7 +162,7 @@ export default class ArticleController extends FalcorController {
 
     if (!this.isFormChanged()) {
       throw new Error('Tried to save changes but there were no changes. ' +
-        'the save changes button is supposed to be disabled in this case'
+                      'the save changes button is supposed to be disabled in this case'
       );
     }
 
@@ -287,35 +275,15 @@ export default class ArticleController extends FalcorController {
       const article = this.state.data.articles.bySlug[slug];
 
       // If it is a new article it won't have any meta data yet so we use the default
-      const chosenCategory = this.state.category || 'none';
-
-      const categories = this.state.data.categories.byIndex;
-      categories.none = { name: 'none', slug: 'none' };
-
-      let changedStateMessage;
-      const changedStateStyle = {};
-      if (!this.state.changed) {
-        if (!this.state.saving) {
-          changedStateMessage = 'No Changes';
-        } else {
-          changedStateMessage = 'Saved';
-          changedStateStyle.color = 'green';
-        }
-      } else if (!this.state.saving) {
-        changedStateMessage = 'Save Changes';
-        changedStateStyle.color = 'red';
-      } else {
-        changedStateMessage = 'Saving';
-        changedStateStyle.color = '#65e765';
-      }
+      const categories = _.toArray(this.state.data.categories.byIndex);
+      categories.push({ name: 'none', slug: 'none' });
 
       const actionButtons = [
-        <RaisedButton
-          label={changedStateMessage}
-          primary
-          style={styles.buttons}
+        <SaveButton
           onClick={this.handleSaveChanges}
-          disabled={!this.state.changed || this.state.saving}
+          style={styles.buttons}
+          saving={this.state.saving}
+          changed={this.state.changed}
         />,
       ];
 
@@ -337,35 +305,28 @@ export default class ArticleController extends FalcorController {
             floatingLabelText="Title"
             fullWidth
           />
-          <CategorySelector
-            type="Category"
-            chosenType={chosenCategory}
-            update={this.fieldUpdaters.category}
+          <ListSelector
+            label="Category"
+            chosenElement={this.state.category}
+            update={this.updateCategory}
             disabled={this.state.saving}
-            types={categories}
+            elements={categories}
+          /><br />
+          <ImageUrlField
+            imageUrl={this.state.imageUrl}
+            disabled={this.state.saving}
+            updateImage={this.updateImage}
           />
-          <TextField
-            name="imageUrl"
-            value={this.state.imageUrl}
-            floatingLabelText="Image (Remember to use https:// not http://)"
-            disabled={this.state.saving}
-            onChange={this.fieldUpdaters.imageUrl}
-            fullWidth
-          /><br />
-          <TextField
+          <br />
+          <MaxLenTextField
             name="teaser"
-            floatingLabelText={
-              `Teaser (${this.state.teaser.length} of ${MAX_TEASER_LENGTH} characters)`
-            }
             value={this.state.teaser}
-            disabled={this.state.saving}
-            onChange={this.fieldUpdaters.teaser}
-            multiLine
-            rows={2}
-            fullWidth
-          /><br />
+            maxLen={MAX_TEASER_LENGTH}
+            onUpdate={this.updateTeaser}
+          />
+          <br />
           <SearchableSelector
-            objects={this.state.authors}
+            value={this.state.authors}
             onChange={this.debouncedHandleFormStateChanges}
             onUpdate={this.updateAuthors}
             disabled={this.state.saving}
