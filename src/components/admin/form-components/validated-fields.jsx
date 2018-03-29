@@ -12,4 +12,15 @@ export const hasHttps = (value) => {
   return null;
 };
 
+export const cannotNull = (value) => {
+  if (!value) {
+    return (
+      'This field must have an entry.'
+    );
+  }
+  return null;
+};
+
 export const ValidatedHttpsUrlField = withValidate(hasHttps)(TextField);
+
+export const RequiredTextField = withValidate(cannotNull)(TextField);
