@@ -14,6 +14,8 @@ const getAbsolute = relativePath => path.resolve(ROOT_DIRECTORY, relativePath);
  *   type: one of 'server', 'admin-client', 'main-client',
  *   compileScss: boolean
  * }
+ * @param {Object} config
+ * @returns {Object[]}
  */
 const generateWebpackConfig = (config) => {
   // Initialized shared config variables based on environment and
@@ -107,7 +109,7 @@ const generateWebpackConfig = (config) => {
         getAbsolute('src'),
         getAbsolute('.'),
       ],
-      extensions: ['.js', '.jsx'],
+      extensions: ['.js', '.jsx', '.json5'],
     },
 
     // This makes webpack not bundle in node_modules but leave the require statements
@@ -193,13 +195,20 @@ const generateWebpackConfig = (config) => {
                     },
                   ],
                 ],
-                plugins: ['transform-object-rest-spread'],
+                plugins: ['transform-object-rest-spread', 'array-includes'],
                 minified: config.NODE_ENV !== undefined,
               },
             },
             // Lint all that is compiled, notice the order so eslint runs before babel
             'eslint-loader',
           ],
+        },
+        {
+          test: /\.json5$/,
+          exclude: [
+            getAbsolute('node_modules'),
+          ],
+          loader: 'json5-loader',
         },
       // Only add the scss loaders if we're actually compiling it
       ].concat(config.compileScss ? (

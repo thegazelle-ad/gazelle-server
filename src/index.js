@@ -1,3 +1,14 @@
+/* This is what allows babel to transpile async functions */
+import 'regenerator-runtime/runtime';
+
+// Emil hacking because he can't find a babel plugin that does it for some reason
+if (!Array.prototype.flatten) {
+  // eslint-disable-next-line
+  Array.prototype.flatten = function flatten() {
+    return this.reduce((acc, cur) => acc.concat(cur), []);
+  };
+}
+
 /* Falcor */
 import falcor from 'falcor';
 // The custom falcor code we write

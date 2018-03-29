@@ -1,7 +1,6 @@
 build/
 static/build/
-config/database.config.js
-config/ghost.config.js
+config/database.config.json5
 config/s3.config.js
 scripts/backup-database.sh
 **/tmp/*

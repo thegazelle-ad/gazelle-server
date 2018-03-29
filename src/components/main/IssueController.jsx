@@ -25,7 +25,7 @@ export default class IssueController extends FalcorController {
     // User is either requesting the 'issues', 'latest' on the home page or an
     // old issue.
     const articleFields = ['title', 'teaser', 'issueNumber', 'category',
-      'slug', 'image', 'is_interactive'];
+      'slug', 'image_url', 'is_interactive'];
     const authorFields = ['name', 'slug'];
     const issueFields = ['issueNumber', 'published_at'];
     const categoryFields = ['name', 'slug'];
@@ -126,7 +126,7 @@ export default class IssueController extends FalcorController {
       );
 
       // Make sure issueImage has a default
-      const issueImage = issueData.featured.image || 'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
+      const issueImage = issueData.featured.image_url || 'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
 
       const meta = [
         // Search results

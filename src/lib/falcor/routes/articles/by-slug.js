@@ -1,135 +1,64 @@
 import falcor from 'falcor';
 import _ from 'lodash';
 
-import * as db from 'lib/db';
-import { mapGhostNames, cleanupJsonGraphArg } from 'lib/falcor/falcor-utilities';
-import { ghostArticleQuery } from 'lib/ghost-api';
+import {
+  articleQuery,
+  updateArticles,
+  articleIssueQuery,
+  articleAuthorQuery,
+  interactiveArticleQuery,
+  updateAuthors,
+  relatedArticleQuery,
+  addView,
+} from 'lib/db';
+import { cleanupJsonGraphArg } from 'lib/falcor/falcor-utilities';
 
 const $ref = falcor.Model.ref;
 
 export default [
   {
-    // Get article data from Ghost API
-    route: "articles['bySlug'][{keys:slugs}]['id', 'image', 'slug', 'title', 'markdown', 'html', 'teaser']", // eslint-disable-line max-len
-    get: (pathSet) => (
-      new Promise((resolve) => {
-        const requestedFields = pathSet[3];
-        let query = 'filter=';
-        pathSet.slugs.forEach((slug, index) => {
-          query += `${index > 0 ? ',' : ''}slug:'${slug}'`;
-        });
-        query += '&fields=slug';
-        requestedFields.forEach((field) => {
-          if (field !== 'slug') {
-            query += `,${mapGhostNames(field)}`;
-          }
-        });
-        query += `&limit=${pathSet.slugs.length}`;
-        ghostArticleQuery(query).then((data) => {
-          const posts = data.posts;
-          const results = [];
-          posts.forEach((article) => {
-            requestedFields.forEach((field) => {
-              const ghostField = mapGhostNames(field);
-              results.push({
-                path: ['articles', 'bySlug', article.slug, field],
-                value: article[ghostField],
-              });
-            });
-          });
-          resolve(results);
-        })
-        .catch((e) => {
-          // eslint-disable-next-line no-console
-          console.error('Error was found in Ghost query for slugs:');
-          console.error(pathSet.slugs); // eslint-disable-line no-console
-          console.error(e); // eslint-disable-line no-console
-          resolve([]);
-        });
-      })
-    ),
-    set: (jsonGraphArg) => (
-      new Promise((resolve) => {
-        jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
-        const articles = jsonGraphArg.articles.bySlug;
-        const slugs = Object.keys(articles);
-        db.updateGhostFields(articles).then((flag) => {
-          const results = [];
-          if (flag !== true) {
-            throw new Error('For unknown reasons updateGhostFields returned a non-true flag');
-          }
-          slugs.forEach((slug) => {
-            const slugObject = articles[slug];
-            _.forEach(slugObject, (value, field) => {
-              results.push({
-                path: ['articles', 'bySlug', slug, field],
-                value,
-              });
-            });
-          });
-          resolve(results);
-        });
-      })
-    ),
-  },
-  {
     // Get custom article data from MariaDB
-    route: "articles['bySlug'][{keys:slugs}]['category', 'published_at', 'views', 'is_interactive']", // eslint-disable-line max-len
-    get: (pathSet) => (
-      new Promise((resolve) => {
-        const requestedFields = pathSet[3];
-        db.articleQuery(pathSet.slugs, requestedFields).then((data) => {
-          const results = [];
-          data.forEach((article) => {
-            const processedArticle = { ...article };
-            if (
-              processedArticle.hasOwnProperty('published_at') &&
-              processedArticle.published_at instanceof Date
-            ) {
-              processedArticle.published_at = processedArticle.published_at.getTime();
-            }
-            requestedFields.forEach((field) => {
-              results.push({
-                path: ['articles', 'bySlug', processedArticle.slug, field],
-                value: processedArticle[field],
-              });
-            });
-          });
-          resolve(results);
-        });
-      })
-    ),
-    set: (jsonGraphArg) => (
-      new Promise((resolve) => {
-        jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
-        const articles = jsonGraphArg.articles.bySlug;
-        const slugs = Object.keys(articles);
-        const results = [];
-        db.updatePostMeta(articles)
-        .then((flag) => {
-          if (!flag) {
-            throw new Error('For unknown reasons updatePostMeta returned a non-true flag');
-          }
-          slugs.forEach((slug) => {
-            const slugObject = articles[slug];
-            _.forEach(slugObject, (value, field) => {
-              results.push({
-                path: ['articles', 'bySlug', slug, field],
-                value,
-              });
-            });
-          });
-          resolve(results);
-        });
-      })
-    ),
+    route: "articles['bySlug'][{keys:slugs}]['id', 'image_url', 'slug', 'title', 'markdown', 'html', 'teaser', 'category', 'published_at', 'views', 'is_interactive']", // eslint-disable-line max-len
+    get: async pathSet => {
+      const requestedFields = pathSet[3];
+      const data = await articleQuery(pathSet.slugs, requestedFields);
+      const results = data.map(article => {
+        const processedArticle = { ...article };
+        if (
+          processedArticle.hasOwnProperty('published_at') &&
+          processedArticle.published_at instanceof Date
+        ) {
+          processedArticle.published_at = processedArticle.published_at.getTime();
+        }
+        return requestedFields.map(field => ({
+          path: ['articles', 'bySlug', processedArticle.slug, field],
+          value: processedArticle[field],
+        }));
+      }).flatten();
+      return results;
+    },
+    set: async jsonGraphArg => {
+      jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
+      const articles = jsonGraphArg.articles.bySlug;
+      const flag = await updateArticles(articles);
+      if (!flag) {
+        throw new Error('For unknown reasons updatePostMeta returned a non-true flag');
+      }
+      const results = _.map(articles, (singleArticle, slug) => (
+        _.map(singleArticle, (value, field) => ({
+          path: ['articles', 'bySlug', slug, field],
+          value,
+        }))
+      )).flatten();
+      return results;
+    },
   },
   {
     // Get issueNumber from database
     route: "articles['bySlug'][{keys:slugs}]['issueNumber']",
     get: (pathSet) => (
       new Promise((resolve) => {
-        db.articleIssueQuery(pathSet.slugs).then((data) => {
+        articleIssueQuery(pathSet.slugs).then((data) => {
           const results = [];
           data.forEach((row) => {
             results.push({
@@ -162,7 +91,7 @@ export default [
     route: "articles['bySlug'][{keys:slugs}]['authors'][{integers:indices}]",
     get: (pathSet) => (
       new Promise((resolve) => {
-        db.articleAuthorQuery(pathSet.slugs).then((data) => {
+        articleAuthorQuery(pathSet.slugs).then((data) => {
           // We receive the data as an object with keys equalling article slugs
           // and values being an array of author slugs in no particular order
           const results = [];
@@ -187,7 +116,7 @@ export default [
     get: (pathSet) => (
       new Promise((resolve) => {
         const fields = pathSet[4];
-        db.interactiveArticleQuery(pathSet.slugs, fields).then((data) => {
+        interactiveArticleQuery(pathSet.slugs, fields).then((data) => {
           const results = [];
           data.forEach((article) => {
             fields.forEach((field) => {
@@ -218,7 +147,7 @@ export default [
         const articleId = args[0];
         const newAuthors = args[1];
         const articleSlug = callPath.slugs[0];
-        db.updateAuthors(articleId, newAuthors).then((data) => {
+        updateAuthors(articleId, newAuthors).then((data) => {
           const results = [];
           // Invalidate all the old data
           results.push({
@@ -244,7 +173,7 @@ export default [
         // The dbRelatedArticleQuery function will only return 3 related articles
         // per article queried right now (as you shouldn't need more),
         // so you cannot request an index higher than 2
-        db.relatedArticleQuery(pathSet.slugs).then((data) => {
+        relatedArticleQuery(pathSet.slugs).then((data) => {
           const results = [];
           pathSet.slugs.forEach((slug) => {
             pathSet.indices.forEach((index) => {
@@ -272,7 +201,7 @@ export default [
           );
         }
         const slug = callPath.slugs[0];
-        db.addView(slug).then((views) => {
+        addView(slug).then((views) => {
           if (views === false) {
             // Means the article wasn't found
             resolve([]);
