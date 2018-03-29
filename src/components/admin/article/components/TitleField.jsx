@@ -12,6 +12,7 @@ const TitleField = (props) => {
     <RequiredTextField
       onChange={onChange}
       value={props.title}
+      disabled={props.disabled}
       floatingLabelText="Title"
       fullWidth
     />
