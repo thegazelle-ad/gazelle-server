@@ -12,7 +12,7 @@ import LoadingOverlay from 'components/admin/LoadingOverlay';
 import SaveButton from 'components/admin/article/components/SaveButton';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton';
 import ImageUrlField from 'components/admin/article/components/ImageUrlField';
-import TitleField from 'components/admin/article/components/TitleField';
+import { BoundRequiredTextField } from 'components/admin/form-components/BoundRequiredTextField';
 import ListSelector from 'components/admin/form-components/ListSelector';
 import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
 import { MAX_TEASER_LENGTH } from 'components/admin/lib/constants';
@@ -31,6 +31,7 @@ export default class ArticleController extends FalcorController {
     this.isFormChanged = this.isFormChanged.bind(this);
     this.falcorToState = this.falcorToState.bind(this);
     this.updateTitle = title => this.safeSetState({ title });
+    this.updateSlug = slug => this.safeSetState({ slug });
     this.updateAuthors = authors => this.safeSetState({ authors });
     this.updateTeaser = teaser => this.safeSetState({ teaser });
     this.updateImage = imageUrl => this.safeSetState({ imageUrl });
@@ -40,6 +41,7 @@ export default class ArticleController extends FalcorController {
       saving: false,
       refresh: false,
       title: '',
+      slug: '',
       authors: [],
       teaser: '',
       category: '',
@@ -94,7 +96,15 @@ export default class ArticleController extends FalcorController {
         'articles',
         'bySlug',
         params.slug,
-        ['title', 'category', 'teaser', 'image_url', 'id', 'published_at'],
+        [
+          'title',
+          'slug',
+          'category',
+          'teaser',
+          'image_url',
+          'id',
+          'published_at',
+        ],
       ],
       [
         'articles',
@@ -110,6 +120,7 @@ export default class ArticleController extends FalcorController {
   falcorToState(data) {
     const article = data.articles.bySlug[this.props.params.slug];
     const title = article.title || '';
+    const slug = article.slug || '';
     const teaser = article.teaser || '';
     const category = article.category || '';
     const imageUrl = article.image_url || '';
@@ -117,6 +128,7 @@ export default class ArticleController extends FalcorController {
 
     this.safeSetState({
       title,
+      slug,
       teaser,
       category,
       imageUrl,
@@ -143,6 +155,7 @@ export default class ArticleController extends FalcorController {
   formHasUpdated(prevState, state) {
     return (
       this.isFormFieldChanged(prevState.title, state.title) ||
+      this.isFormFieldChanged(prevState.slug, state.slug) ||
       this.isFormFieldChanged(prevState.authors, state.authors) ||
       this.isFormFieldChanged(prevState.teaser, state.teaser) ||
       this.isFormFieldChanged(prevState.category, state.category) ||
@@ -237,8 +250,8 @@ export default class ArticleController extends FalcorController {
 
     const shouldUpdateCategory = this.state.category;
     const fields = shouldUpdateCategory
-      ? ['title', 'teaser', 'image_url', 'category']
-      : ['title', 'teaser', 'image_url'];
+      ? ['title', 'slug', 'teaser', 'image_url', 'category']
+      : ['title', 'slug', 'teaser', 'image_url'];
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
       paths: [['articles', 'bySlug', articleSlug, fields]],
@@ -254,6 +267,9 @@ export default class ArticleController extends FalcorController {
     jsonGraphEnvelope.jsonGraph.articles.bySlug[
       articleSlug
     ].title = this.state.title;
+    jsonGraphEnvelope.jsonGraph.articles.bySlug[
+      articleSlug
+    ].slug = this.state.slug;
     jsonGraphEnvelope.jsonGraph.articles.bySlug[
       articleSlug
     ].teaser = this.state.teaser;
@@ -290,6 +306,7 @@ export default class ArticleController extends FalcorController {
     const falcorData = this.state.data.articles.bySlug[this.props.params.slug];
     const changedFlag =
       this.isFormFieldChanged(this.state.title, falcorData.title) ||
+      this.isFormFieldChanged(this.state.slug, falcorData.slug) ||
       this.isFormFieldChanged(this.state.teaser, falcorData.teaser) ||
       this.isFormFieldChanged(this.state.category, falcorData.category) ||
       this.isFormFieldChanged(this.state.imageUrl, falcorData.image_url) ||
@@ -340,9 +357,16 @@ export default class ArticleController extends FalcorController {
           onRequestClose={this.handleDialogClose}
         >
           {this.state.saving ? <LoadingOverlay /> : null}
-          <TitleField
-            title={this.state.title}
+          <BoundRequiredTextField
+            label="Title"
+            value={this.state.title}
             onUpdate={this.updateTitle}
+            disabled={this.state.saving}
+          />
+          <BoundRequiredTextField
+            label="Slug"
+            value={this.state.slug}
+            onUpdate={this.updateSlug}
             disabled={this.state.saving}
           />
           <ListSelector

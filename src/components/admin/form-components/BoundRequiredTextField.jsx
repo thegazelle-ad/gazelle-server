@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { capFirstLetter } from 'lib/utilities';
+
 import { RequiredTextField } from 'components/admin/form-components/validated-fields';
 
-class TitleField extends React.Component {
+export class BoundRequiredTextField extends React.Component {
   constructor(props) {
     super(props);
     this.onChange = event => props.onUpdate(event.target.value);
@@ -13,23 +15,23 @@ class TitleField extends React.Component {
     return (
       <RequiredTextField
         onChange={this.onChange}
-        value={this.props.title}
+        value={this.props.value}
         disabled={this.props.disabled}
-        floatingLabelText="Title"
+        floatingLabelText={capFirstLetter(this.props.label)}
         fullWidth
       />
     );
   }
 }
 
-TitleField.propTypes = {
-  title: PropTypes.string.isRequired,
-  disabled: PropTypes.bool,
+BoundRequiredTextField.propTypes = {
+  value: PropTypes.string.isRequired,
   onUpdate: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
+  label: PropTypes.string,
 };
 
-TitleField.defaultProps = {
+BoundRequiredTextField.defaultProps = {
   disabled: false,
+  label: '',
 };
-
-export default TitleField;

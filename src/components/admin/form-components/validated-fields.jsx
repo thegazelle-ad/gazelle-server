@@ -17,6 +17,15 @@ export const cannotNull = value => {
   return null;
 };
 
+export const hasVarCharMax = value => {
+  if (value.length > 150) {
+    return 'The database restricts this field to a maximum value of 150 characters.';
+  }
+  return null;
+};
+
 export const ValidatedHttpsUrlField = withValidate(hasHttps)(TextField);
 
-export const RequiredTextField = withValidate(cannotNull)(TextField);
+export const RequiredTextField = withValidate(cannotNull, hasVarCharMax)(
+  TextField,
+);
