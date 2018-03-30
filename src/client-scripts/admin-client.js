@@ -20,6 +20,7 @@ import {
   setAppReady,
 } from 'lib/falcor/falcor-utilities';
 import HttpDataSource from 'falcor-http-datasource';
+import { Provider as FalcorProvider } from 'react-falcor';
 
 // Set app ready so falcor doesn't try to load from cache
 setAppReady();
@@ -29,10 +30,12 @@ const clientModel = new falcor.Model({
 });
 
 ReactDOM.render(
-  <Router
-    history={browserHistory}
-    routes={routes}
-    createElement={injectModelCreateElement(clientModel)}
-  />,
+  <FalcorProvider falcor={clientModel}>
+    <Router
+      history={browserHistory}
+      routes={routes}
+      createElement={injectModelCreateElement(clientModel)}
+    />
+  </FalcorProvider>,
   document.getElementById('main'),
 );
