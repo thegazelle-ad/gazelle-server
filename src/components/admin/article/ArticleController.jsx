@@ -12,6 +12,7 @@ import LoadingOverlay from 'components/admin/LoadingOverlay';
 import SaveButton from 'components/admin/article/components/SaveButton';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton';
 import ImageUrlField from 'components/admin/article/components/ImageUrlField';
+import TitleField from 'components/admin/article/components/TitleField';
 import ListSelector from 'components/admin/form-components/ListSelector';
 import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
 import { MAX_TEASER_LENGTH } from 'components/admin/lib/constants';
@@ -20,7 +21,6 @@ import { MAX_TEASER_LENGTH } from 'components/admin/lib/constants';
 import Dialog from 'material-ui/Dialog';
 import CircularProgress from 'material-ui/CircularProgress';
 import Divider from 'material-ui/Divider';
-import TextField from 'material-ui/TextField';
 
 export default class ArticleController extends FalcorController {
   constructor(props) {
@@ -29,6 +29,8 @@ export default class ArticleController extends FalcorController {
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
     this.handleDialogClose = this.handleDialogClose.bind(this);
     this.isFormChanged = this.isFormChanged.bind(this);
+    this.falcorToState = this.falcorToState.bind(this);
+    this.updateTitle = title => this.safeSetState({ title });
     this.updateAuthors = authors => this.safeSetState({ authors });
     this.updateTeaser = teaser => this.safeSetState({ teaser });
     this.updateImage = imageUrl => this.safeSetState({ imageUrl });
@@ -36,6 +38,8 @@ export default class ArticleController extends FalcorController {
     this.safeSetState({
       changed: false,
       saving: false,
+      refresh: false,
+      title: '',
       authors: [],
       teaser: '',
       category: '',
@@ -72,6 +76,7 @@ export default class ArticleController extends FalcorController {
       // Reset state after save is done
       this.safeSetState({
         changed: false,
+        refresh: true,
         authorsAdded: [],
         authorsDeleted: {},
         changesObject: { mainForm: false, authors: false },
@@ -102,41 +107,29 @@ export default class ArticleController extends FalcorController {
       ['categories', 'byIndex', { length: 30 }, ['name', 'slug']],
     ];
   }
+  falcorToState(data) {
+    const article = data.articles.bySlug[this.props.params.slug];
+    const title = article.title || '';
+    const teaser = article.teaser || '';
+    const category = article.category || '';
+    const imageUrl = article.image_url || '';
+    const authors = _.toArray(article.authors);
+
+    this.safeSetState({
+      title,
+      teaser,
+      category,
+      imageUrl,
+      authors,
+    });
+  }
 
   componentWillMount() {
-    const falcorCallback = data => {
-      const article = data.articles.bySlug[this.props.params.slug];
-      const teaser = article.teaser || '';
-      const category = article.category || '';
-      const imageUrl = article.image_url || '';
-      const authors = _.map(article.authors, author => author);
-
-      this.safeSetState({
-        teaser,
-        category,
-        imageUrl,
-        authors,
-      });
-    };
-    super.componentWillMount(falcorCallback);
+    super.componentWillMount(this.falcorToState);
   }
 
   componentWillReceiveProps(nextProps) {
-    const falcorCallback = data => {
-      const article = data.articles.bySlug[this.props.params.slug];
-      const teaser = article.teaser || '';
-      const category = article.category || '';
-      const imageUrl = article.image_url || '';
-      const authors = _.map(article.authors, author => author);
-
-      this.safeSetState({
-        teaser,
-        category,
-        imageUrl,
-        authors,
-      });
-    };
-    super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
+    super.componentWillReceiveProps(nextProps, undefined, this.falcorToState);
     this.safeSetState({
       changed: false,
       saving: false,
@@ -149,6 +142,7 @@ export default class ArticleController extends FalcorController {
 
   formHasUpdated(prevState, state) {
     return (
+      this.isFormFieldChanged(prevState.title, state.title) ||
       this.isFormFieldChanged(prevState.authors, state.authors) ||
       this.isFormFieldChanged(prevState.teaser, state.teaser) ||
       this.isFormFieldChanged(prevState.category, state.category) ||
@@ -171,8 +165,10 @@ export default class ArticleController extends FalcorController {
     if (this.state.saving) return;
 
     const { page } = this.props.params;
-    const path = `/articles/page/${page}`;
-    browserHistory.push(path);
+    const pathname = `/articles/page/${page}`;
+
+    const location = { pathname, state: { refresh: this.state.saved } };
+    browserHistory.push(location);
   }
 
   handleSaveChanges() {
@@ -241,8 +237,8 @@ export default class ArticleController extends FalcorController {
 
     const shouldUpdateCategory = this.state.category;
     const fields = shouldUpdateCategory
-      ? ['teaser', 'image_url', 'category']
-      : ['teaser', 'image_url'];
+      ? ['title', 'teaser', 'image_url', 'category']
+      : ['title', 'teaser', 'image_url'];
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
       paths: [['articles', 'bySlug', articleSlug, fields]],
@@ -255,6 +251,9 @@ export default class ArticleController extends FalcorController {
       },
     };
     // Fill in the data
+    jsonGraphEnvelope.jsonGraph.articles.bySlug[
+      articleSlug
+    ].title = this.state.title;
     jsonGraphEnvelope.jsonGraph.articles.bySlug[
       articleSlug
     ].teaser = this.state.teaser;
@@ -290,6 +289,7 @@ export default class ArticleController extends FalcorController {
   isFormChanged() {
     const falcorData = this.state.data.articles.bySlug[this.props.params.slug];
     const changedFlag =
+      this.isFormFieldChanged(this.state.title, falcorData.title) ||
       this.isFormFieldChanged(this.state.teaser, falcorData.teaser) ||
       this.isFormFieldChanged(this.state.category, falcorData.category) ||
       this.isFormFieldChanged(this.state.imageUrl, falcorData.image_url) ||
@@ -340,26 +340,23 @@ export default class ArticleController extends FalcorController {
           onRequestClose={this.handleDialogClose}
         >
           {this.state.saving ? <LoadingOverlay /> : null}
-          <h2>{article.title}</h2>
-          <Divider />
-          <TextField
-            disabled
-            defaultValue={article.title}
-            floatingLabelText="Title"
-            fullWidth
+          <TitleField
+            title={this.state.title}
+            onUpdate={this.updateTitle}
+            disabled={this.state.saving}
           />
           <ListSelector
             label="Category"
             chosenElement={this.state.category}
             update={this.updateCategory}
-            disabled={this.state.saving}
             elements={categories}
+            disabled={this.state.saving}
           />
           <br />
           <ImageUrlField
             imageUrl={this.state.imageUrl}
-            disabled={this.state.saving}
             updateImage={this.updateImage}
+            disabled={this.state.saving}
           />
           <br />
           <MaxLenTextField

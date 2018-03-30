@@ -43,6 +43,22 @@ export default class ArticleListController extends FalcorController {
     this.createListElement = this.createListElement.bind(this);
   }
 
+  /* When we route back to ArticleListController after making changes
+   * the FalcorData in ArticleListController is now out of date.
+   * This makes ArticleListController update it's state to reflect
+   * the data in the DB after making edits to an Article.
+   * TODO - Pub-Sub model with React-Falcor||Falcor-React 
+   */
+  componentWillReceiveProps(nextProps, nextContext) {
+    super.componentWillReceiveProps(nextProps, nextContext);
+    const newPathSets = this.constructor.getFalcorPathSets(
+      nextProps.params,
+      nextProps.location.query,
+    );
+    if (nextProps.location.state && nextProps.location.state.refresh) {
+      this.falcorFetch(newPathSets);
+    }
+  }
   static getFalcorPathSets(params) {
     return [
       [
