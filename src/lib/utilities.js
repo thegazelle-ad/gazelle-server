@@ -113,8 +113,10 @@ export function slugifyStaff(staffSlug) {
 export function slugify(category, item) {
   if (category === 'articles') return slugifyPost(item);
   if (category === 'authors') return slugifyAuthor(item);
-  throw new Error(`The category ${category} is not valid `
-    + `and so the item ${JSON.stringify(item)} cannot be slugified.`);
+  throw new Error(
+    `The category ${category} is not valid ` +
+      `and so the item ${JSON.stringify(item)} cannot be slugified.`,
+  );
 }
 
 export function formatDate(date) {
