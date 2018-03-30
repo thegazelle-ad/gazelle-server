@@ -358,7 +358,7 @@ export function teamArrayQuery() {
       .innerJoin('teams_staff', 'teams.id', '=', 'teams_staff.team_id')
       .orderBy('teams_staff.team_order', 'asc')
       .then(rows => {
-        // The SQL is returning a copy of the team for each author.
+        // The SQL is returning a copy of the team for each staff.
         const result = [];
         const resultSeen = {};
         rows.forEach(row => {
@@ -397,23 +397,23 @@ export function teamQuery(slugs, columns) {
 export function teamAuthorQuery(slugs) {
   // Arguments: `slugs`: array of team slugs
   // Returns: an object with team slugs (keys), each mapped
-  // to an array of author slugs (values).
+  // to an array of staff slugs (values).
   return new Promise(resolve => {
     database
-      .select('teams.slug as teamSlug', 'staff.slug as authorSlug')
+      .select('teams.slug as teamSlug', 'staff.slug as staffSlug')
       .from('staff')
-      .innerJoin('teams_staff', 'staff.id', '=', 'author_id')
+      .innerJoin('teams_staff', 'staff.id', '=', 'staff_id')
       .innerJoin('teams', 'teams.id', '=', 'teams_staff.team_id')
       .whereIn('teams.slug', slugs)
-      .orderBy('teams_staff.author_order', 'asc')
+      .orderBy('teams_staff.staff_order', 'asc')
       .then(rows => {
-        // `rows`: array of objects with keys `authorSlug` and `teamSlug`
+        // `rows`: array of objects with keys `staffSlug` and `teamSlug`
         const data = {};
         rows.forEach(row => {
           if (!has.call(data, row.teamSlug)) {
-            data[row.teamSlug] = [row.authorSlug];
+            data[row.teamSlug] = [row.staffSlug];
           } else {
-            data[row.teamSlug].push(row.authorSlug);
+            data[row.teamSlug].push(row.staffSlug);
           }
         });
         resolve(data);
@@ -1089,13 +1089,13 @@ export function updateMainAuthorData(jsonGraphArg) {
   return new Promise(resolve => {
     const updatesCalled = Object.keys(jsonGraphArg).length;
     let updatesReturned = 0;
-    _.forEach(jsonGraphArg, (authorObject, slug) => {
+    _.forEach(jsonGraphArg, (staffObject, slug) => {
       database('staff')
         .where('slug', '=', slug)
-        .update(authorObject)
+        .update(staffObject)
         .then(data => {
           if (data !== 1) {
-            throw new Error(`Problems updating main author data of: ${slug}`);
+            throw new Error(`Problems updating main staff data of: ${slug}`);
           }
           updatesReturned += 1;
           if (updatesReturned >= updatesCalled) {
@@ -1111,10 +1111,10 @@ export function updateMainAuthorData(jsonGraphArg) {
 
 // Refactoring suggestion: rename to `addAuthor`
 // to follow the style of the rest of the code
-export function createAuthor(authorObject) {
+export function createAuthor(staffObject) {
   return new Promise(resolve => {
     database('staff')
-      .insert(authorObject)
+      .insert(staffObject)
       .then(() => {
         // Insert statements should throw errors themselves
         // if they fail
@@ -1664,24 +1664,24 @@ export function getSemesterMembers(semesterName, teamIndices, memberIndices) {
     database
       .select(
         'teams.slug as teamSlug',
-        'staff.slug as authorSlug',
+        'staff.slug as staffSlug',
         'team_order',
-        'author_order',
+        'staff_order',
       ) // eslint-disable-line max-len
       .from('teams_staff')
       .innerJoin('semesters', 'semesters.id', '=', 'semester_id')
       .innerJoin('teams', 'teams.id', '=', 'team_id')
-      .innerJoin('staff', 'staff.id', '=', 'author_id')
+      .innerJoin('staff', 'staff.id', '=', 'staff_id')
       .where('semesters.name', '=', semesterName)
       .whereIn('team_order', teamIndices)
-      .whereIn('author_order', memberIndices)
+      .whereIn('staff_order', memberIndices)
       .then(rows => {
         const data = {};
         rows.forEach(row => {
           if (!has.call(data, row.team_order)) {
             data[row.team_order] = {};
           }
-          data[row.team_order][row.author_order] = row.authorSlug;
+          data[row.team_order][row.staff_order] = row.staffSlug;
         });
         resolve(data);
       }),
