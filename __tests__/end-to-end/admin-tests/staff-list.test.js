@@ -10,7 +10,7 @@ import {
   isVisible,
 } from './e2e-admin-utilities';
 
-describe('Admin interface staff list', () => {
+describe('Admin interface staff member list', () => {
   let nightmare = null;
   beforeEach(() => {
     nightmare = new Nightmare(NIGHTMARE_CONFIG);
@@ -69,7 +69,7 @@ describe('Admin interface staff list', () => {
   const testAddingNewStaff = (useEnter = false, inputToPressEnterOn = 1) => {
     expect.assertions(2);
 
-    // We first create a new staff with a unique name
+    // We first create a new staff member with a unique name
     const staffName = `test-user-${new Date().getTime()}`;
     const getInputSelector = index =>
       `${addNewTabSelector} form div:nth-of-type(${index}) input`;
@@ -89,7 +89,7 @@ describe('Admin interface staff list', () => {
       .insert(getInputSelector(1), staffName)
       // Input slug
       .insert(getInputSelector(2), staffName.substr(0, staffName.length - 1))
-      // We type the last character to fire the events to enable the create staff button
+      // We type the last character to fire the events to enable the create staff member button
       .type(getInputSelector(2), staffName.substr(staffName.length - 1, 1));
 
     let staffInformationSubmitted;
@@ -141,9 +141,10 @@ describe('Admin interface staff list', () => {
       });
   };
 
-  it('correctly adds new staff using button', () => testAddingNewStaff());
-  it('correctly adds new staff using enter on name', () =>
+  it('correctly adds new staff member using button', () =>
+    testAddingNewStaff());
+  it('correctly adds new staff member using enter on name', () =>
     testAddingNewStaff(true, 1));
-  it('correctly adds new staff using enter on slug', () =>
+  it('correctly adds new staff member using enter on slug', () =>
     testAddingNewStaff(true, 2));
 });

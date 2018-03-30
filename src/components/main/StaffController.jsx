@@ -48,12 +48,12 @@ export default class StaffController extends FalcorController {
       const { staffSlug } = this.props.params;
       const staffData = this.state.data.staff.bySlug[staffSlug];
       if (!staffData.image_url) {
-        // Default image for staff without one
+        // Default image for staff member without one
         staffData.image_url =
           'https://gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=300';
       }
       if (!staffData.job_title) {
-        // Default job title for staff without one
+        // Default job title for staff member without one
         staffData.job_title = 'Contributor';
       }
       const meta = [

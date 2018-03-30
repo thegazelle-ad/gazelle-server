@@ -17,10 +17,10 @@ const database = knex({
 
 export function staffQuery(slugs, columns) {
   // parameters are both expected to be arrays
-  // the first one with staff slugs to fetch
+  // the first one with staff member slugs to fetch
   // and the other one the columns to retrieve from the staff
   return new Promise(resolve => {
-    // So the Falcor Router knows which staff we're talking about
+    // So the Falcor Router knows which staff member we're talking about
     let processedColumns = columns;
     if (!processedColumns.some(col => col === 'slug')) {
       // Use concat to make a copy, if you just push
@@ -44,8 +44,8 @@ export function staffQuery(slugs, columns) {
 }
 
 export function staffTeamQuery(slugs) {
-  // Arguments: `slugs`: array of staff slugs
-  // Returns: an object with staff slugs (keys), each mapped
+  // Arguments: `slugs`: array of staff member slugs
+  // Returns: an object with staff member slugs (keys), each mapped
   // to an array of team slugs (values).
   return new Promise(resolve => {
     database
@@ -211,7 +211,7 @@ export function articleIssueQuery(slugs) {
 
 export function articleAuthorQuery(slugs) {
   // slugs function parameter is an array of article slugs
-  // of which to fetch the staff of.
+  // of which to fetch the staff member of.
   // The function returns an object with article slugs
   // as keys and values being arrays of author slugs.
   return new Promise(resolve => {
@@ -397,7 +397,7 @@ export function teamQuery(slugs, columns) {
 export function teamStaffQuery(slugs) {
   // Arguments: `slugs`: array of team slugs
   // Returns: an object with team slugs (keys), each mapped
-  // to an array of staff slugs (values).
+  // to an array of staff member slugs (values).
   return new Promise(resolve => {
     database
       .select('teams.slug as teamSlug', 'staff.slug as staffSlug')
@@ -1095,7 +1095,9 @@ export function updateMainStaffData(jsonGraphArg) {
         .update(staffObject)
         .then(data => {
           if (data !== 1) {
-            throw new Error(`Problems updating main staff data of: ${slug}`);
+            throw new Error(
+              `Problems updating main staff member data of: ${slug}`,
+            );
           }
           updatesReturned += 1;
           if (updatesReturned >= updatesCalled) {

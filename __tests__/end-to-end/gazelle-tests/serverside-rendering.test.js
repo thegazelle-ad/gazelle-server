@@ -39,7 +39,7 @@ describe('The Gazelle server side rendering', () => {
       HOST,
       '/issue/100/letters/letter-from-the-editors-celebrating-100-issues',
     ));
-  it('renders staff page correctly', () =>
+  it('renders staff member page correctly', () =>
     testPathServersideRender(
       nightmare,
       HOST,

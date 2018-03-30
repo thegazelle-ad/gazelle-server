@@ -7,7 +7,7 @@ const $ref = falcor.Model.ref;
 
 export default [
   {
-    // Search for staff by name
+    // Search for staff member by name
     route: "search['staff'][{keys:queries}][{integers:indices}]",
     get: pathSet =>
       new Promise(resolve => {

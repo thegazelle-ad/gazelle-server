@@ -84,7 +84,7 @@ export default [
     get: pathSet =>
       new Promise(resolve => {
         db.authorArticleQuery(pathSet.slugs).then(data => {
-          // We receive the data as an object with keys equalling staff slugs
+          // We receive the data as an object with keys equalling staff member slugs
           // and values being an array of article slugs where the most recent is first
           const results = [];
           _.forEach(data, (postSlugArray, staffSlug) => {
