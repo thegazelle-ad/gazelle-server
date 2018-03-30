@@ -4,35 +4,35 @@ import BaseComponent from 'lib/BaseComponent';
 import { parseMarkdown } from 'lib/react-utilities';
 import _ from 'lodash';
 
-export default class Author extends BaseComponent {
+export default class Staff extends BaseComponent {
   render() {
-    const { author } = this.props;
+    const { staff } = this.props;
     return (
-      <div key={author.slug} className="author">
-        <div className="author__header">
+      <div key={staff.slug} className="staff">
+        <div className="staff__header">
           <img
-            className="author__header__author-image"
-            alt="author"
-            src={author.image_url}
+            className="staff__header__staff-image"
+            alt="staff"
+            src={staff.image_url}
           />
-          <div className="author__header__author-info">
-            <h1 className="author__header__author-info__name">{author.name}</h1>
-            <h2 className="author__header__author-info__role">
-              {author.job_title}
+          <div className="staff__header__staff-info">
+            <h1 className="staff__header__staff-info__name">{staff.name}</h1>
+            <h2 className="staff__header__staff-info__role">
+              {staff.job_title}
             </h2>
-            <p className="author__header__author-info__biography">
-              {parseMarkdown(author.biography)}
+            <p className="staff__header__staff-info__biography">
+              {parseMarkdown(staff.biography)}
             </p>
           </div>
         </div>
-        <ArticleList articles={_.toArray(author.articles)} />
+        <ArticleList articles={_.toArray(staff.articles)} />
       </div>
     );
   }
 }
 
-Author.propTypes = {
-  author: React.PropTypes.shape({
+Staff.propTypes = {
+  staff: React.PropTypes.shape({
     name: React.PropTypes.string.isRequired,
     biography: React.PropTypes.string,
     title: React.PropTypes.string,

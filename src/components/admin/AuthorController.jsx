@@ -16,7 +16,7 @@ import LoadingOverlay from './LoadingOverlay';
 const MAX_BIOGRAPHY_LENGTH = 400;
 
 const styles = {
-  authorProfile: {
+  staffProfile: {
     paddingLeft: 30,
     paddingRight: 30,
     paddingBottom: 30,
@@ -28,7 +28,7 @@ const styles = {
   },
 };
 
-export default class AuthorController extends FalcorController {
+export default class StaffController extends FalcorController {
   constructor(props) {
     super(props);
     this.handleDialogClose = this.handleDialogClose.bind(this);
@@ -122,7 +122,7 @@ export default class AuthorController extends FalcorController {
     });
   }
 
-  isSameAuthor(prevProps, props) {
+  isSameStaff(prevProps, props) {
     return prevProps.params.slug === props.params.slug;
   }
 
@@ -138,7 +138,7 @@ export default class AuthorController extends FalcorController {
 
   componentDidUpdate(prevProps, prevState) {
     if (
-      this.isSameAuthor(prevProps, this.props) &&
+      this.isSameStaff(prevProps, this.props) &&
       this.formHasUpdated(prevState, this.state) &&
       this.state.ready
     ) {
@@ -158,7 +158,7 @@ export default class AuthorController extends FalcorController {
     event.preventDefault();
 
     const falcorData = this.state.data.staff.bySlug[this.props.params.slug];
-    const authorSlug = this.props.params.slug;
+    const staffSlug = this.props.params.slug;
 
     if (!this.isFormChanged()) {
       throw new Error(
@@ -185,14 +185,14 @@ export default class AuthorController extends FalcorController {
           [
             'staff',
             'bySlug',
-            authorSlug,
+            staffSlug,
             ['name', 'slug', 'job_title', 'image_url', 'biography'],
           ],
         ],
         jsonGraph: {
           staff: {
             bySlug: {
-              [authorSlug]: {},
+              [staffSlug]: {},
             },
           },
         },
@@ -200,19 +200,19 @@ export default class AuthorController extends FalcorController {
 
       // Fill in the data
       jsonGraphEnvelope.jsonGraph.staff.bySlug[
-        authorSlug
+        staffSlug
       ].name = this.state.name;
       jsonGraphEnvelope.jsonGraph.staff.bySlug[
-        authorSlug
+        staffSlug
       ].slug = this.state.slug;
       jsonGraphEnvelope.jsonGraph.staff.bySlug[
-        authorSlug
+        staffSlug
       ].job_title = this.state.jobTitle;
       jsonGraphEnvelope.jsonGraph.staff.bySlug[
-        authorSlug
+        staffSlug
       ].image_url = this.state.imageUrl;
       jsonGraphEnvelope.jsonGraph.staff.bySlug[
-        authorSlug
+        staffSlug
       ].biography = this.state.biography;
 
       // Update the values
@@ -222,7 +222,7 @@ export default class AuthorController extends FalcorController {
     if (this.isFormFieldChanged(this.state.slug, falcorData.slug)) {
       if (
         !window.confirm(
-          'You are about to change the slug of an author, this means that the url to ' +
+          'You are about to change the slug of a staff member, this means that the url to ' +
             'their webpage will change among other things, it is strongly recommended ' +
             " not to change the slug unless it's very crucial. Are you sure you wish to proceed?",
         )
@@ -273,7 +273,7 @@ export default class AuthorController extends FalcorController {
   }
 
   render() {
-    const ID = 'author-editor';
+    const ID = 'staff-editor';
     if (this.state.ready) {
       if (!this.state.data) {
         return (
@@ -298,14 +298,14 @@ export default class AuthorController extends FalcorController {
 
       return (
         <Dialog
-          title="Author Profile"
+          title="Staff Profile"
           open
           autoScrollBodyContent
           onRequestClose={this.handleDialogClose}
         >
           {this.state.saving ? <LoadingOverlay /> : null}
-          <div id={ID} style={styles.authorProfile}>
-            <h3>Author Profile: {this.state.name}</h3>
+          <div id={ID} style={styles.staffProfile}>
+            <h3>Staff Profile: {this.state.name}</h3>
             <Divider />
             <form onSubmit={this.handleSaveChanges}>
               <TextField

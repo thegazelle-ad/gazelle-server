@@ -6,7 +6,7 @@ import InteractiveArticle from 'components/main/InteractiveArticle';
 import AppController from 'components/main/AppController';
 import ArticleController from 'components/main/ArticleController';
 import ArchivesController from 'components/main/ArchivesController';
-import AuthorController from 'components/main/AuthorController';
+import StaffController from 'components/main/StaffController';
 import IssueController from 'components/main/IssueController';
 import CategoryController from 'components/main/CategoryController';
 import TextPageController from 'components/main/TextPageController';
@@ -21,7 +21,7 @@ export default [
       path="issue/:issueNumber/:articleCategory/:articleSlug"
       component={ArticleController}
     />
-    <Route path="staff/:staffSlug" component={AuthorController} />
+    <Route path="staff/:staffSlug" component={StaffController} />
     <Route path="issue/:issueNumber" component={IssueController} />
     <Route path="category/:category" component={CategoryController} />
     <Route path="archives" component={ArchivesController} />

@@ -58,7 +58,7 @@ export default [
     route: "teams['bySlug'][{keys:slugs}]['staff'][{integers:indices}]",
     get: pathSet =>
       new Promise(resolve => {
-        db.teamAuthorQuery(pathSet.slugs).then(data => {
+        db.teamStaffQuery(pathSet.slugs).then(data => {
           const results = [];
           _.forEach(data, (staffSlugArray, teamSlug) => {
             pathSet.indices.forEach(index => {

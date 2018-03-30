@@ -34,11 +34,11 @@ export default [
         jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
         const staffBySlug = jsonGraphArg.staff.bySlug;
         db
-          .updateMainAuthorData(staffBySlug)
+          .updateMainStaffData(staffBySlug)
           .then(flag => {
             if (!flag) {
               throw new Error(
-                'For unknown reasons updateMainAuthorData returned a non-true flag',
+                'For unknown reasons updateMainStaffData returned a non-true flag',
               );
             }
             const results = [];
@@ -102,18 +102,18 @@ export default [
       }),
   },
   {
-    route: "staff['bySlug']['createAuthor']",
+    route: "staff['bySlug']['createStaff']",
     call: (callPath, args) =>
       new Promise(resolve => {
         const staffObject = args[0];
         if (!(has.call(staffObject, 'slug') && has.call(staffObject, 'name'))) {
           throw new Error(
-            'When creating an staff you must provide both name and slug',
+            'When creating a staff member you must provide both name and slug',
           );
         }
-        db.createAuthor(staffObject).then(flag => {
+        db.createStaff(staffObject).then(flag => {
           if (flag !== true) {
-            throw new Error('Create Author function returned non-true flag');
+            throw new Error('Create Staff function returned non-true flag');
           }
           const results = [];
           const staffSlug = staffObject.slug;

@@ -39,8 +39,8 @@ describe('The Gazelle server side rendering', () => {
       HOST,
       '/issue/100/letters/letter-from-the-editors-celebrating-100-issues',
     ));
-  it('renders author page correctly', () =>
-    testPathServersideRender(nightmare, HOST, '/author/khadeeja-farooqui'));
+  it('renders staff page correctly', () =>
+    testPathServersideRender(nightmare, HOST, '/staff/khadeeja-farooqui'));
   // This should definitely return a 404 but it isn't implemented right now so we'll make it a todo
   it('renders not found page correctly', () =>
     testPathServersideRender(

@@ -15,12 +15,12 @@ const database = knex({
   },
 });
 
-export function authorQuery(slugs, columns) {
+export function staffQuery(slugs, columns) {
   // parameters are both expected to be arrays
-  // the first one with author slugs to fetch
+  // the first one with staff slugs to fetch
   // and the other one the columns to retrieve from the staff
   return new Promise(resolve => {
-    // So the Falcor Router knows which author we're talking about
+    // So the Falcor Router knows which staff we're talking about
     let processedColumns = columns;
     if (!processedColumns.some(col => col === 'slug')) {
       // Use concat to make a copy, if you just push
@@ -43,25 +43,25 @@ export function authorQuery(slugs, columns) {
   });
 }
 
-export function authorTeamQuery(slugs) {
-  // Arguments: `slugs`: array of author slugs
-  // Returns: an object with author slugs (keys), each mapped
+export function staffTeamQuery(slugs) {
+  // Arguments: `slugs`: array of staff slugs
+  // Returns: an object with staff slugs (keys), each mapped
   // to an array of team slugs (values).
   return new Promise(resolve => {
     database
-      .select('teams.slug as teamSlug', 'staff.slug as authorSlug')
+      .select('teams.slug as teamSlug', 'staff.slug as staffSlug')
       .from('staff')
-      .innerJoin('teams_staff', 'staff.id', '=', 'author_id')
+      .innerJoin('teams_staff', 'staff.id', '=', 'staff_id')
       .innerJoin('teams', 'teams.id', '=', 'team_id')
       .whereIn('staff.slug', slugs)
       .then(rows => {
-        // `rows`: array of objects with keys `authorSlug` and `teamSlug`
+        // `rows`: array of objects with keys `staffSlug` and `teamSlug`
         const data = {};
         rows.forEach(row => {
-          if (!has.call(data, row.authorSlug)) {
-            data[row.authorSlug] = [row.teamSlug];
+          if (!has.call(data, row.staffSlug)) {
+            data[row.staffSlug] = [row.teamSlug];
           } else {
-            data[row.authorSlug].push(row.teamSlug);
+            data[row.staffSlug].push(row.teamSlug);
           }
         });
         resolve(data);
@@ -114,7 +114,7 @@ export function infoPagesQuery(slugs, columns) {
   // first one with page slugs to fetch
   // second one which columns to fetch from the db
   return new Promise(resolve => {
-    // So the Falcor Router knows which author we're talking about
+    // So the Falcor Router knows which page we're talking about
     let processedColumns = columns;
     if (processedColumns.find(col => col === 'slug') === undefined) {
       // Use concat to make a copy, if you just push
@@ -394,7 +394,7 @@ export function teamQuery(slugs, columns) {
   });
 }
 
-export function teamAuthorQuery(slugs) {
+export function teamStaffQuery(slugs) {
   // Arguments: `slugs`: array of team slugs
   // Returns: an object with team slugs (keys), each mapped
   // to an array of staff slugs (values).
@@ -856,7 +856,7 @@ export function relatedArticleQuery(slugs) {
   });
 }
 
-export function searchAuthorsQuery(queries, min, max) {
+export function searchStaffQuery(queries, min, max) {
   return new Promise(resolve => {
     let queriesReturned = 0;
     const results = {};
@@ -1085,7 +1085,7 @@ export function orderArticlesInIssues(issues) {
   });
 }
 
-export function updateMainAuthorData(jsonGraphArg) {
+export function updateMainStaffData(jsonGraphArg) {
   return new Promise(resolve => {
     const updatesCalled = Object.keys(jsonGraphArg).length;
     let updatesReturned = 0;
@@ -1109,9 +1109,9 @@ export function updateMainAuthorData(jsonGraphArg) {
   });
 }
 
-// Refactoring suggestion: rename to `addAuthor`
+// Refactoring suggestion: rename to `addStaff`
 // to follow the style of the rest of the code
-export function createAuthor(staffObject) {
+export function createStaff(staffObject) {
   return new Promise(resolve => {
     database('staff')
       .insert(staffObject)

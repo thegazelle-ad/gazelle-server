@@ -4,8 +4,8 @@ import React from 'react';
 import AppController from 'components/admin/AppController';
 import ArticleListController from 'components/admin/ArticleListController';
 import ArticleController from 'components/admin/article/ArticleController';
-import AuthorListController from 'components/admin/AuthorListController';
-import AuthorController from 'components/admin/AuthorController';
+import StaffListController from 'components/admin/StaffListController';
+import StaffController from 'components/admin/StaffController';
 import IssueListController from 'components/admin/IssueListController';
 import MainIssueController from 'components/admin/MainIssueController';
 import IssueArticleController from 'components/admin/IssueArticleController';
@@ -27,8 +27,8 @@ export default (
         <Route path="slug/:slug" component={ArticleController} />
       </Route>
     </Route>
-    <Route path="staff" component={AuthorListController}>
-      <Route path=":slug" component={AuthorController} />
+    <Route path="staff" component={StaffListController}>
+      <Route path=":slug" component={StaffController} />
     </Route>
     <Route path="issues" component={IssueListController}>
       <Route path=":issueNumber">
