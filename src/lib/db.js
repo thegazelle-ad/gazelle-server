@@ -82,7 +82,7 @@ export function authorArticleQuery(slugs) {
     database
       .select('articles.slug as articleSlug', 'authors.slug as authorSlug')
       .from('authors')
-      .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
+      .innerJoin('authors_articles', 'authors.id', '=', 'author_id')
       .innerJoin('articles', 'articles.id', '=', 'article_id')
       .whereNotNull('published_at')
       .whereIn('authors.slug', slugs)
@@ -169,12 +169,12 @@ export function articleIssueQuery(slugs) {
       .select('issue_order as issueNumber', 'articles.slug as slug')
       .from('articles')
       .innerJoin(
-        'issues_posts_order',
-        'issues_posts_order.article_id',
+        'issues_articles_order',
+        'issues_articles_order.article_id',
         '=',
         'articles.id',
       )
-      .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issue_id')
+      .innerJoin('issues', 'issues.id', '=', 'issues_articles_order.issue_id')
       .whereIn('articles.slug', slugs)
       .orderBy('articles.slug')
       .then(rows => {
@@ -218,10 +218,10 @@ export function articleAuthorQuery(slugs) {
     database
       .select('articles.slug as articleSlug', 'authors.slug as authorSlug')
       .from('authors')
-      .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
+      .innerJoin('authors_articles', 'authors.id', '=', 'author_id')
       .innerJoin('articles', 'articles.id', '=', 'article_id')
       .whereIn('articles.slug', slugs)
-      .orderBy('authors_posts.id', 'asc')
+      .orderBy('authors_articles.id', 'asc')
       .then(rows => {
         // rows is an array of objects with keys authorSlug and articleSlug
         const data = {};
@@ -431,12 +431,12 @@ export function featuredArticleQuery(issueNumbers) {
       .select('articles.slug', 'issue_order')
       .from('articles')
       .innerJoin(
-        'issues_posts_order',
-        'issues_posts_order.article_id',
+        'issues_articles_order',
+        'issues_articles_order.article_id',
         '=',
         'articles.id',
       )
-      .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issue_id')
+      .innerJoin('issues', 'issues.id', '=', 'issues_articles_order.issue_id')
       .whereIn('issues.issue_order', issueNumbers)
       .andWhere('type', '=', 1)
       .then(rows => {
@@ -457,12 +457,12 @@ export function editorPickQuery(issueNumbers) {
       .select('articles.slug', 'issue_order')
       .from('articles')
       .innerJoin(
-        'issues_posts_order',
-        'issues_posts_order.article_id',
+        'issues_articles_order',
+        'issues_articles_order.article_id',
         '=',
         'articles.id',
       )
-      .innerJoin('issues', 'issues.id', '=', 'issues_posts_order.issue_id')
+      .innerJoin('issues', 'issues.id', '=', 'issues_articles_order.issue_id')
       .whereIn('issues.issue_order', issueNumbers)
       .andWhere('type', '=', 2)
       .then(rows => {
@@ -556,13 +556,13 @@ export function issueCategoryArticleQuery(issueNumbers) {
       .select(
         'issue_order',
         'articles.slug',
-        'posts_order',
+        'article_order',
         'articles.category_id',
       )
       .from('issues')
       .innerJoin(
-        'issues_posts_order',
-        'issues_posts_order.issue_id',
+        'issues_articles_order',
+        'issues_articles_order.issue_id',
         '=',
         'issues.id',
       )
@@ -570,11 +570,11 @@ export function issueCategoryArticleQuery(issueNumbers) {
         'articles',
         'articles.id',
         '=',
-        'issues_posts_order.article_id',
+        'issues_articles_order.article_id',
       )
       .whereIn('issues.issue_order', issueNumbers)
       .andWhere('type', '=', 0)
-      .orderBy('posts_order', 'ASC')
+      .orderBy('article_order', 'ASC')
       .then(articleRows => {
         database
           .select(
@@ -631,7 +631,7 @@ export function issueCategoryArticleQuery(issueNumbers) {
                   correspondingCategoryRow.categories_order;
               }
               // Continue with rest of constants
-              const postIndex = postRow.posts_order;
+              const postIndex = postRow.article_order;
               const articleSlug = postRow.slug;
               if (!has.call(results, issueNumber)) {
                 results[issueNumber] = [];
@@ -711,8 +711,8 @@ export function trendingQuery() {
           .select('slug')
           .from('articles')
           .innerJoin(
-            'issues_posts_order',
-            'issues_posts_order.article_id',
+            'issues_articles_order',
+            'issues_articles_order.article_id',
             '=',
             'articles.id',
           )
@@ -747,7 +747,7 @@ export function relatedArticleQuery(slugs) {
           .select(
             'tag_id',
             'articles.slug',
-            'issues_posts_order.issue_id',
+            'issues_articles_order.issue_id',
             'category_id',
           )
           .from('articles')
@@ -758,8 +758,8 @@ export function relatedArticleQuery(slugs) {
             'articles.id',
           )
           .innerJoin(
-            'issues_posts_order',
-            'issues_posts_order.article_id',
+            'issues_articles_order',
+            'issues_articles_order.article_id',
             '=',
             'articles.id',
           )
@@ -768,7 +768,7 @@ export function relatedArticleQuery(slugs) {
           .where(function neededForThis() {
             // eslint-disable-line
             this.where(
-              'issues_posts_order.issue_id',
+              'issues_articles_order.issue_id',
               '=',
               latestIssueId,
             ).orWhereIn('slug', slugs);
@@ -926,7 +926,7 @@ export function searchTeamsQuery(queries, min, max) {
 // Suggestion: rename to updateArticleAuthors
 export function updateAuthors(articleId, newAuthors) {
   return new Promise(resolve => {
-    database('authors_posts')
+    database('authors_articles')
       .where('article_id', '=', articleId)
       .del()
       .then(() => {
@@ -934,17 +934,17 @@ export function updateAuthors(articleId, newAuthors) {
           article_id: articleId,
           author_id,
         }));
-        database('authors_posts')
+        database('authors_articles')
           .insert(insertArray)
           .then(() => {
             database
               .select('slug')
-              .from('authors_posts')
+              .from('authors_articles')
               .innerJoin(
                 'authors',
                 'authors.id',
                 '=',
-                'authors_posts.author_id',
+                'authors_articles.author_id',
               )
               .where('article_id', '=', articleId)
               .then(rows => resolve(rows.map(row => row.slug)));
@@ -969,18 +969,22 @@ export function orderArticlesInIssues(issues) {
         .orderBy('categories_order', 'ASC')
         .then(categoryRows => {
           database
-            .select('issues_posts_order.id as id', 'category_id', 'posts_order')
-            .from('issues_posts_order')
+            .select(
+              'issues_articles_order.id as id',
+              'category_id',
+              'article_order',
+            )
+            .from('issues_articles_order')
             .innerJoin(
               'articles',
               'articles.id',
               '=',
-              'issues_posts_order.article_id',
+              'issues_articles_order.article_id',
             )
             .where('type', '=', 0)
             .where('issue_id', '=', issue_id)
             .orderBy('category_id', 'ASC')
-            .orderBy('issues_posts_order.posts_order', 'ASC')
+            .orderBy('issues_articles_order.article_order', 'ASC')
             .then(articleRows => {
               let lastCategory = null;
               let order = 0;
@@ -992,11 +996,11 @@ export function orderArticlesInIssues(issues) {
                   order = 0;
                   newCategories.push(row.category_id);
                 }
-                if (order !== row.posts_order) {
+                if (order !== row.article_order) {
                   toUpdate.push({
                     id: row.id,
                     update: {
-                      posts_order: order,
+                      article_order: order,
                     },
                   });
                 }
@@ -1004,7 +1008,7 @@ export function orderArticlesInIssues(issues) {
               });
               updatesCalled += toUpdate.length;
               toUpdate.forEach(obj => {
-                database('issues_posts_order')
+                database('issues_articles_order')
                   .where('id', '=', obj.id)
                   .update(obj.update)
                   .then(() => {
@@ -1145,7 +1149,7 @@ export function updateIssueArticles(
         }
         const issue_id = issues[0].id;
         const issuePublished = issues[0].published_at instanceof Date;
-        database('issues_posts_order')
+        database('issues_articles_order')
           .where('issue_id', '=', issue_id)
           .del()
           .then(() => {
@@ -1160,7 +1164,7 @@ export function updateIssueArticles(
                     issue_id,
                     type: 1,
                     article_id: article.id,
-                    posts_order: index,
+                    article_order: index,
                   });
                 });
 
@@ -1169,7 +1173,7 @@ export function updateIssueArticles(
                     issue_id,
                     type: 2,
                     article_id: article.id,
-                    posts_order: index,
+                    article_order: index,
                   });
                 });
 
@@ -1207,12 +1211,12 @@ export function updateIssueArticles(
                     issue_id,
                     type: 0,
                     article_id: article.id,
-                    posts_order: articleIssueOrder,
+                    article_order: articleIssueOrder,
                   });
                   articleIssueOrder += 1;
                 });
 
-                database('issues_posts_order')
+                database('issues_articles_order')
                   .insert(articlesInsert)
                   .then(() => {
                     // Insert statements throw their own errors if there are problems
@@ -1484,10 +1488,10 @@ export function publishIssue(issue_id) {
       .select('articles.id', 'slug', 'published_at')
       .from('articles')
       .innerJoin(
-        'issues_posts_order',
+        'issues_articles_order',
         'articles.id',
         '=',
-        'issues_posts_order.article_id',
+        'issues_articles_order.article_id',
       )
       .where('issue_id', '=', issue_id)
       .then(articles => {
@@ -1778,12 +1782,12 @@ export async function updateArticles(jsonGraphArg) {
     const issueRows = await database
       .distinct('issue_id')
       .select()
-      .from('issues_posts_order')
+      .from('issues_articles_order')
       .innerJoin(
         'articles',
         'articles.id',
         '=',
-        'issues_posts_order.article_id',
+        'issues_articles_order.article_id',
       )
       .whereIn('articles.slug', articlesWithChangedCategory);
 
