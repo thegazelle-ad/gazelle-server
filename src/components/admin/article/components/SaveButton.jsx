@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import RaisedButton from 'material-ui/RaisedButton';
 
-const SaveButton = (props) => {
+const SaveButton = props => {
   let changedStateMessage;
   if (!props.changed) {
     if (!props.saving) {
@@ -29,10 +29,14 @@ const SaveButton = (props) => {
 };
 
 SaveButton.propTypes = {
-  style: PropTypes.object,
   changed: PropTypes.bool.isRequired,
   saving: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
+  style: PropTypes.shape({}),
+};
+
+SaveButton.defaultProps = {
+  style: {},
 };
 
 export default SaveButton;

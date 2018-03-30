@@ -5,13 +5,21 @@ import List from 'components/admin/List';
 import _ from 'lodash';
 import update from 'react-addons-update';
 import moment from 'moment';
+import { has } from 'lib/utilities';
 import LoadingOverlay from './LoadingOverlay';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
 
-const ARTICLE_FIELDS = ['id', 'title', 'slug', 'category',
-  'published_at', 'html', 'is_interactive'];
+const ARTICLE_FIELDS = [
+  'id',
+  'title',
+  'slug',
+  'category',
+  'published_at',
+  'html',
+  'is_interactive',
+];
 const ARTICLE_LIST_LENGTH = 100;
 
 const styles = {
@@ -54,7 +62,8 @@ export default class IssueArticleController extends FalcorController {
     return [
       ['issues', 'byNumber', params.issueNumber, ['name', 'published_at']],
       [
-        'issues', 'byNumber',
+        'issues',
+        'byNumber',
         params.issueNumber,
         'categories',
         { length: 20 },
@@ -63,12 +72,20 @@ export default class IssueArticleController extends FalcorController {
         ARTICLE_FIELDS,
       ],
       ['issues', 'byNumber', params.issueNumber, 'featured', ARTICLE_FIELDS],
-      ['issues', 'byNumber', params.issueNumber, 'picks', { length: 10 }, ARTICLE_FIELDS],
+      [
+        'issues',
+        'byNumber',
+        params.issueNumber,
+        'picks',
+        { length: 10 },
+        ARTICLE_FIELDS,
+      ],
       /* The following three calls are simply calling the first author to check
        *if any author has been assigned
         this is used for validiy checking */
       [
-        'issues', 'byNumber',
+        'issues',
+        'byNumber',
         params.issueNumber,
         'categories',
         { length: 20 },
@@ -78,8 +95,25 @@ export default class IssueArticleController extends FalcorController {
         0,
         'slug',
       ],
-      ['issues', 'byNumber', params.issueNumber, 'featured', 'authors', 0, 'slug'],
-      ['issues', 'byNumber', params.issueNumber, 'picks', { length: 10 }, 'authors', 0, 'slug'],
+      [
+        'issues',
+        'byNumber',
+        params.issueNumber,
+        'featured',
+        'authors',
+        0,
+        'slug',
+      ],
+      [
+        'issues',
+        'byNumber',
+        params.issueNumber,
+        'picks',
+        { length: 10 },
+        'authors',
+        0,
+        'slug',
+      ],
       // This is for the articleList
       [
         'articles',
@@ -90,7 +124,8 @@ export default class IssueArticleController extends FalcorController {
         ARTICLE_FIELDS,
       ],
       [
-        'articles', 'byPage',
+        'articles',
+        'byPage',
         ARTICLE_LIST_LENGTH,
         1,
         { length: ARTICLE_LIST_LENGTH },
@@ -102,17 +137,17 @@ export default class IssueArticleController extends FalcorController {
   }
 
   componentWillMount() {
-    const falcorCallBack = (data) => {
-      const issueNumber = this.props.params.issueNumber;
+    const falcorCallBack = data => {
+      const { issueNumber } = this.props.params;
       const issueData = data.issues.byNumber[issueNumber];
       const mainArticles = [];
-      _.forEach(issueData.categories, (category) => {
-        _.forEach(category.articles, (article) => {
+      _.forEach(issueData.categories, category => {
+        _.forEach(category.articles, article => {
           mainArticles.push(article);
         });
       });
       const featuredArticles = issueData.featured ? [issueData.featured] : [];
-      const picks = issueData.picks ? _.map(issueData.picks, (val) => val) : [];
+      const picks = issueData.picks ? _.map(issueData.picks, val => val) : [];
       this.safeSetState({
         mainArticles,
         featuredArticles,
@@ -123,17 +158,17 @@ export default class IssueArticleController extends FalcorController {
   }
 
   componentWillReceiveProps(nextProps) {
-    const falcorCallBack = (data) => {
-      const issueNumber = this.props.params.issueNumber;
+    const falcorCallBack = data => {
+      const { issueNumber } = this.props.params;
       const issueData = data.issues.byNumber[issueNumber];
       const mainArticles = [];
-      _.forEach(issueData.categories, (category) => {
-        _.forEach(category.articles, (article) => {
+      _.forEach(issueData.categories, category => {
+        _.forEach(category.articles, article => {
           mainArticles.push(article);
         });
       });
       const featuredArticles = issueData.featured ? [issueData.featured] : [];
-      const picks = issueData.picks ? _.map(issueData.picks, (val) => val) : [];
+      const picks = issueData.picks ? _.map(issueData.picks, val => val) : [];
       this.safeSetState({
         mainArticles,
         featuredArticles,
@@ -149,7 +184,7 @@ export default class IssueArticleController extends FalcorController {
   }
 
   handleArticlesChange(newArticles, mode) {
-    const issueNumber = this.props.params.issueNumber;
+    const { issueNumber } = this.props.params;
     const data = this.state.data.issues.byNumber[issueNumber];
 
     // Get all the variables set for each corresponding mode
@@ -165,8 +200,8 @@ export default class IssueArticleController extends FalcorController {
         old1 = data.picks ? _.map(data.picks, val => val) : [];
         field2 = this.state.mainArticles;
         old2 = [];
-        _.forEach(data.categories, (category) => {
-          _.forEach(category.articles, (article) => {
+        _.forEach(data.categories, category => {
+          _.forEach(category.articles, article => {
             old2.push(article);
           });
         });
@@ -177,16 +212,16 @@ export default class IssueArticleController extends FalcorController {
         old1 = data.featured ? [data.featured] : [];
         field2 = this.state.mainArticles;
         old2 = [];
-        _.forEach(data.categories, (category) => {
-          _.forEach(category.articles, (article) => {
+        _.forEach(data.categories, category => {
+          _.forEach(category.articles, article => {
             old2.push(article);
           });
         });
         break;
       case 'main':
         originalArticles = [];
-        _.forEach(data.categories, (category) => {
-          _.forEach(category.articles, (article) => {
+        _.forEach(data.categories, category => {
+          _.forEach(category.articles, article => {
             originalArticles.push(article);
           });
         });
@@ -199,15 +234,16 @@ export default class IssueArticleController extends FalcorController {
         throw new Error('Wrong mode passed to handleArticlesChange');
     }
 
-
     // It will only run the check if they are the same length
     // because of short circuiting
-    let changedFlag = (newArticles.length !== originalArticles.length ||
+    let changedFlag =
+      newArticles.length !== originalArticles.length ||
       // The two arrays must be same size, and therefore this check is valid
-      newArticles.some(article => (
-        originalArticles.find(post => post.slug === article.slug) === undefined
-      ))
-    );
+      newArticles.some(
+        article =>
+          originalArticles.find(post => post.slug === article.slug) ===
+          undefined,
+      );
 
     // If the changedFlag of this one set of articles
     // is the same as before, no change is possible independent
@@ -219,21 +255,24 @@ export default class IssueArticleController extends FalcorController {
       if (changedFlag === false) {
         // The function wants to change to no changes
         // so we double check the other fields don't have changes
-        changedFlag = (changedFlag ||
+        changedFlag =
+          changedFlag ||
           field1.length !== old1.length ||
-          field1.some((article) => (
-            old1.find((post) => article.slug === post.slug) === undefined
-          ))
-        );
+          field1.some(
+            article =>
+              old1.find(post => article.slug === post.slug) === undefined,
+          );
         if (changedFlag === true) {
           // It was a false alarm
           return;
         }
-        changedFlag = (changedFlag ||
+        changedFlag =
+          changedFlag ||
           field2.length !== old2.length ||
-          field2.some((article) =>
-           old2.find((post) =>
-            article.slug === post.slug) === undefined));
+          field2.some(
+            article =>
+              old2.find(post => article.slug === post.slug) === undefined,
+          );
         if (changedFlag === true) {
           // It was a false alarm
           return;
@@ -268,7 +307,7 @@ export default class IssueArticleController extends FalcorController {
     // Check if it is already picked in the issue
     const allArticles = this.state.mainArticles.concat(
       this.state.picks,
-      this.state.featuredArticles
+      this.state.featuredArticles,
     );
     if (allArticles.some(article => article.slug === post.slug)) {
       window.alert('That post is already in the issue');
@@ -317,35 +356,41 @@ export default class IssueArticleController extends FalcorController {
   }
 
   saveChanges() {
-    const issueNumber = this.props.params.issueNumber;
-    const featuredArticles = this.state.featuredArticles;
-    const picks = this.state.picks;
-    const mainArticles = this.state.mainArticles;
+    const { issueNumber } = this.props.params;
+    const { featuredArticles, picks, mainArticles } = this.state;
     const data = this.state.data.issues.byNumber[issueNumber];
     const isPublished = data.published_at;
 
-    const allArticles =
-      this.state.mainArticles.concat(this.state.picks, this.state.featuredArticles);
-    const allSlugs = allArticles.map((article) => article.slug);
+    const allArticles = this.state.mainArticles.concat(
+      this.state.picks,
+      this.state.featuredArticles,
+    );
+    const allSlugs = allArticles.map(article => article.slug);
     // check for uniqueness
     if (_.uniq(allSlugs).length !== allSlugs.length) {
-      window.alert("You have duplicate articles, as this shouldn't be able" +
-        ' to happen, please contact developers. And if you know all the actions' +
-        ' you did previously to this and can reproduce them that would be of great help.' +
-        ' The save has been cancelled. (Remember you can also use the remove duplicates button' +
-        ' for a current fix');
+      window.alert(
+        "You have duplicate articles, as this shouldn't be able" +
+          ' to happen, please contact developers. And if you know all the actions' +
+          ' you did previously to this and can reproduce them that would be of great help.' +
+          ' The save has been cancelled. (Remember you can also use the remove duplicates button' +
+          ' for a current fix',
+      );
       return;
     }
     if (allSlugs.length === 0) {
-      window.alert("Sorry, because of some non-trivial issues we currently don't have" +
-        " deleting every single article implemented. You hopefully shouldn't need this function" +
-        ' either. Please re-add an article to be able to save');
+      window.alert(
+        "Sorry, because of some non-trivial issues we currently don't have" +
+          " deleting every single article implemented. You hopefully shouldn't need this function" +
+          ' either. Please re-add an article to be able to save',
+      );
       return;
     }
     const allArticlesHaveCategories = allArticles.every(article => {
-      if (!article.hasOwnProperty('category') || !article.category) {
+      if (!has.call(article, 'category') || !article.category) {
         window.alert(
-          `${article.title} has no category and can therefore not be added to an issue yet`
+          `${
+            article.title
+          } has no category and can therefore not be added to an issue yet`,
         );
         return false;
       }
@@ -356,23 +401,21 @@ export default class IssueArticleController extends FalcorController {
     }
     if (isPublished) {
       // Check that all articles are valid since issue is already published
-      const fields = ARTICLE_FIELDS.filter((field) => (
-        field !== 'published_at' && field !== 'is_interactive'));
-      const articlesValid = allArticles.every((article) => {
-        const slug = article.slug;
-        const isOldArticle = (
-           _.some(data.categories, (category) => (
-             _.some(category.articles, (post) => slug === post.slug)
-          )) ||
-
+      const fields = ARTICLE_FIELDS.filter(
+        field => field !== 'published_at' && field !== 'is_interactive',
+      );
+      const articlesValid = allArticles.every(article => {
+        const { slug } = article;
+        const isOldArticle =
+          _.some(data.categories, category =>
+            _.some(category.articles, post => slug === post.slug),
+          ) ||
           data.featured.slug === slug ||
-
-          _.some(data.picks, (post) => post.slug === slug)
-        );
+          _.some(data.picks, post => post.slug === slug);
         if (isOldArticle) {
           return true;
         }
-        const fieldsValid = fields.every((field) => {
+        const fieldsValid = fields.every(field => {
           // Special case for interactive articles, don't need html key
           if (article.is_interactive && field === 'html') {
             return true;
@@ -380,7 +423,7 @@ export default class IssueArticleController extends FalcorController {
           if (!article[field]) {
             window.alert(
               `${article.title} has no ${field}. Please correct this ` +
-              'before adding the article to an already published issue'
+                'before adding the article to an already published issue',
             );
             return false;
           }
@@ -389,18 +432,19 @@ export default class IssueArticleController extends FalcorController {
         if (!fieldsValid) {
           return false;
         }
-        if (!article.hasOwnProperty('authors') || !article.authors[0]) {
+        if (!has.call(article, 'authors') || !article.authors[0]) {
           window.alert(
             `${article.title} has no authors assigned. Please correct this ` +
-            'before adding the article to an already published issue'
+              'before adding the article to an already published issue',
           );
           return false;
         }
         if (/http(?!s)/.test(article.html)) {
-          if (!window.confirm(
+          if (
+            !window.confirm(
               `${article.title} has a non https link in it's body. ` +
-              ' please make sure this link is not an image/video etc. being loaded in. ' +
-              ' If you are sure of this press okay to continue, else cancel to check.'
+                ' please make sure this link is not an image/video etc. being loaded in. ' +
+                ' If you are sure of this press okay to continue, else cancel to check.',
             )
           ) {
             return false;
@@ -420,32 +464,37 @@ export default class IssueArticleController extends FalcorController {
       // Set timeout so "saved" message shows for a while
       setTimeout(() => {
         this.safeSetState({ saving: false });
-        window.alert('Remember that categories have now been put in a random' +
-          ' order as you changed the articles. Please go check that they are' +
-          ' ordered as you wish.');
+        window.alert(
+          'Remember that categories have now been put in a random' +
+            ' order as you changed the articles. Please go check that they are' +
+            ' ordered as you wish.',
+        );
       }, 1000);
     };
 
     const refPaths = ARTICLE_FIELDS.map(field => [field]);
     this.safeSetState({ saving: true });
-    this.falcorCall(['issues', 'byNumber', 'updateIssueArticles'],
+    this.falcorCall(
+      ['issues', 'byNumber', 'updateIssueArticles'],
       [issueNumber, featuredArticles, picks, mainArticles],
-      refPaths, undefined, undefined, resetState);
+      refPaths,
+      undefined,
+      undefined,
+      resetState,
+    );
   }
 
   makeUnique() {
-    let mainArticles = this.state.mainArticles;
-    let featuredArticles = this.state.featuredArticles;
-    let picks = this.state.picks;
+    let { mainArticles, featuredArticles, picks } = this.state;
     const seen = {};
-    featuredArticles = featuredArticles.filter((article) => {
+    featuredArticles = featuredArticles.filter(article => {
       if (seen[article.slug]) {
         return false;
       }
       seen[article.slug] = true;
       return true;
     });
-    picks = picks.filter((article) => {
+    picks = picks.filter(article => {
       if (seen[article.slug]) {
         return false;
       }
@@ -455,7 +504,7 @@ export default class IssueArticleController extends FalcorController {
     // By putting mainArticles at the bottom we make sure
     // that we prioritize keeping featured and picks and
     // removing the duplicates in mainArticles
-    mainArticles = mainArticles.filter((article) => {
+    mainArticles = mainArticles.filter(article => {
       if (seen[article.slug]) {
         return false;
       }
@@ -484,7 +533,9 @@ export default class IssueArticleController extends FalcorController {
           type="button"
           className="pure-button"
           onClick={this.addArticle.bind(this, mode, article)}
-        >{`${article.title} - ${date}`}</button>
+        >
+          {`${article.title} - ${date}`}
+        </button>
         {/* eslint-enable react/jsx-no-bind */}
       </div>
     );
@@ -501,8 +552,10 @@ export default class IssueArticleController extends FalcorController {
         let articles = this.state.data.articles.byPage[ARTICLE_LIST_LENGTH][1];
         const seen = {};
         const allArticles = this.state.mainArticles.concat(
-          this.state.featuredArticles, this.state.picks);
-        allArticles.forEach((article) => {
+          this.state.featuredArticles,
+          this.state.picks,
+        );
+        allArticles.forEach(article => {
           seen[article.slug] = true;
         });
         articles = _.filter(articles, article => !seen[article.slug]);
@@ -514,23 +567,25 @@ export default class IssueArticleController extends FalcorController {
               maxHeight="50vh"
               createElement={this.createArticleListElement.bind(
                 this,
-                this.state.showArticleListMode
+                this.state.showArticleListMode,
               )}
             />
             {/* eslint-enable react/jsx-no-bind */}
             <button
               type="button"
               className="pure-button"
-              onClick={() => { this.safeSetState({ showArticleListMode: 'none' }); }}
-            >Back</button>
+              onClick={() => {
+                this.safeSetState({ showArticleListMode: 'none' });
+              }}
+            >
+              Back
+            </button>
           </div>
         );
       }
-      const issueNumber = this.props.params.issueNumber;
+      const { issueNumber } = this.props.params;
       const data = this.state.data.issues.byNumber[issueNumber];
-      const mainArticles = this.state.mainArticles;
-      const featuredArticles = this.state.featuredArticles;
-      const picks = this.state.picks;
+      const { mainArticles, featuredArticles, picks } = this.state;
 
       let changedStateMessage;
       const changedStateStyle = {};
@@ -541,14 +596,12 @@ export default class IssueArticleController extends FalcorController {
           changedStateMessage = 'Saved';
           changedStateStyle.color = 'green';
         }
+      } else if (!this.state.saving) {
+        changedStateMessage = 'Unsaved Changes';
+        changedStateStyle.color = 'red';
       } else {
-        if (!this.state.saving) {
-          changedStateMessage = 'Unsaved Changes';
-          changedStateStyle.color = 'red';
-        } else {
-          changedStateMessage = 'Saving';
-          changedStateStyle.color = '#65e765';
-        }
+        changedStateMessage = 'Saving';
+        changedStateStyle.color = '#65e765';
       }
       return (
         <div style={styles.tabs}>
@@ -556,13 +609,16 @@ export default class IssueArticleController extends FalcorController {
             type="button"
             className="pure-button"
             onClick={this.makeUnique}
-          >Remove duplicates</button>
+          >
+            Remove duplicates
+          </button>
           <h2 style={changedStateStyle}>{changedStateMessage}</h2>
           <h3>{data.name}</h3>
           <p>
-            Here you may decide which articles are going to be in the issue, and their roles.
-            <br />At this moment in development please refresh the page after saving to see the
-            correct data.
+            Here you may decide which articles are going to be in the issue, and
+            their roles.
+            <br />At this moment in development please refresh the page after
+            saving to see the correct data.
           </p>
           <h4 style={{ marginBottom: '0px', marginTop: '0px' }}>
             Featured Articles (please add exactly 1)
@@ -572,8 +628,12 @@ export default class IssueArticleController extends FalcorController {
             <button
               type="button"
               className="pure-button"
-              onClick={() => { this.safeSetState({ showArticleListMode: 'featured' }); }}
-            >Search By List</button>
+              onClick={() => {
+                this.safeSetState({ showArticleListMode: 'featured' });
+              }}
+            >
+              Search By List
+            </button>
             {/* eslint-disable react/jsx-no-bind */}
             <SearchBar
               model={this.props.model}
@@ -585,30 +645,34 @@ export default class IssueArticleController extends FalcorController {
               extraPathSets={[['authors', 0, 'slug']]}
               showPubDate
             />
-            {
-              featuredArticles.map(article => (
-                <div key={article.slug}>
-                  <button
-                    type="button"
-                    className="toggle-button"
-                    aria-label="Remove post from featured"
-                    onClick={this.deleteArticle.bind(this, 'featured', article)}
-                    disabled={this.state.saving}
-                  >&times;&nbsp;</button>
-                  <div style={{ marginLeft: '1em' }}>{article.title}</div>
-                </div>
-              ))
-            }
+            {featuredArticles.map(article => (
+              <div key={article.slug}>
+                <button
+                  type="button"
+                  className="toggle-button"
+                  aria-label="Remove post from featured"
+                  onClick={this.deleteArticle.bind(this, 'featured', article)}
+                  disabled={this.state.saving}
+                >
+                  &times;&nbsp;
+                </button>
+                <div style={{ marginLeft: '1em' }}>{article.title}</div>
+              </div>
+            ))}
           </div>
           <h4 style={{ marginBottom: '0px', marginTop: '8px' }}>
-            Editor's Picks (please add exactly 2)
+            Editor{"'"}s Picks (please add exactly 2)
           </h4>
           <div>
             <button
               type="button"
               className="pure-button"
-              onClick={() => { this.safeSetState({ showArticleListMode: 'picks' }); }}
-            >Search By List</button>
+              onClick={() => {
+                this.safeSetState({ showArticleListMode: 'picks' });
+              }}
+            >
+              Search By List
+            </button>
             <SearchBar
               model={this.props.model}
               handleClick={this.addArticle.bind(this, 'picks')}
@@ -619,20 +683,20 @@ export default class IssueArticleController extends FalcorController {
               extraPathSets={[['authors', 0, 'slug']]}
               showPubDate
             />
-            {
-              picks.map(article => (
-                <div key={article.slug}>
-                  <button
-                    type="button"
-                    className="toggle-button"
-                    aria-label="Remove post from picks"
-                    onClick={this.deleteArticle.bind(this, 'picks', article)}
-                    disabled={this.state.saving}
-                  >&times;&nbsp;</button>
-                  <div style={{ marginLeft: '1em' }}>{article.title}</div>
-                </div>
-              ))
-            }
+            {picks.map(article => (
+              <div key={article.slug}>
+                <button
+                  type="button"
+                  className="toggle-button"
+                  aria-label="Remove post from picks"
+                  onClick={this.deleteArticle.bind(this, 'picks', article)}
+                  disabled={this.state.saving}
+                >
+                  &times;&nbsp;
+                </button>
+                <div style={{ marginLeft: '1em' }}>{article.title}</div>
+              </div>
+            ))}
           </div>
           <h4 style={{ marginBottom: '0px', marginTop: '8px' }}>
             Main articles (add as many as you like)
@@ -641,8 +705,12 @@ export default class IssueArticleController extends FalcorController {
             <button
               type="button"
               className="pure-button"
-              onClick={() => { this.safeSetState({ showArticleListMode: 'main' }); }}
-            >Search By List</button>
+              onClick={() => {
+                this.safeSetState({ showArticleListMode: 'main' });
+              }}
+            >
+              Search By List
+            </button>
             <SearchBar
               model={this.props.model}
               handleClick={this.addArticle.bind(this, 'main')}
@@ -654,20 +722,20 @@ export default class IssueArticleController extends FalcorController {
               showPubDate
             />
             <div style={{ overflow: 'auto', maxHeight: '20vh' }}>
-              {
-                mainArticles.map(article => (
-                  <div key={article.slug}>
-                    <button
-                      type="button"
-                      className="toggle-button"
-                      aria-label="Remove post from issue"
-                      onClick={this.deleteArticle.bind(this, 'main', article)}
-                      disabled={this.state.saving}
-                    >&times;&nbsp;</button>
-                    <div style={{ marginLeft: '1em' }}>{article.title}</div>
-                  </div>
-                ))
-              }
+              {mainArticles.map(article => (
+                <div key={article.slug}>
+                  <button
+                    type="button"
+                    className="toggle-button"
+                    aria-label="Remove post from issue"
+                    onClick={this.deleteArticle.bind(this, 'main', article)}
+                    disabled={this.state.saving}
+                  >
+                    &times;&nbsp;
+                  </button>
+                  <div style={{ marginLeft: '1em' }}>{article.title}</div>
+                </div>
+              ))}
             </div>
           </div>
           {/* eslint-enable react/jsx-no-bind */}
@@ -680,7 +748,9 @@ export default class IssueArticleController extends FalcorController {
             aria-label="Save changes"
             onClick={this.saveChanges}
             disabled={this.state.saving || !this.state.changed}
-          >Save Changes</button>
+          >
+            Save Changes
+          </button>
         </div>
       );
     }

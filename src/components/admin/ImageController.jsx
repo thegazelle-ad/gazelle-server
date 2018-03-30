@@ -70,32 +70,46 @@ export default class ImageUploader extends BaseComponent {
   }
 
   uploadFile(fileObject) {
-    const file = fileObject.file;
+    const { file } = fileObject;
     const xhr = new XMLHttpRequest();
     const formData = new FormData();
     xhr.onload = () => {
-      const response = xhr.response;
+      const { response } = xhr;
       if (response.split(' ')[0] === 'success') {
         const URL = response.split(' ')[1];
         this.handleUploadTerminated(fileObject.metaData.name, 2, URL);
       } else {
         let errorMessage;
         if (response === 'Error uploading') {
-          errorMessage = 'The server had an error while trying to upload the image to s3';
+          errorMessage =
+            'The server had an error while trying to upload the image to s3';
         } else if (response.split(',')[0] === 'object already exists') {
-          errorMessage = `An object already exists with the key: ${response.split(',')[1]}`;
+          errorMessage = `An object already exists with the key: ${
+            response.split(',')[1]
+          }`;
         } else {
           errorMessage = `An unexpected error occured: ${response}`;
         }
-        this.handleUploadTerminated(fileObject.metaData.name, 3, undefined, errorMessage);
+        this.handleUploadTerminated(
+          fileObject.metaData.name,
+          3,
+          undefined,
+          errorMessage,
+        );
       }
     };
-    xhr.onerror = (err) => {
+    xhr.onerror = err => {
       // Set upload status to failed
       console.error(err); // eslint-disable-line no-console
-      const errorMessage = 'An unknown error occured contacting the server, ' +
-                           'error logged in developer console';
-      this.handleUploadTerminated(fileObject.metaData.name, 3, undefined, errorMessage);
+      const errorMessage =
+        'An unknown error occured contacting the server, ' +
+        'error logged in developer console';
+      this.handleUploadTerminated(
+        fileObject.metaData.name,
+        3,
+        undefined,
+        errorMessage,
+      );
     };
     xhr.open('POST', '/upload', true);
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -106,7 +120,7 @@ export default class ImageUploader extends BaseComponent {
   }
 
   handleUploadTerminated(fileName, uploadStatus, amazonURL, errorMessage) {
-    const newChanged = this.state.files.some((storedFileObject) => {
+    const newChanged = this.state.files.some(storedFileObject => {
       if (storedFileObject.metaData.name === fileName) {
         return false;
       }
@@ -115,21 +129,20 @@ export default class ImageUploader extends BaseComponent {
       return !(upStat === 2 || upStat === 3);
     });
     const index = this.state.files.findIndex(
-      storedFileObject => storedFileObject.metaData.name === fileName
+      storedFileObject => storedFileObject.metaData.name === fileName,
     );
     if (index !== -1) {
-      const newFiles = update(this.state.files,
-        {
-          [index]: {
-            metaData: {
-              $merge: {
-                uploadStatus,
-                amazonURL,
-                errorMessage,
-              },
+      const newFiles = update(this.state.files, {
+        [index]: {
+          metaData: {
+            $merge: {
+              uploadStatus,
+              amazonURL,
+              errorMessage,
             },
           },
-        });
+        },
+      });
       this.safeSetState({
         files: newFiles,
         changed: newChanged,
@@ -146,15 +159,18 @@ export default class ImageUploader extends BaseComponent {
 
   handleInputChange(e) {
     e.preventDefault();
-    const files = e.target.files;
-    const fileArray = _.map(files, file => ({ file, metaData: { name: file.name } }));
+    const { files } = e.target;
+    const fileArray = _.map(files, file => ({
+      file,
+      metaData: { name: file.name },
+    }));
     let newFiles = this.state.files.concat(fileArray);
     newFiles = _.uniqBy(newFiles, fileObject => fileObject.metaData.name);
     this.safeSetState({
       files: newFiles,
     });
 
-    fileArray.forEach((file) => {
+    fileArray.forEach(file => {
       this.addImagePreviewUrl(file);
     });
 
@@ -171,7 +187,10 @@ export default class ImageUploader extends BaseComponent {
       this.safeSetState({
         changed: true,
       });
-    } else if ((!this.state.files || this.state.files.length === 0) && this.state.changed) {
+    } else if (
+      (!this.state.files || this.state.files.length === 0) &&
+      this.state.changed
+    ) {
       this.safeSetState({
         changed: false,
       });
@@ -179,7 +198,9 @@ export default class ImageUploader extends BaseComponent {
   }
 
   deleteImagePreview(name) {
-    const index = this.state.files.findIndex(fileObject => fileObject.metaData.name === name);
+    const index = this.state.files.findIndex(
+      fileObject => fileObject.metaData.name === name,
+    );
     if (index !== -1) {
       const newFiles = update(this.state.files, { $splice: [[index, 1]] });
       this.safeSetState({
@@ -192,7 +213,8 @@ export default class ImageUploader extends BaseComponent {
     const reader = new FileReader();
     reader.onload = () => {
       const index = this.state.files.findIndex(
-        storedFileObject => storedFileObject.metaData.name === fileObject.metaData.name
+        storedFileObject =>
+          storedFileObject.metaData.name === fileObject.metaData.name,
       );
       if (index !== -1) {
         const newFiles = update(this.state.files, {
@@ -205,7 +227,7 @@ export default class ImageUploader extends BaseComponent {
         });
       }
     };
-    reader.onerror = (e) => {
+    reader.onerror = e => {
       console.error(e); // eslint-disable-line no-console
     };
 
@@ -223,19 +245,27 @@ export default class ImageUploader extends BaseComponent {
 
   changeImageName(e) {
     e.preventDefault();
-    const imgName = this.state.imgName;
+    const { imgName } = this.state;
     const re = /(?:\.([^.]+))?$/;
     const oldExt = re.exec(imgName)[1];
-    const nameInput = this.state.nameInput;
-    const newExt = nameInput.lastIndexOf('.') !== -1 ? re.exec(nameInput)[1] : undefined;
-    const index = this.state.files.findIndex(fileObject => fileObject.metaData.name === imgName);
+    const { nameInput } = this.state;
+    const newExt =
+      nameInput.lastIndexOf('.') !== -1 ? re.exec(nameInput)[1] : undefined;
+    const index = this.state.files.findIndex(
+      fileObject => fileObject.metaData.name === imgName,
+    );
     if (index !== -1) {
       const newFiles = update(this.state.files, {
         [index]: {
-          metaData: { $merge:
-            { name: nameInput.lastIndexOf('.') !== -1
-              ? nameInput.substring(0, nameInput.lastIndexOf('.')).concat('.', oldExt)
-            : nameInput.concat('.', oldExt) },
+          metaData: {
+            $merge: {
+              name:
+                nameInput.lastIndexOf('.') !== -1
+                  ? nameInput
+                      .substring(0, nameInput.lastIndexOf('.'))
+                      .concat('.', oldExt)
+                  : nameInput.concat('.', oldExt),
+            },
           },
         },
       });
@@ -265,16 +295,8 @@ export default class ImageUploader extends BaseComponent {
 
   render() {
     const actions = [
-      <FlatButton
-        label="Cancel"
-        primary
-        onClick={this.changeImageNameClose}
-      />,
-      <FlatButton
-        label="Submit"
-        primary
-        onClick={this.changeImageName}
-      />,
+      <FlatButton label="Cancel" primary onClick={this.changeImageNameClose} />,
+      <FlatButton label="Submit" primary onClick={this.changeImageName} />,
     ];
     const changedStateStyle = {};
     changedStateStyle.fontWeight = 'normal';
@@ -286,30 +308,34 @@ export default class ImageUploader extends BaseComponent {
         changedStateStyle.color = '#65e765';
       }
     } else {
-      if (!this.state.uploading) {
-        changedStateStyle.display = 'block';
-        changedStateStyle.color = '#6490e7';
-      } else {
-        changedStateStyle.display = 'block';
-        changedStateStyle.color = '#6490e7';
-      }
+      changedStateStyle.display = 'block';
+      changedStateStyle.color = '#6490e7';
     }
 
-    const imagePreviews = this.state.files ? this.state.files.map((fileObject) => {
-      const { name, url, uploadStatus, amazonURL, errorMessage } = fileObject.metaData;
-      return (
-        <ImagePreview
-          url={url}
-          name={name}
-          uploadStatus={uploadStatus}
-          key={name}
-          onDelete={this.deleteImagePreview}
-          onChangeName={this.changeImageName}
-          onChangeNameOpen={this.changeImageNameOpen}
-          amazonURL={amazonURL}
-          errorMessage={errorMessage}
-        />);
-    }) : null;
+    const imagePreviews = this.state.files
+      ? this.state.files.map(fileObject => {
+          const {
+            name,
+            url,
+            uploadStatus,
+            amazonURL,
+            errorMessage,
+          } = fileObject.metaData;
+          return (
+            <ImagePreview
+              url={url}
+              name={name}
+              uploadStatus={uploadStatus}
+              key={name}
+              onDelete={this.deleteImagePreview}
+              onChangeName={this.changeImageName}
+              onChangeNameOpen={this.changeImageNameOpen}
+              amazonURL={amazonURL}
+              errorMessage={errorMessage}
+            />
+          );
+        })
+      : null;
 
     const isUpload = /upload\/?$/.test(window.location.pathname);
 
@@ -360,18 +386,19 @@ export default class ImageUploader extends BaseComponent {
       },
     };
 
-    let extensionErrorMsg = `To change the image's extension to .${this.state.attemptedExt},`;
-    extensionErrorMsg = extensionErrorMsg.concat(' please convert it externally and re-upload.');
+    let extensionErrorMsg = `To change the image's extension to .${
+      this.state.attemptedExt
+    },`;
+    extensionErrorMsg = extensionErrorMsg.concat(
+      ' please convert it externally and re-upload.',
+    );
 
     return (
       <div>
         <h1 style={styles.heading}>Images</h1>
         <Divider />
-        <Paper style={styles.paper} zDepth={2} >
-          <form
-            style={styles.imageSubmit}
-            onSubmit={this.handleUpload}
-          >
+        <Paper style={styles.paper} zDepth={2}>
+          <form style={styles.imageSubmit} onSubmit={this.handleUpload}>
             <Tabs>
               <Tab
                 icon={<FileUpload />}
@@ -385,7 +412,7 @@ export default class ImageUploader extends BaseComponent {
               />
             </Tabs>
             <div>
-              {isUpload ?
+              {isUpload ? (
                 <div style={styles.uploadButtons}>
                   <FlatButton
                     label="Add an Image"
@@ -414,26 +441,25 @@ export default class ImageUploader extends BaseComponent {
                   >
                     <p style={styles.buttonText}>UPLOAD</p>
                   </RaisedButton>
-                  {this.state.uploading && !this.state.changed ?
+                  {this.state.uploading && !this.state.changed ? (
                     <RaisedButton
                       onClick={this.postUploadReset}
                       secondary
                       style={styles.raisedButton}
-                    ><p style={styles.buttonText}>NEW UPLOAD</p></RaisedButton>
-                  : null
-                  }
+                    >
+                      <p style={styles.buttonText}>NEW UPLOAD</p>
+                    </RaisedButton>
+                  ) : null}
                 </div>
-              : null}
+              ) : null}
             </div>
             <div>
               {isUpload
-                ? React.cloneElement(this.props.children,
-                  {
+                ? React.cloneElement(this.props.children, {
                     images: imagePreviews,
                     onChange: this.handlePreviewChange,
                   })
-                : this.props.children
-              }
+                : this.props.children}
             </div>
           </form>
         </Paper>

@@ -65,17 +65,25 @@ export default class AuthorController extends FalcorController {
 
   static getFalcorPathSets(params) {
     return [
-      ['authors', 'bySlug', params.slug, ['name', 'image_url', 'biography', 'slug', 'job_title']],
+      [
+        'authors',
+        'bySlug',
+        params.slug,
+        ['name', 'image_url', 'biography', 'slug', 'job_title'],
+      ],
     ];
   }
 
   componentWillMount() {
-    const falcorCallback = (data) => {
+    const falcorCallback = data => {
       const name = data.authors.bySlug[this.props.params.slug].name || '';
       const slug = data.authors.bySlug[this.props.params.slug].slug || '';
-      const imageUrl = data.authors.bySlug[this.props.params.slug].image_url || '';
-      const jobTitle = data.authors.bySlug[this.props.params.slug].job_title || '';
-      const biography = data.authors.bySlug[this.props.params.slug].biography || '';
+      const imageUrl =
+        data.authors.bySlug[this.props.params.slug].image_url || '';
+      const jobTitle =
+        data.authors.bySlug[this.props.params.slug].job_title || '';
+      const biography =
+        data.authors.bySlug[this.props.params.slug].biography || '';
 
       this.safeSetState({
         name,
@@ -89,12 +97,15 @@ export default class AuthorController extends FalcorController {
   }
 
   componentWillReceiveProps(nextProps) {
-    const falcorCallback = (data) => {
+    const falcorCallback = data => {
       const name = data.authors.bySlug[this.props.params.slug].name || '';
       const slug = data.authors.bySlug[this.props.params.slug].slug || '';
-      const imageUrl = data.authors.bySlug[this.props.params.slug].image_url || '';
-      const jobTitle = data.authors.bySlug[this.props.params.slug].job_title || '';
-      const biography = data.authors.bySlug[this.props.params.slug].biography || '';
+      const imageUrl =
+        data.authors.bySlug[this.props.params.slug].image_url || '';
+      const jobTitle =
+        data.authors.bySlug[this.props.params.slug].job_title || '';
+      const biography =
+        data.authors.bySlug[this.props.params.slug].biography || '';
 
       this.safeSetState({
         name,
@@ -126,9 +137,11 @@ export default class AuthorController extends FalcorController {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.isSameAuthor(prevProps, this.props) &&
-        this.formHasUpdated(prevState, this.state) &&
-        this.state.ready) {
+    if (
+      this.isSameAuthor(prevProps, this.props) &&
+      this.formHasUpdated(prevState, this.state) &&
+      this.state.ready
+    ) {
       // The update wasn't due to a change in article
       this.debouncedHandleFormStateChanges();
     }
@@ -150,7 +163,7 @@ export default class AuthorController extends FalcorController {
     if (!this.isFormChanged()) {
       throw new Error(
         'Tried to save changes but there were no changes. ' +
-        'the save changes button is supposed to be disabled in this case'
+          'the save changes button is supposed to be disabled in this case',
       );
     }
 
@@ -160,7 +173,9 @@ export default class AuthorController extends FalcorController {
         changed: false,
       });
       // This is purely so the 'saved' message can be seen by the user for a second
-      setTimeout(() => { this.safeSetState({ saving: false }); }, 1000);
+      setTimeout(() => {
+        this.safeSetState({ saving: false });
+      }, 1000);
     };
 
     const update = () => {
@@ -168,7 +183,9 @@ export default class AuthorController extends FalcorController {
       const jsonGraphEnvelope = {
         paths: [
           [
-            'authors', 'bySlug', authorSlug,
+            'authors',
+            'bySlug',
+            authorSlug,
             ['name', 'slug', 'job_title', 'image_url', 'biography'],
           ],
         ],
@@ -182,40 +199,56 @@ export default class AuthorController extends FalcorController {
       };
 
       // Fill in the data
-      jsonGraphEnvelope.jsonGraph.authors.bySlug[authorSlug].name = this.state.name;
-      jsonGraphEnvelope.jsonGraph.authors.bySlug[authorSlug].slug = this.state.slug;
-      jsonGraphEnvelope.jsonGraph.authors.bySlug[authorSlug].job_title = this.state.jobTitle;
-      jsonGraphEnvelope.jsonGraph.authors.bySlug[authorSlug].image_url = this.state.imageUrl;
-      jsonGraphEnvelope.jsonGraph.authors.bySlug[authorSlug].biography = this.state.biography;
+      jsonGraphEnvelope.jsonGraph.authors.bySlug[
+        authorSlug
+      ].name = this.state.name;
+      jsonGraphEnvelope.jsonGraph.authors.bySlug[
+        authorSlug
+      ].slug = this.state.slug;
+      jsonGraphEnvelope.jsonGraph.authors.bySlug[
+        authorSlug
+      ].job_title = this.state.jobTitle;
+      jsonGraphEnvelope.jsonGraph.authors.bySlug[
+        authorSlug
+      ].image_url = this.state.imageUrl;
+      jsonGraphEnvelope.jsonGraph.authors.bySlug[
+        authorSlug
+      ].biography = this.state.biography;
 
       // Update the values
       this.falcorUpdate(jsonGraphEnvelope, undefined, resetState);
     };
 
     if (this.isFormFieldChanged(this.state.slug, falcorData.slug)) {
-      if (!window.confirm(
-        'You are about to change the slug of an author, this means that the url to ' +
-        'their webpage will change among other things, it is strongly recommended ' +
-        " not to change the slug unless it's very crucial. Are you sure you wish to proceed?"
-      )) {
+      if (
+        !window.confirm(
+          'You are about to change the slug of an author, this means that the url to ' +
+            'their webpage will change among other things, it is strongly recommended ' +
+            " not to change the slug unless it's very crucial. Are you sure you wish to proceed?",
+        )
+      ) {
         return;
       }
       // Start the saving
       this.safeSetState({ saving: true });
 
       // Make sure this slug is not already taken since we operate with unique slugs
-      this.props.model.get(['authors', 'bySlug', this.state.slug, 'slug']).then((x) => {
-        if (x) {
-          x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
-          // This slug is already taken as something was returned
-          window.alert('The slug you chose is already taken, please change it');
-          this.safeSetState({ saving: false });
-          return;
-        }
-        // Nothing was found which means we can proceed with assigning this slug
-        // without problems
-        update();
-      });
+      this.props.model
+        .get(['authors', 'bySlug', this.state.slug, 'slug'])
+        .then(x => {
+          if (x) {
+            x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
+            // This slug is already taken as something was returned
+            window.alert(
+              'The slug you chose is already taken, please change it',
+            );
+            this.safeSetState({ saving: false });
+            return;
+          }
+          // Nothing was found which means we can proceed with assigning this slug
+          // without problems
+          update();
+        });
     } else {
       // Slug isn't being updated so we can freely update
       // Start the saving
@@ -225,7 +258,7 @@ export default class AuthorController extends FalcorController {
   }
 
   isFormFieldChanged(userInput, falcorData) {
-    return ((userInput !== falcorData) && !(!userInput && !falcorData));
+    return userInput !== falcorData && !(!userInput && !falcorData);
   }
 
   isFormChanged() {
@@ -243,7 +276,11 @@ export default class AuthorController extends FalcorController {
     const ID = 'author-editor';
     if (this.state.ready) {
       if (!this.state.data) {
-        return <div id={ID}><p>No authors match the slug given in the URL</p></div>;
+        return (
+          <div id={ID}>
+            <p>No authors match the slug given in the URL</p>
+          </div>
+        );
       }
 
       let changedStateMessage;
@@ -253,12 +290,10 @@ export default class AuthorController extends FalcorController {
         } else {
           changedStateMessage = 'Saved';
         }
+      } else if (!this.state.saving) {
+        changedStateMessage = 'Save Changes';
       } else {
-        if (!this.state.saving) {
-          changedStateMessage = 'Save Changes';
-        } else {
-          changedStateMessage = 'Saving';
-        }
+        changedStateMessage = 'Saving';
       }
 
       return (
@@ -278,19 +313,22 @@ export default class AuthorController extends FalcorController {
                 floatingLabelText="Name"
                 disabled={this.state.saving}
                 onChange={this.fieldUpdaters.name}
-              /><br />
+              />
+              <br />
               <TextField
                 value={this.state.slug}
                 floatingLabelText="Slug"
                 disabled={this.state.saving}
                 onChange={this.fieldUpdaters.slug}
-              /><br />
+              />
+              <br />
               <TextField
                 value={this.state.jobTitle}
                 floatingLabelText="Job Title"
                 disabled={this.state.saving}
                 onChange={this.fieldUpdaters.jobTitle}
-              /><br />
+              />
+              <br />
               <TextField
                 name="image_url"
                 value={this.state.imageUrl}
@@ -298,7 +336,8 @@ export default class AuthorController extends FalcorController {
                 disabled={this.state.saving}
                 onChange={this.fieldUpdaters.imageUrl}
                 fullWidth
-              /><br />
+              />
+              <br />
               <TextField
                 name="biography"
                 floatingLabelText={
@@ -311,7 +350,8 @@ export default class AuthorController extends FalcorController {
                 multiLine
                 rows={2}
                 fullWidth
-              /><br />
+              />
+              <br />
               <RaisedButton
                 label={changedStateMessage}
                 type="submit"

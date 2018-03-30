@@ -47,15 +47,22 @@ export default class IssueCategoryController extends FalcorController {
 
   static getFalcorPathSets(params) {
     return [
-      ['issues', 'byNumber', params.issueNumber, 'categories', { length: 20 }, ['name', 'id']],
+      [
+        'issues',
+        'byNumber',
+        params.issueNumber,
+        'categories',
+        { length: 20 },
+        ['name', 'id'],
+      ],
       ['issues', 'byNumber', params.issueNumber, 'name'],
     ];
   }
 
   componentWillMount() {
-    const falcorCallBack = (data) => {
-      const issueNumber = this.props.params.issueNumber;
-      const categories = data.issues.byNumber[issueNumber].categories;
+    const falcorCallBack = data => {
+      const { issueNumber } = this.props.params;
+      const { categories } = data.issues.byNumber[issueNumber];
       const categoriesArray = _.map(categories, category => category);
 
       this.safeSetState({
@@ -66,9 +73,9 @@ export default class IssueCategoryController extends FalcorController {
   }
 
   componentWillReceiveProps(nextProps) {
-    const falcorCallBack = (data) => {
-      const issueNumber = this.props.params.issueNumber;
-      const categories = data.issues.byNumber[issueNumber].categories;
+    const falcorCallBack = data => {
+      const { issueNumber } = this.props.params;
+      const { categories } = data.issues.byNumber[issueNumber];
       const categoriesArray = _.map(categories, category => category);
       this.safeSetState({
         categories: categoriesArray,
@@ -82,11 +89,12 @@ export default class IssueCategoryController extends FalcorController {
   }
 
   handleChanges(newCategories) {
-    const issueNumber = this.props.params.issueNumber;
-    const oldCategories = this.state.data.issues.byNumber[issueNumber].categories;
-    const changed = newCategories.some((category, index) => (
-      category.id !== oldCategories[index].id
-    ));
+    const { issueNumber } = this.props.params;
+    const oldCategories = this.state.data.issues.byNumber[issueNumber]
+      .categories;
+    const changed = newCategories.some(
+      (category, index) => category.id !== oldCategories[index].id,
+    );
     if (changed !== this.state.changed) {
       this.safeSetState({ changed });
     }
@@ -94,9 +102,11 @@ export default class IssueCategoryController extends FalcorController {
 
   handleOrderChange(index, event) {
     const newIndex = event.target.value - 1;
-    const categories = this.state.categories;
+    const { categories } = this.state;
     const category = categories[index];
-    const newCategories = update(categories, { $splice: [[index, 1], [newIndex, 0, category]] });
+    const newCategories = update(categories, {
+      $splice: [[index, 1], [newIndex, 0, category]],
+    });
     this.handleChanges(newCategories);
     this.safeSetState({
       categories: newCategories,
@@ -104,21 +114,24 @@ export default class IssueCategoryController extends FalcorController {
   }
 
   handleSave() {
-    const issueNumber = this.props.params.issueNumber;
-    const oldCategories = this.state.data.issues.byNumber[issueNumber].categories;
+    const { issueNumber } = this.props.params;
+    const oldCategories = this.state.data.issues.byNumber[issueNumber]
+      .categories;
     const newCategories = this.state.categories;
     // Shallow validity check
     if (Object.keys(oldCategories).length !== newCategories.length) {
-      window.alert('There was an error, there has been added or removed a category' +
-        ' mysteriously. Please contact developers');
+      window.alert(
+        'There was an error, there has been added or removed a category' +
+          ' mysteriously. Please contact developers',
+      );
       return;
     }
     const idArray = newCategories.map(category => category.id);
 
-    const callback = (data) => {
+    const callback = data => {
       const updatedCategories = _.map(
         data.issues.byNumber[issueNumber].categories,
-        category => category
+        category => category,
       );
       this.safeSetState({
         changed: false,
@@ -129,8 +142,14 @@ export default class IssueCategoryController extends FalcorController {
       }, 1000);
     };
     this.safeSetState({ saving: true });
-    this.falcorCall(['issues', 'byNumber', issueNumber, 'updateIssueCategories'],
-      [idArray], undefined, undefined, undefined, callback);
+    this.falcorCall(
+      ['issues', 'byNumber', issueNumber, 'updateIssueCategories'],
+      [idArray],
+      undefined,
+      undefined,
+      undefined,
+      callback,
+    );
   }
 
   render() {
@@ -146,14 +165,15 @@ export default class IssueCategoryController extends FalcorController {
           </div>
         );
       }
-      const categories = this.state.categories;
+      const { categories } = this.state;
       if (!categories || categories.length === 0) {
         return (
           <div style={styles.tabs}>
             <Paper style={styles.paper} zDepth={1}>
               <div style={styles.innerPaper}>
                 The issue has no categories as of now. Remember to first add all
-                articles you want to be in the issue and then go here to order the categories.
+                articles you want to be in the issue and then go here to order
+                the categories.
               </div>
             </Paper>
           </div>
@@ -167,12 +187,10 @@ export default class IssueCategoryController extends FalcorController {
         } else {
           changedStateMessage = 'Saved';
         }
+      } else if (!this.state.saving) {
+        changedStateMessage = 'Save Changes';
       } else {
-        if (!this.state.saving) {
-          changedStateMessage = 'Save Changes';
-        } else {
-          changedStateMessage = 'Saving';
-        }
+        changedStateMessage = 'Saving';
       }
 
       return (
@@ -180,12 +198,15 @@ export default class IssueCategoryController extends FalcorController {
           <Paper style={styles.paper} zDepth={1}>
             <div style={styles.innerPaper}>
               <p>
-                Here you can reorder the categories. Remember that every time you
-                change which articles are in the issue, for now the order of the categories
-                will be randomized and you will have to come back here and reorder them.
-                <br /><br />
-                Also remember that this should be the last step before the issue is published and
-                at this point all articles you want in the issue should be already added.
+                Here you can reorder the categories. Remember that every time
+                you change which articles are in the issue, for now the order of
+                the categories will be randomized and you will have to come back
+                here and reorder them.
+                <br />
+                <br />
+                Also remember that this should be the last step before the issue
+                is published and at this point all articles you want in the
+                issue should be already added.
               </p>
             </div>
             {this.state.saving ? <LoadingOverlay /> : null}
@@ -195,37 +216,37 @@ export default class IssueCategoryController extends FalcorController {
           <Divider />
           <br />
           <div>
-            {
-              categories.map((category, index) => (
-                <div
-                  key={`${category.id.toString()}'-'${index.toString()}`}
-                  style={{ marginBottom: '8px' }}
+            {categories.map((category, index) => (
+              <div
+                key={`${category.id.toString()}'-'${index.toString()}`}
+                style={{ marginBottom: '8px' }}
+              >
+                {/* eslint-disable react/jsx-no-bind */}
+                <select
+                  onChange={this.handleOrderChange.bind(this, index)}
+                  defaultValue={index + 1}
+                  style={{ marginRight: '10px' }}
+                  disabled={this.state.saving}
                 >
-                  {/* eslint-disable react/jsx-no-bind*/}
-                  <select
-                    onChange={this.handleOrderChange.bind(this, index)}
-                    defaultValue={index + 1}
-                    style={{ marginRight: '10px' }}
-                    disabled={this.state.saving}
-                  >
-                  {/* eslint-enable react/jsx-no-bind*/}
-                    {
-                      _.range(1, categories.length + 1).map((order) => (
-                        <option key={order} value={order}>{order}</option>
-                      ))
-                    }
-                  </select>
-                    {category.name}
-                </div>
-              ))
-            }
+                  {/* eslint-enable react/jsx-no-bind */}
+                  {_.range(1, categories.length + 1).map(order => (
+                    <option key={order} value={order}>
+                      {order}
+                    </option>
+                  ))}
+                </select>
+                {category.name}
+              </div>
+            ))}
           </div>
           <button
             type="button"
             className="pure-button pure-button-primary"
             onClick={this.handleSave}
             disabled={this.state.saving || !this.state.changed}
-          >{changedStateMessage}</button>
+          >
+            {changedStateMessage}
+          </button>
         </div>
       );
     }

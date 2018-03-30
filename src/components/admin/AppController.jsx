@@ -30,13 +30,21 @@ export default class AppController extends BaseComponent {
     this.handleDisableLink = this.handleDisableLink.bind(this);
     this.resetGhostInfo = this.resetGhostInfo.bind(this);
     this.isLoggedIn = this.isLoggedIn.bind(this);
-    this.toggleRestartPasswordModal = this.toggleRestartPasswordModal.bind(this);
-    this.handleRestartPasswordEnter = this.handleRestartPasswordEnter.bind(this);
+    this.toggleRestartPasswordModal = this.toggleRestartPasswordModal.bind(
+      this,
+    );
+    this.handleRestartPasswordEnter = this.handleRestartPasswordEnter.bind(
+      this,
+    );
     this.assignPasswordRef = ref => {
       this.refs = { passwordInput: ref };
     };
     this.fieldUpdaters = {
-      restartPassword: updateFieldValue.bind(this, 'restartPasswordValue', undefined),
+      restartPassword: updateFieldValue.bind(
+        this,
+        'restartPasswordValue',
+        undefined,
+      ),
     };
     this.safeSetState({
       restartPasswordModalOpen: false,
@@ -94,7 +102,7 @@ export default class AppController extends BaseComponent {
             setTimeout(isRestarted, 500);
           } else {
             window.alert(
-              "Timeout: Server still hasn't restarted, please contact dev team for assistance"
+              "Timeout: Server still hasn't restarted, please contact dev team for assistance",
             );
             this.safeSetState({ currentlyRestarting: false });
           }
@@ -136,7 +144,9 @@ export default class AppController extends BaseComponent {
         failed = true;
       }
       if (failed) {
-        window.alert('Unexpected error while trying to restart server, please contact dev team');
+        window.alert(
+          'Unexpected error while trying to restart server, please contact dev team',
+        );
         this.safeSetState({
           currentlyRestarting: false,
         });
@@ -184,15 +194,21 @@ export default class AppController extends BaseComponent {
   }
 
   render() {
-    const bodyStyle = { transition: 'margin-left 450ms cubic-bezier(0.23, 1, 0.32, 1)' };
+    const bodyStyle = {
+      transition: 'margin-left 450ms cubic-bezier(0.23, 1, 0.32, 1)',
+    };
     const APP_ID = 'app';
     const HEADER_ID = `${APP_ID}-header`;
-    if (this.isLoggedIn()) { bodyStyle.marginLeft = 256; }
+    if (this.isLoggedIn()) {
+      bodyStyle.marginLeft = 256;
+    }
 
     const LoggedIn = () => (
       <IconMenu
         iconButtonElement={
-          <IconButton id={`${HEADER_ID}-menu-button`}><MoreVertIcon /></IconButton>
+          <IconButton id={`${HEADER_ID}-menu-button`}>
+            <MoreVertIcon />
+          </IconButton>
         }
         targetOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
@@ -223,19 +239,15 @@ export default class AppController extends BaseComponent {
         <div id={APP_ID} className="mainContainer">
           <AppBar
             id={HEADER_ID}
-            title={"Admin Interface"}
-            iconElementRight={this.isLoggedIn() ?
-              <LoggedIn /> :
-              null}
+            title="Admin Interface"
+            iconElementRight={this.isLoggedIn() ? <LoggedIn /> : null}
             showMenuIconButton={false}
           />
 
           {/* Only show nav if logged in */}
           <Navigation isNavOpen={this.isLoggedIn()} />
           <div style={bodyStyle} className="editor-body">
-            <div className="editor-items">
-              {this.props.children}
-            </div>
+            <div className="editor-items">{this.props.children}</div>
           </div>
           {/* Dialog for restart server password */}
           <Dialog

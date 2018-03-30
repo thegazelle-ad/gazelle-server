@@ -13,18 +13,22 @@ export default class AuthorController extends FalcorController {
     // Multilevel request requires Falcor Path for each level of data requested
     return [
       [
-        'authors', 'bySlug', params.authorSlug,
+        'authors',
+        'bySlug',
+        params.authorSlug,
         ['name', 'biography', 'slug', 'job_title', 'image_url'],
       ],
       [
-        'authors', 'bySlug',
+        'authors',
+        'bySlug',
         params.authorSlug,
         'articles',
         { to: 50 },
         ['title', 'image_url', 'teaser', 'issueNumber', 'category', 'slug'],
       ],
       [
-        'authors', 'bySlug',
+        'authors',
+        'bySlug',
         params.authorSlug,
         'articles',
         { to: 50 },
@@ -38,17 +42,18 @@ export default class AuthorController extends FalcorController {
   render() {
     if (this.state.ready) {
       if (this.state.data == null) {
-        return (
-          <NotFound />
-        );
+        return <NotFound />;
       }
 
-      const authorSlug = this.props.params.authorSlug;
+      const { authorSlug } = this.props.params;
       const authorData = this.state.data.authors.bySlug[authorSlug];
-      if (!authorData.image_url) { // Default image for authors without one
-        authorData.image_url = 'https://gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=300';
+      if (!authorData.image_url) {
+        // Default image for authors without one
+        authorData.image_url =
+          'https://gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=300';
       }
-      if (!authorData.job_title) { // Default job title for authors without one
+      if (!authorData.job_title) {
+        // Default job title for authors without one
         authorData.job_title = 'Contributor';
       }
       const meta = [
@@ -58,15 +63,15 @@ export default class AuthorController extends FalcorController {
         // Social media
         { property: 'og:title', content: `${authorData.name} | The Gazelle` },
         { property: 'og:type', content: 'website' },
-        { property: 'og:url', content: `www.thegazelle.org/author/${authorData.slug}` },
+        {
+          property: 'og:url',
+          content: `www.thegazelle.org/author/${authorData.slug}`,
+        },
         { property: 'og:description', content: authorData.biography },
       ];
       return (
         <div>
-          <Helmet
-            meta={meta}
-            title={`${authorData.name} | The Gazelle`}
-          />
+          <Helmet meta={meta} title={`${authorData.name} | The Gazelle`} />
           <Author author={authorData} />
         </div>
       );

@@ -1,10 +1,11 @@
+/* eslint-disable react/jsx-filename-extension */
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
 import update from 'react-addons-update';
 import falcor from 'falcor';
 
-import { followPath } from 'lib/utilities';
+import { has, followPath } from 'lib/utilities';
 
 // create a curried createElement that injects a
 // falcor model instance into each of the falcon controllers
@@ -41,7 +42,11 @@ export function validateFalcorPathSets(falcorPathSets) {
   */
 
   // If the component doesn't want any data
-  if (!falcorPathSets || !(falcorPathSets instanceof Array) || falcorPathSets.length === 0) {
+  if (
+    !falcorPathSets ||
+    !(falcorPathSets instanceof Array) ||
+    falcorPathSets.length === 0
+  ) {
     return undefined;
   }
   // If we're only passing a single pathSet we compensate for the spread operator
@@ -51,12 +56,14 @@ export function validateFalcorPathSets(falcorPathSets) {
 
   // Remove any empty arrays (would also remove falsey values, but they shouldn't
   // be present in a falcorPathSet anyway)
-  return _.compact(falcorPathSets.map((pathSet) => {
-    if (!(pathSet instanceof Array) || pathSet.length === 0) {
-      return null;
-    }
-    return pathSet;
-  }));
+  return _.compact(
+    falcorPathSets.map(pathSet => {
+      if (!(pathSet instanceof Array) || pathSet.length === 0) {
+        return null;
+      }
+      return pathSet;
+    }),
+  );
 }
 
 export function pathSetsInCache(cache, falcorPathSets) {
@@ -74,7 +81,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
     It returns whether this key and all branches from the pathSet that follow
     this key are in the cache as it continues recursively.
     */
-    if (!curObject.hasOwnProperty(key) || curObject[key] === null) {
+    if (!has.call(curObject, key) || curObject[key] === null) {
       return false;
     }
     const val = curObject[key];
@@ -84,10 +91,15 @@ export function pathSetsInCache(cache, falcorPathSets) {
         case 'atom':
           return nextRemainingKeySets.length === 0;
         case 'ref':
-          return checkSinglePathSetInCache(followPath(val.value, cache), nextRemainingKeySets);
+          return checkSinglePathSetInCache(
+            followPath(val.value, cache),
+            nextRemainingKeySets,
+          );
         default:
           throw new Error(
-            `pathSetsInCache encountered unexpected type. Type found was: ${val.$type}`
+            `pathSetsInCache encountered unexpected type. Type found was: ${
+              val.$type
+            }`,
           );
       }
     } else {
@@ -120,7 +132,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
     if (!(nextKeySet instanceof Array)) {
       nextKeySet = [nextKeySet];
     }
-    return nextKeySet.every((keyOrRange) => {
+    return nextKeySet.every(keyOrRange => {
       if (keyOrRange !== null && typeof keyOrRange === 'object') {
         // keyOrRange is a range
 
@@ -129,9 +141,12 @@ export function pathSetsInCache(cache, falcorPathSets) {
         // in the cache or it's simply because there is no data to fetch.
         // It is also needed in the software development to know how many
         // items you will actually receive when overfetching.
-        if (!curObject.hasOwnProperty('length')) {
+        if (!has.call(curObject, 'length')) {
           if (process.env.NODE_ENV !== 'production') {
-            console.warn('No length property on object in cache. This might be a developer mistake.'); // eslint-disable-line no-console, max-len
+            // eslint-disable-next-line no-console
+            console.warn(
+              'No length property on object in cache. This might be a developer mistake.',
+            );
             console.log('Current object in pathSetsInCache:'); // eslint-disable-line no-console
             console.log(curObject); // eslint-disable-line no-console
             console.log('remainingKeySets in pathSetsInCache'); // eslint-disable-line no-console
@@ -143,24 +158,24 @@ export function pathSetsInCache(cache, falcorPathSets) {
         }
         const lengthOfFalcorArray = curObject.length;
         let start = 0;
-        if (keyOrRange.hasOwnProperty('from')) {
+        if (has.call(keyOrRange, 'from')) {
           start = keyOrRange.from;
         }
         let end;
-        if (keyOrRange.hasOwnProperty('to')) {
-          if (keyOrRange.hasOwnProperty('length')) {
+        if (has.call(keyOrRange, 'to')) {
+          if (has.call(keyOrRange, 'length')) {
             throw new Error(
               "Falcor Range cannot have both 'to' and 'length' properties at falcor KeySet: " +
-              `${JSON.stringify(keyOrRange)}`
+                `${JSON.stringify(keyOrRange)}`,
             );
           }
           end = keyOrRange.to;
-        } else if (keyOrRange.hasOwnProperty('length')) {
+        } else if (has.call(keyOrRange, 'length')) {
           end = start + keyOrRange.length - 1;
         } else {
           throw new Error(
             "Falcor Range must have either 'to' or 'length' properties at falcor KeySet: " +
-            `${JSON.stringify(keyOrRange)}`
+              `${JSON.stringify(keyOrRange)}`,
           );
         }
         // Don't check any keys beyond the end of the theoretical falcor array.
@@ -173,7 +188,11 @@ export function pathSetsInCache(cache, falcorPathSets) {
         return true;
       }
       // keyOrRange is a simple key
-      return handleCheckingSingleKey(curObject, nextRemainingKeySets, keyOrRange);
+      return handleCheckingSingleKey(
+        curObject,
+        nextRemainingKeySets,
+        keyOrRange,
+      );
     });
   }
 
@@ -185,8 +204,8 @@ export function pathSetsInCache(cache, falcorPathSets) {
   }
   // Return if every pathSet in the array of pathSets
   // is located in the cache.
-  return processedFalcorPaths.every((pathSet) =>
-    checkSinglePathSetInCache(cache, pathSet)
+  return processedFalcorPaths.every(pathSet =>
+    checkSinglePathSetInCache(cache, pathSet),
   );
 }
 
@@ -199,7 +218,10 @@ export function expandCache(cache) {
     }
     // Parent also works for array length 1, aka initial keys
     // Parent and Key variables are used for assigning new values later
-    const parent = followPath(processedPath.slice(0, processedPath.length - 1), cache);
+    const parent = followPath(
+      processedPath.slice(0, processedPath.length - 1),
+      cache,
+    );
     const key = processedPath[processedPath.length - 1];
     // The following key exists as it was pushed on to stack as a valid key
     parent[key] = value;
@@ -209,8 +231,8 @@ export function expandCache(cache) {
     // We don't count arrays as objects here. This is to protect ourselves against an expanded atom
     // This does still leave us vulnerable to an expanded object though, but in by far most cases
     // it would be very bad form to put an object in an atom, so this is not supported at this time.
-    if (val === null || (val instanceof Array)) return false;
-    return (typeof val) === 'object';
+    if (val === null || val instanceof Array) return false;
+    return typeof val === 'object';
   }
 
   function handleRef(pathToRef, refPath) {
@@ -219,20 +241,24 @@ export function expandCache(cache) {
     if (!(pathToRef instanceof Array)) {
       throw new Error(
         'pathToRef was passed as a non-array. The value passed was: ' +
-        `${JSON.stringify(pathToRef)}`
+          `${JSON.stringify(pathToRef)}`,
       );
     }
     // So is refPath
     if (!(pathToRef instanceof Array)) {
       throw new Error(
-        `refPath was passed as a non-array. The value passed was: ${JSON.stringify(refPath)}`
+        `refPath was passed as a non-array. The value passed was: ${JSON.stringify(
+          refPath,
+        )}`,
       );
     }
     refPathsSet.add(pathToRef.join('.'));
     let val = followPath(refPath, cache);
     let path = refPath.join('.');
     if (val === undefined) {
-      throw new Error(`Missing part of JSON graph in expandCache function at path: ${path}`);
+      throw new Error(
+        `Missing part of JSON graph in expandCache function at path: ${path}`,
+      );
     }
     while (isObject(val) && val.$type) {
       switch (val.$type) {
@@ -247,13 +273,13 @@ export function expandCache(cache) {
         case 'ref':
           if (refPathsSet.has(path)) {
             let paths = '[';
-            refPathsSet.forEach((pathFromSet) => {
+            refPathsSet.forEach(pathFromSet => {
               paths += `${pathFromSet},`;
             });
             paths = `${paths.substring(0, paths.length - 2)}]`;
             throw new Error(
               'Neverending loop from ref to ref with no real values present in expandCache. ' +
-              `It is made up of the following paths: ${paths}`
+                `It is made up of the following paths: ${paths}`,
             );
           } else {
             refPathsSet.add(path);
@@ -264,11 +290,11 @@ export function expandCache(cache) {
         default:
           throw new Error(
             `expandCache encountered a new type of name: ${val.$type}. ` +
-            `And cannot read it at following path: ${path}`
+              `And cannot read it at following path: ${path}`,
           );
       }
     }
-    refPathsSet.forEach((pathFromSet) => {
+    refPathsSet.forEach(pathFromSet => {
       assignByPath(pathFromSet, val);
     });
   }
@@ -277,7 +303,7 @@ export function expandCache(cache) {
   if (!cache) return cache;
   // Expanding
   const stack = [];
-  Object.keys(cache).forEach((key) => {
+  Object.keys(cache).forEach(key => {
     stack.push([key]);
   });
   while (stack.length > 0) {
@@ -288,18 +314,18 @@ export function expandCache(cache) {
     if (!(pathArray instanceof Array)) {
       throw new Error(
         'non-array popped off stack in expandCache. ' +
-        `Item popped off was: ${JSON.stringify(pathArray)}`
+          `Item popped off was: ${JSON.stringify(pathArray)}`,
       );
     }
     const val = followPath(pathArray, cache);
     if (val === undefined) {
       throw new Error(
-        `Missing part of JSON graph in expandCache function at path: ${pathArray.join('.')}`
+        `Missing part of JSON graph in expandCache function at path: ${pathArray.join(
+          '.',
+        )}`,
       );
     }
-    if (!isObject(val)) {
-      continue;
-    } else if (val.$type) {
+    if (isObject(val) && val.$type) {
       switch (val.$type) {
         case 'atom':
           assignByPath(pathArray, val.value);
@@ -313,11 +339,11 @@ export function expandCache(cache) {
         default:
           throw new Error(
             `expandCache encountered a new type of name: ${val.$type}. ` +
-            `And cannot read it at following path: ${pathArray.join('.')}`
+              `And cannot read it at following path: ${pathArray.join('.')}`,
           );
       }
-    } else {
-      Object.keys(val).forEach((key) => {
+    } else if (isObject(val)) {
+      Object.keys(val).forEach(key => {
         const next = pathArray.concat(key);
         stack.push(next);
       });
@@ -334,7 +360,7 @@ export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
 
   function isObject(val) {
     if (val === null) return false;
-    return (typeof val) === 'object';
+    return typeof val === 'object';
   }
 
   function recursivelyConvertObject(curObject, correspondingOldObject, depth) {
@@ -352,9 +378,13 @@ export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
       if (value instanceof Error) {
         throw value;
       }
-      if (correspondingOldObject.hasOwnProperty(key)) {
+      if (has.call(correspondingOldObject, key)) {
         if (isObject(value)) {
-          recursivelyConvertObject(value, correspondingOldObject[key], depth + 1);
+          recursivelyConvertObject(
+            value,
+            correspondingOldObject[key],
+            depth + 1,
+          );
         } else {
           curObject[key] = { $set: value };
         }
@@ -362,7 +392,7 @@ export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
         curObject[key] = { $set: value };
       }
     });
-    return;
+
     /* eslint-enable no-param-reassign */
   }
 
@@ -380,7 +410,8 @@ export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
 }
 
 export function cleanupFalcorKeys(obj) {
-  if (obj === null || (typeof obj) !== 'object' || obj.cleanupFalcorKeysMetaSeen) return obj;
+  if (obj === null || typeof obj !== 'object' || obj.cleanupFalcorKeysMetaSeen)
+    return obj;
   const ret = {};
   // In order to handle circular objects, the key name is convoluted to make sure it's unique
   obj.cleanupFalcorKeysMetaSeen = true; // eslint-disable-line no-param-reassign
@@ -394,7 +425,7 @@ export function cleanupFalcorKeys(obj) {
 }
 
 export function cleanupJsonGraphArg(jsonGraphArg) {
-  if (jsonGraphArg.hasOwnProperty('$type')) {
+  if (has.call(jsonGraphArg, '$type')) {
     // Then this is the final part we can substitute
     return jsonGraphArg.value;
   }

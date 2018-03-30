@@ -5,7 +5,6 @@ import { Link } from 'react-router';
 import moment from 'moment';
 
 export default class Navigation extends BaseComponent {
-
   render() {
     const categories = [
       {
@@ -25,22 +24,19 @@ export default class Navigation extends BaseComponent {
         slug: 'media',
       },
     ];
-    if (this.props.navigationData != null) { // Wait for navigation data to come in asynchronously
+    if (this.props.navigationData != null) {
+      // Wait for navigation data to come in asynchronously
       const data = this.props.navigationData;
-      let renderCategories =
-        _.map((categories || []), (category) =>
-          <li
-            key={category.slug}
-            className="navigation__categories__item"
+      const renderCategories = _.map(categories || [], category => (
+        <li key={category.slug} className="navigation__categories__item">
+          <Link
+            to={`/category/${category.slug}`}
+            activeClassName="navigation__categories__item--active"
           >
-            <Link
-              to={`/category/${category.slug}`}
-              activeClassName="navigation__categories__item--active"
-            >
-              {category.name}
-            </Link>
-          </li>
-        );
+            {category.name}
+          </Link>
+        </li>
+      ));
 
       return (
         <div>
@@ -48,21 +44,18 @@ export default class Navigation extends BaseComponent {
             <p className="navigation__publication-date">
               {moment(data.published_at).format('MMM DD, YYYY')}
             </p>
-            <nav role="navigation">
-              <ul className="navigation__categories">
-                {renderCategories}
-              </ul>
+            <nav>
+              <ul className="navigation__categories">{renderCategories}</ul>
             </nav>
             {/* TODO: change link to archives list */}
-            <Link
-              to="/archives"
-              className="navigation__issueNumber"
-            >{`Issue ${data.issueNumber}`}</Link>
+            <Link to="/archives" className="navigation__issueNumber">
+              {`Issue ${data.issueNumber}`}
+            </Link>
           </div>
         </div>
       );
     }
-    return <div></div>;
+    return <div />;
   }
 }
 

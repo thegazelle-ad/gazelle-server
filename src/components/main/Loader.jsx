@@ -39,19 +39,14 @@ export default class Loader extends BaseComponent {
   }
 
   render() {
-    const loading = this.state.loading;
-    const active = this.state.active;
-    const containerClass = classnames(
-      'loader', {
-        'loader--hide': !active,
-      }
-    );
-    const loaderClass = classnames(
-      'loader--percent', {
-        'loader--percent--loading': loading,
-        'loader--percent--finishing': !loading && active,
-      }
-    );
+    const { loading, active } = this.state;
+    const containerClass = classnames('loader', {
+      'loader--hide': !active,
+    });
+    const loaderClass = classnames('loader--percent', {
+      'loader--percent--loading': loading,
+      'loader--percent--finishing': !loading && active,
+    });
 
     return (
       <div className={containerClass}>

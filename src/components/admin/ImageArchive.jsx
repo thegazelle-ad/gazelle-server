@@ -5,7 +5,13 @@ export default class ImageArchive extends BaseComponent {
   render() {
     return (
       <div>
-        <p>This feature is currently unavailable. Please visit <a href="https://console.aws.amazon.com/s3/home?region=eu-west-1">Amazon S3</a> to access these features</p>
+        <p>
+          This feature is currently unavailable. Please visit{' '}
+          <a href="https://console.aws.amazon.com/s3/home?region=eu-west-1">
+            Amazon S3
+          </a>{' '}
+          to access these features
+        </p>
       </div>
     );
   }

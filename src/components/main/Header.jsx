@@ -2,27 +2,27 @@ import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
 import { Link, browserHistory } from 'react-router';
 
-export default class Header extends BaseComponent {
-  // Allows user to navigate to populated search page on pressing 'Enter'
-  handleSubmit(e) {
-    e.preventDefault();
-    browserHistory.push(`/search?q=${e.target['search-box'].value}`);
-  }
+// Allows user to navigate to populated search page on pressing 'Enter'
+function handleSubmit(e) {
+  e.preventDefault();
+  browserHistory.push(`/search?q=${e.target['search-box'].value}`);
+}
 
+export default class Header extends BaseComponent {
   // onKeyPress={this.handleKeyPress}
   render() {
     return (
       <div>
         <div className="header">
           <div className="header__search">
-            <form onSubmit={this.handleSubmit}>
+            <form onSubmit={handleSubmit}>
               <input
                 name="search-box"
                 className="header__search__main"
                 type="text"
                 placeholder="Search The Gazelle"
               />
-              <div className="header__search__tail"></div>
+              <div className="header__search__tail" />
               <input
                 type="submit"
                 className="header__search__text"
@@ -31,16 +31,29 @@ export default class Header extends BaseComponent {
             </form>
           </div>
           <div className="header__title">
-            {/* TODO: change link to proper Gazelle icon uploaded to server*/}
+            {/* TODO: change link to proper Gazelle icon uploaded to server */}
             <Link to="/" className="header__title__content">
-              <img src="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/header-logo.png" alt="logo" />
-              <h1 className="header__title__content__site-name">{this.props.appName}</h1>
+              <img
+                src="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/header-logo.png"
+                alt="logo"
+              />
+              <h1 className="header__title__content__site-name">
+                {this.props.appName}
+              </h1>
             </Link>
           </div>
           <div className="header__social">
             {/* eslint-disable max-len */}
-            <a href="https://www.facebook.com/TheGazelleAD" className="header__social--facebook">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 25 25">
+            <a
+              href="https://www.facebook.com/TheGazelleAD"
+              className="header__social--facebook"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 25 25"
+              >
                 <path
                   strokeWidth="1px"
                   strokeLinejoin="round"
@@ -49,8 +62,16 @@ export default class Header extends BaseComponent {
                 />
               </svg>
             </a>
-            <a href="https://twitter.com/TheGazelleAD" className="header__social--twitter">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <a
+              href="https://twitter.com/TheGazelleAD"
+              className="header__social--twitter"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeWidth="1px"
                   strokeLinejoin="round"
@@ -59,8 +80,16 @@ export default class Header extends BaseComponent {
                 />
               </svg>
             </a>
-            <a href="https://www.instagram.com/thegazelle_ad/" className="header__social--instagram">
-              <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24">
+            <a
+              href="https://www.instagram.com/thegazelle_ad/"
+              className="header__social--instagram"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="23"
+                height="23"
+                viewBox="0 0 24 24"
+              >
                 <path
                   className="header__social--instagram--bg"
                   strokeWidth="1px"

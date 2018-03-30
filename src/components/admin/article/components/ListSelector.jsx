@@ -17,15 +17,9 @@ export default class ListSelector extends BaseComponent {
         autoWidth={false}
         style={{ width: 200 }}
       >
-        {
-          _.map(this.props.types, type => (
-            <MenuItem
-              value={type.slug}
-              key={type.slug}
-              primaryText={type.name}
-            />
-          ))
-        }
+        {_.map(this.props.types, type => (
+          <MenuItem value={type.slug} key={type.slug} primaryText={type.name} />
+        ))}
       </SelectField>
     );
   }

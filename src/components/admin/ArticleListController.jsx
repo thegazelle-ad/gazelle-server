@@ -46,7 +46,8 @@ export default class ArticleListController extends FalcorController {
   static getFalcorPathSets(params) {
     return [
       [
-        'articles', 'byPage',
+        'articles',
+        'byPage',
         NUM_ARTICLES_IN_PAGE,
         parseInt(params.page, 10),
         { length: NUM_ARTICLES_IN_PAGE },
@@ -64,13 +65,13 @@ export default class ArticleListController extends FalcorController {
   }
 
   clickSearchSuggestion(article) {
-    const page = this.props.params.page;
+    const { page } = this.props.params;
     const path = `/articles/page/${page}/slug/${article.slug}`;
     browserHistory.push(path);
   }
 
   createListElement(article) {
-    const page = this.props.params.page;
+    const { page } = this.props.params;
     let publishedDate;
     if (article.published_at) {
       publishedDate = moment(article.published_at).format('MMM DD, YYYY');
@@ -78,14 +79,16 @@ export default class ArticleListController extends FalcorController {
       publishedDate = 'Unpublished';
     }
     return (
-      <Link to={`/articles/page/${page}/slug/${article.slug}`} key={article.slug}>
+      <Link
+        to={`/articles/page/${page}/slug/${article.slug}`}
+        key={article.slug}
+      >
         <ListItem
           primaryText={article.title}
           secondaryText={
             <p>
-              <span style={{ color: darkBlack }}>
-                {publishedDate}
-              </span> {article.teaser ? ' -- ' : null}
+              <span style={{ color: darkBlack }}>{publishedDate}</span>{' '}
+              {article.teaser ? ' -- ' : null}
               {article.teaser}
             </p>
           }
@@ -101,17 +104,17 @@ export default class ArticleListController extends FalcorController {
       if (!this.state.data.articles.byPage) {
         return (
           <p>
-            You have tried accessing a page that doesn't exist. Please press
-            <Link to="/articles/page/1">this link</Link> to return to page 1.
-            If you believe this was unintended and there is an error with the
+            You have tried accessing a page that doesn{"'"}t exist. Please press
+            <Link to="/articles/page/1">this link</Link> to return to page 1. If
+            you believe this was unintended and there is an error with the
             website please contact the web development team of The Gazelle.
           </p>
         );
       }
 
-      const page = this.props.params.page;
+      const { page } = this.props.params;
       const data = this.state.data.articles.byPage[NUM_ARTICLES_IN_PAGE][page];
-      const length = this.state.data.articles.length;
+      const { length } = this.state.data.articles;
       const maxPage = Math.ceil(length / NUM_ARTICLES_IN_PAGE);
 
       return (
@@ -131,10 +134,7 @@ export default class ArticleListController extends FalcorController {
                 fields={[]}
                 showPubDate
               />
-              <List
-                elements={data}
-                createElement={this.createListElement}
-              />
+              <List elements={data} createElement={this.createListElement} />
               <RaisedButton
                 label="Previous Page"
                 primary

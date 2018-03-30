@@ -20,7 +20,8 @@ export default class AppController extends FalcorController {
 
   // Data for rendering the navigation bar dynamically
   static getFalcorPathSets(params) {
-    if (params.issueNumber) { // User is on archived issue page
+    if (params.issueNumber) {
+      // User is on archived issue page
       const issueNumber = mapLegacyIssueSlugsToIssueNumber(params.issueNumber);
       return [
         ['issues', 'latest', ['issueNumber']], // Used for robustness when setting navigationData
@@ -28,29 +29,36 @@ export default class AppController extends FalcorController {
       ];
     }
     // User is on home page
-    return [
-      ['issues', 'latest', ['published_at', 'issueNumber']],
-    ];
+    return [['issues', 'latest', ['published_at', 'issueNumber']]];
   }
 
   render() {
-    const transitionKey = _.reduce(this.props.params, (keyString, val, key) => (
-      `${keyString}&${val}=${key}`
-    ), 'keystring');
+    const transitionKey = _.reduce(
+      this.props.params,
+      (keyString, val, key) => `${keyString}&${val}=${key}`,
+      'keystring',
+    );
 
     let navigationData = null;
-    if (this.state.ready) { // Maintains async enviornment
+    if (this.state.ready) {
+      // Maintains async enviornment
       if (
         this.props.params.issueNumber &&
-        this.props.params.issueNumber !== this.state.data.issues.latest.issueNumber
-      ) { // User is on an archived issuepage
-        const issueNumber = mapLegacyIssueSlugsToIssueNumber(this.props.params.issueNumber);
+        this.props.params.issueNumber !==
+          this.state.data.issues.latest.issueNumber
+      ) {
+        // User is on an archived issuepage
+        const issueNumber = mapLegacyIssueSlugsToIssueNumber(
+          this.props.params.issueNumber,
+        );
         navigationData = this.state.data.issues.byNumber[issueNumber];
-      } else { // User is on home page, categories, author page, info page, etc.
-        if (this.props.params.issueNumber) { // User is on an article from current issue
-          const latestIssueNumber = this.state.data.issues.latest.issueNumber;
-          navigationData = this.state.data.issues.byNumber[latestIssueNumber];
-        } else { navigationData = this.state.data.issues.latest; }
+      } else if (this.props.params.issueNumber) {
+        // User is on an article from current issue
+        const latestIssueNumber = this.state.data.issues.latest.issueNumber;
+        navigationData = this.state.data.issues.byNumber[latestIssueNumber];
+      } else {
+        // User is on home page, categories, author page, info page, etc.
+        navigationData = this.state.data.issues.latest;
       }
     }
 

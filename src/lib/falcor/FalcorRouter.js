@@ -24,8 +24,8 @@ export default class FalcorRouter extends BaseRouter.createClass(
     placeholder,
     teams,
     trending,
-    semesters
-  )
+    semesters,
+  ),
 ) {
   /* eslint-disable no-useless-constructor */
   constructor(...args) {

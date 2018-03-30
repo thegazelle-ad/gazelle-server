@@ -96,10 +96,10 @@ export default class ImagePreview extends BaseComponent {
       uploadingComponent = (
         <div style={styles.greenText}>
           <hr style={styles.hr} />
-            Uploaded at {amazonURL}
+          Uploaded at {amazonURL}
           <br />
         </div>
-    );
+      );
     } else if (uploadStatus === 3) {
       uploadingComponent = (
         <div style={styles.redText}>
@@ -121,7 +121,7 @@ export default class ImagePreview extends BaseComponent {
             style={styles.copyLink}
             onClick={this.onCopyToClipboard}
           >
-              COPY LINK
+            COPY LINK
           </FlatButton>
         );
       } else {
@@ -129,13 +129,16 @@ export default class ImagePreview extends BaseComponent {
         // Material-UI Dialog or something similar
         copyComponent = (
           <div>
-            It seems that our copy button is not compatible with your web browser.
-            Please upgrade to the newest version for full Gazelle capabilities.
+            It seems that our copy button is not compatible with your web
+            browser. Please upgrade to the newest version for full Gazelle
+            capabilities.
           </div>
         );
       }
     } else if (errorMessage) {
-      messageComponent = <div style={styles.previewError}>Error: {errorMessage}</div>;
+      messageComponent = (
+        <div style={styles.previewError}>Error: {errorMessage}</div>
+      );
     } else {
       messageComponent = null;
     }
@@ -144,7 +147,11 @@ export default class ImagePreview extends BaseComponent {
     if (url) {
       component = (
         <div className="imagePreview" style={styles.imagePreview}>
-          <img alt={`preview of ${name}`} src={url} style={styles.imageThumbnail} />
+          <img
+            alt={`preview of ${name}`}
+            src={url}
+            style={styles.imageThumbnail}
+          />
           <div style={styles.cardText}>
             {name}
             <br />
@@ -153,13 +160,15 @@ export default class ImagePreview extends BaseComponent {
               secondary
               onClick={this.onDelete}
               style={styles.flatButton}
-            >DELETE
+            >
+              DELETE
             </FlatButton>
             <FlatButton
               type="button"
               onClick={this.onChangeNameOpen}
               style={styles.flatButton}
-            >CHANGE NAME
+            >
+              CHANGE NAME
             </FlatButton>
             <br />
             {uploadingComponent}
@@ -168,7 +177,7 @@ export default class ImagePreview extends BaseComponent {
           </div>
           <Snackbar
             open={this.state.open}
-            message={"Link copied to clipboard"}
+            message="Link copied to clipboard"
             autoHideDuration={4000}
             onActionTouchTap={this.handleActionTouchTap}
             onRequestClose={this.handleRequestClose}
@@ -176,9 +185,7 @@ export default class ImagePreview extends BaseComponent {
         </div>
       );
     } else {
-      component = (
-        <CircularProgress />
-      );
+      component = <CircularProgress />;
     }
 
     return component;

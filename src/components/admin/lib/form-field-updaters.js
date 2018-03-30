@@ -43,7 +43,7 @@ export function updateFieldValue(keyPath, options = {}, e, ...restArgs) {
            * We currently don't support the multiple argument, as we don't use it.
            * If we start using it though, it should be implemented here as an option.
            */
-          value = restArgs[1];
+          [, value] = restArgs;
         }
         break;
 
@@ -62,7 +62,7 @@ export function updateFieldValue(keyPath, options = {}, e, ...restArgs) {
      * and it also makes sure we get the value before event dissappears and avoids
      * us needing to use event.persist
      */
-    value = e.target.value;
+    ({ value } = e.target);
   }
 
   if (trimLength !== false) {
