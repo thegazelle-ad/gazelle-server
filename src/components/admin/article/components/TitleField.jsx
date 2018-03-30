@@ -3,21 +3,24 @@ import PropTypes from 'prop-types';
 
 import { RequiredTextField } from 'components/admin/form-components/validated-fields';
 
-const TitleField = props => {
-  const onChange = event => {
-    props.onUpdate(event.target.value);
-  };
+class TitleField extends React.Component {
+  constructor(props) {
+    super(props);
+    this.onChange = event => props.onUpdate(event.target.value);
+  }
 
-  return (
-    <RequiredTextField
-      onChange={onChange}
-      value={props.title}
-      disabled={props.disabled}
-      floatingLabelText="Title"
-      fullWidth
-    />
-  );
-};
+  render() {
+    return (
+      <RequiredTextField
+        onChange={this.onChange}
+        value={this.props.title}
+        disabled={this.props.disabled}
+        floatingLabelText="Title"
+        fullWidth
+      />
+    );
+  }
+}
 
 TitleField.propTypes = {
   title: PropTypes.string.isRequired,

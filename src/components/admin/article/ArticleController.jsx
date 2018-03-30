@@ -38,7 +38,7 @@ export default class ArticleController extends FalcorController {
     this.safeSetState({
       changed: false,
       saving: false,
-      saved: false,
+      refresh: false,
       title: '',
       authors: [],
       teaser: '',
@@ -76,7 +76,7 @@ export default class ArticleController extends FalcorController {
       // Reset state after save is done
       this.safeSetState({
         changed: false,
-        saved: true,
+        refresh: true,
         authorsAdded: [],
         authorsDeleted: {},
         changesObject: { mainForm: false, authors: false },
@@ -113,7 +113,7 @@ export default class ArticleController extends FalcorController {
     const teaser = article.teaser || '';
     const category = article.category || '';
     const imageUrl = article.image_url || '';
-    const authors = _.map(article.authors, author => author);
+    const authors = _.toArray(article.authors);
 
     this.safeSetState({
       title,
