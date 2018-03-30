@@ -82,7 +82,7 @@ export function authorArticleQuery(slugs) {
     database
       .select('articles.slug as articleSlug', 'authors.slug as authorSlug')
       .from('authors')
-      .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
+      .innerJoin('authors_articles', 'authors.id', '=', 'author_id')
       .innerJoin('articles', 'articles.id', '=', 'article_id')
       .whereNotNull('published_at')
       .whereIn('authors.slug', slugs)
@@ -218,10 +218,10 @@ export function articleAuthorQuery(slugs) {
     database
       .select('articles.slug as articleSlug', 'authors.slug as authorSlug')
       .from('authors')
-      .innerJoin('authors_posts', 'authors.id', '=', 'author_id')
+      .innerJoin('authors_articles', 'authors.id', '=', 'author_id')
       .innerJoin('articles', 'articles.id', '=', 'article_id')
       .whereIn('articles.slug', slugs)
-      .orderBy('authors_posts.id', 'asc')
+      .orderBy('authors_articles.id', 'asc')
       .then(rows => {
         // rows is an array of objects with keys authorSlug and articleSlug
         const data = {};
@@ -926,7 +926,7 @@ export function searchTeamsQuery(queries, min, max) {
 // Suggestion: rename to updateArticleAuthors
 export function updateAuthors(articleId, newAuthors) {
   return new Promise(resolve => {
-    database('authors_posts')
+    database('authors_articles')
       .where('article_id', '=', articleId)
       .del()
       .then(() => {
@@ -934,17 +934,17 @@ export function updateAuthors(articleId, newAuthors) {
           article_id: articleId,
           author_id,
         }));
-        database('authors_posts')
+        database('authors_articles')
           .insert(insertArray)
           .then(() => {
             database
               .select('slug')
-              .from('authors_posts')
+              .from('authors_articles')
               .innerJoin(
                 'authors',
                 'authors.id',
                 '=',
-                'authors_posts.author_id',
+                'authors_articles.author_id',
               )
               .where('article_id', '=', articleId)
               .then(rows => resolve(rows.map(row => row.slug)));
