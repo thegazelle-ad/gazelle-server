@@ -8,7 +8,7 @@ import NotFound from 'components/main/NotFound';
 
 export default class StaffController extends FalcorController {
   static getFalcorPathSets(params) {
-    // URL Format: thegazelle.org/staff/:staffSlug
+    // URL Format: thegazelle.org/staff-member/:staffSlug
 
     // Multilevel request requires Falcor Path for each level of data requested
     return [
@@ -65,7 +65,7 @@ export default class StaffController extends FalcorController {
         { property: 'og:type', content: 'website' },
         {
           property: 'og:url',
-          content: `www.thegazelle.org/staff/${staffData.slug}`,
+          content: `www.thegazelle.org/staff-member/${staffData.slug}`,
         },
         { property: 'og:description', content: staffData.biography },
       ];

@@ -12,7 +12,7 @@ export default class TeamMembersList extends BaseComponent {
       const jobTitle = member.job_title || 'Contributor';
       return (
         <Link
-          to={`/staff/${member.slug}`}
+          to={`/staff-member/${member.slug}`}
           key={member.name}
           className="team-page__team__members__member"
         >

@@ -24,7 +24,7 @@ export default [
       path="issue/:issueNumber/:articleCategory/:articleSlug"
       component={ArticleController}
     />
-    <Route path="staff/:staffSlug" component={StaffController} />
+    <Route path="staff-member/:staffSlug" component={StaffController} />
     <Route path="issue/:issueNumber" component={IssueController} />
     <Route path="category/:category" component={CategoryController} />
     <Route path="archives" component={ArchivesController} />
