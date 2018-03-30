@@ -556,7 +556,7 @@ export function issueCategoryArticleQuery(issueNumbers) {
       .select(
         'issue_order',
         'articles.slug',
-        'posts_order',
+        'article_order',
         'articles.category_id',
       )
       .from('issues')
@@ -574,7 +574,7 @@ export function issueCategoryArticleQuery(issueNumbers) {
       )
       .whereIn('issues.issue_order', issueNumbers)
       .andWhere('type', '=', 0)
-      .orderBy('posts_order', 'ASC')
+      .orderBy('article_order', 'ASC')
       .then(articleRows => {
         database
           .select(
@@ -631,7 +631,7 @@ export function issueCategoryArticleQuery(issueNumbers) {
                   correspondingCategoryRow.categories_order;
               }
               // Continue with rest of constants
-              const postIndex = postRow.posts_order;
+              const postIndex = postRow.article_order;
               const articleSlug = postRow.slug;
               if (!has.call(results, issueNumber)) {
                 results[issueNumber] = [];
@@ -969,7 +969,11 @@ export function orderArticlesInIssues(issues) {
         .orderBy('categories_order', 'ASC')
         .then(categoryRows => {
           database
-            .select('issues_posts_order.id as id', 'category_id', 'posts_order')
+            .select(
+              'issues_posts_order.id as id',
+              'category_id',
+              'article_order',
+            )
             .from('issues_posts_order')
             .innerJoin(
               'articles',
@@ -980,7 +984,7 @@ export function orderArticlesInIssues(issues) {
             .where('type', '=', 0)
             .where('issue_id', '=', issue_id)
             .orderBy('category_id', 'ASC')
-            .orderBy('issues_posts_order.posts_order', 'ASC')
+            .orderBy('issues_posts_order.article_order', 'ASC')
             .then(articleRows => {
               let lastCategory = null;
               let order = 0;
@@ -992,11 +996,11 @@ export function orderArticlesInIssues(issues) {
                   order = 0;
                   newCategories.push(row.category_id);
                 }
-                if (order !== row.posts_order) {
+                if (order !== row.article_order) {
                   toUpdate.push({
                     id: row.id,
                     update: {
-                      posts_order: order,
+                      article_order: order,
                     },
                   });
                 }
@@ -1160,7 +1164,7 @@ export function updateIssueArticles(
                     issue_id,
                     type: 1,
                     article_id: article.id,
-                    posts_order: index,
+                    article_order: index,
                   });
                 });
 
@@ -1169,7 +1173,7 @@ export function updateIssueArticles(
                     issue_id,
                     type: 2,
                     article_id: article.id,
-                    posts_order: index,
+                    article_order: index,
                   });
                 });
 
@@ -1207,7 +1211,7 @@ export function updateIssueArticles(
                     issue_id,
                     type: 0,
                     article_id: article.id,
-                    posts_order: articleIssueOrder,
+                    article_order: articleIssueOrder,
                   });
                   articleIssueOrder += 1;
                 });
