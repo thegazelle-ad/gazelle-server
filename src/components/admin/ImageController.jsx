@@ -4,6 +4,7 @@ import ImagePreview from './ImagePreview';
 import _ from 'lodash';
 import update from 'react-addons-update';
 import { Link } from 'react-router';
+import { updateFieldValue } from 'components/admin/lib/form-field-updaters';
 
 // material-ui
 import Divider from 'material-ui/Divider';
@@ -29,9 +30,13 @@ export default class ImageUploader extends BaseComponent {
       imgName: '',
       wrongExtension: false,
       attemptedExt: '',
+      fullWidthTextField: true,
     });
+    this.fieldUpdaters = {
+      nameInput: updateFieldValue.bind(this, 'nameInput', undefined),
+    };
     this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleRequestClose = this.handleRequestClose.bind(this);
+    this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
     this.handleUpload = this.handleUpload.bind(this);
     this.deleteImagePreview = this.deleteImagePreview.bind(this);
     this.addImagePreviewUrl = this.addImagePreviewUrl.bind(this);
@@ -61,7 +66,7 @@ export default class ImageUploader extends BaseComponent {
     });
   }
 
-  handleRequestClose() {
+  handleSnackbarClose() {
     this.safeSetState({ wrongExtension: false });
   }
 
@@ -217,12 +222,13 @@ export default class ImageUploader extends BaseComponent {
     });
   }
 
-  changeImageName() {
+  changeImageName(e) {
+    e.preventDefault();
     const imgName = this.state.imgName;
     const re = /(?:\.([^.]+))?$/;
     const oldExt = re.exec(imgName)[1];
     const nameInput = this.state.nameInput;
-    const newExt = nameInput.lastIndexOf('.') !== -1 ? re.exec(nameInput)[1] : null;
+    const newExt = nameInput.lastIndexOf('.') !== -1 ? re.exec(nameInput)[1] : undefined;
     const index = this.state.files.findIndex(fileObject => fileObject.metaData.name === imgName);
     if (index !== -1) {
       const newFiles = update(this.state.files, {
@@ -239,7 +245,7 @@ export default class ImageUploader extends BaseComponent {
       });
     }
     this.safeSetState({
-      wrongExtension: newExt !== null && newExt !== oldExt,
+      wrongExtension: newExt !== undefined && newExt !== oldExt,
       changeNameOpen: false,
       attemptedExt: newExt,
       nameInput: '',
@@ -355,6 +361,8 @@ export default class ImageUploader extends BaseComponent {
       },
     };
 
+    let extensionErrorMsg = `To change the image's extension to . ${this.state.attemptedExt},`;
+    extensionErrorMsg = extensionErrorMsg.concat(' please convert it externally and re-upload.');
 
     return (
       <div>
@@ -438,21 +446,20 @@ export default class ImageUploader extends BaseComponent {
         >
           Please enter a new name for the image:
           <br />
-          <TextField
-            name="newName"
-            defaultValue={this.state.nameInput}
-            onChange={(event) => {
-              this.safeSetState({ nameInput: event.target.value });
-            }}
-          />
+          <form onSubmit={this.changeImageName}>
+            <TextField
+              name="newName"
+              fullWidth={this.state.fullWidthTextField}
+              defaultValue={this.state.nameInput}
+              onChange={this.fieldUpdaters.nameInput}
+            />
+          </form>
         </Dialog>
         <Snackbar
           open={this.state.wrongExtension}
-          message={`To change the image's extension to .
-          ${this.state.attemptedExt}, please convert it externally and re-upload.`}
+          message={extensionErrorMsg}
           autoHideDuration={6000}
-          onActionTouchTap={this.handleActionTouchTap}
-          onRequestClose={this.handleRequestClose}
+          onRequestClose={this.handleSnackbarClose}
         />
       </div>
     );

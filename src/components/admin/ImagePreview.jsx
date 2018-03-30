@@ -13,9 +13,9 @@ import Snackbar from 'material-ui/Snackbar';
 export default class ImagePreview extends BaseComponent {
   constructor() {
     super();
-    this.state = {
+    this.safeSetState({
       open: false,
-    };
+    });
 
     this.onDelete = this.onDelete.bind(this);
     this.onChangeName = this.onChangeName.bind(this);
