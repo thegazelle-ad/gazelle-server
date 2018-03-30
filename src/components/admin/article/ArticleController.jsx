@@ -367,12 +367,12 @@ export default class ArticleController extends FalcorController {
           />
           <br />
           <SearchableSelector
-            value={this.state.authors}
+            value={this.state.staff}
             onChange={this.debouncedHandleFormStateChanges}
             onUpdate={this.updateAuthors}
             disabled={this.state.saving}
             model={this.props.model}
-            mode="authors"
+            mode="staff"
           />
           <br />
           <Divider />

@@ -33,7 +33,7 @@ export default class Navigation extends BaseComponent {
           <Link to="/issues">
             <MenuItem leftIcon={<LibraryBooks />}>Issues</MenuItem>
           </Link>
-          <Link to="/authors">
+          <Link to="/staff">
             <MenuItem leftIcon={<Person />}>Authors</MenuItem>
           </Link>
           <Link to="/images/upload">

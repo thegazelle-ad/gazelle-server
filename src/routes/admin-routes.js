@@ -27,7 +27,7 @@ export default (
         <Route path="slug/:slug" component={ArticleController} />
       </Route>
     </Route>
-    <Route path="authors" component={AuthorListController}>
+    <Route path="staff" component={AuthorListController}>
       <Route path=":slug" component={AuthorController} />
     </Route>
     <Route path="issues" component={IssueListController}>

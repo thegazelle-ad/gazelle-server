@@ -24,7 +24,7 @@
       display: none;
       margin: 0 0 0.3rem 0;
       @include uppercase;
-      font-size: $authors-large;
+      font-size: $staff-large;
       font-weight: 700;
       color: $dark-grey;
       &:hover,
@@ -41,7 +41,7 @@
     }
 
     &__authors {
-      font-size: $authors-large;
+      font-size: $staff-large;
       font-weight: 400;
       margin: 0 0 0.3rem 0;
       color: $dark-grey;
@@ -86,7 +86,7 @@
       }
 
       &__authors {
-        font-size: $authors-small;
+        font-size: $staff-small;
         margin: 0 0 0.1rem 0;
         @include uppercase();
         padding-top: 0.2rem ;

@@ -35,7 +35,7 @@ export default [
                     'members',
                     memberIndex,
                   ], // eslint-disable-line max-len
-                  value: $ref(['authors', 'bySlug', memberSlug]),
+                  value: $ref(['staff', 'bySlug', memberSlug]),
                 });
               });
             });

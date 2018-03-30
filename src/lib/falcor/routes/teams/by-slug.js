@@ -55,7 +55,7 @@ export default [
       }),
   },
   {
-    route: "teams['bySlug'][{keys:slugs}]['authors'][{integers:indices}]",
+    route: "teams['bySlug'][{keys:slugs}]['staff'][{integers:indices}]",
     get: pathSet =>
       new Promise(resolve => {
         db.teamAuthorQuery(pathSet.slugs).then(data => {
@@ -64,8 +64,8 @@ export default [
             pathSet.indices.forEach(index => {
               if (index < authorSlugArray.length) {
                 results.push({
-                  path: ['teams', 'bySlug', teamSlug, 'authors', index],
-                  value: $ref(['authors', 'bySlug', authorSlugArray[index]]),
+                  path: ['teams', 'bySlug', teamSlug, 'staff', index],
+                  value: $ref(['staff', 'bySlug', authorSlugArray[index]]),
                 });
               }
             });

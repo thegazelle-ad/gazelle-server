@@ -29,16 +29,16 @@ describe('Admin interface author list', () => {
   const addNewTabSelector = '#author-list-add-new-tab';
   const editTabSelector = '#author-list-edit-tab';
   const authorEditorSelector = '#author-editor';
-  const searchInputSelector = `${authorListSelector} .search-bar-authors input[type="text"]`;
+  const searchInputSelector = `${authorListSelector} .search-bar-staff input[type="text"]`;
   // This should return the first one, and we also currently search in a way so that there
   // should always only be one result
-  const searchItemSelector = `${authorListSelector} .search-bar-authors .search-bar-result`;
+  const searchItemSelector = `${authorListSelector} .search-bar-staff .search-bar-result`;
 
-  it('searches correctly for authors', () => {
+  it('searches correctly for staff', () => {
     expect.assertions(1);
 
     return (
-      getLoggedInState(nightmare, '/authors')
+      getLoggedInState(nightmare, '/staff')
         .wait(searchInputSelector)
         .insert(searchInputSelector, 'Emil Goldsmith Olesen')
         .wait(searchItemSelector)
@@ -48,13 +48,13 @@ describe('Admin interface author list', () => {
         .path()
         .end()
         .then(path => {
-          expect(path).toBe('/authors/emil-goldsmith-olesen');
+          expect(path).toBe('/staff/emil-goldsmith-olesen');
         })
     );
   });
 
   it('correctly switches tabs', () =>
-    getLoggedInState(nightmare, '/authors')
+    getLoggedInState(nightmare, '/staff')
       .wait(authorListSelector)
       // Click 'Add New' tab
       .click(getTabButtonSelector(2))
@@ -74,7 +74,7 @@ describe('Admin interface author list', () => {
     const getInputSelector = index =>
       `${addNewTabSelector} form div:nth-of-type(${index}) input`;
     const createAuthorSelector = `${addNewTabSelector} button[type="submit"]`;
-    const authorInformationEntered = getLoggedInState(nightmare, '/authors')
+    const authorInformationEntered = getLoggedInState(nightmare, '/staff')
       .wait(authorListSelector)
       // Click 'Add New' tab
       // We use mouseup here because of weird Material UI behaviour with the touchtap event it uses
@@ -109,7 +109,7 @@ describe('Admin interface author list', () => {
       .path()
       .end()
       .then(path => {
-        expect(path).toBe(`/authors/${authorName}`);
+        expect(path).toBe(`/staff/${authorName}`);
         // We reuse the variable since we know .then only runs because there were no exceptions
         // so .end() has finished successfully, and also this means that the afterEach function will
         // correctly terminate the nightmare instance if an error happens in this step
@@ -125,7 +125,7 @@ describe('Admin interface author list', () => {
         // We have restarted the server which also clears the cache which allows us to test that
         // the data we inserted actually propagated to the database
         return (
-          getLoggedInState(nightmare, '/authors')
+          getLoggedInState(nightmare, '/staff')
             .wait(searchInputSelector)
             .insert(searchInputSelector, authorName)
             .wait(searchItemSelector)
@@ -135,15 +135,15 @@ describe('Admin interface author list', () => {
             .path()
             .end()
             .then(path => {
-              expect(path).toBe(`/authors/${authorName}`);
+              expect(path).toBe(`/staff/${authorName}`);
             })
         );
       });
   };
 
-  it('correctly adds new authors using button', () => testAddingNewAuthor());
-  it('correctly adds new authors using enter on name', () =>
+  it('correctly adds new staff using button', () => testAddingNewAuthor());
+  it('correctly adds new staff using enter on name', () =>
     testAddingNewAuthor(true, 1));
-  it('correctly adds new authors using enter on slug', () =>
+  it('correctly adds new staff using enter on slug', () =>
     testAddingNewAuthor(true, 2));
 });

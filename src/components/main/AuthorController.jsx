@@ -13,13 +13,13 @@ export default class AuthorController extends FalcorController {
     // Multilevel request requires Falcor Path for each level of data requested
     return [
       [
-        'authors',
+        'staff',
         'bySlug',
         params.authorSlug,
         ['name', 'biography', 'slug', 'job_title', 'image_url'],
       ],
       [
-        'authors',
+        'staff',
         'bySlug',
         params.authorSlug,
         'articles',
@@ -27,7 +27,7 @@ export default class AuthorController extends FalcorController {
         ['title', 'image_url', 'teaser', 'issueNumber', 'category', 'slug'],
       ],
       [
-        'authors',
+        'staff',
         'bySlug',
         params.authorSlug,
         'articles',
@@ -46,14 +46,14 @@ export default class AuthorController extends FalcorController {
       }
 
       const { authorSlug } = this.props.params;
-      const authorData = this.state.data.authors.bySlug[authorSlug];
+      const authorData = this.state.data.staff.bySlug[authorSlug];
       if (!authorData.image_url) {
-        // Default image for authors without one
+        // Default image for staff without one
         authorData.image_url =
           'https://gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=300';
       }
       if (!authorData.job_title) {
-        // Default job title for authors without one
+        // Default job title for staff without one
         authorData.job_title = 'Contributor';
       }
       const meta = [

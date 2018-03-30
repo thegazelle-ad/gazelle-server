@@ -11,7 +11,7 @@ export default [
   {
     // eslint-disable-next-line max-len
     route:
-      "authors['bySlug'][{keys:slugs}]['id', 'name', 'image_url', 'biography', 'slug', 'job_title']",
+      "staff['bySlug'][{keys:slugs}]['id', 'name', 'image_url', 'biography', 'slug', 'job_title']",
     get: pathSet =>
       new Promise(resolve => {
         const requestedFields = pathSet[3];
@@ -21,7 +21,7 @@ export default [
           data.forEach(author => {
             requestedFields.forEach(field => {
               results.push({
-                path: ['authors', 'bySlug', author.slug, field],
+                path: ['staff', 'bySlug', author.slug, field],
                 value: author[field],
               });
             });
@@ -32,9 +32,9 @@ export default [
     set: jsonGraphArg =>
       new Promise((resolve, reject) => {
         jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
-        const authorsBySlug = jsonGraphArg.authors.bySlug;
+        const staffBySlug = jsonGraphArg.staff.bySlug;
         db
-          .updateMainAuthorData(authorsBySlug)
+          .updateMainAuthorData(staffBySlug)
           .then(flag => {
             if (!flag) {
               throw new Error(
@@ -42,10 +42,10 @@ export default [
               );
             }
             const results = [];
-            _.forEach(authorsBySlug, (authorObject, slug) => {
+            _.forEach(staffBySlug, (authorObject, slug) => {
               _.forEach(authorObject, (value, field) => {
                 results.push({
-                  path: ['authors', 'bySlug', slug, field],
+                  path: ['staff', 'bySlug', slug, field],
                   value,
                 });
               });
@@ -58,7 +58,7 @@ export default [
       }),
   },
   {
-    route: "authors['bySlug'][{keys:slugs}]['teams'][{integers:indices}]",
+    route: "staff['bySlug'][{keys:slugs}]['teams'][{integers:indices}]",
     get: pathSet =>
       new Promise(resolve => {
         db.authorTeamQuery(pathSet.slugs).then(data => {
@@ -67,7 +67,7 @@ export default [
             pathSet.indices.forEach(index => {
               if (index < teamSlugArray.length) {
                 results.push({
-                  path: ['authors', 'bySlug', authorSlug, 'teams', index],
+                  path: ['staff', 'bySlug', authorSlug, 'teams', index],
                   value: $ref(['teams', 'bySlug', teamSlugArray[index]]),
                 });
               }
@@ -78,7 +78,7 @@ export default [
       }),
   },
   {
-    route: "authors['bySlug'][{keys:slugs}]['articles'][{integers:indices}]",
+    route: "staff['bySlug'][{keys:slugs}]['articles'][{integers:indices}]",
     // This could be a bit vulnerable as it fetches all articles written by an author
     // no matter what indices are called, but I think in reality it shouldn't be a problem
     get: pathSet =>
@@ -91,7 +91,7 @@ export default [
             pathSet.indices.forEach(index => {
               if (index < postSlugArray.length) {
                 results.push({
-                  path: ['authors', 'bySlug', authorSlug, 'articles', index],
+                  path: ['staff', 'bySlug', authorSlug, 'articles', index],
                   value: $ref(['articles', 'bySlug', postSlugArray[index]]),
                 });
               }
@@ -102,7 +102,7 @@ export default [
       }),
   },
   {
-    route: "authors['bySlug']['createAuthor']",
+    route: "staff['bySlug']['createAuthor']",
     call: (callPath, args) =>
       new Promise(resolve => {
         const authorObject = args[0];
@@ -121,7 +121,7 @@ export default [
           const authorSlug = authorObject.slug;
           _.forEach(authorObject, (value, field) => {
             results.push({
-              path: ['authors', 'bySlug', authorSlug, field],
+              path: ['staff', 'bySlug', authorSlug, field],
               value,
             });
           });

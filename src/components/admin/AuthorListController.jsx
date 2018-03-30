@@ -61,7 +61,7 @@ export default class AuthorListController extends FalcorController {
   }
 
   handleClickAuthor(author) {
-    browserHistory.push(`/authors/${author.slug}`);
+    browserHistory.push(`/staff/${author.slug}`);
   }
 
   handleCreateAuthorChange() {
@@ -86,7 +86,7 @@ export default class AuthorListController extends FalcorController {
     }
 
     // Check if the slug is already taken
-    this.props.model.get(['authors', 'bySlug', slug, 'slug']).then(x => {
+    this.props.model.get(['staff', 'bySlug', slug, 'slug']).then(x => {
       if (x) {
         x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
         // Something was found, which means the slug is taken
@@ -98,10 +98,10 @@ export default class AuthorListController extends FalcorController {
       // Create the author
       const callback = () => {
         window.alert('Author added successfully');
-        browserHistory.push(`/authors/${slug}`);
+        browserHistory.push(`/staff/${slug}`);
       };
       this.falcorCall(
-        ['authors', 'bySlug', 'createAuthor'],
+        ['staff', 'bySlug', 'createAuthor'],
         [{ slug, name }],
         undefined,
         undefined,
@@ -126,7 +126,7 @@ export default class AuthorListController extends FalcorController {
                   <Divider />
                   <SearchBar
                     model={this.props.model}
-                    mode="authors"
+                    mode="staff"
                     fields={['slug']}
                     length={3}
                     handleClick={this.handleClickAuthor}
