@@ -17,6 +17,9 @@ import SearchController from 'components/main/SearchController';
 export default [
   <Route path="/interactive/:articleSlug" component={InteractiveArticle} />,
   <Route path="/" component={AppController}>
+    {/** LEGACY ROUTES BEGIN */}
+    <Route path="author/:staffSlug" component={StaffController} />
+    {/** LEGACY ROUTES END */}
     <Route
       path="issue/:issueNumber/:articleCategory/:articleSlug"
       component={ArticleController}
