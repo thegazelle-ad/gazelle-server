@@ -58,7 +58,9 @@ jobs:
           keys:
             - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
-      - run: npm install
+      - run:
+          name: Install dependencies and check that the repo didn't change during the install
+          command: npm install && [[ "$(git diff)" == "" ]]
 
       - save_cache:
           paths:
