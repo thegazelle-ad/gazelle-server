@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 import { Route, IndexRedirect } from 'react-router';
 import React from 'react';
 import AppController from 'components/admin/AppController';

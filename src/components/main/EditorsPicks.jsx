@@ -6,7 +6,9 @@ export default class EditorsPicks extends BaseComponent {
   render() {
     return (
       <div className="editors-picks">
-        <h2 className="section-header"><span>editor's picks</span></h2>
+        <h2 className="section-header">
+          <span>editor{"'"}s picks</span>
+        </h2>
         <ArticleList articles={this.props.articles} />
       </div>
     );
@@ -14,5 +16,5 @@ export default class EditorsPicks extends BaseComponent {
 }
 
 EditorsPicks.propTypes = {
-  articles: React.PropTypes.object,
+  articles: ArticleList.propTypes.articles,
 };

@@ -21,14 +21,12 @@ const styles = {
 export default class ArticleList extends BaseComponent {
   render() {
     if (this.props.elements) {
-      const elements = this.props.elements;
+      const { elements } = this.props;
       return (
         <Paper style={styles.paper} zDepth={1}>
           <List style={{ overflow: 'auto', maxHeight: '400px' }}>
             <Subheader>Recent Articles</Subheader>
-            {
-              _.map(elements, this.props.createElement)
-            }
+            {_.map(elements, this.props.createElement)}
           </List>
         </Paper>
       );

@@ -8,15 +8,16 @@ export default [
   {
     // Get latest issue
     route: "issues['latest']",
-    get: () => (
-      new Promise((resolve) => {
-        db.latestIssueQuery().then((row) => {
-          resolve([{
-            path: ['issues', 'latest'],
-            value: $ref(['issues', 'byNumber', row[0].issue_order]),
-          }]);
+    get: () =>
+      new Promise(resolve => {
+        db.latestIssueQuery().then(row => {
+          resolve([
+            {
+              path: ['issues', 'latest'],
+              value: $ref(['issues', 'byNumber', row[0].issue_order]),
+            },
+          ]);
         });
-      })
-    ),
+      }),
   },
 ];

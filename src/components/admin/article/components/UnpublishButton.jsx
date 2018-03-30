@@ -12,11 +12,9 @@ export default class UnpublishButton extends React.Component {
   }
 
   unpublish() {
-    const slug = this.props.slug;
+    const { slug } = this.props;
     const jsonGraphEnvelope = {
-      paths: [
-        ['articles', 'bySlug', slug, 'published_at'],
-      ],
+      paths: [['articles', 'bySlug', slug, 'published_at']],
       jsonGraph: {
         articles: {
           bySlug: {
@@ -30,18 +28,15 @@ export default class UnpublishButton extends React.Component {
     this.props.save(jsonGraphEnvelope);
   }
 
-
   render() {
     return (
       <div>
-        {
-            this.props.published_at ?
-            `This article was published on ${
-                  moment(this.props.published_at).format('MMMM DD, YYYY')
-                }.`
-            : 'The article has yet to be published. It will be published automatically ' +
-              'when you publish the issue that contains it.'
-          }
+        {this.props.published_at
+          ? `This article was published on ${moment(
+              this.props.published_at,
+            ).format('MMMM DD, YYYY')}.`
+          : 'The article has yet to be published. It will be published automatically ' +
+            'when you publish the issue that contains it.'}
         <br />
         <RaisedButton
           label="Unpublish Article"
@@ -60,5 +55,9 @@ UnpublishButton.propTypes = {
   slug: PropTypes.string.isRequired,
   save: PropTypes.func.isRequired,
   published_at: PropTypes.number.isRequired,
-  style: PropTypes.object.isRequired,
+  style: PropTypes.shape({}),
+};
+
+UnpublishButton.defaultProps = {
+  style: {},
 };

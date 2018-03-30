@@ -10,7 +10,7 @@ import FalcorController from 'lib/falcor/FalcorController';
 import SearchableSelector from 'components/admin/form-components/SearchableSelector';
 import LoadingOverlay from 'components/admin/LoadingOverlay';
 import SaveButton from 'components/admin/article/components/SaveButton';
-import UnpublishButton from 'components/admin/article/components/UnpublishButton.jsx';
+import UnpublishButton from 'components/admin/article/components/UnpublishButton';
 import ImageUrlField from 'components/admin/article/components/ImageUrlField';
 import TitleField from 'components/admin/article/components/TitleField';
 import ListSelector from 'components/admin/form-components/ListSelector';
@@ -30,11 +30,11 @@ export default class ArticleController extends FalcorController {
     this.handleDialogClose = this.handleDialogClose.bind(this);
     this.isFormChanged = this.isFormChanged.bind(this);
     this.falcorToState = this.falcorToState.bind(this);
-    this.updateTitle = (title) => this.safeSetState({ title });
-    this.updateAuthors = (authors) => this.safeSetState({ authors });
-    this.updateTeaser = (teaser) => this.safeSetState({ teaser });
-    this.updateImage = (imageUrl) => this.safeSetState({ imageUrl });
-    this.updateCategory = (category) => this.safeSetState({ category });
+    this.updateTitle = title => this.safeSetState({ title });
+    this.updateAuthors = authors => this.safeSetState({ authors });
+    this.updateTeaser = teaser => this.safeSetState({ teaser });
+    this.updateImage = imageUrl => this.safeSetState({ imageUrl });
+    this.updateCategory = category => this.safeSetState({ category });
     this.safeSetState({
       changed: false,
       saving: false,
@@ -63,11 +63,12 @@ export default class ArticleController extends FalcorController {
     const updatePromises = [this.falcorUpdate(jsonGraphEnvelope)];
 
     if (processedAuthors !== null) {
-      updatePromises.push(this.falcorCall(
-        ['articles', 'bySlug', articleSlug, 'authors', 'updateAuthors'],
-        [falcorData.id, processedAuthors],
-        [['name'], ['slug']]
-      )
+      updatePromises.push(
+        this.falcorCall(
+          ['articles', 'bySlug', articleSlug, 'authors', 'updateAuthors'],
+          [falcorData.id, processedAuthors],
+          [['name'], ['slug']],
+        ),
       );
     }
 
@@ -81,18 +82,28 @@ export default class ArticleController extends FalcorController {
         changesObject: { mainForm: false, authors: false },
       });
       // This is purely so the 'saved' message can be seen by the user for a second
-      setTimeout(() => { this.safeSetState({ saving: false }); }, 1000);
+      setTimeout(() => {
+        this.safeSetState({ saving: false });
+      }, 1000);
     });
   }
 
   static getFalcorPathSets(params) {
     return [
       [
-        'articles', 'bySlug',
+        'articles',
+        'bySlug',
         params.slug,
         ['title', 'category', 'teaser', 'image_url', 'id', 'published_at'],
       ],
-      ['articles', 'bySlug', params.slug, 'authors', { length: 10 }, ['id', 'name']],
+      [
+        'articles',
+        'bySlug',
+        params.slug,
+        'authors',
+        { length: 10 },
+        ['id', 'name'],
+      ],
       ['categories', 'byIndex', { length: 30 }, ['name', 'slug']],
     ];
   }
@@ -136,9 +147,11 @@ export default class ArticleController extends FalcorController {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.isSameArticle(prevProps, this.props) &&
-	this.formHasUpdated(prevState, this.state) &&
-	this.state.ready) {
+    if (
+      this.isSameArticle(prevProps, this.props) &&
+      this.formHasUpdated(prevState, this.state) &&
+      this.state.ready
+    ) {
       // The update wasn't due to a change in article
       this.debouncedHandleFormStateChanges();
     }
@@ -159,45 +172,60 @@ export default class ArticleController extends FalcorController {
     const falcorData = this.state.data.articles.bySlug[articleSlug];
 
     if (!this.isFormChanged()) {
-      throw new Error('Tried to save changes but there were no changes. ' +
-                      'the save changes button is supposed to be disabled in this case'
+      throw new Error(
+        'Tried to save changes but there were no changes. ' +
+          'the save changes button is supposed to be disabled in this case',
       );
     }
 
     let processedAuthors = this.state.authors.map(author => author.id);
     // Check that all authors are unique
     if (_.uniq(processedAuthors).length !== processedAuthors.length) {
-      window.alert("You have duplicate authors, as this shouldn't be able" +
-                   ' to happen, please contact developers. And if you know all the actions' +
-                   ' you did previously to this and can reproduce them that would be of' +
-                   ' great help. The save has been cancelled');
+      window.alert(
+        "You have duplicate authors, as this shouldn't be able" +
+          ' to happen, please contact developers. And if you know all the actions' +
+          ' you did previously to this and can reproduce them that would be of' +
+          ' great help. The save has been cancelled',
+      );
       return;
     }
     if (processedAuthors.length === 0) {
-      window.alert("Sorry, because of some non-trivial issues we currently don't have" +
-                   ' deleting every single author implemented.' +
-                   " You hopefully shouldn't need this function either." +
-                   ' Please re-add an author to be able to save');
+      window.alert(
+        "Sorry, because of some non-trivial issues we currently don't have" +
+          ' deleting every single author implemented.' +
+          " You hopefully shouldn't need this function either." +
+          ' Please re-add an author to be able to save',
+      );
       return;
     }
 
     // Check the special case of someone trying to reassign a category as none
     if (this.state.category === 'none' && falcorData.category !== 'none') {
-      window.alert('Save cancelled, you cannot reset a category to none.' +
-                   ' If you wish to have this feature added, speak to the developers');
+      window.alert(
+        'Save cancelled, you cannot reset a category to none.' +
+          ' If you wish to have this feature added, speak to the developers',
+      );
       return;
     }
 
-    if (this.state.imageUrl.length > 4 && this.state.imageUrl.substr(0, 5) !== 'https') {
-      if (!window.confirm('You are saving an image without using https. ' +
-                          'This can be correct in a few cases but is mostly not. Are you sure ' +
-                          ' you wish to continue saving?')) {
+    if (
+      this.state.imageUrl.length > 4 &&
+      this.state.imageUrl.substr(0, 5) !== 'https'
+    ) {
+      if (
+        !window.confirm(
+          'You are saving an image without using https. ' +
+            'This can be correct in a few cases but is mostly not. Are you sure ' +
+            ' you wish to continue saving?',
+        )
+      ) {
         return;
       }
     }
 
-    if (processedAuthors.length === 0 &&
-	(!falcorData.authors || Object.keys(falcorData.authors).length === 0)
+    if (
+      processedAuthors.length === 0 &&
+      (!falcorData.authors || Object.keys(falcorData.authors).length === 0)
     ) {
       // Indicate that we won't update authors as there were none before and none were added
       processedAuthors = null;
@@ -209,9 +237,7 @@ export default class ArticleController extends FalcorController {
                    ['title', 'teaser', 'image_url'];
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
-      paths: [
-        ['articles', 'bySlug', articleSlug, fields],
-      ],
+      paths: [['articles', 'bySlug', articleSlug, fields]],
       jsonGraph: {
         articles: {
           bySlug: {
@@ -222,27 +248,31 @@ export default class ArticleController extends FalcorController {
     };
     // Fill in the data
     jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].title = this.state.title;
-
     jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].teaser = this.state.teaser;
     jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].image_url = this.state.imageUrl;
     if (shouldUpdateCategory) {
-      jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].category = this.state.category;
+      jsonGraphEnvelope.jsonGraph.articles.bySlug[
+        articleSlug
+      ].category = this.state.category;
     }
 
     this.save(jsonGraphEnvelope, processedAuthors, articleSlug, falcorData);
   }
 
   isFormFieldChanged(userInput, falcorData) {
-    return ((userInput !== falcorData) && !(!userInput && !falcorData));
+    return userInput !== falcorData && !(!userInput && !falcorData);
   }
 
   areAuthorsChanged(currentAuthors, falcorAuthors) {
     const falcorAuthorsArray = _.map(falcorAuthors, author => author);
     return (
       falcorAuthorsArray.length !== currentAuthors.length ||
-      currentAuthors.some(author => (
-        falcorAuthorsArray.find(falcorAuthor => author.id === falcorAuthor.id) === undefined
-      ))
+      currentAuthors.some(
+        author =>
+          falcorAuthorsArray.find(
+            falcorAuthor => author.id === falcorAuthor.id,
+          ) === undefined,
+      )
     );
   }
 
@@ -267,10 +297,14 @@ export default class ArticleController extends FalcorController {
 
     if (this.state.ready) {
       if (!this.state.data || !this.state.data.articles.bySlug) {
-        return <div><p>Error: No articles match this slug</p></div>;
+        return (
+          <div>
+            <p>Error: No articles match this slug</p>
+          </div>
+        );
       }
 
-      const slug = this.props.params.slug;
+      const { slug } = this.props.params;
       const article = this.state.data.articles.bySlug[slug];
 
       // If it is a new article it won't have any meta data yet so we use the default
@@ -328,7 +362,6 @@ export default class ArticleController extends FalcorController {
             disabled={this.state.saving}
             model={this.props.model}
             mode="authors"
-            disabled={this.state.saving}
           />
           <br />
           <Divider />

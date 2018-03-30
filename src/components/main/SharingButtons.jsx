@@ -2,7 +2,6 @@ import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
 
 export default class SharingButtons extends BaseComponent {
-
   render() {
     const renderButtons = () => {
       const nodes = [];
@@ -11,11 +10,22 @@ export default class SharingButtons extends BaseComponent {
       /* Facebook Sharing Button */
       if (this.props.facebook) {
         nodes.push(
-          <a key={"facebook"} className="sharing-buttons__item__link" href={`https://facebook.com/sharer/sharer.php?u=https://www.${url}`} target="_blank" aria-label="">
+          <a
+            key="facebook"
+            className="sharing-buttons__item__link"
+            href={`https://facebook.com/sharer/sharer.php?u=https://www.${url}`}
+            target="_blank"
+            aria-label=""
+          >
             <div className="sharing-buttons__item sharing-buttons__item--facebook">
               <div aria-hidden="true" className="sharing-buttons__item__icon">
                 {/* eslint-disable max-len */}
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 25 25">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 25 25"
+                >
                   <path
                     strokeWidth="1px"
                     strokeLinejoin="round"
@@ -26,18 +36,29 @@ export default class SharingButtons extends BaseComponent {
                 {/* eslint-enable max-len */}
               </div>
             </div>
-          </a>
+          </a>,
         );
       }
 
       /* Twitter Sharing Button */
       if (this.props.twitter) {
         nodes.push(
-          <a key={"twitter"} className="sharing-buttons__item__link" href={`https://twitter.com/intent/tweet/?text=%27${title}%27%20via%20%40TheGazelleAD%0A${url}&url=${url}`} target="_blank" aria-label="">
+          <a
+            key="twitter"
+            className="sharing-buttons__item__link"
+            href={`https://twitter.com/intent/tweet/?text=%27${title}%27%20via%20%40TheGazelleAD%0A${url}&url=${url}`}
+            target="_blank"
+            aria-label=""
+          >
             <div className="sharing-buttons__item sharing-buttons__item--twitter">
               <div aria-hidden="true" className="sharing-buttons__item__icon">
                 {/* eslint-disable max-len */}
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeWidth="1px"
                     strokeLinejoin="round"
@@ -48,18 +69,29 @@ export default class SharingButtons extends BaseComponent {
                 {/* eslint-enable max-len */}
               </div>
             </div>
-          </a>
+          </a>,
         );
       }
 
-     /* linkedIn Sharing Button */
+      /* linkedIn Sharing Button */
       if (this.props.linkedin) {
         nodes.push(
-          <a key={"linkedin"} className="sharing-buttons__item__link" href={`https://www.linkedin.com/shareArticle?mini=true&amp;url=https://www.${url}&amp;title=${title}&amp;summary=${teaser}&amp;source=${url}`} target="_blank" aria-label="">
+          <a
+            key="linkedin"
+            className="sharing-buttons__item__link"
+            href={`https://www.linkedin.com/shareArticle?mini=true&amp;url=https://www.${url}&amp;title=${title}&amp;summary=${teaser}&amp;source=${url}`}
+            target="_blank"
+            aria-label=""
+          >
             <div className="sharing-buttons__item sharing-buttons__item--linkedin">
               <div aria-hidden="true" className="sharing-buttons__item__icon">
                 {/* eslint-disable max-len */}
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeWidth="1px"
                     strokeLinejoin="round"
@@ -70,7 +102,7 @@ export default class SharingButtons extends BaseComponent {
                 {/* eslint-enable max-len */}
               </div>
             </div>
-          </a>
+          </a>,
         );
       }
 
@@ -86,7 +118,12 @@ export default class SharingButtons extends BaseComponent {
             <div className="sharing-buttons__item sharing-buttons__item--email">
               <div aria-hidden="true" className="sharing-buttons__item__icon">
                 {/* eslint-disable max-len */}
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeWidth="1px"
                     strokeLinecap="round"
@@ -98,18 +135,14 @@ export default class SharingButtons extends BaseComponent {
                 {/* eslint-enable max-len */}
               </div>
             </div>
-          </a>
+          </a>,
         );
       }
 
       return nodes;
     };
 
-    return (
-      <div className="sharing-buttons">
-        {renderButtons()}
-      </div>
-    );
+    return <div className="sharing-buttons">{renderButtons()}</div>;
   }
 }
 

@@ -15,9 +15,14 @@ export default [
     articles['byPage'][pageLength][pageIndex][{length: pageLength}]
     where {length: pageLength} makes use of falcor's range object.
     */
-    route: "articles['byPage'][{integers:pageLengths}][{integers:pageIndices}][{integers:indicesOnPage}]", // eslint-disable-line max-len
+    route:
+      "articles['byPage'][{integers:pageLengths}][{integers:pageIndices}][{integers:indicesOnPage}]", // eslint-disable-line max-len
     get: async pathSet => {
-      validatePaginationQuery(pathSet.pageLengths, pathSet.pageIndices, pathSet.indicesOnPage);
+      validatePaginationQuery(
+        pathSet.pageLengths,
+        pathSet.pageIndices,
+        pathSet.indicesOnPage,
+      );
       // Because we validated that they want all indices on a page we no longer need that variable
       const pageLength = pathSet.pageLengths[0];
       const pageIndex = pathSet.pageIndices[0];
@@ -40,7 +45,9 @@ export default [
  */
 function validatePaginationQuery(pageLengths, pageIndices, indicesOnPage) {
   if (pageLengths.length !== 1) {
-    throw new Error("We only allow passing a single pageLength at a time to articles['byPage']");
+    throw new Error(
+      "We only allow passing a single pageLength at a time to articles['byPage']",
+    );
   }
   if (pageLengths[0] < 1) {
     throw new Error('pageLength must be at least 1');
@@ -48,7 +55,9 @@ function validatePaginationQuery(pageLengths, pageIndices, indicesOnPage) {
   // It would be pretty simple to extend it to several pages, but as long as we don't use it
   // we can just as well make our SQL logic easier
   if (pageIndices.length !== 1) {
-    throw new Error("We only allow passing a single pageIndex at a time to articles['byPage']");
+    throw new Error(
+      "We only allow passing a single pageIndex at a time to articles['byPage']",
+    );
   }
   if (pageIndices[0] < 0) {
     throw new Error('page indices must be non-negative');
@@ -56,7 +65,7 @@ function validatePaginationQuery(pageLengths, pageIndices, indicesOnPage) {
   if (indicesOnPage.length !== pageLengths[0]) {
     throw new Error(
       'You should always try fetching all the indices on a page, ' +
-      'use {length: pageLength} for indices'
+        'use {length: pageLength} for indices',
     );
   }
   if (_.uniq(indicesOnPage).length !== indicesOnPage.length) {

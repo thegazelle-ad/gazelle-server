@@ -50,19 +50,26 @@ export default class ImagePreview extends BaseComponent {
     if (amazonURL) {
       messageComponent = <div className="previewURL">URL: {amazonURL}</div>;
       if (document.queryCommandSupported('copy')) {
-        copyComponent = <button type="button" onClick={this.onCopyToClipboard}>Copy link</button>;
+        copyComponent = (
+          <button type="button" onClick={this.onCopyToClipboard}>
+            Copy link
+          </button>
+        );
       } else {
         // TODO: After Material-UI is merged in we change this to a
         // Material-UI Dialog or something similar
         copyComponent = (
           <div>
-            It seems that our copy button is not compatible with your web browser.
-            Please upgrade to the newest version for full Gazelle capabilities.
+            It seems that our copy button is not compatible with your web
+            browser. Please upgrade to the newest version for full Gazelle
+            capabilities.
           </div>
         );
       }
     } else if (errorMessage) {
-      messageComponent = <div className="preview_error">Error: {errorMessage}</div>;
+      messageComponent = (
+        <div className="preview_error">Error: {errorMessage}</div>
+      );
     } else {
       messageComponent = null;
     }
@@ -75,9 +82,13 @@ export default class ImagePreview extends BaseComponent {
           <br />
           {name}
           <br />
-          <button type="button" onClick={this.onDelete}>Delete</button>
+          <button type="button" onClick={this.onDelete}>
+            Delete
+          </button>
           <br />
-          <button type="button" onClick={this.onChangeName}>Change name</button>
+          <button type="button" onClick={this.onChangeName}>
+            Change name
+          </button>
           <br />
           {uploadingComponent}
           {messageComponent}
@@ -88,9 +99,14 @@ export default class ImagePreview extends BaseComponent {
       component = (
         <div className="imagePreview">
           <div className="imagePreviewLoading">
-            Loading...<button type="button" onClick={this.onDelete}>Delete</button>
+            Loading...
+            <button type="button" onClick={this.onDelete}>
+              Delete
+            </button>
             <br />
-            <button type="button" onClick={this.onChangeName}>Change name></button>
+            <button type="button" onClick={this.onChangeName}>
+              Change name
+            </button>
           </div>
           {name}
           <br />

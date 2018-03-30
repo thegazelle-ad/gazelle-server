@@ -7,16 +7,19 @@ const $ref = falcor.Model.ref;
 export default [
   {
     route: "semesters['latest']",
-    get: () => (
+    get: () =>
       new Promise((resolve, reject) => {
-        db.getLatestSemester().then(semesterName => {
-          resolve([{
-            path: ['semesters', 'latest'],
-            value: $ref(['semesters', 'byName', semesterName]),
-          }]);
-        })
-        .catch(reject);
-      })
-    ),
+        db
+          .getLatestSemester()
+          .then(semesterName => {
+            resolve([
+              {
+                path: ['semesters', 'latest'],
+                value: $ref(['semesters', 'byName', semesterName]),
+              },
+            ]);
+          })
+          .catch(reject);
+      }),
   },
 ];

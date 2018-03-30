@@ -17,16 +17,24 @@ class ObjectChip extends React.PureComponent {
 
   render() {
     return (
-      <Chip
-        onRequestDelete={this.onClick}
-        style={this.props.style}
-      >
+      <Chip onRequestDelete={this.onClick} style={this.props.style}>
         {this.props.children}
       </Chip>
     );
   }
 }
 
+ObjectChip.propTypes = {
+  onDelete: PropTypes.func.isRequired,
+  id: PropTypes.number.isRequired,
+  style: PropTypes.shape({}),
+  children: PropTypes.node,
+};
+
+ObjectChip.defaultProps = {
+  style: {},
+  children: null,
+};
 
 export default class SearchableSelector extends React.Component {
   constructor(props) {
@@ -36,8 +44,7 @@ export default class SearchableSelector extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (!this.props.disabled &&
-      this.props.value !== prevProps.value) {
+    if (!this.props.disabled && this.props.value !== prevProps.value) {
       this.props.onChange();
     }
   }
@@ -46,9 +53,9 @@ export default class SearchableSelector extends React.Component {
     // disable this if saving
     if (this.props.disabled) return;
 
-    const id = object.id;
-    const name = object.name;
-    const alreadyAdded = this.props.value.find(baseObject => baseObject.id === id) !== undefined;
+    const { id, name } = object;
+    const alreadyAdded =
+      this.props.value.find(baseObject => baseObject.id === id) !== undefined;
 
     if (alreadyAdded) {
       window.alert('Already added');
@@ -66,7 +73,7 @@ export default class SearchableSelector extends React.Component {
     if (index === -1) {
       throw new Error(
         'You tried to delete an object not currently selected. ' +
-        "This shouldn't happen, please let the developers know that it did."
+          "This shouldn't happen, please let the developers know that it did.",
       );
     }
     const newObjects = update(this.props.value, { $splice: [[index, 1]] });
@@ -81,17 +88,19 @@ export default class SearchableSelector extends React.Component {
       },
     };
 
-    const objectChips = this.props.value.length > 0 ?
-      _.map(this.props.value, object => (
-        <ObjectChip
-          key={object.id}
-          id={object.id}
-          onDelete={this.handleDelete}
-          style={{ margin: 4 }}
-        >
-          {object.name}
-        </ObjectChip>
-      )) : null;
+    const objectChips =
+      this.props.value.length > 0
+        ? _.map(this.props.value, object => (
+            <ObjectChip
+              key={object.id}
+              id={object.id}
+              onDelete={this.handleDelete}
+              style={{ margin: 4 }}
+            >
+              {object.name}
+            </ObjectChip>
+          ))
+        : null;
 
     const noObjectsMessage = (
       <span style={{ color: 'rgba(0, 0, 0, 0.3)' }}>
@@ -102,10 +111,10 @@ export default class SearchableSelector extends React.Component {
     return (
       <div>
         <br />
-        <p style={{ marginTop: 0, marginBottom: 10 }}>{capFirstLetter(this.props.mode)}</p>
-        <div style={styles.wrapper} >
-          {objectChips || noObjectsMessage}
-        </div>
+        <p style={{ marginTop: 0, marginBottom: 10 }}>
+          {capFirstLetter(this.props.mode)}
+        </p>
+        <div style={styles.wrapper}>{objectChips || noObjectsMessage}</div>
         <SearchBar
           model={this.props.model}
           mode={this.props.mode}
@@ -119,10 +128,22 @@ export default class SearchableSelector extends React.Component {
 }
 
 SearchableSelector.propTypes = {
-  disabled: PropTypes.bool,
-  value: PropTypes.array.isRequired,
+  value: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
   onChange: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,
+  // It isn't a typo and they are required in SearchBar so no need for defaults
+  /* eslint-disable react/no-typos, react/require-default-props */
   mode: SearchBar.propTypes.mode,
   model: SearchBar.propTypes.model,
+  /* eslint-enable react/no-typos, react/require-default-props */
+  disabled: PropTypes.bool,
+};
+
+SearchableSelector.defaultProps = {
+  disabled: false,
 };

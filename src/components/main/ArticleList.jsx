@@ -3,7 +3,6 @@
 // Children: ArticlePreview
 
 import React from 'react';
-import _ from 'lodash';
 
 import BaseComponent from 'lib/BaseComponent';
 
@@ -14,24 +13,22 @@ import ArticlePreview from 'components/main/ArticlePreview';
 export default class ArticleList extends BaseComponent {
   render() {
     // Returns list of <ArticlePreview/> components with their respective posts
-    let renderArticlePreviews =
+    const renderArticlePreviews =
       // Render nothing if this.props.articles is empty
-      _.map((this.props.articles || []), (article) =>
+      this.props.articles.map(article => (
         <ArticlePreview key={article.slug} article={article} />
-      );
+      ));
 
-    return (
-      <div className="article-list">
-        {renderArticlePreviews}
-      </div>
-    );
+    return <div className="article-list">{renderArticlePreviews}</div>;
   }
 }
 
 // Formatted as list of objects
 ArticleList.propTypes = {
-  articles: React.PropTypes.oneOfType([
-    React.PropTypes.object,
-    React.PropTypes.array,
-  ]),
+  articles: React.PropTypes.arrayOf(ArticlePreview.propTypes.article)
+    .isRequired,
+};
+
+ArticleList.defaultProps = {
+  articles: [],
 };
