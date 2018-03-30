@@ -6,7 +6,8 @@ import TextField from 'material-ui/TextField';
 export default class MaxLenTextField extends React.Component {
   constructor(props) {
     super(props);
-    this.onChange = (event) => this.props.onUpdate(event.target.value.substr(0, this.props.maxLen));
+    this.onChange = event =>
+      this.props.onUpdate(event.target.value.substr(0, this.props.maxLen));
   }
 
   render() {
@@ -34,4 +35,9 @@ MaxLenTextField.propTypes = {
   value: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   name: PropTypes.string,
+};
+
+MaxLenTextField.defaultProps = {
+  disabled: false,
+  name: undefined,
 };

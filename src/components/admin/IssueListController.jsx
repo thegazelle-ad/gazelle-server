@@ -3,7 +3,7 @@ import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
 import { browserHistory, Link } from 'react-router';
 import { updateFieldValue } from './lib/form-field-updaters';
-import { stringToInt } from 'lib/utilities';
+import { has, stringToInt } from 'lib/utilities';
 import LoadingOverlay from './LoadingOverlay';
 
 // material-ui
@@ -65,8 +65,10 @@ export default class IssueListController extends FalcorController {
   }
 
   componentWillMount() {
-    const falcorCallback = (data) => {
-      const issues = Object.keys(data.issues.byNumber).map(key => stringToInt(key));
+    const falcorCallback = data => {
+      const issues = Object.keys(data.issues.byNumber).map(key =>
+        stringToInt(key),
+      );
       const nextIssue = Math.max(...issues) + 1;
       // Set default values
       this.safeSetState({
@@ -90,16 +92,17 @@ export default class IssueListController extends FalcorController {
 
   addIssue(e) {
     e.preventDefault();
-    const issueName = this.state.name;
-    const issueNumber = this.state.issueNumber;
+    const { name: issueName, issueNumber } = this.state;
 
-    if (isNaN(stringToInt(issueNumber))) {
+    if (Number.isNaN(stringToInt(issueNumber))) {
       window.alert('the issue number given is not a valid number');
       return;
     }
 
-    if (this.state.data.issues.byNumber.hasOwnProperty(issueNumber)) {
-      window.alert('This issue has already been created, you cannot create it again');
+    if (has.call(this.state.data.issues.byNumber, issueNumber)) {
+      window.alert(
+        'This issue has already been created, you cannot create it again',
+      );
       return;
     }
 
@@ -119,14 +122,20 @@ export default class IssueListController extends FalcorController {
     this.safeSetState({
       saving: true,
     });
-    this.falcorCall(['issues', 'byNumber', 'addIssue'], [issue],
-      undefined, undefined, undefined, callback);
+    this.falcorCall(
+      ['issues', 'byNumber', 'addIssue'],
+      [issue],
+      undefined,
+      undefined,
+      undefined,
+      callback,
+    );
 
     browserHistory.push(`/issues/${issueNumber}/main`);
   }
 
   getSelectedTab() {
-    const path = (this.props.location.pathname).split('/'); // Parse URL pathname
+    const path = this.props.location.pathname.split('/'); // Parse URL pathname
 
     switch (path[3]) {
       case 'main':
@@ -135,7 +144,9 @@ export default class IssueListController extends FalcorController {
         return path[3];
 
       default:
-        throw new Error('Invalid selected tab (getSelectedTab, IssueListController)');
+        throw new Error(
+          'Invalid selected tab (getSelectedTab, IssueListController)',
+        );
     }
   }
 
@@ -144,13 +155,13 @@ export default class IssueListController extends FalcorController {
       if (!this.state.data) {
         return (
           <div>
-            An error occured while fetching issue data,
-            please contact the development team
+            An error occured while fetching issue data, please contact the
+            development team
           </div>
         );
       }
       const currentIssueNumber = this.props.params.issueNumber;
-      if (currentIssueNumber && isNaN(stringToInt(currentIssueNumber))) {
+      if (currentIssueNumber && Number.isNaN(stringToInt(currentIssueNumber))) {
         return <div>Invalid URL</div>;
       }
       const baseUrl = `/issues/${currentIssueNumber}`;
@@ -173,19 +184,21 @@ export default class IssueListController extends FalcorController {
                     value={this.state.currentIssue}
                     onChange={this.fieldUpdaters.currentIssue}
                   >
-                    <MenuItem value="none" key="none" primaryText="None Chosen" />
-                    {
-                      _.map(data, (issue, issueNumber) => {
-                        const name = issue.name;
-                        return (
-                          <MenuItem
-                            value={issueNumber}
-                            key={issueNumber}
-                            primaryText={name}
-                          />
-                        );
-                      }).reverse()
-                    }
+                    <MenuItem
+                      value="none"
+                      key="none"
+                      primaryText="None Chosen"
+                    />
+                    {_.map(data, (issue, issueNumber) => {
+                      const { name } = issue;
+                      return (
+                        <MenuItem
+                          value={issueNumber}
+                          key={issueNumber}
+                          primaryText={name}
+                        />
+                      );
+                    }).reverse()}
                   </DropDownMenu>
                 </div>
                 {this.state.saving ? <LoadingOverlay /> : null}
@@ -194,21 +207,16 @@ export default class IssueListController extends FalcorController {
                 <div style={styles.tabs}>
                   <h2>Add a new issue</h2>
                   <Divider />
-                  {
-                    this.state.saving ?
-                      <div>Adding issue...</div> :
-                      null
-                  }
-                  <form
-                    onSubmit={this.addIssue}
-                  >
+                  {this.state.saving ? <div>Adding issue...</div> : null}
+                  <form onSubmit={this.addIssue}>
                     <TextField
                       name="name"
                       value={this.state.name}
                       floatingLabelText="Issue Name"
                       disabled={this.state.saving}
                       onChange={this.fieldUpdaters.name}
-                    /><br />
+                    />
+                    <br />
                     {/* Don't use type=number here as it had weird problems in Chrome */}
                     <TextField
                       name="issueNumber"
@@ -216,7 +224,8 @@ export default class IssueListController extends FalcorController {
                       floatingLabelText="Issue Number"
                       disabled={this.state.saving}
                       onChange={this.fieldUpdaters.issueNumber}
-                    /><br />
+                    />
+                    <br />
                     <br />
                     <RaisedButton
                       type="submit"
@@ -230,36 +239,34 @@ export default class IssueListController extends FalcorController {
             </Tabs>
           </Paper>
           <Paper style={styles.paper} zDepth={2}>
-            {
-              currentIssueNumber ?
-                <div>
-                  <Tabs value={this.getSelectedTab()}>
-                    <Tab
-                      label="MAIN"
-                      value="main"
-                      icon={<Home />}
-                      containerElement={<Link to={`${baseUrl}/main`} />}
-                    />
-                    <Tab
-                      label="ARTICLES"
-                      value="articles"
-                      icon={<Description />}
-                      containerElement={<Link to={`${baseUrl}/articles`} />}
-                    />
-                    <Tab
-                      label="CATEGORIES"
-                      value="categories"
-                      icon={<Reorder />}
-                      containerElement={<Link to={`${baseUrl}/categories`} />}
-                    />
-                  </Tabs>
-                  <div style={styles.tabs}>
-                    <h2>Issue {currentIssueNumber}</h2>
-                    <Divider />
-                  </div>
+            {currentIssueNumber ? (
+              <div>
+                <Tabs value={this.getSelectedTab()}>
+                  <Tab
+                    label="MAIN"
+                    value="main"
+                    icon={<Home />}
+                    containerElement={<Link to={`${baseUrl}/main`} />}
+                  />
+                  <Tab
+                    label="ARTICLES"
+                    value="articles"
+                    icon={<Description />}
+                    containerElement={<Link to={`${baseUrl}/articles`} />}
+                  />
+                  <Tab
+                    label="CATEGORIES"
+                    value="categories"
+                    icon={<Reorder />}
+                    containerElement={<Link to={`${baseUrl}/categories`} />}
+                  />
+                </Tabs>
+                <div style={styles.tabs}>
+                  <h2>Issue {currentIssueNumber}</h2>
+                  <Divider />
                 </div>
-                : null
-            }
+              </div>
+            ) : null}
             {this.props.children}
           </Paper>
         </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import BaseComponent from 'lib/BaseComponent';
 import moment from 'moment';
 import { Link } from 'react-router';
+import _ from 'lodash';
 
 // Components
 import AuthorList from 'components/main/AuthorList';
@@ -19,7 +20,7 @@ export default class Article extends BaseComponent {
           <div className="article__header__subtitle">
             <AuthorList
               className="article__header__subtitle__authors"
-              authors={this.props.authors}
+              authors={_.toArray(this.props.authors)}
             />
             <p className="article__header__subtitle__publication-date">
               {moment(this.props.published_at).format('MMM DD, YYYY')}
@@ -31,10 +32,17 @@ export default class Article extends BaseComponent {
             />
           </div>
         </div>
-        <div className="article__body" dangerouslySetInnerHTML={{ __html: this.props.html }} />
+        <div
+          className="article__body"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: this.props.html }}
+        />
         <div className="article__body__end-mark">
           <Link to="/">
-            <img src="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/header-logo.png" alt="Gazelle Logo" />
+            <img
+              src="https://thegazelle.s3.amazonaws.com/gazelle/2016/02/header-logo.png"
+              alt="Gazelle Logo"
+            />
           </Link>
         </div>
         <div className="article__footer">
@@ -49,7 +57,6 @@ export default class Article extends BaseComponent {
           </div>
         </div>
       </div>
-
     );
   }
 }
@@ -59,9 +66,9 @@ Article.propTypes = {
   // Teaser is passed to <SharingButtons/> for use in link urls
   teaser: React.PropTypes.string,
   html: React.PropTypes.string.isRequired,
-  authors: React.PropTypes.object.isRequired,
+  authors: AuthorList.propTypes.authors,
   url: React.PropTypes.string,
   published_at: React.PropTypes.number,
-  trending: React.PropTypes.object,
-  relatedArticles: React.PropTypes.object,
+  trending: Trending.propTypes.articles,
+  relatedArticles: ArticleList.propTypes.articles,
 };

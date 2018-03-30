@@ -79,18 +79,20 @@ export default class AuthorListController extends FalcorController {
     if (slug !== slugifyAuthor(slug)) {
       window.alert(
         'Your slug is not in the right format. Our programatically suggested ' +
-        `substitute is: ${slugifyAuthor(slug)}. ` +
-        'Feel free to use it or change it to something else'
+          `substitute is: ${slugifyAuthor(slug)}. ` +
+          'Feel free to use it or change it to something else',
       );
       return;
     }
 
     // Check if the slug is already taken
-    this.props.model.get(['authors', 'bySlug', slug, 'slug']).then((x) => {
+    this.props.model.get(['authors', 'bySlug', slug, 'slug']).then(x => {
       if (x) {
         x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
         // Something was found, which means the slug is taken
-        window.alert('This slug is already taken, please change to another one');
+        window.alert(
+          'This slug is already taken, please change to another one',
+        );
         return;
       }
       // Create the author
@@ -98,8 +100,14 @@ export default class AuthorListController extends FalcorController {
         window.alert('Author added successfully');
         browserHistory.push(`/authors/${slug}`);
       };
-      this.falcorCall(['authors', 'bySlug', 'createAuthor'], [{ slug, name }],
-        undefined, undefined, undefined, callback);
+      this.falcorCall(
+        ['authors', 'bySlug', 'createAuthor'],
+        [{ slug, name }],
+        undefined,
+        undefined,
+        undefined,
+        callback,
+      );
     });
   }
 

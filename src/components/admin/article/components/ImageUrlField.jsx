@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 import { ValidatedHttpsUrlField } from 'components/admin/form-components/validated-fields';
 
-const ImageUrlField = (props) => {
-  const onChange = (event) => {
+const ImageUrlField = props => {
+  const onChange = event => {
     props.updateImage(event.target.value);
   };
 
@@ -22,8 +22,12 @@ const ImageUrlField = (props) => {
 
 ImageUrlField.propTypes = {
   imageUrl: PropTypes.string.isRequired,
-  disabled: PropTypes.bool,
   updateImage: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
+};
+
+ImageUrlField.defaultProps = {
+  disabled: false,
 };
 
 export default ImageUrlField;

@@ -17,7 +17,12 @@ export default class ArchivesController extends FalcorController {
   static getFalcorPathSets() {
     return [
       // Returns 150 archived issues
-      ['issues', 'byNumber', { length: 150 }, ['issueNumber', 'name', 'published_at']],
+      [
+        'issues',
+        'byNumber',
+        { length: 150 },
+        ['issueNumber', 'name', 'published_at'],
+      ],
     ];
   }
 
@@ -26,7 +31,10 @@ export default class ArchivesController extends FalcorController {
       if (this.state.data === null) {
         return <NotFound />;
       }
-      const data = _.filter(this.state.data.issues.byNumber, issue => issue.published_at);
+      const data = _.filter(
+        this.state.data.issues.byNumber,
+        issue => issue.published_at,
+      );
       const meta = [
         // Search results
         {
@@ -42,7 +50,8 @@ export default class ArchivesController extends FalcorController {
         { property: 'og:url', content: 'www.thegazelle.org/archives' },
         {
           property: 'og:image',
-          content: 'https://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png',
+          content:
+            'https://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png',
         },
         {
           property: 'og:description',
@@ -53,10 +62,7 @@ export default class ArchivesController extends FalcorController {
       ];
       return (
         <div>
-          <Helmet
-            meta={meta}
-            title={"Archives | The Gazelle"}
-          />
+          <Helmet meta={meta} title="Archives | The Gazelle" />
           <Archives archivesData={data} />
         </div>
       );

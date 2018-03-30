@@ -13,5 +13,5 @@ export default class FeaturedArticle extends BaseComponent {
 }
 
 FeaturedArticle.propTypes = {
-  article: React.PropTypes.object,
+  article: ArticlePreview.propTypes.article,
 };

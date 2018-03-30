@@ -2,6 +2,7 @@ import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
 import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
+import { has } from 'lib/utilities';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -30,7 +31,14 @@ const styles = {
   },
 };
 
-const ARTICLE_FIELDS = ['title', 'teaser', 'category', 'image_url', 'slug', 'html'];
+const ARTICLE_FIELDS = [
+  'title',
+  'teaser',
+  'category',
+  'image_url',
+  'slug',
+  'html',
+];
 const AUTHOR_FIELDS = ['id', 'name', 'slug'];
 
 export default class MainIssueController extends FalcorController {
@@ -52,7 +60,8 @@ export default class MainIssueController extends FalcorController {
     };
     const falcorPathSets = [
       [
-        'issues', 'byNumber',
+        'issues',
+        'byNumber',
         this.props.params.issueNumber,
         'categories',
         { length: 20 },
@@ -61,7 +70,8 @@ export default class MainIssueController extends FalcorController {
         ARTICLE_FIELDS,
       ],
       [
-        'issues', 'byNumber',
+        'issues',
+        'byNumber',
         this.props.params.issueNumber,
         'categories',
         { length: 20 },
@@ -72,13 +82,15 @@ export default class MainIssueController extends FalcorController {
         AUTHOR_FIELDS,
       ],
       [
-        'issues', 'byNumber',
+        'issues',
+        'byNumber',
         this.props.params.issueNumber,
         'featured',
         ARTICLE_FIELDS,
       ],
       [
-        'issues', 'byNumber',
+        'issues',
+        'byNumber',
         this.props.params.issueNumber,
         'featured',
         'authors',
@@ -86,14 +98,16 @@ export default class MainIssueController extends FalcorController {
         AUTHOR_FIELDS,
       ],
       [
-        'issues', 'byNumber',
+        'issues',
+        'byNumber',
         this.props.params.issueNumber,
         'picks',
         { length: 10 },
         ARTICLE_FIELDS,
       ],
       [
-        'issues', 'byNumber',
+        'issues',
+        'byNumber',
         this.props.params.issueNumber,
         'picks',
         { length: 10 },
@@ -101,94 +115,124 @@ export default class MainIssueController extends FalcorController {
         0,
         AUTHOR_FIELDS,
       ],
-      ['issues', 'byNumber', this.props.params.issueNumber, ['id', 'published_at', 'name']],
+      [
+        'issues',
+        'byNumber',
+        this.props.params.issueNumber,
+        ['id', 'published_at', 'name'],
+      ],
     ];
-    this.props.model.get(...falcorPathSets).then((x) => {
-      if (!x) {
-        window.alert('There was an error getting the issue data from the database ' +
-          'please contact the developers');
-      } else {
-        x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
-        // Check validity of the issue before publishing it
-        const issueNumber = this.props.params.issueNumber;
-        const issue = x.json.issues.byNumber[issueNumber];
-        const fields = ARTICLE_FIELDS;
-        if (!issue.featured) {
-          window.alert('You need to add a featured article');
-          return;
-        }
-        let allArticles = [issue.featured];
-        allArticles = allArticles.concat(_.map(issue.picks, y => y));
-        if (allArticles.length !== 3) {
-          window.alert('you must have exactly 2 editor\'s picks in an issue');
-          return;
-        }
-        _.forEach(issue.categories, category => (
-          allArticles = allArticles.concat(_.map(category.articles, y => y))
-        ));
-        if (issue.published_at) {
-          if (!window.confirm('This article is already published, do you want to republish it?')) {
+    this.props.model
+      .get(...falcorPathSets)
+      .then(x => {
+        if (!x) {
+          window.alert(
+            'There was an error getting the issue data from the database ' +
+              'please contact the developers',
+          );
+        } else {
+          x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
+          // Check validity of the issue before publishing it
+          const { issueNumber } = this.props.params;
+          const issue = x.json.issues.byNumber[issueNumber];
+          const fields = ARTICLE_FIELDS;
+          if (!issue.featured) {
+            window.alert('You need to add a featured article');
             return;
           }
-        }
-        const articlesValid = allArticles.every(article => {
-          const fieldsValid = fields.every((field) => {
-            if (!article[field]) {
-              window.alert(`${article.title} has no ${field}. Please correct this`);
+          let allArticles = [issue.featured];
+          allArticles = allArticles.concat(_.map(issue.picks, y => y));
+          if (allArticles.length !== 3) {
+            window.alert("you must have exactly 2 editor's picks in an issue");
+            return;
+          }
+          _.forEach(issue.categories, category => {
+            const articles = _.toArray(category.articles);
+            allArticles.push(...articles);
+          });
+          if (issue.published_at) {
+            if (
+              !window.confirm(
+                'This article is already published, do you want to republish it?',
+              )
+            ) {
+              return;
+            }
+          }
+          const articlesValid = allArticles.every(article => {
+            const fieldsValid = fields.every(field => {
+              if (!article[field]) {
+                window.alert(
+                  `${article.title} has no ${field}. Please correct this`,
+                );
+                return false;
+              }
+              return true;
+            });
+            if (!fieldsValid) {
               return false;
+            }
+            if (!has.call(article, 'authors') || !article.authors[0]) {
+              window.alert(
+                `${article.title} has no authors. Please correct this`,
+              );
+              return false;
+            }
+            if (/http(?!s)/.test(article.html)) {
+              if (
+                !window.confirm(
+                  `${article.title} has a non https link in it's body. ` +
+                    'please make sure this link is not an image/video etc. being loaded in. ' +
+                    'If you are sure of this press okay to continue, else cancel to check.',
+                )
+              ) {
+                return false;
+              }
+            }
+            const absoluteUrlRegex = /<a.*?href\s*?=\s*?["'](?!http)(.*?)["'] *?>/;
+            if (absoluteUrlRegex.test(article.html)) {
+              const url = article.html.match(absoluteUrlRegex)[1];
+              if (
+                !window.confirm(
+                  `The URL ${url} in the article ${
+                    article.title
+                  } is in non-absolute format, ` +
+                    'which means that it does not have http(s):// in front of it, ' +
+                    'which will break the link. ' +
+                    'It will be misinterpreted and it will simply add the ' +
+                    'link written to the end of the URL. ' +
+                    'The easiest way to get a correct link is to copy it ' +
+                    "from your browser's URL bar, remember to prefer https over http. " +
+                    'Do you want to override our warning and continue publishing?',
+                )
+              ) {
+                return false;
+              }
             }
             return true;
           });
-          if (!fieldsValid) {
-            return false;
+          if (!articlesValid) {
+            return;
           }
-          if (!article.hasOwnProperty('authors') || !article.authors[0]) {
-            window.alert(`${article.title} has no authors. Please correct this`);
-            return false;
-          }
-          if (/http(?!s)/.test(article.html)) {
-            if (!window.confirm(
-                `${article.title} has a non https link in it's body. ` +
-                'please make sure this link is not an image/video etc. being loaded in. ' +
-                'If you are sure of this press okay to continue, else cancel to check.'
-              )
-            ) {
-              return false;
-            }
-          }
-          const absoluteUrlRegex = /<a.*?href\s*?=\s*?["'](?!http)(.*?)["'] *?>/;
-          if (absoluteUrlRegex.test(article.html)) {
-            const url = article.html.match(absoluteUrlRegex)[1];
-            if (!window.confirm(
-              `The URL ${url} in the article ${article.title} is in non-absolute format, ` +
-              'which means that it does not have http(s):// in front of it, ' +
-              'which will break the link. ' +
-              'It will be misinterpreted and it will simply add the ' +
-              'link written to the end of the URL. ' +
-              'The easiest way to get a correct link is to copy it ' +
-              "from your browser's URL bar, remember to prefer https over http. " +
-              'Do you want to override our warning and continue publishing?'
-              )
-            ) {
-              return false;
-            }
-          }
-          return true;
-        });
-        if (!articlesValid) {
-          return;
+          // The issue is valid, we can publish it
+          this.safeSetState({ publishing: true });
+          this.falcorCall(
+            ['issues', 'byNumber', issueNumber, 'publishIssue'],
+            [issue.id],
+            undefined,
+            undefined,
+            undefined,
+            callback,
+          );
         }
-        // The issue is valid, we can publish it
-        this.safeSetState({ publishing: true });
-        this.falcorCall(['issues', 'byNumber', issueNumber, 'publishIssue'],
-          [issue.id], undefined, undefined, undefined, callback);
-      }
-    })
-    .catch((e) => {
-      console.error(e); // eslint-disable-line no-console
-      window.alert('There was an error getting the issue data from the database ' +
-        'please contact the developers. The error message is in the developers console');
-    });
+      })
+      .catch(e => {
+        console.error(e); // eslint-disable-line no-console
+        window.alert(
+          'There was an error getting the issue data from the database ' +
+            'please contact the developers. The error message is in the developers console',
+        );
+      });
   }
 
   unpublishIssue() {
@@ -196,18 +240,24 @@ export default class MainIssueController extends FalcorController {
       this.safeSetState({ publishing: false });
     };
     this.safeSetState({ publishing: true });
-    this.falcorUpdate({
-      paths: [['issues', 'byNumber', this.props.params.issueNumber, 'published_at']],
-      jsonGraph: {
-        issues: {
-          byNumber: {
-            [this.props.params.issueNumber]: {
-              published_at: null,
+    this.falcorUpdate(
+      {
+        paths: [
+          ['issues', 'byNumber', this.props.params.issueNumber, 'published_at'],
+        ],
+        jsonGraph: {
+          issues: {
+            byNumber: {
+              [this.props.params.issueNumber]: {
+                published_at: null,
+              },
             },
           },
         },
       },
-    }, undefined, callback);
+      undefined,
+      callback,
+    );
   }
 
   render() {
@@ -216,36 +266,26 @@ export default class MainIssueController extends FalcorController {
         return <p>This issue does not exist</p>;
       }
       const published = Boolean(
-        this.state.data.issues.byNumber[this.props.params.issueNumber].published_at
+        this.state.data.issues.byNumber[this.props.params.issueNumber]
+          .published_at,
       );
       return (
         <div style={styles.tabs}>
           <RaisedButton
-            label={
-              !published
-              ? 'Publish Issue'
-              : 'Issue Published'
-            }
+            label={!published ? 'Publish Issue' : 'Issue Published'}
             primary
             style={styles.publishingButtons}
             onTouchTap={this.publishIssue}
             disabled={published}
           />
           <RaisedButton
-            label={
-              published
-              ? 'Unpublish Issue'
-              : 'Issue Not Published'
-            }
+            label={published ? 'Unpublish Issue' : 'Issue Not Published'}
             secondary
             style={styles.publishingButtons}
             onTouchTap={this.unpublishIssue}
             disabled={!published}
           />
-          {this.state.publishing
-          ? <h4>Publishing...</h4>
-          : null
-          }
+          {this.state.publishing ? <h4>Publishing...</h4> : null}
         </div>
       );
     }

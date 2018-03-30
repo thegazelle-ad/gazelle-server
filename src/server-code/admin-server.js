@@ -10,7 +10,7 @@ import s3 from 's3';
 // Needed for receiving the multi-part file upload
 import multer from 'multer';
 // Our own custom config
-import s3Config from 'config/s3.config.js';
+import s3Config from 'config/s3.config';
 
 /* Helper libraries */
 import fs from 'fs';
@@ -69,9 +69,10 @@ export default function runAdminServer(serverFalcorModel) {
   app.use(bodyParser.json());
 
   // For connecting the client to our falcor server
-  app.use('/model.json', FalcorServer.dataSourceRoute(() => (
-    serverFalcorModel.asDataSource()
-  )));
+  app.use(
+    '/model.json',
+    FalcorServer.dataSourceRoute(() => serverFalcorModel.asDataSource()),
+  );
 
   // serving static files
   app.use(express.static('static'));
@@ -79,9 +80,14 @@ export default function runAdminServer(serverFalcorModel) {
   const allowCrossDomain = (req, res, next) => {
     if (req.method === 'OPTIONS') {
       res.header('Access-Control-Allow-Origin', '*');
-      res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, ' +
-        'Content-Length, X-Requested-With');
+      res.header(
+        'Access-Control-Allow-Methods',
+        'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+      );
+      res.header(
+        'Access-Control-Allow-Headers',
+        'Content-Type, Authorization, Content-Length, X-Requested-With',
+      );
       res.send(200);
     } else {
       next();
@@ -90,18 +96,24 @@ export default function runAdminServer(serverFalcorModel) {
 
   app.use(allowCrossDomain);
 
-  const RESTART_SERVERS_PATH_NAME = `${process.env.ROOT_DIRECTORY}/scripts/restart-servers.sh`;
+  const RESTART_SERVERS_PATH_NAME = `${
+    process.env.ROOT_DIRECTORY
+  }/scripts/restart-servers.sh`;
 
   let isRestarted = false;
 
   app.post('/restart-server', (req, res) => {
-    const password = req.body.password;
-    if ((typeof password) !== 'string' || password.length < 1) {
+    const { password } = req.body;
+    if (typeof password !== 'string' || password.length < 1) {
       res.sendStatus(401);
-    } else if (hash(password) === 'eaafc81d7868e1c203ecc90f387acfa4c24d1027134b0bfda6fd7c536efc5d8dd5718609a407dbfcd41e747aec331153d47733153afb7c125c558acba3fb6bcd') { // eslint-disable-line max-len
+    } else if (
+      hash(password) ===
+      'eaafc81d7868e1c203ecc90f387acfa4c24d1027134b0bfda6fd7c536efc5d8dd5718609a407dbfcd41e747aec331153d47733153afb7c125c558acba3fb6bcd'
+    ) {
+      // eslint-disable-line max-len
       isRestarted = true;
       res.sendStatus(200);
-      exec(RESTART_SERVERS_PATH_NAME, (err) => {
+      exec(RESTART_SERVERS_PATH_NAME, err => {
         if (err) {
           if (process.env.NODE_ENV !== 'production') {
             console.error(err); // eslint-disable-line no-console
@@ -137,7 +149,7 @@ export default function runAdminServer(serverFalcorModel) {
   const upload = multer({ storage });
 
   const awsSdkClient = new AWS.S3(
-    Object.assign(s3Config, { apiVersion: '2006-03-01' })
+    Object.assign(s3Config, { apiVersion: '2006-03-01' }),
   );
 
   const s3Client = s3.createClient({
@@ -181,7 +193,7 @@ export default function runAdminServer(serverFalcorModel) {
 
       /* Compress image, then upload to S3 */
       compressJPEG(filePath).then(() => {
-        awsSdkClient.headObject({ Bucket, Key }, (err) => {
+        awsSdkClient.headObject({ Bucket, Key }, err => {
           if (err && err.code === 'NotFound') {
             const s3Uploader = s3Client.uploadFile(s3Params);
             s3Uploader.on('error', s3Err => {
@@ -206,7 +218,10 @@ export default function runAdminServer(serverFalcorModel) {
   });
 
   app.get('/robots.txt', (req, res) => {
-    res.status(200).type('txt').send(nothingAllowedRobotsTxt);
+    res
+      .status(200)
+      .type('txt')
+      .send(nothingAllowedRobotsTxt);
   });
 
   if (!isDevelopment) {
@@ -230,7 +245,9 @@ export default function runAdminServer(serverFalcorModel) {
 
   app.post('/googlelogin', (req, res) => {
     const token = req.body.data;
-    const endpoint = `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${encodeURIComponent(token)}`;
+    const endpoint = `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${encodeURIComponent(
+      token,
+    )}`;
 
     request.get(endpoint, (error, response, body) => {
       if (error) {
@@ -239,8 +256,8 @@ export default function runAdminServer(serverFalcorModel) {
 
       const content = JSON.parse(body);
       // aud should contain our google client id
-      const aud = content.aud;
-      const email = content.email;
+      const { aud } = content;
+      const { email } = content;
 
       if (aud.trim() === googleClientID) {
         // in dev mode, allow any valid email address

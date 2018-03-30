@@ -4,7 +4,11 @@ import {
   NIGHTMARE_CONFIG,
   ENTER_UNICODE,
 } from '__tests__/end-to-end/e2e-constants';
-import { getLoggedInState, restartServer, isVisible } from './e2e-admin-utilities';
+import {
+  getLoggedInState,
+  restartServer,
+  isVisible,
+} from './e2e-admin-utilities';
 
 describe('Admin interface author list', () => {
   let nightmare = null;
@@ -20,9 +24,8 @@ describe('Admin interface author list', () => {
   });
 
   const authorListSelector = '#author-list';
-  const getTabButtonSelector = index => (
-    `${authorListSelector} button[type="button"]:nth-child(${index})`
-  );
+  const getTabButtonSelector = index =>
+    `${authorListSelector} button[type="button"]:nth-child(${index})`;
   const addNewTabSelector = '#author-list-add-new-tab';
   const editTabSelector = '#author-list-edit-tab';
   const authorEditorSelector = '#author-editor';
@@ -34,21 +37,23 @@ describe('Admin interface author list', () => {
   it('searches correctly for authors', () => {
     expect.assertions(1);
 
-    return getLoggedInState(nightmare, '/authors')
-      .wait(searchInputSelector)
-      .insert(searchInputSelector, 'Emil Goldsmith Olesen')
-      .wait(searchItemSelector)
-      // We click on the Material UI element where the onClick handler is actually set
-      .click(`${searchItemSelector} span[role="menuitem"]`)
-      .wait(authorEditorSelector)
-      .path()
-      .end()
-      .then((path) => {
-        expect(path).toBe('/authors/emil-goldsmith-olesen');
-      });
+    return (
+      getLoggedInState(nightmare, '/authors')
+        .wait(searchInputSelector)
+        .insert(searchInputSelector, 'Emil Goldsmith Olesen')
+        .wait(searchItemSelector)
+        // We click on the Material UI element where the onClick handler is actually set
+        .click(`${searchItemSelector} span[role="menuitem"]`)
+        .wait(authorEditorSelector)
+        .path()
+        .end()
+        .then(path => {
+          expect(path).toBe('/authors/emil-goldsmith-olesen');
+        })
+    );
   });
 
-  it('correctly switches tabs', () => (
+  it('correctly switches tabs', () =>
     getLoggedInState(nightmare, '/authors')
       .wait(authorListSelector)
       // Click 'Add New' tab
@@ -59,15 +64,15 @@ describe('Admin interface author list', () => {
       .wait(editTabSelector)
       // The waits make sure we actually routed to the right elements
       // so no further checks are needed
-      .end()
-  ));
+      .end());
 
   const testAddingNewAuthor = (useEnter = false, inputToPressEnterOn = 1) => {
     expect.assertions(2);
 
     // We first create a new author with a unique name
     const authorName = `test-user-${new Date().getTime()}`;
-    const getInputSelector = index => `${addNewTabSelector} form div:nth-of-type(${index}) input`;
+    const getInputSelector = index =>
+      `${addNewTabSelector} form div:nth-of-type(${index}) input`;
     const createAuthorSelector = `${addNewTabSelector} button[type="submit"]`;
     const authorInformationEntered = getLoggedInState(nightmare, '/authors')
       .wait(authorListSelector)
@@ -89,11 +94,14 @@ describe('Admin interface author list', () => {
 
     let authorInformationSubmitted;
     if (useEnter) {
-      authorInformationSubmitted = authorInformationEntered
-        .type(getInputSelector(inputToPressEnterOn), ENTER_UNICODE);
+      authorInformationSubmitted = authorInformationEntered.type(
+        getInputSelector(inputToPressEnterOn),
+        ENTER_UNICODE,
+      );
     } else {
-      authorInformationSubmitted = authorInformationEntered
-        .click(createAuthorSelector);
+      authorInformationSubmitted = authorInformationEntered.click(
+        createAuthorSelector,
+      );
     }
 
     return authorInformationSubmitted
@@ -116,28 +124,26 @@ describe('Admin interface author list', () => {
         nightmare = new Nightmare(NIGHTMARE_CONFIG);
         // We have restarted the server which also clears the cache which allows us to test that
         // the data we inserted actually propagated to the database
-        return getLoggedInState(nightmare, '/authors')
-          .wait(searchInputSelector)
-          .insert(searchInputSelector, authorName)
-          .wait(searchItemSelector)
-          // We click on the Material UI element where the onClick handler is actually set
-          .click(`${searchItemSelector} span[role="menuitem"]`)
-          .wait(authorEditorSelector)
-          .path()
-          .end()
-          .then((path) => {
-            expect(path).toBe(`/authors/${authorName}`);
-          });
+        return (
+          getLoggedInState(nightmare, '/authors')
+            .wait(searchInputSelector)
+            .insert(searchInputSelector, authorName)
+            .wait(searchItemSelector)
+            // We click on the Material UI element where the onClick handler is actually set
+            .click(`${searchItemSelector} span[role="menuitem"]`)
+            .wait(authorEditorSelector)
+            .path()
+            .end()
+            .then(path => {
+              expect(path).toBe(`/authors/${authorName}`);
+            })
+        );
       });
   };
 
   it('correctly adds new authors using button', () => testAddingNewAuthor());
-  it(
-    'correctly adds new authors using enter on name',
-    () => testAddingNewAuthor(true, 1)
-  );
-  it(
-    'correctly adds new authors using enter on slug',
-    () => testAddingNewAuthor(true, 2)
-  );
+  it('correctly adds new authors using enter on name', () =>
+    testAddingNewAuthor(true, 1));
+  it('correctly adds new authors using enter on slug', () =>
+    testAddingNewAuthor(true, 2));
 });

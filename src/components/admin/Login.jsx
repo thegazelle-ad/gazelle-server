@@ -10,6 +10,11 @@ const styles = {
   },
 };
 
+function onSignInFailure(response) {
+  if (response.error !== 'popup_closed_by_user') {
+    window.alert(`Google Login Failed.\n${response.error}`);
+  }
+}
 
 export default class Login extends BaseComponent {
   constructor(props) {
@@ -26,7 +31,8 @@ export default class Login extends BaseComponent {
     super.componentDidMount();
     const interval = setInterval(() => {
       // GoogleAPILoaded is a global var, set to true when Google platform.js script loaded
-      if (window.THE_GAZELLE.googleAPILoaded) { // eslint-disable-line no-undef
+      if (window.THE_GAZELLE.googleAPILoaded) {
+        // eslint-disable-line no-undef
         this.renderButton();
         window.gapi.load('auth2', () => {
           this.safeSetState({
@@ -38,7 +44,8 @@ export default class Login extends BaseComponent {
             window.gapi.auth2.init({
               client_id: googleClientID,
             });
-          } else { // detects user has signed in
+          } else {
+            // detects user has signed in
             this.onSignInSuccess(auth.currentUser.get());
           }
         });
@@ -85,18 +92,12 @@ export default class Login extends BaseComponent {
     xhr.send(JSON.stringify(token));
   }
 
-  onSignInFailure(response) {
-    if (response.error !== 'popup_closed_by_user') {
-      alert(`Google Login Failed.\n${response.error}`);
-    }
-  }
-
   renderButton() {
     window.gapi.signin2.render('my-signin2', {
       scope: 'profile email',
       longtitle: true,
       onsuccess: this.onSignInSuccess,
-      onfailure: this.onSignInFailure,
+      onfailure: onSignInFailure,
     });
   }
 
@@ -104,6 +105,8 @@ export default class Login extends BaseComponent {
     const fade = this.state.GoogleAPIReady ? 1 : 0.5;
     return (
       <div id="login-page">
+        {/* eslint-disable */
+        /* FIXME */}
         <div
           id="my-signin2"
           style={{
@@ -111,8 +114,8 @@ export default class Login extends BaseComponent {
             opacity: fade,
           }}
           onClick={this.handleLoginCI}
-        >
-        </div>
+        />
+        {/* eslint-enable */}
       </div>
     );
   }

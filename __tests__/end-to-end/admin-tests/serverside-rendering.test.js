@@ -17,7 +17,8 @@ function testLoginRedirect(nightmare, path) {
     redirectedPath = '/';
   }
 
-  return nightmare.goto(`${HOST}${path}`)
+  return nightmare
+    .goto(`${HOST}${path}`)
     .end()
     .then(result => {
       expect(result.url).toBe(`${HOST}/login?url=${redirectedPath}`);
@@ -37,13 +38,13 @@ describe('Admin interface server side rendering', () => {
     nightmare.halt();
   });
 
-  it('renders any page correctly', () => testPathServersideRender(nightmare, HOST, '/login'));
+  it('renders any page correctly', () =>
+    testPathServersideRender(nightmare, HOST, '/login'));
 
   describe('login redirect', () => {
-    it('handles attempting to access main page directly', () => testLoginRedirect(nightmare, ''));
-    it(
-      'handles attempting to access non-main page directly',
-      () => testLoginRedirect(nightmare, '/authors')
-    );
+    it('handles attempting to access main page directly', () =>
+      testLoginRedirect(nightmare, ''));
+    it('handles attempting to access non-main page directly', () =>
+      testLoginRedirect(nightmare, '/authors'));
   });
 });
