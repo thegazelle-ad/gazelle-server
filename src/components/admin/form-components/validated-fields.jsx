@@ -10,11 +10,9 @@ export const hasHttps = value => {
   return null;
 };
 
-export const cannotNull = (value) => {
+export const cannotNull = value => {
   if (!value) {
-    return (
-      'This field must have an entry.'
-    );
+    return 'This field must have an entry.';
   }
   return null;
 };

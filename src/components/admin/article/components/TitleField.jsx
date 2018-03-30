@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 import { RequiredTextField } from 'components/admin/form-components/validated-fields';
 
-const TitleField = (props) => {
-  const onChange = (event) => {
+const TitleField = props => {
+  const onChange = event => {
     props.onUpdate(event.target.value);
   };
 
@@ -23,6 +23,10 @@ TitleField.propTypes = {
   title: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
   onUpdate: PropTypes.func.isRequired,
+};
+
+TitleField.defaultProps = {
+  disabled: false,
 };
 
 export default TitleField;

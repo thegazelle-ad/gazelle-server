@@ -52,7 +52,7 @@ export default class ArticleListController extends FalcorController {
     super.componentWillReceiveProps(nextProps, nextContext);
     const newPathSets = this.constructor.getFalcorPathSets(
       nextProps.params,
-      nextProps.location.query
+      nextProps.location.query,
     );
     if (nextProps.location.state && nextProps.location.state.refresh) {
       this.falcorFetch(newPathSets);

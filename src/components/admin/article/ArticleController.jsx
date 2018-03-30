@@ -116,7 +116,11 @@ export default class ArticleController extends FalcorController {
     const authors = _.map(article.authors, author => author);
 
     this.safeSetState({
-      title, teaser, category, imageUrl, authors,
+      title,
+      teaser,
+      category,
+      imageUrl,
+      authors,
     });
   }
 
@@ -160,7 +164,7 @@ export default class ArticleController extends FalcorController {
   handleDialogClose() {
     if (this.state.saving) return;
 
-    const page = this.props.params.page;
+    const { page } = this.props.params;
     const pathname = `/articles/page/${page}`;
 
     const location = { pathname, state: { refresh: this.state.saved } };
@@ -232,9 +236,9 @@ export default class ArticleController extends FalcorController {
     }
 
     const shouldUpdateCategory = this.state.category;
-    const fields = shouldUpdateCategory ?
-                   ['title', 'teaser', 'image_url', 'category'] :
-                   ['title', 'teaser', 'image_url'];
+    const fields = shouldUpdateCategory
+      ? ['title', 'teaser', 'image_url', 'category']
+      : ['title', 'teaser', 'image_url'];
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
       paths: [['articles', 'bySlug', articleSlug, fields]],
@@ -247,9 +251,15 @@ export default class ArticleController extends FalcorController {
       },
     };
     // Fill in the data
-    jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].title = this.state.title;
-    jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].teaser = this.state.teaser;
-    jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].image_url = this.state.imageUrl;
+    jsonGraphEnvelope.jsonGraph.articles.bySlug[
+      articleSlug
+    ].title = this.state.title;
+    jsonGraphEnvelope.jsonGraph.articles.bySlug[
+      articleSlug
+    ].teaser = this.state.teaser;
+    jsonGraphEnvelope.jsonGraph.articles.bySlug[
+      articleSlug
+    ].image_url = this.state.imageUrl;
     if (shouldUpdateCategory) {
       jsonGraphEnvelope.jsonGraph.articles.bySlug[
         articleSlug
@@ -341,7 +351,8 @@ export default class ArticleController extends FalcorController {
             update={this.updateCategory}
             elements={categories}
             disabled={this.state.saving}
-          /><br />
+          />
+          <br />
           <ImageUrlField
             imageUrl={this.state.imageUrl}
             updateImage={this.updateImage}
