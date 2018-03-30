@@ -104,7 +104,7 @@ export default class SearchableSelector extends React.Component {
 
     const noObjectsMessage = (
       <span style={{ color: 'rgba(0, 0, 0, 0.3)' }}>
-        `No {this.props.mode} are currently assigned to this article`
+        No {this.props.mode} are currently assigned to this article
       </span>
     );
 
@@ -133,7 +133,7 @@ SearchableSelector.propTypes = {
       id: PropTypes.number.isRequired,
       name: PropTypes.string.isRequired,
     }),
-  ).isRequired,
+  ),
   onChange: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,
   // It isn't a typo and they are required in SearchBar so no need for defaults
@@ -145,5 +145,6 @@ SearchableSelector.propTypes = {
 };
 
 SearchableSelector.defaultProps = {
+  value: [],
   disabled: false,
 };

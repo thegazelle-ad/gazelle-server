@@ -83,7 +83,7 @@ export default [
     // no matter what indices are called, but I think in reality it shouldn't be a problem
     get: pathSet =>
       new Promise(resolve => {
-        db.staffArticleQuery(pathSet.slugs).then(data => {
+        db.authorArticleQuery(pathSet.slugs).then(data => {
           // We receive the data as an object with keys equalling staff slugs
           // and values being an array of article slugs where the most recent is first
           const results = [];
