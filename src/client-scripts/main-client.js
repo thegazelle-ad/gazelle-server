@@ -19,6 +19,7 @@ import { injectModelCreateElement } from 'lib/falcor/falcor-utilities';
 import HttpDataSource from 'falcor-http-datasource';
 import { setIsClient } from 'lib/utilities';
 import ReactGA from 'react-ga';
+import { Provider as FalcorProvider } from 'react-falcor';
 
 // Let the app know we are running as client, activates certain behaviors like
 // global client tracking.
@@ -41,11 +42,13 @@ const logPageView = () => {
 };
 
 ReactDOM.render(
-  <Router
-    history={browserHistory}
-    routes={routes}
-    onUpdate={logPageView}
-    createElement={injectModelCreateElement(clientModel)}
-  />,
+  <FalcorProvider falcor={clientModel}>
+    <Router
+      history={browserHistory}
+      routes={routes}
+      onUpdate={logPageView}
+      createElement={injectModelCreateElement(clientModel)}
+    />
+  </FalcorProvider>,
   document.getElementById('main'),
 );
