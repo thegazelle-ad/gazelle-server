@@ -19,7 +19,9 @@ import {
   injectModelCreateElement,
   setAppReady,
 } from 'lib/falcor/falcor-utilities';
+import { ModalProvider } from 'components/admin/hocs/modals';
 import HttpDataSource from 'falcor-http-datasource';
+import { MuiThemeProvider } from 'material-ui';
 
 // Set app ready so falcor doesn't try to load from cache
 setAppReady();
@@ -29,10 +31,14 @@ const clientModel = new falcor.Model({
 });
 
 ReactDOM.render(
-  <Router
-    history={browserHistory}
-    routes={routes}
-    createElement={injectModelCreateElement(clientModel)}
-  />,
+  <MuiThemeProvider>
+    <ModalProvider>
+      <Router
+        history={browserHistory}
+        routes={routes}
+        createElement={injectModelCreateElement(clientModel)}
+      />
+    </ModalProvider>
+  </MuiThemeProvider>,
   document.getElementById('main'),
 );

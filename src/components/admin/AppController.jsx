@@ -3,7 +3,6 @@ import BaseComponent from 'lib/BaseComponent';
 import { browserHistory } from 'react-router';
 
 // material-ui
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
@@ -235,53 +234,51 @@ export default class AppController extends BaseComponent {
     );
 
     return (
-      <MuiThemeProvider>
-        <div id={APP_ID} className="mainContainer">
-          <AppBar
-            id={HEADER_ID}
-            title="Admin Interface"
-            iconElementRight={this.isLoggedIn() ? <LoggedIn /> : null}
-            showMenuIconButton={false}
-          />
+      <div id={APP_ID} className="mainContainer">
+        <AppBar
+          id={HEADER_ID}
+          title="Admin Interface"
+          iconElementRight={this.isLoggedIn() ? <LoggedIn /> : null}
+          showMenuIconButton={false}
+        />
 
-          {/* Only show nav if logged in */}
-          <Navigation isNavOpen={this.isLoggedIn()} />
-          <div style={bodyStyle} className="editor-body">
-            <div className="editor-items">{this.props.children}</div>
-          </div>
-          {/* Dialog for restart server password */}
-          <Dialog
-            title="Restart Server"
-            modal
-            open={this.state.restartPasswordModalOpen}
-            actions={[
-              <FlatButton
-                id="restart-server-password-cancel"
-                label="Cancel"
-                onClick={this.toggleRestartPasswordModal}
-              />,
-              <FlatButton
-                label="Submit"
-                id="restart-server-password-submit"
-                onClick={this.restartServer}
-                disabled={this.state.currentlyRestarting}
-              />,
-            ]}
-          >
-            <TextField
-              ref={this.assignPasswordRef}
-              value={this.state.restartPasswordValue}
-              floatingLabelText="Input Password"
-              id="restart-server-password-input"
-              type="password"
-              onChange={this.fieldUpdaters.restartPassword}
-              onKeyUp={this.handleRestartPasswordEnter}
-              disabled={this.state.currentlyRestarting}
-              autoFocus
-            />
-          </Dialog>
+        {/* Only show nav if logged in */}
+        <Navigation isNavOpen={this.isLoggedIn()} />
+        <div style={bodyStyle} className="editor-body">
+          <div className="editor-items">{this.props.children}</div>
         </div>
-      </MuiThemeProvider>
+        {/* Dialog for restart server password */}
+        <Dialog
+          title="Restart Server"
+          modal
+          open={this.state.restartPasswordModalOpen}
+          actions={[
+            <FlatButton
+              id="restart-server-password-cancel"
+              label="Cancel"
+              onClick={this.toggleRestartPasswordModal}
+            />,
+            <FlatButton
+              label="Submit"
+              id="restart-server-password-submit"
+              onClick={this.restartServer}
+              disabled={this.state.currentlyRestarting}
+            />,
+          ]}
+        >
+          <TextField
+            ref={this.assignPasswordRef}
+            value={this.state.restartPasswordValue}
+            floatingLabelText="Input Password"
+            id="restart-server-password-input"
+            type="password"
+            onChange={this.fieldUpdaters.restartPassword}
+            onKeyUp={this.handleRestartPasswordEnter}
+            disabled={this.state.currentlyRestarting}
+            autoFocus
+          />
+        </Dialog>
+      </div>
     );
   }
 }
