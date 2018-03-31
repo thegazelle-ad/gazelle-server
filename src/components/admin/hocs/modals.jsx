@@ -1,11 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dialog, RaisedButton } from 'material-ui';
+import { Dialog, RaisedButton, FlatButton, SvgIcon } from 'material-ui';
 
 import { getDisplayName } from 'lib/higher-order-helpers';
 
 const MODAL_TYPE_ALERT = 'alert';
 const MODAL_TYPE_CONFIRM = 'confirm';
+
+const AlertIcon = props => (
+  <SvgIcon style={{ fill: '#ff5d00', width: props.size, height: props.size }}>
+    <path d="M11 16h2v2h-2z" />
+    <path d="M13.516 10h-3L11 15h2z" />
+    <path d="M12.017 5.974L19.537 19H4.497l7.52-13.026m0-2.474c-.545 0-1.09.357-1.5 1.07L2.53 18.403C1.705 19.833 2.38 21 4.03 21H20c1.65 0 2.325-1.17 1.5-2.6L13.517 4.575c-.413-.715-.956-1.072-1.5-1.072z" />
+  </SvgIcon>
+);
+
+AlertIcon.propTypes = {
+  size: PropTypes.string,
+};
+
+AlertIcon.defaultProps = {
+  size: '24px',
+};
 
 export class ModalProvider extends React.Component {
   constructor(props, context) {
@@ -17,6 +33,7 @@ export class ModalProvider extends React.Component {
     this.displayConfirm = this.displayConfirm.bind(this);
     this.confirm = this.confirm.bind(this);
     this.deny = this.deny.bind(this);
+    this.createModalRef = this.createModalRef.bind(this);
 
     this.resolvePromise = null;
 
@@ -94,12 +111,14 @@ export class ModalProvider extends React.Component {
     this.resolvePromise = null;
   }
 
+  createModalRef(ref) {
+    this.modalRef = ref;
+  }
+
   render() {
     let actionButtons;
     if (this.state.modalType === MODAL_TYPE_ALERT) {
-      actionButtons = [
-        <RaisedButton label="Ok" primary onClick={this.closeModal} />,
-      ];
+      actionButtons = [<FlatButton label="Ok" onClick={this.closeModal} />];
     } else if (this.state.modalType === MODAL_TYPE_CONFIRM) {
       actionButtons = [
         <RaisedButton label="Yes" primary onClick={this.confirm} />,
@@ -112,8 +131,22 @@ export class ModalProvider extends React.Component {
     return (
       <div>
         {React.Children.only(this.props.children)}
-        <Dialog actions={actionButtons} open={this.state.modalOpen} modal>
-          <div>{this.state.modalMessage}</div>
+        <Dialog
+          open={this.state.modalOpen}
+          modal
+          // Reset the style so we can do what we want with it
+          contentStyle={{ maxWidth: '500px' }}
+        >
+          <div
+            style={{ width: '500px', margin: 'auto' }}
+            ref={this.createModalRef}
+          >
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <AlertIcon size="150px" />
+            </div>
+            <div style={{ textAlign: 'center' }}>{this.state.modalMessage}</div>
+            <FlatButton style={{ margin: 'auto' }} label="Ok" />
+          </div>
         </Dialog>
       </div>
     );
