@@ -1,10 +1,9 @@
 import falcor from 'falcor';
 import _ from 'lodash';
 
-import DbFunctions from 'lib/db';
+import * as db from 'lib/db';
 import { cleanupJsonGraphArg } from 'lib/falcor/falcor-utilities';
 
-const db = new DbFunctions();
 const $ref = falcor.Model.ref;
 
 export default [

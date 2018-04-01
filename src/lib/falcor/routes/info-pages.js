@@ -1,6 +1,4 @@
-import DbFunctions from 'lib/db';
-
-const db = new DbFunctions();
+import * as db from 'lib/db';
 
 export default [
   {
