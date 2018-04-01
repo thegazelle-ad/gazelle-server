@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Alert } from './Alert';
+import { Confirm } from './Confirm';
 
 const MODAL_TYPE_ALERT = 'alert';
 const MODAL_TYPE_CONFIRM = 'confirm';
@@ -103,6 +104,12 @@ export class ModalProvider extends React.Component {
       case MODAL_TYPE_ALERT:
         dialogProps.onClose = this.closeModal;
         Modal = <Alert {...dialogProps} />;
+        break;
+
+      case MODAL_TYPE_CONFIRM:
+        dialogProps.onConfirm = this.confirm;
+        dialogProps.onDeny = this.deny;
+        Modal = <Confirm {...dialogProps} />;
         break;
 
       default:

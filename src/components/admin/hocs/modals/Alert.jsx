@@ -25,7 +25,7 @@ AlertIcon.defaultProps = {
 };
 
 export const Alert = ({ open, contentStyle, message, onClose }) => {
-  const actionButtons = [<RaisedButton onClick={onClose} label="Ok" />];
+  const actionButtons = [<RaisedButton onClick={onClose} label="OK" />];
   return (
     <Dialog
       open={open}
