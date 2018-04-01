@@ -5,7 +5,7 @@ import stable from 'stable';
 import databaseConfig from 'config/database.config';
 import { mapGhostNames } from 'lib/falcor/falcor-utilities';
 import _ from 'lodash';
-import { formatDate, formatDateTime } from 'lib/utilities';
+import moment from 'moment';
 
 const knexConnectionObject = {
   client: 'mysql',
@@ -1365,7 +1365,7 @@ export function updateIssueArticles(issueNumber, featuredArticles, picks, mainAr
                   }).map(article => article.id);
 
                   database('posts_meta').whereIn('id', toPublish)
-                  .update('gazelle_published_at', formatDateTime(date))
+                  .update('gazelle_published_at', moment(date).format('YYYY-MM-DD HH:mm:ss'))
                   .then(() => {
                     resolve(results);
                   });
@@ -1385,9 +1385,20 @@ export function updateIssueArticles(issueNumber, featuredArticles, picks, mainAr
 export function updateIssueData(jsonGraphArg) {
   return new Promise((resolve) => {
     const issueNumber = Object.keys(jsonGraphArg.issues.byNumber)[0];
-    const value = jsonGraphArg.issues.byNumber[issueNumber].published_at;
+    const issueObject = jsonGraphArg.issues.byNumber[issueNumber];
+    const updateObject = {};
+    if (issueObject.hasOwnProperty('name') && issueObject.name) {
+      updateObject.name = issueObject.name;
+    }
+    if (issueObject.hasOwnProperty('published_at') &&
+      (issueObject.published_at || issueObject.published_at === null)) {
+      updateObject.published_at = moment(issueObject.published_at).format('YYYY-MM-DD');
+    }
+    if (issueObject.hasOwnProperty('issueNumber') && issueObject.issueNumber) {
+      updateObject.issue_order = issueObject.issueNumber;
+    }
     database('issues').where('issue_order', '=', issueNumber)
-    .update('published_at', value)
+    .update(updateObject)
     .then(() => {
       resolve(true);
     });
@@ -1420,13 +1431,13 @@ export function publishIssue(issue_id) {
           results.publishedArticles.push(article.slug);
         }
       });
-      const currentTime = formatDateTime(dateObject);
+      const currentTime = moment(dateObject).format('YYYY-MM-DD HH:mm:ss');
       database('posts_meta')
       .whereIn('id', toPublish)
       .update({ gazelle_published_at: currentTime })
       .then(() => {
         // Now we can publish the issue
-        const currentDate = formatDate(dateObject);
+        const currentDate = moment(dateObject).format('YYYY-MM-DD');
         database('issues')
         .where('id', '=', issue_id)
         .update({ published_at: currentDate })
