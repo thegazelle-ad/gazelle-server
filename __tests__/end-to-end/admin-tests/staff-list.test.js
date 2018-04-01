@@ -10,7 +10,7 @@ import {
   isVisible,
 } from './e2e-admin-utilities';
 
-describe('Admin interface author list', () => {
+describe('Admin interface staff member list', () => {
   let nightmare = null;
   beforeEach(() => {
     nightmare = new Nightmare(NIGHTMARE_CONFIG);
@@ -23,39 +23,39 @@ describe('Admin interface author list', () => {
     nightmare.halt();
   });
 
-  const authorListSelector = '#author-list';
+  const staffListSelector = '#staff-list';
   const getTabButtonSelector = index =>
-    `${authorListSelector} button[type="button"]:nth-child(${index})`;
-  const addNewTabSelector = '#author-list-add-new-tab';
-  const editTabSelector = '#author-list-edit-tab';
-  const authorEditorSelector = '#author-editor';
-  const searchInputSelector = `${authorListSelector} .search-bar-authors input[type="text"]`;
+    `${staffListSelector} button[type="button"]:nth-child(${index})`;
+  const addNewTabSelector = '#staff-list-add-new-tab';
+  const editTabSelector = '#staff-list-edit-tab';
+  const staffEditorSelector = '#staff-editor';
+  const searchInputSelector = `${staffListSelector} .search-bar-staff input[type="text"]`;
   // This should return the first one, and we also currently search in a way so that there
   // should always only be one result
-  const searchItemSelector = `${authorListSelector} .search-bar-authors .search-bar-result`;
+  const searchItemSelector = `${staffListSelector} .search-bar-staff .search-bar-result`;
 
-  it('searches correctly for authors', () => {
+  it('searches correctly for staff', () => {
     expect.assertions(1);
 
     return (
-      getLoggedInState(nightmare, '/authors')
+      getLoggedInState(nightmare, '/staff')
         .wait(searchInputSelector)
         .insert(searchInputSelector, 'Emil Goldsmith Olesen')
         .wait(searchItemSelector)
         // We click on the Material UI element where the onClick handler is actually set
         .click(`${searchItemSelector} span[role="menuitem"]`)
-        .wait(authorEditorSelector)
+        .wait(staffEditorSelector)
         .path()
         .end()
         .then(path => {
-          expect(path).toBe('/authors/emil-goldsmith-olesen');
+          expect(path).toBe('/staff/emil-goldsmith-olesen');
         })
     );
   });
 
   it('correctly switches tabs', () =>
-    getLoggedInState(nightmare, '/authors')
-      .wait(authorListSelector)
+    getLoggedInState(nightmare, '/staff')
+      .wait(staffListSelector)
       // Click 'Add New' tab
       .click(getTabButtonSelector(2))
       .wait(addNewTabSelector)
@@ -66,16 +66,16 @@ describe('Admin interface author list', () => {
       // so no further checks are needed
       .end());
 
-  const testAddingNewAuthor = (useEnter = false, inputToPressEnterOn = 1) => {
+  const testAddingNewStaff = (useEnter = false, inputToPressEnterOn = 1) => {
     expect.assertions(2);
 
-    // We first create a new author with a unique name
-    const authorName = `test-user-${new Date().getTime()}`;
+    // We first create a new staff member with a unique name
+    const staffName = `test-user-${new Date().getTime()}`;
     const getInputSelector = index =>
       `${addNewTabSelector} form div:nth-of-type(${index}) input`;
-    const createAuthorSelector = `${addNewTabSelector} button[type="submit"]`;
-    const authorInformationEntered = getLoggedInState(nightmare, '/authors')
-      .wait(authorListSelector)
+    const createStaffSelector = `${addNewTabSelector} button[type="submit"]`;
+    const staffInformationEntered = getLoggedInState(nightmare, '/staff')
+      .wait(staffListSelector)
       // Click 'Add New' tab
       // We use mouseup here because of weird Material UI behaviour with the touchtap event it uses
       // we should be able to change this to click when Material UI 1.0 is released
@@ -86,30 +86,30 @@ describe('Admin interface author list', () => {
       // the main tab div Material UI hides
       .wait(isVisible, addNewTabSelector, true)
       // Input name
-      .insert(getInputSelector(1), authorName)
+      .insert(getInputSelector(1), staffName)
       // Input slug
-      .insert(getInputSelector(2), authorName.substr(0, authorName.length - 1))
-      // We type the last character to fire the events to enable the create author button
-      .type(getInputSelector(2), authorName.substr(authorName.length - 1, 1));
+      .insert(getInputSelector(2), staffName.substr(0, staffName.length - 1))
+      // We type the last character to fire the events to enable the create staff member button
+      .type(getInputSelector(2), staffName.substr(staffName.length - 1, 1));
 
-    let authorInformationSubmitted;
+    let staffInformationSubmitted;
     if (useEnter) {
-      authorInformationSubmitted = authorInformationEntered.type(
+      staffInformationSubmitted = staffInformationEntered.type(
         getInputSelector(inputToPressEnterOn),
         ENTER_UNICODE,
       );
     } else {
-      authorInformationSubmitted = authorInformationEntered.click(
-        createAuthorSelector,
+      staffInformationSubmitted = staffInformationEntered.click(
+        createStaffSelector,
       );
     }
 
-    return authorInformationSubmitted
-      .wait(authorEditorSelector)
+    return staffInformationSubmitted
+      .wait(staffEditorSelector)
       .path()
       .end()
       .then(path => {
-        expect(path).toBe(`/authors/${authorName}`);
+        expect(path).toBe(`/staff/${staffName}`);
         // We reuse the variable since we know .then only runs because there were no exceptions
         // so .end() has finished successfully, and also this means that the afterEach function will
         // correctly terminate the nightmare instance if an error happens in this step
@@ -125,25 +125,26 @@ describe('Admin interface author list', () => {
         // We have restarted the server which also clears the cache which allows us to test that
         // the data we inserted actually propagated to the database
         return (
-          getLoggedInState(nightmare, '/authors')
+          getLoggedInState(nightmare, '/staff')
             .wait(searchInputSelector)
-            .insert(searchInputSelector, authorName)
+            .insert(searchInputSelector, staffName)
             .wait(searchItemSelector)
             // We click on the Material UI element where the onClick handler is actually set
             .click(`${searchItemSelector} span[role="menuitem"]`)
-            .wait(authorEditorSelector)
+            .wait(staffEditorSelector)
             .path()
             .end()
             .then(path => {
-              expect(path).toBe(`/authors/${authorName}`);
+              expect(path).toBe(`/staff/${staffName}`);
             })
         );
       });
   };
 
-  it('correctly adds new authors using button', () => testAddingNewAuthor());
-  it('correctly adds new authors using enter on name', () =>
-    testAddingNewAuthor(true, 1));
-  it('correctly adds new authors using enter on slug', () =>
-    testAddingNewAuthor(true, 2));
+  it('correctly adds new staff member using button', () =>
+    testAddingNewStaff());
+  it('correctly adds new staff member using enter on name', () =>
+    testAddingNewStaff(true, 1));
+  it('correctly adds new staff member using enter on slug', () =>
+    testAddingNewStaff(true, 2));
 });

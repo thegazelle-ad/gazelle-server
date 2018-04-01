@@ -642,7 +642,7 @@ export default class IssueArticleController extends FalcorController {
               fields={ARTICLE_FIELDS}
               disabled={this.state.saving}
               mode="articles"
-              extraPathSets={[['authors', 0, 'slug']]}
+              extraPathSets={[['staff', 0, 'slug']]}
               showPubDate
             />
             {featuredArticles.map(article => (
@@ -680,7 +680,7 @@ export default class IssueArticleController extends FalcorController {
               fields={ARTICLE_FIELDS}
               disabled={this.state.saving}
               mode="articles"
-              extraPathSets={[['authors', 0, 'slug']]}
+              extraPathSets={[['staff', 0, 'slug']]}
               showPubDate
             />
             {picks.map(article => (
@@ -718,7 +718,7 @@ export default class IssueArticleController extends FalcorController {
               fields={ARTICLE_FIELDS}
               disabled={this.state.saving}
               mode="articles"
-              extraPathSets={[['authors', 0, 'slug']]}
+              extraPathSets={[['staff', 0, 'slug']]}
               showPubDate
             />
             <div style={{ overflow: 'auto', maxHeight: '20vh' }}>

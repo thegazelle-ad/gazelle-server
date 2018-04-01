@@ -1,5 +1,5 @@
 import articles from './articles';
-import authors from './authors';
+import staff from './staff';
 import categories from './categories';
 import infoPages from './info-pages';
 import issues from './issues';
@@ -11,7 +11,7 @@ import semesters from './semesters';
 
 export {
   articles,
-  authors,
+  staff,
   categories,
   infoPages,
   issues,

@@ -16,12 +16,12 @@ const database = knex({
   },
 });
 
-export function authorQuery(slugs, columns) {
+export function staffQuery(slugs, columns) {
   // parameters are both expected to be arrays
-  // the first one with author slugs to fetch
-  // and the other one the columns to retrieve from the authors
+  // the first one with staff member slugs to fetch
+  // and the other one the columns to retrieve from the staff
   return new Promise(resolve => {
-    // So the Falcor Router knows which author we're talking about
+    // So the Falcor Router knows which staff member we're talking about
     let processedColumns = columns;
     if (!processedColumns.some(col => col === 'slug')) {
       // Use concat to make a copy, if you just push
@@ -31,7 +31,7 @@ export function authorQuery(slugs, columns) {
     }
     database
       .select(...processedColumns)
-      .from('authors')
+      .from('staff')
       .whereIn('slug', slugs)
       .then(rows => {
         // database.destroy();
@@ -44,25 +44,25 @@ export function authorQuery(slugs, columns) {
   });
 }
 
-export function authorTeamQuery(slugs) {
-  // Arguments: `slugs`: array of author slugs
-  // Returns: an object with author slugs (keys), each mapped
+export function staffTeamQuery(slugs) {
+  // Arguments: `slugs`: array of staff member slugs
+  // Returns: an object with staff member slugs (keys), each mapped
   // to an array of team slugs (values).
   return new Promise(resolve => {
     database
-      .select('teams.slug as teamSlug', 'authors.slug as authorSlug')
-      .from('authors')
-      .innerJoin('teams_authors', 'authors.id', '=', 'author_id')
+      .select('teams.slug as teamSlug', 'staff.slug as staffSlug')
+      .from('staff')
+      .innerJoin('teams_staff', 'staff.id', '=', 'staff_id')
       .innerJoin('teams', 'teams.id', '=', 'team_id')
-      .whereIn('authors.slug', slugs)
+      .whereIn('staff.slug', slugs)
       .then(rows => {
-        // `rows`: array of objects with keys `authorSlug` and `teamSlug`
+        // `rows`: array of objects with keys `staffSlug` and `teamSlug`
         const data = {};
         rows.forEach(row => {
-          if (!has.call(data, row.authorSlug)) {
-            data[row.authorSlug] = [row.teamSlug];
+          if (!has.call(data, row.staffSlug)) {
+            data[row.staffSlug] = [row.teamSlug];
           } else {
-            data[row.authorSlug].push(row.teamSlug);
+            data[row.staffSlug].push(row.teamSlug);
           }
         });
         resolve(data);
@@ -81,12 +81,12 @@ export function authorArticleQuery(slugs) {
   // sorted by most recent article first.
   return new Promise(resolve => {
     database
-      .select('articles.slug as articleSlug', 'authors.slug as authorSlug')
-      .from('authors')
-      .innerJoin('authors_articles', 'authors.id', '=', 'author_id')
+      .select('articles.slug as articleSlug', 'staff.slug as authorSlug')
+      .from('staff')
+      .innerJoin('authors_articles', 'staff.id', '=', 'author_id')
       .innerJoin('articles', 'articles.id', '=', 'article_id')
       .whereNotNull('published_at')
-      .whereIn('authors.slug', slugs)
+      .whereIn('staff.slug', slugs)
       .orderBy('published_at', 'desc')
       .then(rows => {
         // rows is an array of objects with keys authorSlug and articleSlug
@@ -115,7 +115,7 @@ export function infoPagesQuery(slugs, columns) {
   // first one with page slugs to fetch
   // second one which columns to fetch from the db
   return new Promise(resolve => {
-    // So the Falcor Router knows which author we're talking about
+    // So the Falcor Router knows which page we're talking about
     let processedColumns = columns;
     if (processedColumns.find(col => col === 'slug') === undefined) {
       // Use concat to make a copy, if you just push
@@ -212,14 +212,14 @@ export function articleIssueQuery(slugs) {
 
 export function articleAuthorQuery(slugs) {
   // slugs function parameter is an array of article slugs
-  // of which to fetch the authors of.
+  // of which to fetch the staff member of.
   // The function returns an object with article slugs
   // as keys and values being arrays of author slugs.
   return new Promise(resolve => {
     database
-      .select('articles.slug as articleSlug', 'authors.slug as authorSlug')
-      .from('authors')
-      .innerJoin('authors_articles', 'authors.id', '=', 'author_id')
+      .select('articles.slug as articleSlug', 'staff.slug as authorSlug')
+      .from('staff')
+      .innerJoin('authors_articles', 'staff.id', '=', 'author_id')
       .innerJoin('articles', 'articles.id', '=', 'article_id')
       .whereIn('articles.slug', slugs)
       .orderBy('authors_articles.id', 'asc')
@@ -356,10 +356,10 @@ export function teamArrayQuery() {
     database
       .select('slug')
       .from('teams')
-      .innerJoin('teams_authors', 'teams.id', '=', 'teams_authors.team_id')
-      .orderBy('teams_authors.team_order', 'asc')
+      .innerJoin('teams_staff', 'teams.id', '=', 'teams_staff.team_id')
+      .orderBy('teams_staff.team_order', 'asc')
       .then(rows => {
-        // The SQL is returning a copy of the team for each author.
+        // The SQL is returning a copy of the team for each staff.
         const result = [];
         const resultSeen = {};
         rows.forEach(row => {
@@ -395,26 +395,26 @@ export function teamQuery(slugs, columns) {
   });
 }
 
-export function teamAuthorQuery(slugs) {
+export function teamStaffQuery(slugs) {
   // Arguments: `slugs`: array of team slugs
   // Returns: an object with team slugs (keys), each mapped
-  // to an array of author slugs (values).
+  // to an array of staff member slugs (values).
   return new Promise(resolve => {
     database
-      .select('teams.slug as teamSlug', 'authors.slug as authorSlug')
-      .from('authors')
-      .innerJoin('teams_authors', 'authors.id', '=', 'author_id')
-      .innerJoin('teams', 'teams.id', '=', 'teams_authors.team_id')
+      .select('teams.slug as teamSlug', 'staff.slug as staffSlug')
+      .from('staff')
+      .innerJoin('teams_staff', 'staff.id', '=', 'staff_id')
+      .innerJoin('teams', 'teams.id', '=', 'teams_staff.team_id')
       .whereIn('teams.slug', slugs)
-      .orderBy('teams_authors.author_order', 'asc')
+      .orderBy('teams_staff.staff_order', 'asc')
       .then(rows => {
-        // `rows`: array of objects with keys `authorSlug` and `teamSlug`
+        // `rows`: array of objects with keys `staffSlug` and `teamSlug`
         const data = {};
         rows.forEach(row => {
           if (!has.call(data, row.teamSlug)) {
-            data[row.teamSlug] = [row.authorSlug];
+            data[row.teamSlug] = [row.staffSlug];
           } else {
-            data[row.teamSlug].push(row.authorSlug);
+            data[row.teamSlug].push(row.staffSlug);
           }
         });
         resolve(data);
@@ -857,14 +857,14 @@ export function relatedArticleQuery(slugs) {
   });
 }
 
-export function searchAuthorsQuery(queries, min, max) {
+export function searchStaffQuery(queries, min, max) {
   return new Promise(resolve => {
     let queriesReturned = 0;
     const results = {};
     queries.forEach(query => {
       database
         .select('slug')
-        .from('authors')
+        .from('staff')
         .where('name', 'like', `%${query}%`)
         .limit(max - min + 1)
         .offset(min)
@@ -941,12 +941,7 @@ export function updateAuthors(articleId, newAuthors) {
             database
               .select('slug')
               .from('authors_articles')
-              .innerJoin(
-                'authors',
-                'authors.id',
-                '=',
-                'authors_articles.author_id',
-              )
+              .innerJoin('staff', 'staff.id', '=', 'authors_articles.author_id')
               .where('article_id', '=', articleId)
               .then(rows => resolve(rows.map(row => row.slug)));
           });
@@ -1091,17 +1086,19 @@ export function orderArticlesInIssues(issues) {
   });
 }
 
-export function updateMainAuthorData(jsonGraphArg) {
+export function updateMainStaffData(jsonGraphArg) {
   return new Promise(resolve => {
     const updatesCalled = Object.keys(jsonGraphArg).length;
     let updatesReturned = 0;
-    _.forEach(jsonGraphArg, (authorObject, slug) => {
-      database('authors')
+    _.forEach(jsonGraphArg, (staffObject, slug) => {
+      database('staff')
         .where('slug', '=', slug)
-        .update(authorObject)
+        .update(staffObject)
         .then(data => {
           if (data !== 1) {
-            throw new Error(`Problems updating main author data of: ${slug}`);
+            throw new Error(
+              `Problems updating main staff member data of: ${slug}`,
+            );
           }
           updatesReturned += 1;
           if (updatesReturned >= updatesCalled) {
@@ -1115,12 +1112,12 @@ export function updateMainAuthorData(jsonGraphArg) {
   });
 }
 
-// Refactoring suggestion: rename to `addAuthor`
+// Refactoring suggestion: rename to `addStaff`
 // to follow the style of the rest of the code
-export function createAuthor(authorObject) {
+export function createStaff(staffObject) {
   return new Promise(resolve => {
-    database('authors')
-      .insert(authorObject)
+    database('staff')
+      .insert(staffObject)
       .then(() => {
         // Insert statements should throw errors themselves
         // if they fail
@@ -1688,24 +1685,24 @@ export function getSemesterMembers(semesterName, teamIndices, memberIndices) {
     database
       .select(
         'teams.slug as teamSlug',
-        'authors.slug as authorSlug',
+        'staff.slug as staffSlug',
         'team_order',
-        'author_order',
+        'staff_order',
       ) // eslint-disable-line max-len
-      .from('teams_authors')
+      .from('teams_staff')
       .innerJoin('semesters', 'semesters.id', '=', 'semester_id')
       .innerJoin('teams', 'teams.id', '=', 'team_id')
-      .innerJoin('authors', 'authors.id', '=', 'author_id')
+      .innerJoin('staff', 'staff.id', '=', 'staff_id')
       .where('semesters.name', '=', semesterName)
       .whereIn('team_order', teamIndices)
-      .whereIn('author_order', memberIndices)
+      .whereIn('staff_order', memberIndices)
       .then(rows => {
         const data = {};
         rows.forEach(row => {
           if (!has.call(data, row.team_order)) {
             data[row.team_order] = {};
           }
-          data[row.team_order][row.author_order] = row.authorSlug;
+          data[row.team_order][row.staff_order] = row.staffSlug;
         });
         resolve(data);
       }),
@@ -1716,7 +1713,7 @@ export function getSemesterTeams(semesterName, teamIndices) {
   return new Promise(resolve =>
     database
       .distinct('teams.slug as teamSlug', 'team_order') // eslint-disable-line max-len
-      .from('teams_authors')
+      .from('teams_staff')
       .innerJoin('semesters', 'semesters.id', '=', 'semester_id')
       .innerJoin('teams', 'teams.id', '=', 'team_id')
       .where('semesters.name', '=', semesterName)

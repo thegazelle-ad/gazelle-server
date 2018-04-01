@@ -95,9 +95,9 @@ export function slugifyPost(postSlug) {
 }
 
 // Modified from ghost/core/server/models/base.js
-export function slugifyAuthor(authorSlug) {
+export function slugifyStaff(staffSlug) {
   // Remove URL reserved chars: `:/?#[]@!$&'()*+,;=` as well as `\%<>|^~£"`
-  let slug = authorSlug
+  let slug = staffSlug
     .replace(/[:\/\?#\[\]@!$&'()*+,;=\\%<>\|\^~£"]/g, '')
     .replace(/(\s|\.)/g, '-')
     .replace(/-+/g, '-')

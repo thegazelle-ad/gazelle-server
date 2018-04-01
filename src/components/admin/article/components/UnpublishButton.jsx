@@ -31,7 +31,7 @@ export default class UnpublishButton extends React.Component {
   render() {
     return (
       <div>
-        {this.props.published_at
+        {this.props.published_at !== null
           ? `This article was published on ${moment(
               this.props.published_at,
             ).format('MMMM DD, YYYY')}.`
@@ -54,10 +54,11 @@ export default class UnpublishButton extends React.Component {
 UnpublishButton.propTypes = {
   slug: PropTypes.string.isRequired,
   save: PropTypes.func.isRequired,
-  published_at: PropTypes.number.isRequired,
+  published_at: PropTypes.number,
   style: PropTypes.shape({}),
 };
 
 UnpublishButton.defaultProps = {
   style: {},
+  published_at: null,
 };
