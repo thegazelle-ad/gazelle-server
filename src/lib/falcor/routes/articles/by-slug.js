@@ -104,7 +104,7 @@ export default [
               if (index < authorSlugArray.length) {
                 results.push({
                   path: ['articles', 'bySlug', postSlug, 'authors', index],
-                  value: $ref(['authors', 'bySlug', authorSlugArray[index]]),
+                  value: $ref(['staff', 'bySlug', authorSlugArray[index]]),
                 });
               }
             });
@@ -160,13 +160,13 @@ export default [
           const results = [];
           // Invalidate all the old data
           results.push({
-            path: ['articles', 'bySlug', articleSlug, 'authors'],
+            path: ['articles', 'bySlug', articleSlug, 'staff'],
             invalidated: true,
           });
           data.forEach((slug, index) => {
             results.push({
-              path: ['articles', 'bySlug', articleSlug, 'authors', index],
-              value: $ref(['authors', 'bySlug', slug]),
+              path: ['articles', 'bySlug', articleSlug, 'staff', index],
+              value: $ref(['staff', 'bySlug', slug]),
             });
           });
           resolve(results);

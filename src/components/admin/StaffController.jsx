@@ -16,7 +16,7 @@ import LoadingOverlay from './LoadingOverlay';
 const MAX_BIOGRAPHY_LENGTH = 400;
 
 const styles = {
-  authorProfile: {
+  staffProfile: {
     paddingLeft: 30,
     paddingRight: 30,
     paddingBottom: 30,
@@ -28,7 +28,7 @@ const styles = {
   },
 };
 
-export default class AuthorController extends FalcorController {
+export default class StaffController extends FalcorController {
   constructor(props) {
     super(props);
     this.handleDialogClose = this.handleDialogClose.bind(this);
@@ -66,7 +66,7 @@ export default class AuthorController extends FalcorController {
   static getFalcorPathSets(params) {
     return [
       [
-        'authors',
+        'staff',
         'bySlug',
         params.slug,
         ['name', 'image_url', 'biography', 'slug', 'job_title'],
@@ -76,14 +76,14 @@ export default class AuthorController extends FalcorController {
 
   componentWillMount() {
     const falcorCallback = data => {
-      const name = data.authors.bySlug[this.props.params.slug].name || '';
-      const slug = data.authors.bySlug[this.props.params.slug].slug || '';
+      const name = data.staff.bySlug[this.props.params.slug].name || '';
+      const slug = data.staff.bySlug[this.props.params.slug].slug || '';
       const imageUrl =
-        data.authors.bySlug[this.props.params.slug].image_url || '';
+        data.staff.bySlug[this.props.params.slug].image_url || '';
       const jobTitle =
-        data.authors.bySlug[this.props.params.slug].job_title || '';
+        data.staff.bySlug[this.props.params.slug].job_title || '';
       const biography =
-        data.authors.bySlug[this.props.params.slug].biography || '';
+        data.staff.bySlug[this.props.params.slug].biography || '';
 
       this.safeSetState({
         name,
@@ -98,14 +98,14 @@ export default class AuthorController extends FalcorController {
 
   componentWillReceiveProps(nextProps) {
     const falcorCallback = data => {
-      const name = data.authors.bySlug[this.props.params.slug].name || '';
-      const slug = data.authors.bySlug[this.props.params.slug].slug || '';
+      const name = data.staff.bySlug[this.props.params.slug].name || '';
+      const slug = data.staff.bySlug[this.props.params.slug].slug || '';
       const imageUrl =
-        data.authors.bySlug[this.props.params.slug].image_url || '';
+        data.staff.bySlug[this.props.params.slug].image_url || '';
       const jobTitle =
-        data.authors.bySlug[this.props.params.slug].job_title || '';
+        data.staff.bySlug[this.props.params.slug].job_title || '';
       const biography =
-        data.authors.bySlug[this.props.params.slug].biography || '';
+        data.staff.bySlug[this.props.params.slug].biography || '';
 
       this.safeSetState({
         name,
@@ -122,7 +122,7 @@ export default class AuthorController extends FalcorController {
     });
   }
 
-  isSameAuthor(prevProps, props) {
+  isSameStaffMember(prevProps, props) {
     return prevProps.params.slug === props.params.slug;
   }
 
@@ -138,7 +138,7 @@ export default class AuthorController extends FalcorController {
 
   componentDidUpdate(prevProps, prevState) {
     if (
-      this.isSameAuthor(prevProps, this.props) &&
+      this.isSameStaffMember(prevProps, this.props) &&
       this.formHasUpdated(prevState, this.state) &&
       this.state.ready
     ) {
@@ -150,15 +150,15 @@ export default class AuthorController extends FalcorController {
   handleDialogClose() {
     if (this.state.saving) return;
 
-    const path = '/authors';
+    const path = '/staff';
     browserHistory.push(path);
   }
 
   handleSaveChanges(event) {
     event.preventDefault();
 
-    const falcorData = this.state.data.authors.bySlug[this.props.params.slug];
-    const authorSlug = this.props.params.slug;
+    const falcorData = this.state.data.staff.bySlug[this.props.params.slug];
+    const staffSlug = this.props.params.slug;
 
     if (!this.isFormChanged()) {
       throw new Error(
@@ -183,36 +183,36 @@ export default class AuthorController extends FalcorController {
       const jsonGraphEnvelope = {
         paths: [
           [
-            'authors',
+            'staff',
             'bySlug',
-            authorSlug,
+            staffSlug,
             ['name', 'slug', 'job_title', 'image_url', 'biography'],
           ],
         ],
         jsonGraph: {
-          authors: {
+          staff: {
             bySlug: {
-              [authorSlug]: {},
+              [staffSlug]: {},
             },
           },
         },
       };
 
       // Fill in the data
-      jsonGraphEnvelope.jsonGraph.authors.bySlug[
-        authorSlug
+      jsonGraphEnvelope.jsonGraph.staff.bySlug[
+        staffSlug
       ].name = this.state.name;
-      jsonGraphEnvelope.jsonGraph.authors.bySlug[
-        authorSlug
+      jsonGraphEnvelope.jsonGraph.staff.bySlug[
+        staffSlug
       ].slug = this.state.slug;
-      jsonGraphEnvelope.jsonGraph.authors.bySlug[
-        authorSlug
+      jsonGraphEnvelope.jsonGraph.staff.bySlug[
+        staffSlug
       ].job_title = this.state.jobTitle;
-      jsonGraphEnvelope.jsonGraph.authors.bySlug[
-        authorSlug
+      jsonGraphEnvelope.jsonGraph.staff.bySlug[
+        staffSlug
       ].image_url = this.state.imageUrl;
-      jsonGraphEnvelope.jsonGraph.authors.bySlug[
-        authorSlug
+      jsonGraphEnvelope.jsonGraph.staff.bySlug[
+        staffSlug
       ].biography = this.state.biography;
 
       // Update the values
@@ -222,7 +222,7 @@ export default class AuthorController extends FalcorController {
     if (this.isFormFieldChanged(this.state.slug, falcorData.slug)) {
       if (
         !window.confirm(
-          'You are about to change the slug of an author, this means that the url to ' +
+          'You are about to change the slug of a staff member, this means that the url to ' +
             'their webpage will change among other things, it is strongly recommended ' +
             " not to change the slug unless it's very crucial. Are you sure you wish to proceed?",
         )
@@ -234,7 +234,7 @@ export default class AuthorController extends FalcorController {
 
       // Make sure this slug is not already taken since we operate with unique slugs
       this.props.model
-        .get(['authors', 'bySlug', this.state.slug, 'slug'])
+        .get(['staff', 'bySlug', this.state.slug, 'slug'])
         .then(x => {
           if (x) {
             x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
@@ -262,7 +262,7 @@ export default class AuthorController extends FalcorController {
   }
 
   isFormChanged() {
-    const falcorData = this.state.data.authors.bySlug[this.props.params.slug];
+    const falcorData = this.state.data.staff.bySlug[this.props.params.slug];
     const changedFlag =
       this.isFormFieldChanged(this.state.name, falcorData.name) ||
       this.isFormFieldChanged(this.state.slug, falcorData.slug) ||
@@ -273,12 +273,12 @@ export default class AuthorController extends FalcorController {
   }
 
   render() {
-    const ID = 'author-editor';
+    const ID = 'staff-editor';
     if (this.state.ready) {
       if (!this.state.data) {
         return (
           <div id={ID}>
-            <p>No authors match the slug given in the URL</p>
+            <p>No staff match the slug given in the URL</p>
           </div>
         );
       }
@@ -298,14 +298,14 @@ export default class AuthorController extends FalcorController {
 
       return (
         <Dialog
-          title="Author Profile"
+          title="Staff Profile"
           open
           autoScrollBodyContent
           onRequestClose={this.handleDialogClose}
         >
           {this.state.saving ? <LoadingOverlay /> : null}
-          <div id={ID} style={styles.authorProfile}>
-            <h3>Author Profile: {this.state.name}</h3>
+          <div id={ID} style={styles.staffProfile}>
+            <h3>Staff Profile: {this.state.name}</h3>
             <Divider />
             <form onSubmit={this.handleSaveChanges}>
               <TextField

@@ -45,6 +45,6 @@ describe('Admin interface server side rendering', () => {
     it('handles attempting to access main page directly', () =>
       testLoginRedirect(nightmare, ''));
     it('handles attempting to access non-main page directly', () =>
-      testLoginRedirect(nightmare, '/authors'));
+      testLoginRedirect(nightmare, '/staff'));
   });
 });

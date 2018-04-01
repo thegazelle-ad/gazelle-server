@@ -9,7 +9,7 @@ export default class AuthorList extends BaseComponent {
       // Render nothing if props.authors is empty
       this.props.authors.map(author => (
         <li key={author.slug} className="author-list__author">
-          <Link to={`/author/${author.slug}`}>{author.name}</Link>
+          <Link to={`/staff-member/${author.slug}`}>{author.name}</Link>
         </li>
       ));
 

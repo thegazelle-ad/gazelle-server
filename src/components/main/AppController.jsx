@@ -57,7 +57,7 @@ export default class AppController extends FalcorController {
         const latestIssueNumber = this.state.data.issues.latest.issueNumber;
         navigationData = this.state.data.issues.byNumber[latestIssueNumber];
       } else {
-        // User is on home page, categories, author page, info page, etc.
+        // User is on home page, categories, staff member page, info page, etc.
         navigationData = this.state.data.issues.latest;
       }
     }

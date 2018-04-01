@@ -5,6 +5,7 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import Helmet from 'react-helmet'; // Add meta tags for pre-Ghost release
+import _ from 'lodash';
 
 // Import components
 import TeamPage from 'components/main/TeamPage';
@@ -30,7 +31,10 @@ export default class TeamPageController extends FalcorController {
       if (!this.state.data) {
         return <NotFound />;
       }
-      const teamData = this.state.data.semesters.latest;
+      const teamData = _.map(this.state.data.semesters.latest, team => ({
+        ...team,
+        members: _.toArray(team.members),
+      }));
       const meta = [
         // Search results
         {
