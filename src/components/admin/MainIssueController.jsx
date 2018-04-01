@@ -63,7 +63,7 @@ export default class MainIssueController extends FalcorController {
 
     this.debouncedHandleFormStateChanges = debounce(() => {
       // We don't want the debounced event to happen if we're saving
-      if (this.state.saving) return;
+      if (this.state.saving || this.state.publishing) return;
 
       const changedFlag = this.isFormChanged();
       if (changedFlag !== this.state.changed) {
@@ -248,7 +248,7 @@ export default class MainIssueController extends FalcorController {
           return;
         }
         // The issue is valid, we can publish it
-        this.safeSetState({ publishing: true, published_at: new Date() });
+        this.safeSetState({ publishing: true, published_at: moment.tz('Asia/Dubai') });
         this.falcorCall(['issues', 'byNumber', issueNumber, 'publishIssue'],
           [issue.id], undefined, undefined, undefined, callback);
       }
@@ -396,6 +396,7 @@ export default class MainIssueController extends FalcorController {
               value={this.state.name}
               style={styles.nameField}
               onChange={this.fieldUpdaters.name}
+              disabled={this.state.saving || this.state.publishing}
               fullWidth
             />
             <br />
@@ -408,7 +409,7 @@ export default class MainIssueController extends FalcorController {
             />
             <br />
             <DatePicker
-              disabled={!published}
+              disabled={!published || this.state.saving || this.state.publishing}
               floatingLabelText="Published At"
               firstDayOfWeek={0}
               shouldDisableDate={this.disableDate}
@@ -421,7 +422,7 @@ export default class MainIssueController extends FalcorController {
               label={changedStateMessage}
               primary
               style={styles.buttons}
-              disabled={!this.state.changed || this.state.saving}
+              disabled={!this.state.changed || this.state.saving || this.state.publishing}
             />
           </form>
           <br />
@@ -434,7 +435,8 @@ export default class MainIssueController extends FalcorController {
             primary
             style={styles.publishingButtons}
             onTouchTap={this.publishIssue}
-            disabled={published || this.state.changed || this.state.saving}
+            disabled={published || this.state.changed ||
+              this.state.saving || this.state.publishing}
           />
           <RaisedButton
             label={
@@ -445,7 +447,8 @@ export default class MainIssueController extends FalcorController {
             secondary
             style={styles.publishingButtons}
             onTouchTap={this.unpublishIssue}
-            disabled={!published || this.state.changed || this.state.saving}
+            disabled={!published || this.state.changed ||
+              this.state.saving || this.state.publishing}
           />
           {this.state.publishing
           ? <h4>Publishing...</h4>
