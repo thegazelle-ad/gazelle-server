@@ -74,15 +74,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
     It returns whether this key and all branches from the pathSet that follow
     this key are in the cache as it continues recursively.
     */
-    if (!curObject.hasOwnProperty(key)) {
-      return false;
-    }
-    /*
-    when unpublishing, published_at value should not exist
-    but it does and it's set to null - figure out why/where
-    this if statement is a hacky way of dealing with that and I think might break other things
-    */
-    if (curObject[key] === null) {
+    if (!curObject.hasOwnProperty(key) || curObject[key] === null) {
       return false;
     }
     const val = curObject[key];
