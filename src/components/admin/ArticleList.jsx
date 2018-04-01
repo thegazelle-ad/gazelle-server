@@ -7,6 +7,8 @@ import List from 'material-ui/List/List';
 import Subheader from 'material-ui/Subheader';
 import Paper from 'material-ui/Paper';
 
+import { withModals } from 'components/admin/hocs/modals';
+
 const styles = {
   paper: {
     height: '100%',
@@ -18,7 +20,7 @@ const styles = {
   },
 };
 
-export class ArticleList extends BaseComponent {
+class ArticleList extends BaseComponent {
   render() {
     if (this.props.elements) {
       const { elements } = this.props;
@@ -28,6 +30,12 @@ export class ArticleList extends BaseComponent {
             <Subheader>Recent Articles</Subheader>
             {_.map(elements, this.props.createElement)}
           </List>
+          <button
+            // eslint-disable-next-line
+            onClick={this.displayAlert.bind(this, 'Oh no something went wrong')}
+          >
+            Click Me
+          </button>
         </Paper>
       );
     }
@@ -42,3 +50,6 @@ ArticleList.propTypes = {
   ]).isRequired,
   createElement: React.PropTypes.func.isRequired,
 };
+
+const EnhancedList = withModals(ArticleList);
+export { EnhancedList as ArticleList };
