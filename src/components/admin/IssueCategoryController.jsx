@@ -9,6 +9,9 @@ import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 import CircularProgress from 'material-ui/CircularProgress';
 
+// HOCs
+import { withModals } from 'components/admin/hocs/modals/withModals';
+
 const styles = {
   paper: {
     height: '100%',
@@ -32,7 +35,7 @@ const styles = {
   },
 };
 
-export default class IssueCategoryController extends FalcorController {
+class IssueCategoryController extends FalcorController {
   constructor(props) {
     super(props);
     this.safeSetState({
@@ -113,14 +116,14 @@ export default class IssueCategoryController extends FalcorController {
     });
   }
 
-  handleSave() {
+  handleSave = async () => {
     const { issueNumber } = this.props.params;
     const oldCategories = this.state.data.issues.byNumber[issueNumber]
       .categories;
     const newCategories = this.state.categories;
     // Shallow validity check
     if (Object.keys(oldCategories).length !== newCategories.length) {
-      window.alert(
+      await this.props.displayAlert(
         'There was an error, there has been added or removed a category' +
           ' mysteriously. Please contact developers',
       );
@@ -150,7 +153,7 @@ export default class IssueCategoryController extends FalcorController {
       undefined,
       callback,
     );
-  }
+  };
 
   render() {
     if (this.state.ready) {
@@ -257,3 +260,6 @@ export default class IssueCategoryController extends FalcorController {
     );
   }
 }
+
+const EnhancedIssueCategoryController = withModals(IssueCategoryController);
+export { EnhancedIssueCategoryController as IssueCategoryController };

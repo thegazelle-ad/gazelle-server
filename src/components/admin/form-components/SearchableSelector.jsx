@@ -9,6 +9,9 @@ import SearchBar from 'components/admin/SearchBar';
 // material-ui
 import Chip from 'material-ui/Chip';
 
+// HOCs
+import { withModals } from 'components/admin/hocs/modals/withModals';
+
 class ObjectChip extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -36,7 +39,7 @@ ObjectChip.defaultProps = {
   children: null,
 };
 
-export default class SearchableSelector extends React.Component {
+class SearchableSelector extends React.Component {
   constructor(props) {
     super(props);
     this.handleDelete = this.handleDelete.bind(this);
@@ -49,7 +52,7 @@ export default class SearchableSelector extends React.Component {
     }
   }
 
-  handleClickAdd(object) {
+  handleClickAdd = async object => {
     // disable this if saving
     if (this.props.disabled) return;
 
@@ -58,12 +61,12 @@ export default class SearchableSelector extends React.Component {
       this.props.value.find(baseObject => baseObject.id === id) !== undefined;
 
     if (alreadyAdded) {
-      window.alert('Already added');
+      await this.props.displayAlert('Already added');
       return;
     }
     const newObjects = update(this.props.value, { $push: [{ id, name }] });
     this.props.onUpdate(newObjects);
-  }
+  };
 
   handleDelete(id) {
     // disabled this if saving
@@ -136,6 +139,7 @@ SearchableSelector.propTypes = {
   ).isRequired,
   onChange: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,
+  displayAlert: PropTypes.func.isRequired,
   // It isn't a typo and they are required in SearchBar so no need for defaults
   /* eslint-disable react/no-typos, react/require-default-props */
   mode: SearchBar.propTypes.mode,
@@ -147,3 +151,6 @@ SearchableSelector.propTypes = {
 SearchableSelector.defaultProps = {
   disabled: false,
 };
+
+const EnhancedSearchableSelector = withModals(SearchableSelector);
+export { EnhancedSearchableSelector as SearchableSelector };

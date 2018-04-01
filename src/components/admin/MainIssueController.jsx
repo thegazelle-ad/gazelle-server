@@ -8,6 +8,9 @@ import { has } from 'lib/utilities';
 import CircularProgress from 'material-ui/CircularProgress';
 import RaisedButton from 'material-ui/RaisedButton';
 
+// HOCs
+import { withModals } from 'components/admin/hocs/modals/withModals';
+
 const styles = {
   paper: {
     height: '100%',
@@ -126,7 +129,7 @@ export default class MainIssueController extends FalcorController {
       .get(...falcorPathSets)
       .then(x => {
         if (!x) {
-          window.alert(
+          await this.props.displayAlert(
             'There was an error getting the issue data from the database ' +
               'please contact the developers',
           );
@@ -137,13 +140,13 @@ export default class MainIssueController extends FalcorController {
           const issue = x.json.issues.byNumber[issueNumber];
           const fields = ARTICLE_FIELDS;
           if (!issue.featured) {
-            window.alert('You need to add a featured article');
+            await this.props.displayAlert('You need to add a featured article');
             return;
           }
           let allArticles = [issue.featured];
           allArticles = allArticles.concat(_.map(issue.picks, y => y));
           if (allArticles.length !== 3) {
-            window.alert("you must have exactly 2 editor's picks in an issue");
+            await this.props.displayAlert("you must have exactly 2 editor's picks in an issue");
             return;
           }
           _.forEach(issue.categories, category => {
@@ -162,7 +165,7 @@ export default class MainIssueController extends FalcorController {
           const articlesValid = allArticles.every(article => {
             const fieldsValid = fields.every(field => {
               if (!article[field]) {
-                window.alert(
+                await this.props.displayAlert(
                   `${article.title} has no ${field}. Please correct this`,
                 );
                 return false;
@@ -173,7 +176,7 @@ export default class MainIssueController extends FalcorController {
               return false;
             }
             if (!has.call(article, 'authors') || !article.authors[0]) {
-              window.alert(
+              await this.props.displayAlert(
                 `${article.title} has no authors. Please correct this`,
               );
               return false;
@@ -228,7 +231,7 @@ export default class MainIssueController extends FalcorController {
       })
       .catch(e => {
         console.error(e); // eslint-disable-line no-console
-        window.alert(
+        await this.props.displayAlert(
           'There was an error getting the issue data from the database ' +
             'please contact the developers. The error message is in the developers console',
         );

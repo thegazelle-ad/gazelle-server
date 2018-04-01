@@ -13,6 +13,9 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import LoadingOverlay from './LoadingOverlay';
 
+// HOCs
+import { withModals } from 'components/admin/hocs/modals/withModals';
+
 const MAX_BIOGRAPHY_LENGTH = 400;
 
 const styles = {
@@ -239,7 +242,7 @@ export default class AuthorController extends FalcorController {
           if (x) {
             x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
             // This slug is already taken as something was returned
-            window.alert(
+            await this.props.displayAlert(
               'The slug you chose is already taken, please change it',
             );
             this.safeSetState({ saving: false });

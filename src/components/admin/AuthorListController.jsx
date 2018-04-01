@@ -16,6 +16,9 @@ import RaisedButton from 'material-ui/RaisedButton';
 import PersonAdd from 'material-ui/svg-icons/social/person-add';
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
 
+// HOCs
+import { withModals } from 'components/admin/hocs/modals/withModals';
+
 const styles = {
   paper: {
     height: '100%',
@@ -77,7 +80,7 @@ export default class AuthorListController extends FalcorController {
     const name = this.state.inputName;
 
     if (slug !== slugifyAuthor(slug)) {
-      window.alert(
+      await this.props.displayAlert(
         'Your slug is not in the right format. Our programatically suggested ' +
           `substitute is: ${slugifyAuthor(slug)}. ` +
           'Feel free to use it or change it to something else',
@@ -90,14 +93,14 @@ export default class AuthorListController extends FalcorController {
       if (x) {
         x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
         // Something was found, which means the slug is taken
-        window.alert(
+        await this.props.displayAlert(
           'This slug is already taken, please change to another one',
         );
         return;
       }
       // Create the author
       const callback = () => {
-        window.alert('Author added successfully');
+        await this.props.displayAlert('Author added successfully');
         browserHistory.push(`/authors/${slug}`);
       };
       this.falcorCall(
