@@ -61,7 +61,7 @@ export default class StaffListController extends FalcorController {
   }
 
   handleClickStaff(staff) {
-    browserHistory.push(`/staff-member/${staff.slug}`);
+    browserHistory.push(`/staff/${staff.slug}`);
   }
 
   handleCreateStaffChange() {
@@ -98,7 +98,7 @@ export default class StaffListController extends FalcorController {
       // Create the author
       const callback = () => {
         window.alert('Staff added successfully');
-        browserHistory.push(`/staff-member/${slug}`);
+        browserHistory.push(`/staff/${slug}`);
       };
       this.falcorCall(
         ['staff', 'bySlug', 'createStaff'],
