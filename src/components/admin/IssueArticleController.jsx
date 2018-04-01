@@ -1,7 +1,7 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import SearchBar from 'components/admin/SearchBar';
-import List from 'components/admin/List';
+import { ArticleList } from 'components/admin/ArticleList';
 import _ from 'lodash';
 import update from 'react-addons-update';
 import { has, formatDate } from 'lib/utilities';
@@ -561,7 +561,7 @@ export default class IssueArticleController extends FalcorController {
         return (
           <div>
             {/* eslint-disable react/jsx-no-bind */}
-            <List
+            <ArticleList
               elements={articles}
               maxHeight="50vh"
               createElement={this.createArticleListElement.bind(
