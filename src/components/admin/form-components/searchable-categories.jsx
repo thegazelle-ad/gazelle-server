@@ -32,7 +32,7 @@ import SearchBar from 'components/admin/form-components/SearchBar';
 export const SearchableAuthors = withSearchableConcept(
   ['name', 'slug', 'id'],
   item => item.name,
-  'authors',
+  'staff',
 )(SearchBar);
 // export const SearchableArticles = withSearchBar(searchableArticles);
 // export const SearchableArticlesWithPubDate = withSearchBar(

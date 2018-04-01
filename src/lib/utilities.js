@@ -112,7 +112,7 @@ export function slugifyStaff(staffSlug) {
 
 export function slugify(category, item) {
   if (category === 'articles') return slugifyPost(item);
-  if (category === 'authors') return slugifyAuthor(item);
+  if (category === 'staff') return slugifyStaff(item);
   throw new Error(
     `The category ${category} is not valid ` +
       `and so the item ${JSON.stringify(item)} cannot be slugified.`,
