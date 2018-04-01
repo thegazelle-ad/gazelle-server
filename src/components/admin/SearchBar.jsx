@@ -166,19 +166,19 @@ export default class SearchBar extends BaseComponent {
       return (
         <div className={`${searchBarClass} ${searchBarClass}-staff`}>
           <TextField
-            floatingLabelText="Search for Staff"
+            floatingLabelText="Search for Staff Members"
             hintText="Staff"
             value={this.state.searchValue}
             onChange={this.fieldUpdaters.searchValue}
           />
           <div>
             <Menu style={{ width: 200 }}>
-              {this.state.searchSuggestions.map(staff => (
-                <div className={searchResultClass} key={staff.slug}>
+              {this.state.searchSuggestions.map(staffMember => (
+                <div className={searchResultClass} key={staffMember.slug}>
                   {/* eslint-disable react/jsx-no-bind */}
                   <MenuItem
-                    primaryText={staff.name}
-                    onClick={this.handleClick.bind(this, staff)}
+                    primaryText={staffMember.name}
+                    onClick={this.handleClick.bind(this, staffMember)}
                     disabled={this.props.disabled}
                   />
                   {/* eslint-enable react/jsx-no-bind */}

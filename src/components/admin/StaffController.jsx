@@ -122,7 +122,7 @@ export default class StaffController extends FalcorController {
     });
   }
 
-  isSameStaff(prevProps, props) {
+  isSameStaffMember(prevProps, props) {
     return prevProps.params.slug === props.params.slug;
   }
 
@@ -138,7 +138,7 @@ export default class StaffController extends FalcorController {
 
   componentDidUpdate(prevProps, prevState) {
     if (
-      this.isSameStaff(prevProps, this.props) &&
+      this.isSameStaffMember(prevProps, this.props) &&
       this.formHasUpdated(prevState, this.state) &&
       this.state.ready
     ) {

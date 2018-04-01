@@ -3,7 +3,7 @@ import Helmet from 'react-helmet'; // Add <head> data=
 import FalcorController from 'lib/falcor/FalcorController';
 
 // Components
-import Staff from 'components/main/Staff';
+import StaffMember from 'components/main/StaffMember';
 import NotFound from 'components/main/NotFound';
 
 export default class StaffController extends FalcorController {
@@ -72,7 +72,7 @@ export default class StaffController extends FalcorController {
       return (
         <div>
           <Helmet meta={meta} title={`${staffData.name} | The Gazelle`} />
-          <Staff staff={staffData} />
+          <StaffMember staffMember={staffData} />
         </div>
       );
     }
