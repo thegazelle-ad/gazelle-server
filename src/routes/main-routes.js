@@ -6,7 +6,7 @@ import InteractiveArticle from 'components/main/InteractiveArticle';
 import AppController from 'components/main/AppController';
 import ArticleController from 'components/main/ArticleController';
 import ArchivesController from 'components/main/ArchivesController';
-import StaffController from 'components/main/StaffController';
+import StaffMemberController from 'components/main/StaffMemberController';
 import IssueController from 'components/main/IssueController';
 import CategoryController from 'components/main/CategoryController';
 import TextPageController from 'components/main/TextPageController';
@@ -18,13 +18,13 @@ export default [
   <Route path="/interactive/:articleSlug" component={InteractiveArticle} />,
   <Route path="/" component={AppController}>
     {/** LEGACY ROUTES BEGIN */}
-    <Route path="author/:staffSlug" component={StaffController} />
+    <Route path="author/:staffSlug" component={StaffMemberController} />
     {/** LEGACY ROUTES END */}
     <Route
       path="issue/:issueNumber/:articleCategory/:articleSlug"
       component={ArticleController}
     />
-    <Route path="staff-member/:staffSlug" component={StaffController} />
+    <Route path="staff-member/:staffSlug" component={StaffMemberController} />
     <Route path="issue/:issueNumber" component={IssueController} />
     <Route path="category/:category" component={CategoryController} />
     <Route path="archives" component={ArchivesController} />

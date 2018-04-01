@@ -133,7 +133,7 @@ SearchableSelector.propTypes = {
       id: PropTypes.number.isRequired,
       name: PropTypes.string.isRequired,
     }),
-  ),
+  ).isRequired,
   onChange: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,
   // It isn't a typo and they are required in SearchBar so no need for defaults
@@ -145,6 +145,5 @@ SearchableSelector.propTypes = {
 };
 
 SearchableSelector.defaultProps = {
-  value: [],
   disabled: false,
 };

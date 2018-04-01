@@ -6,7 +6,7 @@ import FalcorController from 'lib/falcor/FalcorController';
 import StaffMember from 'components/main/StaffMember';
 import NotFound from 'components/main/NotFound';
 
-export default class StaffController extends FalcorController {
+export default class StaffMemberController extends FalcorController {
   static getFalcorPathSets(params) {
     // URL Format: thegazelle.org/staff-member/:staffSlug
 
