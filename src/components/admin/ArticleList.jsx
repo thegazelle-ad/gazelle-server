@@ -7,7 +7,7 @@ import List from 'material-ui/List/List';
 import Subheader from 'material-ui/Subheader';
 import Paper from 'material-ui/Paper';
 
-import { withModals } from 'components/admin/hocs/modals';
+import { withModals } from 'components/admin/hocs/modals/withModals';
 
 const styles = {
   paper: {
@@ -32,7 +32,10 @@ class ArticleList extends BaseComponent {
           </List>
           <button
             // eslint-disable-next-line
-            onClick={this.displayAlert.bind(this, 'Oh no something went wrong')}
+            onClick={this.props.displayAlert.bind(
+              this,
+              'Oh no something went wrong, and even more worng, and so so so wrongOh no something went wrong, and even more worng, and so so so wrongOh no something went wrong, and even more worng, and so so so wrongOh no something went wrong, and even more worng, and so so so wrong',
+            )}
           >
             Click Me
           </button>

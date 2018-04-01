@@ -19,7 +19,7 @@ import {
   injectModelCreateElement,
   setAppReady,
 } from 'lib/falcor/falcor-utilities';
-import { ModalProvider } from 'components/admin/hocs/modals';
+import { ModalProvider } from 'components/admin/hocs/modals/ModalProvider';
 import HttpDataSource from 'falcor-http-datasource';
 import { MuiThemeProvider } from 'material-ui';
 
