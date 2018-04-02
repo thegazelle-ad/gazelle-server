@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import { capFirstLetter, slugify } from 'lib/utilities';
 
 import TextField from 'material-ui/TextField';
@@ -7,9 +8,16 @@ import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 
-export class SearchBar extends React.PureComponent {
-  handleChange() {
-    this.props.updateSuggestions(this.state.value);
+export class SearchBar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { value: '' };
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({ value: event.target.value });
+    this.props.updateSuggestions(event.target.value);
   }
 
   handleClick(item) {
@@ -33,9 +41,7 @@ export class SearchBar extends React.PureComponent {
           hintText={capFirstLetter(this.props.category)}
           fullWidth={this.props.fullWidth}
           value={this.state.value}
-          /* eslint-disable react/jsx-no-bind */
-          onChange={this.handleChange.bind(this)}
-          /* eslint-enable react/jsx-no-bind */
+          onChange={this.handleChange}
         />
         <div>
           <Menu style={!this.props.fullWidth && { width: 200 }}>
@@ -68,7 +74,7 @@ export class SearchBar extends React.PureComponent {
                 className={`${searchBarResultClass} search-bar-${
                   this.props.category
                 }`}
-                key={item.slug}
+                key={item.id}
               >
                 <MenuItem
                   primaryText={item.title}
@@ -88,13 +94,13 @@ export class SearchBar extends React.PureComponent {
 
 SearchBar.propTypes = {
   handleClick: PropTypes.func.isRequired,
-  suggestions: PropTypes.shape([
-    {
+  suggestions: PropTypes.arrayOf(
+    PropTypes.shape({
       title: PropTypes.string.isRequired,
       slug: PropTypes.string,
       id: PropTypes.number.isRequired,
-    },
-  ]),
+    }),
+  ),
   updateSuggestions: PropTypes.func.isRequired,
   fullWidth: PropTypes.bool,
   disabled: PropTypes.bool,
