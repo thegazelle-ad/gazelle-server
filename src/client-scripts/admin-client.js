@@ -41,7 +41,7 @@ ReactDOM.render(
           createElement={injectModelCreateElement(clientModel)}
         />
       </ModalProvider>
-    </FalcorProvider>,
+    </FalcorProvider>
   </MuiThemeProvider>,
   document.getElementById('main'),
 );
