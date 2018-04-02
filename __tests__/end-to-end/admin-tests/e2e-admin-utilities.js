@@ -46,6 +46,7 @@ export function restartServer(nightmare) {
       .wait(checkValueOfAlert, 'Server is being restarted now')
       .click(alertModalOkButtonSelector)
       .wait(checkValueOfAlert, 'Server restarted successfully')
+      .click(alertModalOkButtonSelector)
       .end()
   );
 }

@@ -99,8 +99,13 @@ class AuthorListController extends FalcorController {
         return;
       }
       // Create the author
-      const callback = async () => {
-        await this.props.displayAlert('Author added successfully');
+      const callback = () => {
+        // I commented out the below alert mostly because it made E2E tests more bothersome
+        // but I also think it's maybe not necessary since we already opening the modal with
+        // the editor on successful creation, if we wanted in the future if we make a small
+        // similar framework to this for snackbars we could maybe use one of those for that.
+        // The big dangerous alert also doesn't seem right here (with the warning sign and everything)
+        // await this.props.displayAlert('Author added successfully');
         browserHistory.push(`/authors/${slug}`);
       };
       this.falcorCall(
