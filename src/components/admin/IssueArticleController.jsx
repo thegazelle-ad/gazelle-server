@@ -442,7 +442,8 @@ class IssueArticleController extends FalcorController {
         }
         if (/http(?!s)/.test(article.html)) {
           if (
-            // TODO: It is bothersome figuring out doing this elegantly with the async in the loop
+            // TODO: It is bothersome figuring out changing this to this.props.displayConfirm elegantly
+            // with the async in the loop, so I'm
             // leaving it for later. One cool way to do it would be to upgrade the ModalProvider
             // to queue modal requests instead of just failing them, and then we could maybe create a
             // wrapper function around every that has an array of promises that gets pushed to or something like that

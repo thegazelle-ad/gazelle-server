@@ -127,7 +127,7 @@ class MainIssueController extends FalcorController {
     ];
     this.props.model
       .get(...falcorPathSets)
-      .then(x => {
+      .then(async x => {
         if (!x) {
           this.props.displayAlert(
             'There was an error getting the issue data from the database ' +
@@ -156,13 +156,10 @@ class MainIssueController extends FalcorController {
             allArticles.push(...articles);
           });
           if (issue.published_at) {
-            if (
-              // TODO
-              // eslint-disable-next-line no-alert
-              !window.confirm(
-                'This article is already published, do you want to republish it?',
-              )
-            ) {
+            const shouldProcede = await this.props.displayConfirm(
+              'This issue is already published, do you still wish to proceed changing it?',
+            );
+            if (!shouldProcede) {
               return;
             }
           }
@@ -187,7 +184,8 @@ class MainIssueController extends FalcorController {
             }
             if (/http(?!s)/.test(article.html)) {
               if (
-                // TODO
+                // TODO: Change this to this.props.displayAlert, it's just a bit finnicky
+                // in the .every construct as described in IssueArticleController in a similar comment
                 // eslint-disable-next-line no-alert
                 !window.confirm(
                   `${article.title} has a non https link in it's body. ` +
@@ -202,7 +200,8 @@ class MainIssueController extends FalcorController {
             if (absoluteUrlRegex.test(article.html)) {
               const url = article.html.match(absoluteUrlRegex)[1];
               if (
-                // TODO
+                // TODO: Change this to this.props.displayAlert, it's just a bit finnicky
+                // in the .every construct as described in IssueArticleController in a similar comment
                 // eslint-disable-next-line no-alert
                 !window.confirm(
                   `The URL ${url} in the article ${

@@ -2,6 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, RaisedButton, SvgIcon } from 'material-ui';
 
+/**
+ * Taken from https://commons.wikimedia.org/wiki/File:OOjs_UI_icon_alert-warning.svg
+ * @param {Object} props - the props for the React component
+ * @returns {Object} the JSX as a React component should
+ */
 const AlertIcon = props => (
   <SvgIcon
     style={
