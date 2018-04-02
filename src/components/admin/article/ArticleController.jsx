@@ -11,8 +11,10 @@ import SearchableSelector from 'components/admin/form-components/SearchableSelec
 import LoadingOverlay from 'components/admin/LoadingOverlay';
 import SaveButton from 'components/admin/article/components/SaveButton';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton';
-import ImageUrlField from 'components/admin/article/components/ImageUrlField';
-import { BoundRequiredTextField } from 'components/admin/form-components/BoundRequiredTextField';
+import {
+  HttpsUrlField,
+  ShortRequiredTextField,
+} from 'components/admin/form-components/validated-fields';
 import ListSelector from 'components/admin/form-components/ListSelector';
 import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
 import { MAX_TEASER_LENGTH } from 'components/admin/lib/constants';
@@ -357,17 +359,18 @@ export default class ArticleController extends FalcorController {
           onRequestClose={this.handleDialogClose}
         >
           {this.state.saving ? <LoadingOverlay /> : null}
-          <BoundRequiredTextField
-            label="Title"
+          <ShortRequiredTextField
+            floatingLabelText="Title"
             value={this.state.title}
             onUpdate={this.updateTitle}
             disabled={this.state.saving}
           />
-          <BoundRequiredTextField
-            label="Slug"
+          <ShortRequiredTextField
+            floatingLabelText="Slug"
             value={this.state.slug}
             onUpdate={this.updateSlug}
             disabled={this.state.saving}
+            fullWidth
           />
           <ListSelector
             label="Category"
@@ -375,12 +378,15 @@ export default class ArticleController extends FalcorController {
             update={this.updateCategory}
             elements={categories}
             disabled={this.state.saving}
+            fullWidth
           />
           <br />
-          <ImageUrlField
-            imageUrl={this.state.imageUrl}
-            updateImage={this.updateImage}
+          <HttpsUrlField
+            floatingLabelText="Image"
+            value={this.state.imageUrl}
+            onUpdate={this.updateImage}
             disabled={this.state.saving}
+            fullWidth
           />
           <br />
           <MaxLenTextField
