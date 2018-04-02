@@ -43,7 +43,7 @@ const styles = {
   },
 };
 
-export default class AuthorListController extends FalcorController {
+class AuthorListController extends FalcorController {
   constructor(props) {
     super(props);
     this.handleCreateAuthorChange = this.handleCreateAuthorChange.bind(this);
@@ -80,7 +80,7 @@ export default class AuthorListController extends FalcorController {
     const name = this.state.inputName;
 
     if (slug !== slugifyAuthor(slug)) {
-      await this.props.displayAlert(
+      this.props.displayAlert(
         'Your slug is not in the right format. Our programatically suggested ' +
           `substitute is: ${slugifyAuthor(slug)}. ` +
           'Feel free to use it or change it to something else',
@@ -93,13 +93,13 @@ export default class AuthorListController extends FalcorController {
       if (x) {
         x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
         // Something was found, which means the slug is taken
-        await this.props.displayAlert(
+        this.props.displayAlert(
           'This slug is already taken, please change to another one',
         );
         return;
       }
       // Create the author
-      const callback = () => {
+      const callback = async () => {
         await this.props.displayAlert('Author added successfully');
         browserHistory.push(`/authors/${slug}`);
       };
@@ -188,3 +188,6 @@ export default class AuthorListController extends FalcorController {
     );
   }
 }
+
+const EnhancedAuthorListController = withModals(AuthorListController);
+export { EnhancedAuthorListController as AuthorListController };

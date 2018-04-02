@@ -44,7 +44,7 @@ const styles = {
   },
 };
 
-export default class IssueListController extends FalcorController {
+class IssueListController extends FalcorController {
   constructor(props) {
     super(props);
     this.addIssue = this.addIssue.bind(this);
@@ -98,12 +98,12 @@ export default class IssueListController extends FalcorController {
     const { name: issueName, issueNumber } = this.state;
 
     if (Number.isNaN(stringToInt(issueNumber))) {
-      await this.props.displayAlert('the issue number given is not a valid number');
+      this.props.displayAlert('the issue number given is not a valid number');
       return;
     }
 
     if (has.call(this.state.data.issues.byNumber, issueNumber)) {
-      await this.props.displayAlert(
+      this.props.displayAlert(
         'This issue has already been created, you cannot create it again',
       );
       return;
@@ -282,3 +282,6 @@ export default class IssueListController extends FalcorController {
     );
   }
 }
+
+const EnhancedIssueListController = withModals(IssueListController);
+export { EnhancedIssueListController as IssueListController };

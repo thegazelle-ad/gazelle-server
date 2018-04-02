@@ -207,6 +207,8 @@ export default class FalcorController extends BaseComponent {
           `${
             error !== null ? `. The error message was: ${error.message}` : ''
           }`;
+        // This is why we don't want to do inheritance but composition, I won't call this
+        // eslint-disable-next-line no-alert
         window.alert(errorMessage);
       });
   }
@@ -275,6 +277,8 @@ export default class FalcorController extends BaseComponent {
           `${
             error !== null ? `. The error message was: ${error.message}` : ''
           }`;
+        // This is why we don't want to do inheritance but composition, I won't call this
+        // eslint-disable-next-line no-alert
         window.alert(errorMessage);
       });
   }

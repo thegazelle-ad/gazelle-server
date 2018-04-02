@@ -31,7 +31,7 @@ const styles = {
   },
 };
 
-export default class AuthorController extends FalcorController {
+class AuthorController extends FalcorController {
   constructor(props) {
     super(props);
     this.handleDialogClose = this.handleDialogClose.bind(this);
@@ -157,7 +157,7 @@ export default class AuthorController extends FalcorController {
     browserHistory.push(path);
   }
 
-  handleSaveChanges(event) {
+  handleSaveChanges = async event => {
     event.preventDefault();
 
     const falcorData = this.state.data.authors.bySlug[this.props.params.slug];
@@ -223,13 +223,12 @@ export default class AuthorController extends FalcorController {
     };
 
     if (this.isFormFieldChanged(this.state.slug, falcorData.slug)) {
-      if (
-        !window.confirm(
-          'You are about to change the slug of an author, this means that the url to ' +
-            'their webpage will change among other things, it is strongly recommended ' +
-            " not to change the slug unless it's very crucial. Are you sure you wish to proceed?",
-        )
-      ) {
+      const shouldContinue = await this.props.displayConfirm(
+        'You are about to change the slug of an author, this means that the url to ' +
+          'their webpage will change among other things, it is strongly recommended ' +
+          " not to change the slug unless it's very crucial. Are you sure you wish to proceed?",
+      );
+      if (!shouldContinue) {
         return;
       }
       // Start the saving
@@ -242,7 +241,7 @@ export default class AuthorController extends FalcorController {
           if (x) {
             x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
             // This slug is already taken as something was returned
-            await this.props.displayAlert(
+            this.props.displayAlert(
               'The slug you chose is already taken, please change it',
             );
             this.safeSetState({ saving: false });
@@ -258,7 +257,7 @@ export default class AuthorController extends FalcorController {
       this.safeSetState({ saving: true });
       update();
     }
-  }
+  };
 
   isFormFieldChanged(userInput, falcorData) {
     return userInput !== falcorData && !(!userInput && !falcorData);
@@ -374,3 +373,6 @@ export default class AuthorController extends FalcorController {
     );
   }
 }
+
+const EnhancedAuthorController = withModals(AuthorController);
+export { EnhancedAuthorController as AuthorController };
