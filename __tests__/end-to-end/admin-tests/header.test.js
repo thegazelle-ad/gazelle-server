@@ -1,6 +1,6 @@
 import Nightmare from 'nightmare';
 
-import { getLoggedInState } from './e2e-admin-utilities';
+import { getLoggedInState, checkValueOfAlert } from './e2e-admin-utilities';
 import {
   NIGHTMARE_CONFIG,
   ENTER_UNICODE,
@@ -49,15 +49,13 @@ describe('Admin header', () => {
     const restartServerPasswordInputSelector = '#restart-server-password-input';
     const restartServerSubmitSelector = '#restart-server-password-submit';
     const restartServerCancelSelector = '#restart-server-password-cancel';
+    const alertModalOkButtonSelector = '#alert-modal-ok-button';
 
     const testRestartServer = (
       useEnter = false,
       initialWrongPassword = false,
     ) => {
       const passwordInsertedState = getLoggedInState(nightmare, '')
-        // We inject a script that sets window.THE_GAZELLE.serverRestartedSuccessfully = true when
-        // the correct `window.alert` call has been made
-        .inject('js', `${__dirname}/assets/checkServerRestarted.js`)
         .wait(headerMenuButtonSelector)
         // mouseup for Material UI quirk
         .mouseup(headerMenuButtonSelector)
@@ -76,27 +74,29 @@ describe('Admin header', () => {
         passwordSubmittedState = passwordInsertedState
           .insert(restartServerPasswordInputSelector, 'a')
           .type(restartServerPasswordInputSelector, ENTER_UNICODE)
-          // TODO: When we change from the ugly window.alert to a proper banner then check that
-          // the 'invalid password' message shows,
-          // it's too much of a hassle testing it before that.
+          .wait(checkValueOfAlert, 'Invalid password')
+          .click(alertModalOkButtonSelector)
           .insert(
             restartServerPasswordInputSelector,
             process.env.CIRCLECI_ADMIN_PASSWORD,
           )
-          .type(restartServerPasswordInputSelector, ENTER_UNICODE);
+          .type(restartServerPasswordInputSelector, ENTER_UNICODE)
+          .evaluate(checkValueOfAlert, 'Server is being restarted now')
+          .click(alertModalOkButtonSelector);
       } else if (useEnter) {
-        passwordSubmittedState = passwordInsertedState.type(
-          restartServerPasswordInputSelector,
-          ENTER_UNICODE,
-        );
+        passwordSubmittedState = passwordInsertedState
+          .type(restartServerPasswordInputSelector, ENTER_UNICODE)
+          .evaluate(checkValueOfAlert, 'Server is being restarted now')
+          .click(alertModalOkButtonSelector);
       } else {
-        passwordSubmittedState = passwordInsertedState.click(
-          restartServerSubmitSelector,
-        );
+        passwordSubmittedState = passwordInsertedState
+          .click(restartServerSubmitSelector)
+          .wait(checkValueOfAlert, 'Server is being restarted now')
+          .click(alertModalOkButtonSelector);
       }
 
       return passwordSubmittedState
-        .wait(() => window.THE_GAZELLE.serverRestartedSuccessfully)
+        .wait(checkValueOfAlert, 'Server restarted successfully')
         .end();
     };
 
@@ -107,9 +107,6 @@ describe('Admin header', () => {
 
     it('works pressing cancel in modal', () =>
       getLoggedInState(nightmare, '')
-        // We inject a script that sets window.THE_GAZELLE.serverRestartedSuccessfully = true when
-        // the correct `window.alert` call has been made
-        .inject('js', `${__dirname}/assets/checkServerRestarted.js`)
         .wait(headerMenuButtonSelector)
         // mouseup for Material UI quirk
         .mouseup(headerMenuButtonSelector)

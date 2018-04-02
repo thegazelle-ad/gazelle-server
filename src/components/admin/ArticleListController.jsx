@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, browserHistory } from 'react-router';
 import FalcorController from 'lib/falcor/FalcorController';
 import SearchBar from 'components/admin/SearchBar';
-import List from 'components/admin/List';
+import { ArticleList } from 'components/admin/ArticleList';
 import moment from 'moment';
 
 // material-ui
@@ -47,7 +47,7 @@ export default class ArticleListController extends FalcorController {
    * the FalcorData in ArticleListController is now out of date.
    * This makes ArticleListController update it's state to reflect
    * the data in the DB after making edits to an Article.
-   * TODO - Pub-Sub model with React-Falcor||Falcor-React 
+   * TODO - Pub-Sub model with React-Falcor||Falcor-React
    */
   componentWillReceiveProps(nextProps, nextContext) {
     super.componentWillReceiveProps(nextProps, nextContext);
@@ -150,7 +150,10 @@ export default class ArticleListController extends FalcorController {
                 fields={[]}
                 showPubDate
               />
-              <List elements={data} createElement={this.createListElement} />
+              <ArticleList
+                elements={data}
+                createElement={this.createListElement}
+              />
               <RaisedButton
                 label="Previous Page"
                 primary

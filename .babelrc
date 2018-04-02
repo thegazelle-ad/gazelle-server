@@ -12,5 +12,5 @@
     ],
     'react',
   ],
-  plugins: ['transform-object-rest-spread'],
+  plugins: ['transform-object-rest-spread', 'array-includes', 'transform-class-properties'],
 }

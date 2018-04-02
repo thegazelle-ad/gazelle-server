@@ -13,6 +13,9 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import LoadingOverlay from './LoadingOverlay';
 
+// HOCs
+import { withModals } from 'components/admin/hocs/modals/withModals';
+
 const MAX_BIOGRAPHY_LENGTH = 400;
 
 const styles = {
@@ -28,7 +31,7 @@ const styles = {
   },
 };
 
-export default class StaffController extends FalcorController {
+class StaffController extends FalcorController {
   constructor(props) {
     super(props);
     this.handleDialogClose = this.handleDialogClose.bind(this);
@@ -154,7 +157,7 @@ export default class StaffController extends FalcorController {
     browserHistory.push(path);
   }
 
-  handleSaveChanges(event) {
+  handleSaveChanges = async event => {
     event.preventDefault();
 
     const falcorData = this.state.data.staff.bySlug[this.props.params.slug];
@@ -220,13 +223,12 @@ export default class StaffController extends FalcorController {
     };
 
     if (this.isFormFieldChanged(this.state.slug, falcorData.slug)) {
-      if (
-        !window.confirm(
-          'You are about to change the slug of a staff member, this means that the url to ' +
-            'their webpage will change among other things, it is strongly recommended ' +
-            " not to change the slug unless it's very crucial. Are you sure you wish to proceed?",
-        )
-      ) {
+      const shouldContinue = await this.props.displayConfirm(
+        'You are about to change the slug of a staff member, this means that the url to ' +
+          'their webpage will change among other things, it is strongly recommended ' +
+          " not to change the slug unless it's very crucial. Are you sure you wish to proceed?",
+      );
+      if (!shouldContinue) {
         return;
       }
       // Start the saving
@@ -239,7 +241,7 @@ export default class StaffController extends FalcorController {
           if (x) {
             x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
             // This slug is already taken as something was returned
-            window.alert(
+            this.props.displayAlert(
               'The slug you chose is already taken, please change it',
             );
             this.safeSetState({ saving: false });
@@ -255,7 +257,7 @@ export default class StaffController extends FalcorController {
       this.safeSetState({ saving: true });
       update();
     }
-  }
+  };
 
   isFormFieldChanged(userInput, falcorData) {
     return userInput !== falcorData && !(!userInput && !falcorData);
@@ -371,3 +373,6 @@ export default class StaffController extends FalcorController {
     );
   }
 }
+
+const EnhancedAuthorController = withModals(StaffController);
+export { EnhancedAuthorController as StaffController };
