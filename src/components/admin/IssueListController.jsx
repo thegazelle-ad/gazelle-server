@@ -21,6 +21,9 @@ import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 import CircularProgress from 'material-ui/CircularProgress';
 
+// HOCs
+import { withModals } from 'components/admin/hocs/modals/withModals';
+
 const styles = {
   paper: {
     height: '100%',
@@ -41,7 +44,7 @@ const styles = {
   },
 };
 
-export default class IssueListController extends FalcorController {
+class IssueListController extends FalcorController {
   constructor(props) {
     super(props);
     this.addIssue = this.addIssue.bind(this);
@@ -95,12 +98,12 @@ export default class IssueListController extends FalcorController {
     const { name: issueName, issueNumber } = this.state;
 
     if (Number.isNaN(stringToInt(issueNumber))) {
-      window.alert('the issue number given is not a valid number');
+      this.props.displayAlert('the issue number given is not a valid number');
       return;
     }
 
     if (has.call(this.state.data.issues.byNumber, issueNumber)) {
-      window.alert(
+      this.props.displayAlert(
         'This issue has already been created, you cannot create it again',
       );
       return;
@@ -279,3 +282,6 @@ export default class IssueListController extends FalcorController {
     );
   }
 }
+
+const EnhancedIssueListController = withModals(IssueListController);
+export { EnhancedIssueListController as IssueListController };

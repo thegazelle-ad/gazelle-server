@@ -207,6 +207,10 @@ export default class FalcorController extends BaseComponent {
           `${
             error !== null ? `. The error message was: ${error.message}` : ''
           }`;
+        // This is why we don't want to do inheritance but instead use composition, there could
+        // be issues here if we tried using this.props.displayConfirm as the child class would have
+        // to use the HOC, we can't use the HOC on this class itself because it's abstract.
+        // eslint-disable-next-line no-alert
         window.alert(errorMessage);
       });
   }
@@ -275,6 +279,10 @@ export default class FalcorController extends BaseComponent {
           `${
             error !== null ? `. The error message was: ${error.message}` : ''
           }`;
+        // This is why we don't want to do inheritance but instead use composition, there could
+        // be issues here if we tried using this.props.displayConfirm as the child class would have
+        // to use the HOC, we can't use the HOC on this class itself because it's abstract.
+        // eslint-disable-next-line no-alert
         window.alert(errorMessage);
       });
   }

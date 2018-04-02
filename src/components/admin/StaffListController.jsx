@@ -16,6 +16,9 @@ import RaisedButton from 'material-ui/RaisedButton';
 import PersonAdd from 'material-ui/svg-icons/social/person-add';
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit';
 
+// HOCs
+import { withModals } from 'components/admin/hocs/modals/withModals';
+
 const styles = {
   paper: {
     height: '100%',
@@ -40,7 +43,7 @@ const styles = {
   },
 };
 
-export default class StaffListController extends FalcorController {
+class StaffListController extends FalcorController {
   constructor(props) {
     super(props);
     this.handleCreateStaffChange = this.handleCreateStaffChange.bind(this);
@@ -77,7 +80,7 @@ export default class StaffListController extends FalcorController {
     const name = this.state.inputName;
 
     if (slug !== slugifyStaff(slug)) {
-      window.alert(
+      this.props.displayAlert(
         'Your slug is not in the right format. Our programatically suggested ' +
           `substitute is: ${slugifyStaff(slug)}. ` +
           'Feel free to use it or change it to something else',
@@ -90,14 +93,19 @@ export default class StaffListController extends FalcorController {
       if (x) {
         x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
         // Something was found, which means the slug is taken
-        window.alert(
+        this.props.displayAlert(
           'This slug is already taken, please change to another one',
         );
         return;
       }
       // Create the author
       const callback = () => {
-        window.alert('Staff added successfully');
+        // I commented out the below alert mostly because it made E2E tests more bothersome
+        // but I also think it's maybe not necessary since we already opening the modal with
+        // the editor on successful creation, if we wanted in the future if we make a small
+        // similar framework to this for snackbars we could maybe use one of those for that.
+        // The big dangerous alert also doesn't seem right here (with the warning sign and everything)
+        // await this.props.displayAlert('Staff added successfully');
         browserHistory.push(`/staff/${slug}`);
       };
       this.falcorCall(
@@ -185,3 +193,6 @@ export default class StaffListController extends FalcorController {
     );
   }
 }
+
+const EnhancedAuthorListController = withModals(StaffListController);
+export { EnhancedAuthorListController as StaffListController };

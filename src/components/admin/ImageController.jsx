@@ -215,6 +215,8 @@ export default class ImageUploader extends BaseComponent {
   }
 
   changeImageName(name) {
+    // TODO: Also customize this kind of modal
+    // eslint-disable-next-line no-alert
     const newName = window.prompt(
       'Please enter new name (and remember to keep ' +
         `the extension) for ${name}:`,
