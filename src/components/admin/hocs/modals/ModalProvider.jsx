@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Alert } from './Alert';
 import { Confirm } from './Confirm';
+import EventListener from 'react-event-listener';
 
 const MODAL_TYPE_ALERT = 'alert';
 const MODAL_TYPE_CONFIRM = 'confirm';
@@ -93,6 +94,11 @@ export class ModalProvider extends React.Component {
     this.resolvePromise = null;
   }
 
+  catchEvent(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
   render() {
     const dialogProps = {
       open: this.state.modalOpen,
@@ -120,7 +126,20 @@ export class ModalProvider extends React.Component {
     }
 
     return (
+      // We don't want thing's like the escape button bubbling to parent components as all interactions
+      // should be paused during our modals being opened, normal event capturing didn't work so had to use
+      // this library that Material UI also makes use of. Screen reader kind of buttons still seem to be able
+      // to create some weird interactions, but that may be okay, could be worth looking into in the future
+      // if you want to perfect it
       <div>
+        {this.state.modalOpen && (
+          <EventListener
+            target="document"
+            onKeyUp={this.catchEvent}
+            onKeyDown={this.catchEvent}
+            onKeyPress={this.catchEvent}
+          />
+        )}
         {React.Children.only(this.props.children)}
         {Modal}
       </div>
