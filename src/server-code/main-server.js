@@ -1,6 +1,7 @@
 /* Falcor */
 import FalcorServer from 'falcor-express';
 import falcor from 'falcor';
+import { Provider as FalcorProvider } from 'react-falcor';
 
 /* React */
 import React from 'react';
@@ -114,10 +115,12 @@ export default function runMainServer(serverFalcorModel) {
           buildHtmlString(
             renderToString(
               // eslint-disable-next-line react/jsx-filename-extension
-              <RouterContext
-                createElement={injectModelCreateElement(localModel)}
-                {...renderProps}
-              />,
+              <FalcorProvider falcor={localModel}>
+                <RouterContext
+                  createElement={injectModelCreateElement(localModel)}
+                  {...renderProps}
+                />
+              </FalcorProvider>,
             ),
             localModel.getCache(),
           ),

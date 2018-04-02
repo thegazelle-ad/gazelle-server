@@ -57,25 +57,22 @@ export default class SearchBar extends BaseComponent {
             pathSets = pathSets.concat(extraPathSets);
           }
           break;
-        case 'authors':
+        case 'staff':
           // Add required fields and remove duplicates
           fields = _.uniq(this.props.fields.concat(['name', 'slug']));
 
           pathSets.push([
             'search',
-            'authors',
+            'staff',
             query,
             { length: this.props.length },
             fields,
           ]);
           if (this.props.extraPathSets) {
             const extraPathSets = this.props.extraPathSets.map(pathSet =>
-              [
-                'search',
-                'authors',
-                query,
-                { length: this.props.length },
-              ].concat(pathSet),
+              ['search', 'staff', query, { length: this.props.length }].concat(
+                pathSet,
+              ),
             );
             pathSets = pathSets.concat(extraPathSets);
           }
@@ -94,7 +91,7 @@ export default class SearchBar extends BaseComponent {
         if (this.props.mode === 'articles') {
           suggestions = suggestions.posts[query];
         } else {
-          suggestions = suggestions.authors[query];
+          suggestions = suggestions.staff[query];
         }
         const suggestionsArray = _.map(suggestions, value => value);
         this.safeSetState({ searchSuggestions: suggestionsArray });
@@ -165,23 +162,23 @@ export default class SearchBar extends BaseComponent {
           </div>
         </div>
       );
-    } else if (this.props.mode === 'authors') {
+    } else if (this.props.mode === 'staff') {
       return (
-        <div className={`${searchBarClass} ${searchBarClass}-authors`}>
+        <div className={`${searchBarClass} ${searchBarClass}-staff`}>
           <TextField
-            floatingLabelText="Search for Authors"
-            hintText="Author"
+            floatingLabelText="Search for Staff Members"
+            hintText="Staff"
             value={this.state.searchValue}
             onChange={this.fieldUpdaters.searchValue}
           />
           <div>
             <Menu style={{ width: 200 }}>
-              {this.state.searchSuggestions.map(author => (
-                <div className={searchResultClass} key={author.slug}>
+              {this.state.searchSuggestions.map(staffMember => (
+                <div className={searchResultClass} key={staffMember.slug}>
                   {/* eslint-disable react/jsx-no-bind */}
                   <MenuItem
-                    primaryText={author.name}
-                    onClick={this.handleClick.bind(this, author)}
+                    primaryText={staffMember.name}
+                    onClick={this.handleClick.bind(this, staffMember)}
                     disabled={this.props.disabled}
                   />
                   {/* eslint-enable react/jsx-no-bind */}
@@ -206,7 +203,7 @@ SearchBar.propTypes = {
     get: React.PropTypes.func.isRequired,
   }).isRequired,
   fields: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-  mode: React.PropTypes.oneOf(['authors', 'articles']).isRequired,
+  mode: React.PropTypes.oneOf(['staff', 'articles']).isRequired,
   length: React.PropTypes.number.isRequired,
   handleClick: React.PropTypes.func.isRequired,
   showPubDate: React.PropTypes.bool,

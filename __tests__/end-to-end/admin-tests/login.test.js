@@ -46,5 +46,5 @@ describe('Admin login', () => {
   it('redirects correctly to front page', () =>
     testLoginRedirect(nightmare, ''));
   it('redirects correctly to non-front page', () =>
-    testLoginRedirect(nightmare, '/authors'));
+    testLoginRedirect(nightmare, '/staff'));
 });

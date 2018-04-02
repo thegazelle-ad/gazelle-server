@@ -39,7 +39,7 @@ export default class SearchController extends FalcorController {
         'posts',
         queryParams.q,
         { length: 20 },
-        'authors',
+        'staff',
         { length: 10 },
         ['name', 'slug'],
       ],

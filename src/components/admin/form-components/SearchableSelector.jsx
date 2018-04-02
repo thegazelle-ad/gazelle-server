@@ -107,7 +107,7 @@ class SearchableSelector extends React.Component {
 
     const noObjectsMessage = (
       <span style={{ color: 'rgba(0, 0, 0, 0.3)' }}>
-        `No {this.props.mode} are currently assigned to this article`
+        No {this.props.mode} are currently assigned to this article
       </span>
     );
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
-import { slugifyAuthor } from 'lib/utilities';
+import { slugifyStaff } from 'lib/utilities';
 import { browserHistory } from 'react-router';
 import SearchBar from './SearchBar';
 import { updateFieldValue } from './lib/form-field-updaters';
@@ -37,23 +37,23 @@ const styles = {
     marginTop: 24,
     marginBottom: 12,
   },
-  authorMenu: {
+  staffMenu: {
     display: 'inline-block',
     margin: 0,
   },
 };
 
-class AuthorListController extends FalcorController {
+class StaffListController extends FalcorController {
   constructor(props) {
     super(props);
-    this.handleCreateAuthorChange = this.handleCreateAuthorChange.bind(this);
-    this.createAuthor = this.createAuthor.bind(this);
+    this.handleCreateStaffChange = this.handleCreateStaffChange.bind(this);
+    this.createStaff = this.createStaff.bind(this);
     this.fieldUpdaters = {
       inputName: updateFieldValue.bind(this, 'inputName', undefined),
       inputSlug: updateFieldValue.bind(this, 'inputSlug', undefined),
     };
     this.safeSetState({
-      createAuthorValid: false,
+      createStaffValid: false,
       inputName: '',
       inputSlug: '',
     });
@@ -63,33 +63,33 @@ class AuthorListController extends FalcorController {
     return [];
   }
 
-  handleClickAuthor(author) {
-    browserHistory.push(`/authors/${author.slug}`);
+  handleClickStaff(staff) {
+    browserHistory.push(`/staff/${staff.slug}`);
   }
 
-  handleCreateAuthorChange() {
+  handleCreateStaffChange() {
     const validFlag = this.state.inputSlug && this.state.inputName;
-    if (validFlag !== this.state.createAuthorValid) {
-      this.safeSetState({ createAuthorValid: validFlag });
+    if (validFlag !== this.state.createStaffValid) {
+      this.safeSetState({ createStaffValid: validFlag });
     }
   }
 
-  createAuthor(e) {
+  createStaff(e) {
     e.preventDefault();
     const slug = this.state.inputSlug;
     const name = this.state.inputName;
 
-    if (slug !== slugifyAuthor(slug)) {
+    if (slug !== slugifyStaff(slug)) {
       this.props.displayAlert(
         'Your slug is not in the right format. Our programatically suggested ' +
-          `substitute is: ${slugifyAuthor(slug)}. ` +
+          `substitute is: ${slugifyStaff(slug)}. ` +
           'Feel free to use it or change it to something else',
       );
       return;
     }
 
     // Check if the slug is already taken
-    this.props.model.get(['authors', 'bySlug', slug, 'slug']).then(x => {
+    this.props.model.get(['staff', 'bySlug', slug, 'slug']).then(x => {
       if (x) {
         x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
         // Something was found, which means the slug is taken
@@ -105,11 +105,11 @@ class AuthorListController extends FalcorController {
         // the editor on successful creation, if we wanted in the future if we make a small
         // similar framework to this for snackbars we could maybe use one of those for that.
         // The big dangerous alert also doesn't seem right here (with the warning sign and everything)
-        // await this.props.displayAlert('Author added successfully');
-        browserHistory.push(`/authors/${slug}`);
+        // await this.props.displayAlert('Staff added successfully');
+        browserHistory.push(`/staff/${slug}`);
       };
       this.falcorCall(
-        ['authors', 'bySlug', 'createAuthor'],
+        ['staff', 'bySlug', 'createStaff'],
         [{ slug, name }],
         undefined,
         undefined,
@@ -120,34 +120,34 @@ class AuthorListController extends FalcorController {
   }
 
   render() {
-    const ID = 'author-list';
+    const ID = 'staff-list';
     if (this.state.ready) {
       return (
         <div id={ID}>
-          <h1>Authors</h1>
+          <h1>Staff</h1>
           <Divider />
           <Paper style={styles.paper} zDepth={2}>
             <Tabs>
               <Tab label="EDIT" icon={<ModeEdit />}>
                 <div id={`${ID}-edit-tab`} style={styles.tabs}>
-                  <h2>Edit Author</h2>
+                  <h2>Edit Staff</h2>
                   <Divider />
                   <SearchBar
                     model={this.props.model}
-                    mode="authors"
+                    mode="staff"
                     fields={['slug']}
                     length={3}
-                    handleClick={this.handleClickAuthor}
+                    handleClick={this.handleClickStaff}
                   />
                 </div>
               </Tab>
               <Tab label="ADD NEW" icon={<PersonAdd />}>
                 <div id={`${ID}-add-new-tab`} style={styles.tabs}>
-                  <h2>Add New Author</h2>
+                  <h2>Add New Staff</h2>
                   <Divider />
                   <form
-                    onSubmit={this.createAuthor}
-                    onChange={this.handleCreateAuthorChange}
+                    onSubmit={this.createStaff}
+                    onChange={this.handleCreateStaffChange}
                   >
                     <TextField
                       type="text"
@@ -168,9 +168,9 @@ class AuthorListController extends FalcorController {
                     />
                     <br />
                     <RaisedButton
-                      label="Create Author"
+                      label="Create Staff"
                       type="submit"
-                      disabled={!this.state.createAuthorValid}
+                      disabled={!this.state.createStaffValid}
                       primary
                       style={styles.buttons}
                     />
@@ -194,5 +194,5 @@ class AuthorListController extends FalcorController {
   }
 }
 
-const EnhancedAuthorListController = withModals(AuthorListController);
-export { EnhancedAuthorListController as AuthorListController };
+const EnhancedAuthorListController = withModals(StaffListController);
+export { EnhancedAuthorListController as StaffListController };
