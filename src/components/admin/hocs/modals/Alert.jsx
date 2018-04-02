@@ -24,14 +24,14 @@ AlertIcon.defaultProps = {
   style: null,
 };
 
-export const Alert = ({ open, contentStyle, message, onClose }) => {
+export const Alert = ({ open, message, onClose }) => {
   const actionButtons = [<RaisedButton onClick={onClose} label="OK" />];
   return (
     <Dialog
       open={open}
       modal
       actions={actionButtons}
-      contentStyle={contentStyle}
+      contentStyle={{ maxWidth: '500px' }}
     >
       <div>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -47,9 +47,4 @@ Alert.propTypes = {
   open: PropTypes.bool.isRequired,
   message: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
-  contentStyle: PropTypes.shape({}),
-};
-
-Alert.defaultProps = {
-  contentStyle: {},
 };

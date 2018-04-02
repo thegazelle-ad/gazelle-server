@@ -97,7 +97,6 @@ export class ModalProvider extends React.Component {
     const dialogProps = {
       open: this.state.modalOpen,
       message: this.state.modalMessage,
-      contentStyle: { maxWidth: '500px' },
     };
     let Modal;
     switch (this.state.modalType) {
