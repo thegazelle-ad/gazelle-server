@@ -11,7 +11,7 @@ import { MainIssueController } from 'components/admin/MainIssueController';
 import { IssueArticleController } from 'components/admin/IssueArticleController';
 import { IssueCategoryController } from 'components/admin/IssueCategoryController';
 import NotFound from 'components/admin/NotFound';
-import Login from 'components/admin/Login';
+import { Login } from 'components/admin/Login';
 import { ImageController } from 'components/admin/ImageController';
 import ImagePreviewList from 'components/admin/ImagePreviewList';
 import ImageArchive from 'components/admin/ImageArchive';
