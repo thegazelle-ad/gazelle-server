@@ -13,7 +13,13 @@ import { has, followPath } from 'lib/utilities';
 // if its a server element or not
 export function injectModelCreateElement(model) {
   return (Component, props) => {
-    if (Component.prototype instanceof FalcorController) {
+    if (
+      Component.prototype instanceof FalcorController ||
+      // If it is a HOC we don't know whether there's a FalcorController beneath
+      // so we inject just in case. We want to get completely rid of all our inheritance
+      // at some point though, but this is just for the transition stage
+      (Component.displayName && /\w+?\(\w+?\)/.test(Component.displayName))
+    ) {
       return <Component model={model} {...props} />;
     }
     return <Component {...props} />;
