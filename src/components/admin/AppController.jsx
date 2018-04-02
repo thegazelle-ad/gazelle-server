@@ -171,7 +171,9 @@ class AppController extends BaseComponent {
     }
     if (window.THE_GAZELLE.googleAPILoaded) {
       if (!window.gapi.auth2) {
-        alert('(Dev Mode) Cannot sign out before sign in. Visit /login first.');
+        this.props.displayAlert(
+          '(Dev Mode) Cannot sign out before sign in. Visit /login first.',
+        );
       } else {
         const auth = window.gapi.auth2.getAuthInstance();
         auth.signOut().then(() => {
