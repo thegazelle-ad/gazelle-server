@@ -7,7 +7,7 @@ import { debounce } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 
 // Custom Components
-import SearchableSelector from 'components/admin/form-components/SearchableSelector';
+import { SearchableSelector } from 'components/admin/form-components/SearchableSelector';
 import LoadingOverlay from 'components/admin/LoadingOverlay';
 import SaveButton from 'components/admin/article/components/SaveButton';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton';
