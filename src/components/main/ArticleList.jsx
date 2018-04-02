@@ -1,5 +1,5 @@
 // Returns a list of article previews from articles array prop
-// Parents: HomePage, Author
+// Parents: HomePage, StaffMember
 // Children: ArticlePreview
 
 import React from 'react';

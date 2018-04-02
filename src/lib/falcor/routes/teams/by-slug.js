@@ -55,17 +55,17 @@ export default [
       }),
   },
   {
-    route: "teams['bySlug'][{keys:slugs}]['authors'][{integers:indices}]",
+    route: "teams['bySlug'][{keys:slugs}]['staff'][{integers:indices}]",
     get: pathSet =>
       new Promise(resolve => {
-        db.teamAuthorQuery(pathSet.slugs).then(data => {
+        db.teamStaffQuery(pathSet.slugs).then(data => {
           const results = [];
-          _.forEach(data, (authorSlugArray, teamSlug) => {
+          _.forEach(data, (staffSlugArray, teamSlug) => {
             pathSet.indices.forEach(index => {
-              if (index < authorSlugArray.length) {
+              if (index < staffSlugArray.length) {
                 results.push({
-                  path: ['teams', 'bySlug', teamSlug, 'authors', index],
-                  value: $ref(['authors', 'bySlug', authorSlugArray[index]]),
+                  path: ['teams', 'bySlug', teamSlug, 'staff', index],
+                  value: $ref(['staff', 'bySlug', staffSlugArray[index]]),
                 });
               }
             });

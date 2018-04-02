@@ -402,7 +402,7 @@ export default class ArticleController extends FalcorController {
             onUpdate={this.updateAuthors}
             disabled={this.state.saving}
             model={this.props.model}
-            mode="authors"
+            mode="staff"
           />
           <br />
           <Divider />

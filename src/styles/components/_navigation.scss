@@ -27,7 +27,7 @@
   &__issueNumber {
     @include uppercase;
     float: right;
-    font-size: $authors-small;
+    font-size: $staff-small;
     text-align: right;
     display: flex;
     padding-bottom: 0.5rem ;
