@@ -25,7 +25,9 @@ AlertIcon.defaultProps = {
 };
 
 export const Alert = ({ open, message, onClose }) => {
-  const actionButtons = [<RaisedButton onClick={onClose} label="OK" />];
+  const actionButtons = [
+    <RaisedButton id="alert-modal-ok-button" onClick={onClose} label="OK" />,
+  ];
   return (
     <Dialog
       open={open}
@@ -37,7 +39,9 @@ export const Alert = ({ open, message, onClose }) => {
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <AlertIcon size="150px" />
         </div>
-        <div style={{ textAlign: 'center' }}>{message}</div>
+        <div id="alert-modal-text" style={{ textAlign: 'center' }}>
+          {message}
+        </div>
       </div>
     </Dialog>
   );
