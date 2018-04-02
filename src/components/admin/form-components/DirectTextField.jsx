@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import TextField from 'material-ui/TextField';
 
@@ -10,7 +11,8 @@ export class DirectTextField extends React.Component {
   }
 
   render() {
-    return <TextField onChange={this.onChange} {...this.props} />;
+    const passedProps = _.omit(this.props, 'onUpdate');
+    return <TextField onChange={this.onChange} {...passedProps} />;
   }
 }
 
