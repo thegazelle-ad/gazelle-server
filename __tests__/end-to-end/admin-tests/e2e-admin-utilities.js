@@ -18,7 +18,7 @@ export function getLoggedInState(nightmare, path) {
 }
 
 export function checkValueOfAlert(expectedAlert) {
-  const alertTextDiv = document.getElementById('modal-alert-text');
+  const alertTextDiv = document.getElementById('alert-modal-text');
   return alertTextDiv && alertTextDiv.innerHTML === expectedAlert;
 }
 
@@ -27,6 +27,7 @@ export function restartServer(nightmare) {
   const headerMenuButtonSelector = `${headerSelector}-menu-button`;
   const restartServerButtonSelector = `${headerSelector}-restart-button`;
   const restartServerPasswordInputSelector = '#restart-server-password-input';
+  const alertModalOkButtonSelector = '#alert-modal-ok-button';
 
   return (
     getLoggedInState(nightmare, '')
@@ -42,6 +43,8 @@ export function restartServer(nightmare) {
         process.env.CIRCLECI_ADMIN_PASSWORD,
       )
       .type(restartServerPasswordInputSelector, ENTER_UNICODE)
+      .wait(checkValueOfAlert, 'Server is being restarted now')
+      .click(alertModalOkButtonSelector)
       .wait(checkValueOfAlert, 'Server restarted successfully')
       .end()
   );

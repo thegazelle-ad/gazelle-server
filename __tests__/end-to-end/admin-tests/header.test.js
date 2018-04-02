@@ -80,16 +80,19 @@ describe('Admin header', () => {
             restartServerPasswordInputSelector,
             process.env.CIRCLECI_ADMIN_PASSWORD,
           )
-          .type(restartServerPasswordInputSelector, ENTER_UNICODE);
+          .type(restartServerPasswordInputSelector, ENTER_UNICODE)
+          .evaluate(checkValueOfAlert, 'Server is being restarted now')
+          .click(alertModalOkButtonSelector);
       } else if (useEnter) {
-        passwordSubmittedState = passwordInsertedState.type(
-          restartServerPasswordInputSelector,
-          ENTER_UNICODE,
-        );
+        passwordSubmittedState = passwordInsertedState
+          .type(restartServerPasswordInputSelector, ENTER_UNICODE)
+          .evaluate(checkValueOfAlert, 'Server is being restarted now')
+          .click(alertModalOkButtonSelector);
       } else {
-        passwordSubmittedState = passwordInsertedState.click(
-          restartServerSubmitSelector,
-        );
+        passwordSubmittedState = passwordInsertedState
+          .click(restartServerSubmitSelector)
+          .wait(checkValueOfAlert, 'Server is being restarted now')
+          .click(alertModalOkButtonSelector);
       }
 
       return passwordSubmittedState
