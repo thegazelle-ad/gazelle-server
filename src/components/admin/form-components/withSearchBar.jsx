@@ -44,7 +44,7 @@ export const withSearchableConcept = (
               category,
               query,
               { length: this.props.length },
-              _.uniq([...fields, ...this.props.fields]),
+              _.uniq([...fields, ...this.props.fields, 'id']),
             ],
           ],
         );
@@ -55,9 +55,13 @@ export const withSearchableConcept = (
             return;
           }
           x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
-          const suggestions = _.toArray(x.json.search[category][query]).map(
-            item => ({ title: formatter(item), id: item.id, slug: item.slug }),
-          );
+          const suggestions = _.toArray(x.json.search[category][query])
+            .filter(item => item !== undefined)
+            .map(item => ({
+              title: formatter(item),
+              id: item.id,
+              slug: item.slug,
+            }));
           this.setState({ suggestions });
         });
       }, debounceTime);

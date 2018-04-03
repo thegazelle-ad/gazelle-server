@@ -4,7 +4,7 @@ import { withSearchableConcept } from 'components/admin/form-components/withSear
 import { SearchBar } from 'components/admin/form-components/SearchBar';
 
 export const SearchableAuthors = withSearchableConcept(
-  ['name', 'slug', 'id'],
+  ['name', 'slug'],
   item => item.name,
   'staff',
 )(SearchBar);
@@ -18,9 +18,10 @@ export const SearchableArticles = withSearchableConcept(
 export const SearchableArticlesWithPubDate = withSearchableConcept(
   ['title', 'slug', 'published_at'],
   item => {
-    let date = item.published_at
-      ? `Published: ${moment(item.published_at).format('MMM DD, YYYY')}`
-      : (date = 'Unpublished');
+    const date =
+      'published_at' in item
+        ? `Published: ${moment(item.published_at).format('MMM DD, YYYY')}`
+        : 'Unpublished';
     return `${item.title} - ${date}`;
   },
   'articles',
