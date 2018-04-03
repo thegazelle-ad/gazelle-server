@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import update from 'react-addons-update';
 import _ from 'lodash';
 
-import { capFirstLetter } from 'lib/utilities';
-import SearchBar from 'components/admin/SearchBar';
+import { capFirstLetter, slugify } from 'lib/utilities';
+import { SearchableAuthors } from 'components/admin/form-components/searchable-categories';
 
 // material-ui
 import Chip from 'material-ui/Chip';
@@ -15,7 +15,8 @@ import { withModals } from 'components/admin/hocs/modals/withModals';
 class ObjectChip extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.onClick = () => this.props.onDelete(this.props.id);
+    this.onClick = () =>
+      this.props.onDelete(this.props.id, this.props.title, this.props.slug);
   }
 
   render() {
@@ -29,12 +30,16 @@ class ObjectChip extends React.PureComponent {
 
 ObjectChip.propTypes = {
   onDelete: PropTypes.func.isRequired,
-  id: PropTypes.number.isRequired,
+  id: PropTypes.number,
+  title: PropTypes.string.isRequired,
+  slug: PropTypes.string,
   style: PropTypes.shape({}),
   children: PropTypes.node,
 };
 
 ObjectChip.defaultProps = {
+  id: null,
+  slug: null,
   style: {},
   children: null,
 };
@@ -56,23 +61,37 @@ class SearchableSelector extends React.Component {
     // disable this if saving
     if (this.props.disabled) return;
 
-    const { id, name } = object;
+    const { id, title, slug } = object;
     const alreadyAdded =
-      this.props.value.find(baseObject => baseObject.id === id) !== undefined;
+      this.props.value.find(
+        baseObject =>
+          !('slug' in baseObject)
+            ? slugify(this.props.mode, baseObject.name) === slug
+            : baseObject.slug === slug,
+      ) !== undefined;
 
     if (alreadyAdded) {
       await this.props.displayAlert('Already added');
       return;
     }
-    const newObjects = update(this.props.value, { $push: [{ id, name }] });
+    const newObjects = update(this.props.value, {
+      $push: [{ id, name: title, slug }],
+    });
     this.props.onUpdate(newObjects);
   };
 
-  handleDelete(id) {
+  handleDelete(id, title, slug) {
     // disabled this if saving
     if (this.props.disabled) return;
 
-    const index = this.props.value.findIndex(object => object.id === id);
+    const objectSlug = !slug ? slugify(this.props.mode, title) : slug;
+
+    const index = this.props.value.findIndex(
+      baseObject =>
+        !('slug' in baseObject)
+          ? slugify(this.props.mode, baseObject.name) === objectSlug
+          : baseObject.slug === objectSlug,
+    );
     if (index === -1) {
       throw new Error(
         'You tried to delete an object not currently selected. ' +
@@ -95,8 +114,9 @@ class SearchableSelector extends React.Component {
       this.props.value.length > 0
         ? _.map(this.props.value, object => (
             <ObjectChip
-              key={object.id}
+              key={object.id !== null ? object.id : object.name}
               id={object.id}
+              title={object.name}
               onDelete={this.handleDelete}
               style={{ margin: 4 }}
             >
@@ -118,12 +138,11 @@ class SearchableSelector extends React.Component {
           {capFirstLetter(this.props.mode)}
         </p>
         <div style={styles.wrapper}>{objectChips || noObjectsMessage}</div>
-        <SearchBar
-          model={this.props.model}
-          mode={this.props.mode}
-          fields={['id']}
+        <SearchableAuthors
+          falcor={this.props.model}
           length={3}
           handleClick={this.handleClickAdd}
+          enableAdd
         />
       </div>
     );
@@ -133,7 +152,7 @@ class SearchableSelector extends React.Component {
 SearchableSelector.propTypes = {
   value: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.number.isRequired,
+      id: PropTypes.number,
       name: PropTypes.string.isRequired,
     }),
   ).isRequired,
@@ -142,8 +161,10 @@ SearchableSelector.propTypes = {
   displayAlert: PropTypes.func.isRequired,
   // It isn't a typo and they are required in SearchBar so no need for defaults
   /* eslint-disable react/no-typos, react/require-default-props */
-  mode: SearchBar.propTypes.mode,
-  model: SearchBar.propTypes.model,
+  model: React.PropTypes.shape({
+    get: React.PropTypes.func.isRequired,
+  }).isRequired,
+  mode: React.PropTypes.oneOf(['staff', 'articles']).isRequired,
   /* eslint-enable react/no-typos, react/require-default-props */
   disabled: PropTypes.bool,
 };

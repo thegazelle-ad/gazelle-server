@@ -51,7 +51,7 @@ export const withSearchableConcept = (
           }
           x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
           const suggestions = _.toArray(x.json.search[category][query]).map(
-            item => ({ title: formatter(item), id: item.id }),
+            item => ({ title: formatter(item), id: item.id, slug: item.slug }),
           );
           this.setState({ suggestions });
         });
