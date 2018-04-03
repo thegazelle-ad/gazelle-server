@@ -645,7 +645,6 @@ class IssueArticleController extends FalcorController {
             </button>
             {/* eslint-disable react/jsx-no-bind */}
             <SearchableArticlesWithPubDate
-              falcor={this.props.model}
               handleClick={this.addArticle.bind(this, 'featured')}
               length={3}
               fields={ARTICLE_FIELDS}
@@ -682,7 +681,6 @@ class IssueArticleController extends FalcorController {
               Search By List
             </button>
             <SearchableArticlesWithPubDate
-              falcor={this.props.model}
               handleClick={this.addArticle.bind(this, 'picks')}
               length={3}
               fields={ARTICLE_FIELDS}
@@ -719,7 +717,6 @@ class IssueArticleController extends FalcorController {
               Search By List
             </button>
             <SearchableArticlesWithPubDate
-              falcor={this.props.model}
               handleClick={this.addArticle.bind(this, 'main')}
               length={3}
               fields={ARTICLE_FIELDS}

@@ -66,12 +66,14 @@ class SearchableSelector extends React.Component {
       this.props.value.find(
         baseObject =>
           !('slug' in baseObject)
-            ? slugify(this.props.mode, baseObject.name) === slug
+            ? slugify(this.props.category, baseObject.name) === slug
             : baseObject.slug === slug,
       ) !== undefined;
 
     if (alreadyAdded) {
-      await this.props.displayAlert('Already added');
+      await this.props.displayAlert(
+        `The ${this.props.category} ${title} has already been added.`,
+      );
       return;
     }
     const newObjects = update(this.props.value, {
@@ -84,12 +86,12 @@ class SearchableSelector extends React.Component {
     // disabled this if saving
     if (this.props.disabled) return;
 
-    const objectSlug = !slug ? slugify(this.props.mode, title) : slug;
+    const objectSlug = !slug ? slugify(this.props.category, title) : slug;
 
     const index = this.props.value.findIndex(
       baseObject =>
         !('slug' in baseObject)
-          ? slugify(this.props.mode, baseObject.name) === objectSlug
+          ? slugify(this.props.category, baseObject.name) === objectSlug
           : baseObject.slug === objectSlug,
     );
     if (index === -1) {
@@ -127,7 +129,7 @@ class SearchableSelector extends React.Component {
 
     const noObjectsMessage = (
       <span style={{ color: 'rgba(0, 0, 0, 0.3)' }}>
-        No {this.props.mode} are currently assigned to this article
+        No {this.props.category} are currently assigned to this article
       </span>
     );
 
@@ -135,11 +137,10 @@ class SearchableSelector extends React.Component {
       <div>
         <br />
         <p style={{ marginTop: 0, marginBottom: 10 }}>
-          {capFirstLetter(this.props.mode)}
+          {capFirstLetter(this.props.category)}
         </p>
         <div style={styles.wrapper}>{objectChips || noObjectsMessage}</div>
         <SearchableAuthors
-          falcor={this.props.model}
           length={3}
           handleClick={this.handleClickAdd}
           enableAdd
@@ -161,10 +162,7 @@ SearchableSelector.propTypes = {
   displayAlert: PropTypes.func.isRequired,
   // It isn't a typo and they are required in SearchBar so no need for defaults
   /* eslint-disable react/no-typos, react/require-default-props */
-  model: React.PropTypes.shape({
-    get: React.PropTypes.func.isRequired,
-  }).isRequired,
-  mode: React.PropTypes.oneOf(['staff', 'articles']).isRequired,
+  category: React.PropTypes.oneOf(['staff', 'articles']).isRequired,
   /* eslint-enable react/no-typos, react/require-default-props */
   disabled: PropTypes.bool,
 };

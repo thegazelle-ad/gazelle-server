@@ -131,7 +131,6 @@ class StaffListController extends FalcorController {
                   <h2>Edit Staff</h2>
                   <Divider />
                   <SearchableAuthors
-                    falcor={this.props.model}
                     fields={['slug']}
                     length={3}
                     handleClick={this.handleClickStaff}

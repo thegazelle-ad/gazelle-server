@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
+import { withFalcor } from 'components/hocs/falcor-hocs';
 import { debounce } from 'lib/utilities';
 import { getDisplayName } from 'lib/higher-order-helpers';
 
@@ -125,5 +126,5 @@ export const withSearchableConcept = (
   };
 
   Searchable.displayName = `SearchableField(${getDisplayName(WrappedField)})`;
-  return Searchable;
+  return withFalcor(Searchable);
 };

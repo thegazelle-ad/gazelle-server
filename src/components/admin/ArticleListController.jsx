@@ -147,7 +147,6 @@ export default class ArticleListController extends FalcorController {
               <Divider />
               <br />
               <SearchableArticlesWithPubDate
-                falcor={this.props.model}
                 handleClick={this.clickSearchSuggestion}
                 length={3}
                 fullWidth

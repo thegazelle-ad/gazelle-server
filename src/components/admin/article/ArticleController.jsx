@@ -377,8 +377,7 @@ class ArticleController extends FalcorController {
             onChange={this.debouncedHandleFormStateChanges}
             onUpdate={this.updateAuthors}
             disabled={this.state.saving}
-            model={this.props.model}
-            mode="staff"
+            category="staff"
           />
           <br />
           <Divider />
