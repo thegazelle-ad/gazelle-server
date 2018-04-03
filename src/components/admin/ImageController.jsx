@@ -30,7 +30,6 @@ export default class ImageUploader extends BaseComponent {
       imgName: '',
       wrongExtension: false,
       attemptedExt: '',
-      fullWidthTextField: true,
     });
     this.fieldUpdaters = {
       nameInput: updateFieldValue.bind(this, 'nameInput', undefined),
@@ -361,7 +360,7 @@ export default class ImageUploader extends BaseComponent {
       },
     };
 
-    let extensionErrorMsg = `To change the image's extension to . ${this.state.attemptedExt},`;
+    let extensionErrorMsg = `To change the image's extension to .${this.state.attemptedExt},`;
     extensionErrorMsg = extensionErrorMsg.concat(' please convert it externally and re-upload.');
 
     return (
@@ -449,7 +448,7 @@ export default class ImageUploader extends BaseComponent {
           <form onSubmit={this.changeImageName}>
             <TextField
               name="newName"
-              fullWidth={this.state.fullWidthTextField}
+              fullWidth
               defaultValue={this.state.nameInput}
               onChange={this.fieldUpdaters.nameInput}
             />
