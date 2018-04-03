@@ -40,6 +40,7 @@ const Loading = () => (
 
 /**
  * This HOC factory allows you to provide data from falcor as props to your component.
+ * This will automatically subscribe to changes from Falcor and provide updated data.
  * Remember it is a HOC factory so you have to provide it with the pathSets and possibly
  * the propMerger which returns the actual HOC that you wrap your component in.
  * @param {*} pathSets - This either takes a function which outputs the pathsets where the input
