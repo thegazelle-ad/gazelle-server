@@ -21,6 +21,11 @@ import { setIsClient } from 'lib/utilities';
 import ReactGA from 'react-ga';
 import { Provider as FalcorProvider } from 'react-falcor';
 
+/** For initializing the logger */
+import { initializeLogger } from 'lib/logger';
+
+initializeLogger(true, window.alert);
+
 // Let the app know we are running as client, activates certain behaviors like
 // global client tracking.
 setIsClient(true);
