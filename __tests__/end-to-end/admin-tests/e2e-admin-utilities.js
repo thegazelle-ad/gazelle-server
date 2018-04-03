@@ -2,7 +2,7 @@ import { HOST } from './e2e-admin-constants';
 import { ENTER_UNICODE } from '__tests__/end-to-end/e2e-constants';
 
 export function getLoggedInState(nightmare, path) {
-  const passwordInputSelector = 'input[type="password"]';
+  const googleLoginSelector = 'div.abcRioButtonContentWrapper';
   return nightmare
     // We use this to detect client-side errors in rendering
     .on('page', (type, message, stack) => {
@@ -10,11 +10,9 @@ export function getLoggedInState(nightmare, path) {
       throw new Error(`${message}\nstack trace: ${stack}`);
     })
     .goto(`${HOST}${path}`)
-    // Wait for the input element to render
-    .wait(passwordInputSelector)
-    // Write password
-    .insert(passwordInputSelector, process.env.CIRCLECI_ADMIN_PASSWORD)
-    .type(passwordInputSelector, ENTER_UNICODE);
+    // Wait for the google login button to render
+    .wait(googleLoginSelector)
+    .click(googleLoginSelector);
 }
 
 export function restartServer(nightmare) {

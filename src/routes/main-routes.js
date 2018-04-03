@@ -12,12 +12,10 @@ import TextPageController from 'components/main/TextPageController';
 import TeamPageController from 'components/main/TeamPageController';
 import NotFoundController from 'components/main/NotFoundController';
 import SearchController from 'components/main/SearchController';
-import Login from 'components/main/Login';
 
 export default [
   <Route path="/interactive/:articleSlug" component={InteractiveArticle} />,
   <Route path="/" component={AppController}>
-    <Route path="login" component={Login} />
     <Route path="issue/:issueNumber/:articleCategory/:articleSlug" component={ArticleController} />
     <Route path="author/:authorSlug" component={AuthorController} />
     <Route path="issue/:issueNumber" component={IssueController} />

@@ -74,7 +74,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
     It returns whether this key and all branches from the pathSet that follow
     this key are in the cache as it continues recursively.
     */
-    if (!curObject.hasOwnProperty(key)) {
+    if (!curObject.hasOwnProperty(key) || curObject[key] === null) {
       return false;
     }
     const val = curObject[key];
@@ -401,5 +401,18 @@ export function cleanupFalcorKeys(obj) {
   });
   // Cleanup to not have mutated the object
   delete obj.cleanupFalcorKeysMetaSeen; // eslint-disable-line no-param-reassign
+  return ret;
+}
+
+export function cleanupJsonGraphArg(jsonGraphArg) {
+  if (jsonGraphArg.hasOwnProperty('$type')) {
+    // Then this is the final part we can substitute
+    return jsonGraphArg.value;
+  }
+  // Else we recurse
+  const ret = {};
+  Object.keys(jsonGraphArg).forEach(key => {
+    ret[key] = cleanupJsonGraphArg(jsonGraphArg[key]);
+  });
   return ret;
 }

@@ -1,11 +1,10 @@
 import falcor from 'falcor';
 import _ from 'lodash';
 
-import DbFunctions from 'lib/db';
-import { mapGhostNames } from 'lib/falcor/falcor-utilities';
+import * as db from 'lib/db';
+import { mapGhostNames, cleanupJsonGraphArg } from 'lib/falcor/falcor-utilities';
 import { ghostArticleQuery } from 'lib/ghost-api';
 
-const db = new DbFunctions;
 const $ref = falcor.Model.ref;
 
 export default [
@@ -51,6 +50,7 @@ export default [
     ),
     set: (jsonGraphArg) => (
       new Promise((resolve) => {
+        jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
         const articles = jsonGraphArg.articles.bySlug;
         const slugs = Object.keys(articles);
         db.updateGhostFields(articles).then((flag) => {
@@ -101,6 +101,7 @@ export default [
     ),
     set: (jsonGraphArg) => (
       new Promise((resolve) => {
+        jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
         const articles = jsonGraphArg.articles.bySlug;
         const slugs = Object.keys(articles);
         const results = [];
@@ -142,6 +143,7 @@ export default [
     ),
     set: (jsonGraphArg) => (
       new Promise((resolve) => {
+        jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
         const articles = jsonGraphArg.articles.bySlug;
         const slugs = Object.keys(articles);
         const results = [];

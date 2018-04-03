@@ -7,6 +7,7 @@ import { debounce } from 'lib/utilities';
 import update from 'react-addons-update';
 import moment from 'moment';
 import { updateFieldValue } from 'components/admin/lib/form-field-updaters';
+import LoadingOverlay from './LoadingOverlay';
 
 // material-ui
 import Dialog from 'material-ui/Dialog';
@@ -181,10 +182,12 @@ export default class ArticleController extends FalcorController {
       processedAuthors = null;
     }
 
+    const shouldUpdateCategory = this.state.category;
+    const fields = shouldUpdateCategory ? ['teaser', 'image', 'category'] : ['teaser', 'image'];
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
       paths: [
-        ['articles', 'bySlug', articleSlug, ['teaser', 'category', 'image']],
+        ['articles', 'bySlug', articleSlug, fields],
       ],
       jsonGraph: {
         articles: {
@@ -196,8 +199,10 @@ export default class ArticleController extends FalcorController {
     };
     // Fill in the data
     jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].teaser = this.state.teaser;
-    jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].category = this.state.category;
     jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].image = this.state.image;
+    if (shouldUpdateCategory) {
+      jsonGraphEnvelope.jsonGraph.articles.bySlug[articleSlug].category = this.state.category;
+    }
 
     // Update the values
     this.safeSetState({ saving: true });
@@ -326,10 +331,9 @@ export default class ArticleController extends FalcorController {
       const slug = this.props.params.slug;
       const article = this.state.data.articles.bySlug[slug];
 
-      // If it is a new article it won't have any meta data yet
-      if (!article.hasOwnProperty('category')) {
-        article.category = 'none';
-      }
+      // If it is a new article it won't have any meta data yet so we use the default
+      const chosenCategory = this.state.category || 'none';
+
       const categories = this.state.data.categories.byIndex;
       categories.none = { name: 'none', slug: 'none' };
 
@@ -360,6 +364,7 @@ export default class ArticleController extends FalcorController {
           autoScrollBodyContent
           onRequestClose={this.handleDialogClose}
         >
+          {this.state.saving ? <LoadingOverlay /> : null}
           <h2>{article.title}</h2>
           <Divider />
           <TextField
@@ -374,7 +379,7 @@ export default class ArticleController extends FalcorController {
             <SelectField
               floatingLabelText="Category"
               maxHeight={400}
-              value={this.state.category}
+              value={chosenCategory}
               onChange={this.fieldUpdaters.category}
               disabled={this.state.saving}
               autoWidth={false}

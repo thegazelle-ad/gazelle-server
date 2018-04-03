@@ -3,6 +3,10 @@
   color: black;
 }
 
+h1 {
+ font-family: Roboto, sans-serif;
+}
+
 .toggle-button {
   border: 0;
   padding: 0;

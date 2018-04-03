@@ -1,9 +1,9 @@
 import falcor from 'falcor';
 import _ from 'lodash';
 
-import DbFunctions from 'lib/db';
+import * as db from 'lib/db';
+import { cleanupJsonGraphArg } from 'lib/falcor/falcor-utilities';
 
-const db = new DbFunctions();
 const $ref = falcor.Model.ref;
 
 export default [
@@ -164,19 +164,25 @@ export default [
     },
     set: (jsonGraphArg) => (
       new Promise((resolve) => {
+        jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
         const issueNumber = Object.keys(jsonGraphArg.issues.byNumber)[0];
         const issueObject = jsonGraphArg.issues.byNumber[issueNumber];
+        const results = [];
         db.updateIssueData(jsonGraphArg).then((flag) => {
           if (flag !== true) {
             throw new Error('Error while updating issue data');
           }
-          resolve([{
-            path: ['issues', 'byNumber', parseInt(issueNumber, 10), 'published_at'],
-            value: issueObject.published_at,
-          }, {
+          _.forEach(issueObject, (value, field) => {
+            results.push({
+              path: ['issues', 'byNumber', parseInt(issueNumber, 10), field],
+              value,
+            });
+          });
+          results.push({
             path: ['issues', 'latest'],
             invalidated: true,
-          }]);
+          });
+          resolve(results);
         });
       })
     ),

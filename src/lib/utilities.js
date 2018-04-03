@@ -99,57 +99,6 @@ export function slugifyAuthor(authorSlug) {
   return slug;
 }
 
-export function formatDate(date) {
-  const yyyy = date.getFullYear();
-  const mm = date.getMonth() + 1; // getMonth() is zero-based
-  const dd = date.getDate();
-
-  let dateString = `${yyyy.toString()}-`;
-  if (mm < 10) {
-    dateString += '0';
-  }
-  dateString += `${mm.toString()}-`;
-  if (dd < 10) {
-    dateString += '0';
-  }
-  dateString += dd.toString();
-  return dateString;
-}
-
-export function formatDateTime(date) {
-  const yyyy = date.getFullYear();
-  const mm = date.getMonth() + 1; // getMonth() is zero-based
-  const dd = date.getDate();
-  const hh = date.getHours();
-  const mins = date.getMinutes();
-  const ss = date.getSeconds();
-
-  let dateTimeString = `${yyyy.toString()}-`;
-  if (mm < 10) {
-    dateTimeString += '0';
-  }
-  dateTimeString += `${mm.toString()}-`;
-  if (dd < 10) {
-    dateTimeString += '0';
-  }
-  dateTimeString += `${dd.toString()} `;
-
-  if (hh < 10) {
-    dateTimeString += '0';
-  }
-  dateTimeString += `${hh.toString()}:`;
-  if (mins < 10) {
-    dateTimeString += '0';
-  }
-  dateTimeString += `${mins.toString()}:`;
-  if (ss < 10) {
-    dateTimeString += '0';
-  }
-  dateTimeString += ss.toString();
-
-  return dateTimeString;
-}
-
 // this currently only supports parsing links
 export function parseMarkdown(str) {
   if (!str) return str;
@@ -278,3 +227,9 @@ export function filterByEnvironment(development, beta, production) {
   }
   return development;
 }
+
+export const nothingAllowedRobotsTxt = 'User-agent: *\nDisallow: /\n';
+
+export const googleClientID = '235485701704-vqb1qkp8lk1hbdhcmjm5jmtocaur3mq7.apps.googleusercontent.com'; // eslint-disable-line max-len
+export const googleWhitelist = ['tjk343@nyu.edu', 'ks3583@nyu.edu', 'kw1553@nyu.edu', 'hct245@nyu.edu', 'zmm228@nyu.edu', 'ego225@nyu.edu']; // eslint-disable-line max-len
+

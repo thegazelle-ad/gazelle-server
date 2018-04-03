@@ -112,7 +112,13 @@ jobs:
           keys:
             - v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}
 
-      - run: ./scripts/circleci/fetch-test-database.sh
+      - run:
+          name: Get needed dependencies for fetch database
+          command: '[[ -f scripts/circleci/helpers/test.dump ]] && npm i googleapis@12.4.0 google-auth-library@0.*'
+
+      - run:
+          name: Fetch test database
+          command: '[[ -f scripts/circleci/helpers/test.dump ]] && ./scripts/circleci/fetch-test-database.sh'
 
       - save_cache:
           paths:
@@ -235,7 +241,7 @@ jobs:
 
       - run:
           name: Deploy to staging
-          command: ssh "$GAZELLE_SERVER_STAGING_USER@$GAZELLE_SERVER_STAGING_IP" deployment-resources/scripts/update-source.sh
+          command: ssh "$GAZELLE_SERVER_STAGING_USER@$GAZELLE_SERVER_STAGING_IP" 'bash -ic "deployment-resources/scripts/update-source.sh"'
 
   deploy_production:
     <<: *defaults
@@ -245,7 +251,7 @@ jobs:
 
       - run:
           name: Deploy to production
-          command: ssh "$GAZELLE_SERVER_PRODUCTION_USER@$GAZELLE_SERVER_PRODUCTION_IP" deployment-resources/scripts/update-source.sh
+          command: ssh "$GAZELLE_SERVER_PRODUCTION_USER@$GAZELLE_SERVER_PRODUCTION_IP" 'bash -ic "deployment-resources/scripts/update-source.sh"'
 
 workflows:
   version: 2

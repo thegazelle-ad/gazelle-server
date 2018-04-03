@@ -28,7 +28,7 @@ export default class FalcorRouter extends BaseRouter.createClass(
   )
 ) {
   /* eslint-disable no-useless-constructor */
-  constructor() {
-    super();
+  constructor(...args) {
+    super(...args);
   }
 }

@@ -18,8 +18,18 @@ import { exec } from 'child_process';
 // Helps us parse post requests from falcor
 import bodyParser from 'body-parser';
 
+import request from 'request';
+
 /* Our own helper functions */
-import { isDevelopment, hash, isCI } from 'lib/utilities';
+import {
+  isDevelopment,
+  hash,
+  isCI,
+  googleClientID,
+  googleWhitelist,
+  nothingAllowedRobotsTxt,
+} from 'lib/utilities';
+
 import { md5Hash, compressJPEG, deleteFile } from 'lib/server-utilities';
 
 export default function runAdminServer(serverFalcorModel) {
@@ -35,6 +45,12 @@ export default function runAdminServer(serverFalcorModel) {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
         <link rel="stylesheet" type="text/css" href="/admin.css?h=${cssHash}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="google-signin-client_id" content="${googleClientID}">
+        <script>
+          // In order to avoid 'undefined has no property X' errors
+          window.THE_GAZELLE = {};
+        </script>
+        <script src="https://apis.google.com/js/platform.js" onload='window.THE_GAZELLE.googleAPILoaded=true' async defer></script>
       </head>
       <body>
         <div id="main">
@@ -74,8 +90,7 @@ export default function runAdminServer(serverFalcorModel) {
 
   app.use(allowCrossDomain);
 
-  /* Restart Servers command */
-  const PATH_NAME = `${process.env.ROOT_DIRECTORY}/scripts/restart-servers.sh`;
+  const RESTART_SERVERS_PATH_NAME = `${process.env.ROOT_DIRECTORY}/scripts/restart-servers.sh`;
 
   let isRestarted = false;
 
@@ -86,7 +101,7 @@ export default function runAdminServer(serverFalcorModel) {
     } else if (hash(password) === 'eaafc81d7868e1c203ecc90f387acfa4c24d1027134b0bfda6fd7c536efc5d8dd5718609a407dbfcd41e747aec331153d47733153afb7c125c558acba3fb6bcd') { // eslint-disable-line max-len
       isRestarted = true;
       res.sendStatus(200);
-      exec(PATH_NAME, (err) => {
+      exec(RESTART_SERVERS_PATH_NAME, (err) => {
         if (err) {
           if (process.env.NODE_ENV !== 'production') {
             console.error(err); // eslint-disable-line no-console
@@ -190,12 +205,15 @@ export default function runAdminServer(serverFalcorModel) {
     }
   });
 
+  app.get('/robots.txt', (req, res) => {
+    res.status(200).type('txt').send(nothingAllowedRobotsTxt);
+  });
+
   if (!isDevelopment) {
     // If we are in staging or production we redirect to a forced login
     app.get('/login', (req, res) => {
       res.status(200).send(htmlString);
     });
-
     app.get(/(?!\/restartserver|\/login|\/upload).*/, (req, res) => {
       res.redirect(307, `/login?url=${req.url}`);
     });
@@ -210,6 +228,35 @@ export default function runAdminServer(serverFalcorModel) {
     });
   }
 
+  app.post('/googlelogin', (req, res) => {
+    const token = req.body.data;
+    const endpoint = `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${encodeURIComponent(token)}`;
+
+    request.get(endpoint, (error, response, body) => {
+      if (error) {
+        res.status(500).send('google auth internal server error');
+      }
+
+      const content = JSON.parse(body);
+      // aud should contain our google client id
+      const aud = content.aud;
+      const email = content.email;
+
+      if (aud.trim() === googleClientID) {
+        // in dev mode, allow any valid email address
+        // in production, require email to be in whitelist (defined in utilities.js)
+        if (isDevelopment) {
+          res.sendStatus(200);
+        } else if (googleWhitelist.indexOf(email) !== -1) {
+          res.sendStatus(200);
+        } else {
+          res.status(401).send('unauthorized user');
+        }
+      } else {
+        res.status(401).send('invalid token');
+      }
+    });
+  });
 
   const port = isCI || !process.env.ADMIN_PORT ? 4000 : process.env.ADMIN_PORT;
   app.listen(port, err => {

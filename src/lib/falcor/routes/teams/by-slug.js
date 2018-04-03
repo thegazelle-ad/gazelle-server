@@ -1,9 +1,9 @@
 import falcor from 'falcor';
 import _ from 'lodash';
 
-import DbFunctions from 'lib/db';
+import * as db from 'lib/db';
+import { cleanupJsonGraphArg } from 'lib/falcor/falcor-utilities';
 
-const db = new DbFunctions;
 const $ref = falcor.Model.ref;
 
 export default [
@@ -28,6 +28,7 @@ export default [
     ),
     set: (jsonGraphArg) => (
       new Promise((resolve, reject) => {
+        jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
         const teamsBySlug = jsonGraphArg.teams.bySlug;
         db.updateTeams(teamsBySlug).then((flag) => {
           if (!flag) {
@@ -77,7 +78,7 @@ export default [
       new Promise((resolve) => {
         const teamObject = args[0];
         if (!(teamObject.hasOwnProperty('slug') && teamObject.hasOwnProperty('name'))) {
-          throw new Error('When creating an team you must provide both name and slug');
+          throw new Error('When creating a team you must provide both name and slug');
         }
         db.addTeam(teamObject).then((flag) => {
           if (!flag) {
