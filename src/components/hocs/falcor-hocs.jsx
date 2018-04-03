@@ -8,7 +8,7 @@ import CircularProgress from 'material-ui/CircularProgress';
 
 /**
  * This HOC simply passes through all props you provide it but in addition
- * it also sets the falcor prop to be the falcor model which you can call
+ * it also sets the falcorModel prop to be the falcor model which you can call
  * .get, .set, .call on etc. This is copy pasted of the PR I made to react-falcor
  * and should be replaced if that PR is merged in.
  */
