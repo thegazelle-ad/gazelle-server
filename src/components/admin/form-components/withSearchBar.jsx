@@ -20,6 +20,8 @@ export const withSearchableConcept = (
       };
 
       this.handleChange = this.handleChange.bind(this);
+      this.handleClick = this.handleClick.bind(this);
+
       this.debounceSuggestions = debounce(query => {
         if (!query.trim()) {
           this.setState({ suggestions: [] });
@@ -65,13 +67,20 @@ export const withSearchableConcept = (
       this.debounceSuggestions(query);
     }
 
+    handleClick(item) {
+      this.setState({ suggestions: [] });
+      this.props.handleClick(item);
+    }
+
     render() {
+      const passedProps = _.omit(this.props, 'handleClick');
       return (
         <WrappedField
           suggestions={this.state.suggestions}
           updateSuggestions={this.handleChange}
           category={category}
-          {...this.props}
+          handleClick={this.handleClick}
+          {...passedProps}
         />
       );
     }
@@ -83,6 +92,7 @@ export const withSearchableConcept = (
     }).isRequired,
     length: PropTypes.number,
     fields: PropTypes.arrayOf(PropTypes.string),
+    handleClick: PropTypes.func.isRequired,
     extraPathSets: PropTypes.arrayOf(
       PropTypes.arrayOf(
         (propValue, key, componentName, location, propFullName) => {

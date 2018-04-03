@@ -21,6 +21,7 @@ export class SearchBar extends React.Component {
   }
 
   handleClick(item) {
+    this.setState({ value: '' });
     this.props.handleClick(item);
   }
 
