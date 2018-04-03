@@ -44,7 +44,9 @@ export class SearchBar extends React.Component {
           onChange={this.handleChange}
         />
         <div>
-          <Menu style={!this.props.fullWidth && { width: 200 }}>
+          <Menu
+            style={this.props.fullWidth ? { width: '100%' } : { width: 200 }}
+          >
             {this.props.enableAdd &&
               this.props.suggestions.length === 0 &&
               this.state.value && (

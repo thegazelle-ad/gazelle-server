@@ -28,12 +28,14 @@ export const withSearchableConcept = (
 
         let pathSets = this.props.extraPathSets || [];
         pathSets = pathSets.reduce(
-          (arr, pathSet) =>
+          (arr, pathSet) => {
             arr.push(
               ['search', category, query, { length: this.props.length }].concat(
                 pathSet,
               ),
-            ),
+            );
+            return arr;
+          },
           [
             [
               'search',
@@ -44,6 +46,7 @@ export const withSearchableConcept = (
             ],
           ],
         );
+
         this.props.falcor.get(...pathSets).then(x => {
           if (!x) {
             this.setState({ suggestions: [] });
@@ -80,13 +83,31 @@ export const withSearchableConcept = (
     }).isRequired,
     length: PropTypes.number,
     fields: PropTypes.arrayOf(PropTypes.string),
-    extraPathSets: PropTypes.arrayOf(PropTypes.string),
+    extraPathSets: PropTypes.arrayOf(
+      PropTypes.arrayOf(
+        (propValue, key, componentName, location, propFullName) => {
+          if (!_.isString(propValue[key]) && !_.isNumber(propValue[key])) {
+            return new Error(
+              `Invalid prop ${propFullName} supplied to` +
+                ` ${componentName}. Validation failed.`,
+            );
+          }
+          if (propValue[0] === 'search') {
+            return new Error(
+              `Invalid prop ${propFullName} supplied to ${componentName}. ` +
+                'Just add the extension, do not add "search"... as this is already considered.',
+            );
+          }
+          return true;
+        },
+      ),
+    ),
   };
 
   Searchable.defaultProps = {
     length: 3,
     fields: [],
-    extraPathSets: [],
+    extraPathSets: [[]],
   };
 
   Searchable.displayName = `SearchableField(${getDisplayName(WrappedField)})`;

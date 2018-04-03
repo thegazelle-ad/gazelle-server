@@ -21,7 +21,7 @@ export const SearchableArticlesWithPubDate = withSearchableConcept(
     let date = item.published_at
       ? `Published: ${moment(item.published_at).format('MMM DD, YYYY')}`
       : (date = 'Unpublished');
-    return `${item.titel} - ${date}`;
+    return `${item.title} - ${date}`;
   },
   'articles',
 )(SearchBar);
