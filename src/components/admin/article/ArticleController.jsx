@@ -64,35 +64,31 @@ class ArticleController extends FalcorController {
     }, 500);
   }
 
-  save(jsonGraphEnvelope, processedAuthors, articleSlug, falcorData) {
+  async save(jsonGraphEnvelope, processedAuthors, articleSlug, falcorData) {
     // Update the values
     this.safeSetState({ saving: true });
-    const updatePromises = [this.falcorUpdate(jsonGraphEnvelope)];
+    await this.falcorUpdate(jsonGraphEnvelope);
 
     if (processedAuthors !== null) {
-      updatePromises.push(
-        this.falcorCall(
-          ['articles', 'bySlug', articleSlug, 'authors', 'updateAuthors'],
-          [falcorData.id, processedAuthors],
-          [['name'], ['slug']],
-        ),
+      this.falcorCall(
+        ['articles', 'bySlug', this.state.slug, 'authors', 'updateAuthors'],
+        [falcorData.id, processedAuthors],
+        [['name'], ['slug']],
       );
     }
 
-    Promise.all(updatePromises).then(() => {
-      // Reset state after save is done
-      this.safeSetState({
-        changed: false,
-        refresh: true,
-        authorsAdded: [],
-        authorsDeleted: {},
-        changesObject: { mainForm: false, authors: false },
-      });
-      // This is purely so the 'saved' message can be seen by the user for a second
-      setTimeout(() => {
-        this.safeSetState({ saving: false });
-      }, 1000);
+    // Reset state after save is done
+    this.safeSetState({
+      changed: false,
+      refresh: true,
+      authorsAdded: [],
+      authorsDeleted: {},
+      changesObject: { mainForm: false, authors: false },
     });
+    // This is purely so the 'saved' message can be seen by the user for a second
+    setTimeout(() => {
+      this.safeSetState({ saving: false });
+    }, 1000);
   }
 
   static getFalcorPathSets(params) {
