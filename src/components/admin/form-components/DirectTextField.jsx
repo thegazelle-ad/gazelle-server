@@ -18,4 +18,5 @@ export class DirectTextField extends React.Component {
 
 DirectTextField.propTypes = {
   onUpdate: PropTypes.func.isRequired,
+  ...TextField.propTypes,
 };

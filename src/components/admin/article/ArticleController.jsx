@@ -371,7 +371,7 @@ class ArticleController extends FalcorController {
             floatingLabelText="Slug"
             value={this.state.slug}
             onUpdate={this.updateSlug}
-            disabled={this.state.saving}
+            disabled={this.state.saving || article.published_at !== null}
             fullWidth
           />
           <ListSelector

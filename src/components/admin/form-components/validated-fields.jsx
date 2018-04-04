@@ -17,18 +17,18 @@ export const cannotNull = value => {
   return null;
 };
 
-export const shorterThanDbVarCar = value => {
+export const shorterThanDbVarChar = value => {
   if (value.length > 255) {
     return 'The database restricts this field to a maximum value of 255 characters.';
   }
   return null;
 };
 
-export const HttpsUrlField = withValidate(hasHttps, shorterThanDbVarCar)(
+export const HttpsUrlField = withValidate(hasHttps, shorterThanDbVarChar)(
   DirectTextField,
 );
 
 export const ShortRequiredTextField = withValidate(
   cannotNull,
-  shorterThanDbVarCar,
+  shorterThanDbVarChar,
 )(DirectTextField);
