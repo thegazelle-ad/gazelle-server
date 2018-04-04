@@ -70,7 +70,7 @@ class ArticleController extends FalcorController {
     await this.falcorUpdate(jsonGraphEnvelope);
 
     if (processedAuthors !== null) {
-      this.falcorCall(
+      await this.falcorCall(
         ['articles', 'bySlug', this.state.slug, 'authors', 'updateAuthors'],
         [falcorData.id, processedAuthors],
         [['name'], ['slug']],
