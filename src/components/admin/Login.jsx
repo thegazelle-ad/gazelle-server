@@ -4,19 +4,16 @@ import { browserHistory } from 'react-router';
 import { googleClientID, isCI } from 'lib/utilities';
 import _ from 'lodash';
 
+// HOCs
+import { withModals } from 'components/admin/hocs/modals/withModals';
+
 const styles = {
   button: {
     marginTop: 36,
   },
 };
 
-function onSignInFailure(response) {
-  if (response.error !== 'popup_closed_by_user') {
-    window.alert(`Google Login Failed.\n${response.error}`);
-  }
-}
-
-export default class Login extends BaseComponent {
+class Login extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -54,6 +51,12 @@ export default class Login extends BaseComponent {
     }, 100);
   }
 
+  onSignInFailure = async response => {
+    if (response.error !== 'popup_closed_by_user') {
+      await this.props.displayAlert(`Google Login Failed.\n${response.error}`);
+    }
+  };
+
   handleRedirect() {
     // Add additional query params to new url
     let url = this.props.location.query.url || '';
@@ -81,11 +84,13 @@ export default class Login extends BaseComponent {
     xhr.open('POST', '/googlelogin');
     xhr.setRequestHeader('Content-Type', 'application/json');
 
-    xhr.onreadystatechange = () => {
+    xhr.onreadystatechange = async () => {
       if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
         this.handleRedirect();
       } else if (xhr.readyState === XMLHttpRequest.DONE) {
-        alert(`Google Login Failed.\n${xhr.status}: ${xhr.statusText}`);
+        await this.props.displayAlert(
+          `Google Login Failed.\n${xhr.status}: ${xhr.statusText}`,
+        );
       }
     };
 
@@ -97,7 +102,7 @@ export default class Login extends BaseComponent {
       scope: 'profile email',
       longtitle: true,
       onsuccess: this.onSignInSuccess,
-      onfailure: onSignInFailure,
+      onfailure: this.onSignInFailure,
     });
   }
 
@@ -120,3 +125,6 @@ export default class Login extends BaseComponent {
     );
   }
 }
+
+const EnhancedLogin = withModals(Login);
+export { EnhancedLogin as Login };

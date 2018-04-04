@@ -1,7 +1,7 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import SearchBar from 'components/admin/SearchBar';
-import List from 'components/admin/List';
+import { ArticleList } from 'components/admin/ArticleList';
 import _ from 'lodash';
 import update from 'react-addons-update';
 import { has, formatDate } from 'lib/utilities';
@@ -9,6 +9,9 @@ import LoadingOverlay from './LoadingOverlay';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
+
+// HOCs
+import { withModals } from 'components/admin/hocs/modals/withModals';
 
 const ARTICLE_FIELDS = [
   'id',
@@ -41,7 +44,7 @@ const styles = {
   },
 };
 
-export default class IssueArticleController extends FalcorController {
+class IssueArticleController extends FalcorController {
   constructor(props) {
     super(props);
     this.saveChanges = this.saveChanges.bind(this);
@@ -281,7 +284,7 @@ export default class IssueArticleController extends FalcorController {
     }
   }
 
-  addArticle(mode, post) {
+  addArticle = async (mode, post) => {
     // The original article object and the key
     // in state in which the new object will be inserted
     let articles;
@@ -309,7 +312,7 @@ export default class IssueArticleController extends FalcorController {
       this.state.featuredArticles,
     );
     if (allArticles.some(article => article.slug === post.slug)) {
-      window.alert('That post is already in the issue');
+      await this.props.displayAlert('That post is already in the issue');
       return;
     }
     const newArticles = update(articles, { $push: [post] });
@@ -318,7 +321,7 @@ export default class IssueArticleController extends FalcorController {
     this.safeSetState({
       [key]: newArticles,
     });
-  }
+  };
 
   deleteArticle(mode, post) {
     // The original article object and the key
@@ -354,7 +357,7 @@ export default class IssueArticleController extends FalcorController {
     });
   }
 
-  saveChanges() {
+  saveChanges = async () => {
     const { issueNumber } = this.props.params;
     const { featuredArticles, picks, mainArticles } = this.state;
     const data = this.state.data.issues.byNumber[issueNumber];
@@ -367,7 +370,7 @@ export default class IssueArticleController extends FalcorController {
     const allSlugs = allArticles.map(article => article.slug);
     // check for uniqueness
     if (_.uniq(allSlugs).length !== allSlugs.length) {
-      window.alert(
+      await this.props.displayAlert(
         "You have duplicate articles, as this shouldn't be able" +
           ' to happen, please contact developers. And if you know all the actions' +
           ' you did previously to this and can reproduce them that would be of great help.' +
@@ -377,25 +380,25 @@ export default class IssueArticleController extends FalcorController {
       return;
     }
     if (allSlugs.length === 0) {
-      window.alert(
+      await this.props.displayAlert(
         "Sorry, because of some non-trivial issues we currently don't have" +
           " deleting every single article implemented. You hopefully shouldn't need this function" +
           ' either. Please re-add an article to be able to save',
       );
       return;
     }
+    let errorMessage;
     const allArticlesHaveCategories = allArticles.every(article => {
       if (!has.call(article, 'category') || !article.category) {
-        window.alert(
-          `${
-            article.title
-          } has no category and can therefore not be added to an issue yet`,
-        );
+        errorMessage = `${
+          article.title
+        } has no category and can therefore not be added to an issue yet`;
         return false;
       }
       return true;
     });
     if (!allArticlesHaveCategories) {
+      await this.props.displayAlert(errorMessage);
       return;
     }
     if (isPublished) {
@@ -419,11 +422,11 @@ export default class IssueArticleController extends FalcorController {
           if (article.is_interactive && field === 'html') {
             return true;
           }
+
           if (!article[field]) {
-            window.alert(
+            errorMessage =
               `${article.title} has no ${field}. Please correct this ` +
-                'before adding the article to an already published issue',
-            );
+              'before adding the article to an already published issue';
             return false;
           }
           return true;
@@ -432,14 +435,20 @@ export default class IssueArticleController extends FalcorController {
           return false;
         }
         if (!has.call(article, 'authors') || !article.authors[0]) {
-          window.alert(
+          errorMessage =
             `${article.title} has no authors assigned. Please correct this ` +
-              'before adding the article to an already published issue',
-          );
+            'before adding the article to an already published issue';
           return false;
         }
         if (/http(?!s)/.test(article.html)) {
           if (
+            // TODO: It is bothersome figuring out changing this to this.props.displayConfirm elegantly
+            // with the async in the loop, so I'm
+            // leaving it for later. One cool way to do it would be to upgrade the ModalProvider
+            // to queue modal requests instead of just failing them, and then we could maybe create a
+            // wrapper function around every that has an array of promises that gets pushed to or something like that
+            // and then when every finishes it awaits them all, or maybe there's an even better way to do it
+            // eslint-disable-next-line no-alert
             !window.confirm(
               `${article.title} has a non https link in it's body. ` +
                 ' please make sure this link is not an image/video etc. being loaded in. ' +
@@ -452,6 +461,7 @@ export default class IssueArticleController extends FalcorController {
         return true;
       });
       if (!articlesValid) {
+        await this.props.displayAlert(errorMessage);
         return;
       }
     }
@@ -463,7 +473,7 @@ export default class IssueArticleController extends FalcorController {
       // Set timeout so "saved" message shows for a while
       setTimeout(() => {
         this.safeSetState({ saving: false });
-        window.alert(
+        this.props.displayAlert(
           'Remember that categories have now been put in a random' +
             ' order as you changed the articles. Please go check that they are' +
             ' ordered as you wish.',
@@ -481,7 +491,7 @@ export default class IssueArticleController extends FalcorController {
       undefined,
       resetState,
     );
-  }
+  };
 
   makeUnique() {
     let { mainArticles, featuredArticles, picks } = this.state;
@@ -561,7 +571,7 @@ export default class IssueArticleController extends FalcorController {
         return (
           <div>
             {/* eslint-disable react/jsx-no-bind */}
-            <List
+            <ArticleList
               elements={articles}
               maxHeight="50vh"
               createElement={this.createArticleListElement.bind(
@@ -760,3 +770,6 @@ export default class IssueArticleController extends FalcorController {
     );
   }
 }
+
+const EnhancedIssueArticleController = withModals(IssueArticleController);
+export { EnhancedIssueArticleController as IssueArticleController };

@@ -16,6 +16,7 @@ module.exports = {
       },
     },
   },
+  parser: 'babel-eslint',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -39,7 +40,6 @@ module.exports = {
   },
   rules: {
     // We want to re-enable no-alert when we have something to replace it with
-    'no-alert': 'off',
     'no-use-before-define': 'off',
     'valid-jsdoc': [
       'error',

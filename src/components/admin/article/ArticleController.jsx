@@ -7,7 +7,7 @@ import { debounce } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 
 // Custom Components
-import SearchableSelector from 'components/admin/form-components/SearchableSelector';
+import { SearchableSelector } from 'components/admin/form-components/SearchableSelector';
 import LoadingOverlay from 'components/admin/LoadingOverlay';
 import SaveButton from 'components/admin/article/components/SaveButton';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton';
@@ -24,7 +24,10 @@ import Dialog from 'material-ui/Dialog';
 import CircularProgress from 'material-ui/CircularProgress';
 import Divider from 'material-ui/Divider';
 
-export default class ArticleController extends FalcorController {
+// HOCs
+import { withModals } from 'components/admin/hocs/modals/withModals';
+
+class ArticleController extends FalcorController {
   constructor(props) {
     super(props);
     this.save = this.save.bind(this);
@@ -186,7 +189,7 @@ export default class ArticleController extends FalcorController {
     browserHistory.push(location);
   }
 
-  handleSaveChanges() {
+  handleSaveChanges = async () => {
     const articleSlug = this.props.params.slug;
     const falcorData = this.state.data.articles.bySlug[articleSlug];
 
@@ -200,7 +203,7 @@ export default class ArticleController extends FalcorController {
     let processedAuthors = this.state.authors.map(author => author.id);
     // Check that all authors are unique
     if (_.uniq(processedAuthors).length !== processedAuthors.length) {
-      window.alert(
+      this.props.displayAlert(
         "You have duplicate authors, as this shouldn't be able" +
           ' to happen, please contact developers. And if you know all the actions' +
           ' you did previously to this and can reproduce them that would be of' +
@@ -209,7 +212,7 @@ export default class ArticleController extends FalcorController {
       return;
     }
     if (processedAuthors.length === 0) {
-      window.alert(
+      this.props.displayAlert(
         "Sorry, because of some non-trivial issues we currently don't have" +
           ' deleting every single author implemented.' +
           " You hopefully shouldn't need this function either." +
@@ -220,7 +223,7 @@ export default class ArticleController extends FalcorController {
 
     // Check the special case of someone trying to reassign a category as none
     if (this.state.category === 'none' && falcorData.category !== 'none') {
-      window.alert(
+      this.props.displayAlert(
         'Save cancelled, you cannot reset a category to none.' +
           ' If you wish to have this feature added, speak to the developers',
       );
@@ -231,13 +234,12 @@ export default class ArticleController extends FalcorController {
       this.state.imageUrl.length > 4 &&
       this.state.imageUrl.substr(0, 5) !== 'https'
     ) {
-      if (
-        !window.confirm(
-          'You are saving an image without using https. ' +
-            'This can be correct in a few cases but is mostly not. Are you sure ' +
-            ' you wish to continue saving?',
-        )
-      ) {
+      const shouldContinue = await this.props.displayConfirm(
+        'You are saving an image without using https. ' +
+          'This can be correct in a few cases but is mostly not. Are you sure ' +
+          'that you wish to continue saving?',
+      );
+      if (!shouldContinue) {
         return;
       }
     }
@@ -285,7 +287,7 @@ export default class ArticleController extends FalcorController {
     }
 
     this.save(jsonGraphEnvelope, processedAuthors, articleSlug, falcorData);
-  }
+  };
 
   isFormFieldChanged(userInput, falcorData) {
     return userInput !== falcorData && !(!userInput && !falcorData);
@@ -424,3 +426,6 @@ export default class ArticleController extends FalcorController {
     );
   }
 }
+
+const EnhancedArticleController = withModals(ArticleController);
+export { EnhancedArticleController as ArticleController };

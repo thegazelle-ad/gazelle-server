@@ -8,6 +8,9 @@ import { has } from 'lib/utilities';
 import CircularProgress from 'material-ui/CircularProgress';
 import RaisedButton from 'material-ui/RaisedButton';
 
+// HOCs
+import { withModals } from 'components/admin/hocs/modals/withModals';
+
 const styles = {
   paper: {
     height: '100%',
@@ -41,7 +44,7 @@ const ARTICLE_FIELDS = [
 ];
 const AUTHOR_FIELDS = ['id', 'name', 'slug'];
 
-export default class MainIssueController extends FalcorController {
+class MainIssueController extends FalcorController {
   constructor(props) {
     super(props);
     this.publishIssue = this.publishIssue.bind(this);
@@ -124,9 +127,9 @@ export default class MainIssueController extends FalcorController {
     ];
     this.props.model
       .get(...falcorPathSets)
-      .then(x => {
+      .then(async x => {
         if (!x) {
-          window.alert(
+          this.props.displayAlert(
             'There was an error getting the issue data from the database ' +
               'please contact the developers',
           );
@@ -137,13 +140,15 @@ export default class MainIssueController extends FalcorController {
           const issue = x.json.issues.byNumber[issueNumber];
           const fields = ARTICLE_FIELDS;
           if (!issue.featured) {
-            window.alert('You need to add a featured article');
+            this.props.displayAlert('You need to add a featured article');
             return;
           }
           let allArticles = [issue.featured];
           allArticles = allArticles.concat(_.map(issue.picks, y => y));
           if (allArticles.length !== 3) {
-            window.alert("you must have exactly 2 editor's picks in an issue");
+            this.props.displayAlert(
+              "you must have exactly 2 editor's picks in an issue",
+            );
             return;
           }
           _.forEach(issue.categories, category => {
@@ -151,18 +156,17 @@ export default class MainIssueController extends FalcorController {
             allArticles.push(...articles);
           });
           if (issue.published_at) {
-            if (
-              !window.confirm(
-                'This article is already published, do you want to republish it?',
-              )
-            ) {
+            const shouldProcede = await this.props.displayConfirm(
+              'This issue is already published, do you still wish to proceed changing it?',
+            );
+            if (!shouldProcede) {
               return;
             }
           }
           const articlesValid = allArticles.every(article => {
             const fieldsValid = fields.every(field => {
               if (!article[field]) {
-                window.alert(
+                this.props.displayAlert(
                   `${article.title} has no ${field}. Please correct this`,
                 );
                 return false;
@@ -173,13 +177,16 @@ export default class MainIssueController extends FalcorController {
               return false;
             }
             if (!has.call(article, 'authors') || !article.authors[0]) {
-              window.alert(
+              this.props.displayAlert(
                 `${article.title} has no authors. Please correct this`,
               );
               return false;
             }
             if (/http(?!s)/.test(article.html)) {
               if (
+                // TODO: Change this to this.props.displayAlert, it's just a bit finnicky
+                // in the .every construct as described in IssueArticleController in a similar comment
+                // eslint-disable-next-line no-alert
                 !window.confirm(
                   `${article.title} has a non https link in it's body. ` +
                     'please make sure this link is not an image/video etc. being loaded in. ' +
@@ -193,6 +200,9 @@ export default class MainIssueController extends FalcorController {
             if (absoluteUrlRegex.test(article.html)) {
               const url = article.html.match(absoluteUrlRegex)[1];
               if (
+                // TODO: Change this to this.props.displayAlert, it's just a bit finnicky
+                // in the .every construct as described in IssueArticleController in a similar comment
+                // eslint-disable-next-line no-alert
                 !window.confirm(
                   `The URL ${url} in the article ${
                     article.title
@@ -228,7 +238,7 @@ export default class MainIssueController extends FalcorController {
       })
       .catch(e => {
         console.error(e); // eslint-disable-line no-console
-        window.alert(
+        this.props.displayAlert(
           'There was an error getting the issue data from the database ' +
             'please contact the developers. The error message is in the developers console',
         );
@@ -296,3 +306,6 @@ export default class MainIssueController extends FalcorController {
     );
   }
 }
+
+const EnhancedMainIssueController = withModals(MainIssueController);
+export { EnhancedMainIssueController as MainIssueController };

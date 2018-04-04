@@ -1,18 +1,18 @@
 /* eslint-disable react/jsx-filename-extension */
 import { Route, IndexRedirect } from 'react-router';
 import React from 'react';
-import AppController from 'components/admin/AppController';
+import { AppController } from 'components/admin/AppController';
 import ArticleListController from 'components/admin/ArticleListController';
-import ArticleController from 'components/admin/article/ArticleController';
-import StaffListController from 'components/admin/StaffListController';
-import StaffController from 'components/admin/StaffController';
-import IssueListController from 'components/admin/IssueListController';
-import MainIssueController from 'components/admin/MainIssueController';
-import IssueArticleController from 'components/admin/IssueArticleController';
-import IssueCategoryController from 'components/admin/IssueCategoryController';
+import { ArticleController } from 'components/admin/article/ArticleController';
+import { StaffListController } from 'components/admin/StaffListController';
+import { StaffController } from 'components/admin/StaffController';
+import { IssueListController } from 'components/admin/IssueListController';
+import { MainIssueController } from 'components/admin/MainIssueController';
+import { IssueArticleController } from 'components/admin/IssueArticleController';
+import { IssueCategoryController } from 'components/admin/IssueCategoryController';
 import NotFound from 'components/admin/NotFound';
-import Login from 'components/admin/Login';
-import ImageController from 'components/admin/ImageController';
+import { Login } from 'components/admin/Login';
+import { ImageController } from 'components/admin/ImageController';
 import ImagePreviewList from 'components/admin/ImagePreviewList';
 import ImageArchive from 'components/admin/ImageArchive';
 import Readme from 'components/admin/Readme';

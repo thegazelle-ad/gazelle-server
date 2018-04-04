@@ -17,17 +17,20 @@ export function getLoggedInState(nightmare, path) {
   );
 }
 
+export function checkValueOfAlert(expectedAlert) {
+  const alertTextDiv = document.getElementById('alert-modal-text');
+  return alertTextDiv && alertTextDiv.innerHTML === expectedAlert;
+}
+
 export function restartServer(nightmare) {
   const headerSelector = '#app-header';
   const headerMenuButtonSelector = `${headerSelector}-menu-button`;
   const restartServerButtonSelector = `${headerSelector}-restart-button`;
   const restartServerPasswordInputSelector = '#restart-server-password-input';
+  const alertModalOkButtonSelector = '#alert-modal-ok-button';
 
   return (
     getLoggedInState(nightmare, '')
-      // We inject a script that sets window.THE_GAZELLE.serverRestartedSuccessfully = true when
-      // the correct `window.alert` call has been made
-      .inject('js', `${__dirname}/assets/checkServerRestarted.js`)
       .wait(headerMenuButtonSelector)
       // mouseup for Material UI quirk
       .mouseup(headerMenuButtonSelector)
@@ -40,7 +43,10 @@ export function restartServer(nightmare) {
         process.env.CIRCLECI_ADMIN_PASSWORD,
       )
       .type(restartServerPasswordInputSelector, ENTER_UNICODE)
-      .wait(() => window.THE_GAZELLE.serverRestartedSuccessfully)
+      .wait(checkValueOfAlert, 'Server is being restarted now')
+      .click(alertModalOkButtonSelector)
+      .wait(checkValueOfAlert, 'Server restarted successfully')
+      .click(alertModalOkButtonSelector)
       .end()
   );
 }

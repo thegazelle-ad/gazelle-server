@@ -18,7 +18,7 @@ const styles = {
   },
 };
 
-export default class ArticleList extends BaseComponent {
+export class ArticleList extends BaseComponent {
   render() {
     if (this.props.elements) {
       const { elements } = this.props;
