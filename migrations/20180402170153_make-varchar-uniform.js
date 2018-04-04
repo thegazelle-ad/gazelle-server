@@ -53,7 +53,7 @@ exports.up = async knex => {
       .alter();
     table.string('job_title').alter();
     table.string('biography', 1000).alter();
-    table.text('image_url').alter();
+    table.string('image_url').alter();
   });
   await knex.schema.alterTable('tags', table => {
     table
