@@ -25,7 +25,7 @@ export default class UnpublishButton extends React.Component {
         },
       },
     };
-    this.props.save(jsonGraphEnvelope);
+    this.props.save(jsonGraphEnvelope, null);
   }
 
   render() {
