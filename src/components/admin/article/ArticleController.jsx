@@ -364,7 +364,11 @@ class ArticleController extends FalcorController {
             disabled={this.state.saving}
           />
           <ShortRequiredTextField
-            floatingLabelText="Slug"
+            floatingLabelText={`Slug${
+              !article.published_at
+                ? ''
+                : ' - You cannot edit the slug of a published article. Unpublish this article to edit the slug.'
+            }`}
             value={this.state.slug}
             onUpdate={this.updateSlug}
             disabled={this.state.saving || article.published_at !== null}
