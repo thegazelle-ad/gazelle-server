@@ -101,6 +101,7 @@
     "falcor-router": "^0.8.1",
     "imagemin": "^5.3.1",
     "imagemin-jpeg-recompress": "^5.1.0",
+    "immutable": "^3.8.2",
     "knex": "^0.14.4",
     "lodash": "^4.13.1",
     "material-ui": "^0.17.1",
@@ -121,6 +122,8 @@
     "regenerator-runtime": "^0.11.1",
     "request": "^2.85.0",
     "s3": "^4.4.0",
+    "slate": "^0.33.4",
+    "slate-react": "^0.12.4",
     "source-map-support": "^0.5.0",
     "stable": "^0.1.5"
   }
