@@ -17,6 +17,37 @@ describe('cleanupFalcorKeys', () => {
     expect(cleanupFalcorKeys(test)).toEqual(expected);
   });
 
+  it('removes otherwise empty results', () => {
+    const test = {
+      a: {
+        b: 3,
+        c: {
+          $__path: ['a', 'b', 'c'],
+          0: {
+            a: 3,
+            $__path: ['a', 'b', 'c'],
+          },
+          1: {
+            $__path: ['a', 'b', 'c'],
+          },
+        },
+        $__path: ['a', 'b', 'c'],
+      },
+      $__path: ['whatever', 'asd'],
+    };
+    const expected = {
+      a: {
+        b: 3,
+        c: {
+          0: {
+            a: 3,
+          },
+        },
+      },
+    };
+    expect(cleanupFalcorKeys(test)).toEqual(expected);
+  });
+
   it('handles null values', () => {
     const test = {
       a: {
