@@ -415,6 +415,25 @@ export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
   return update(oldData, dataUpdates);
 }
 
+function isEmptyObject(obj) {
+  // We check whether there are any keys that actually recursively
+  // store a value, if there is one we return false, otherwise true
+  return !falcor.keys(obj).some(key => {
+    if (key === 'isEmptyObjectSeen') {
+      return false;
+    }
+    const value = obj[key];
+    if (value !== null && typeof value === 'object') {
+      // It is an object so we recurse
+      value.isEmptyObjectSeen = true; // eslint-disable-line no-param-reassign
+      const isEmpty = isEmptyObject(value);
+      delete value.isEmptyObjectSeen; // eslint-disable-line no-param-reassign
+      return !isEmpty;
+    }
+    return value !== undefined;
+  });
+}
+
 /**
  * We want to phase this function out as it's only here for compatibility
  * with our legacy code, so please don't use it again, try using the falcor HOCs
@@ -435,14 +454,16 @@ export function cleanupFalcorKeys(obj) {
   obj.cleanupFalcorKeysMetaSeen = true; // eslint-disable-line no-param-reassign
   falcor.keys(obj).forEach(key => {
     if (key === 'cleanupFalcorKeysMetaSeen') return;
-    // Check if it's an empty object and if then don't add it
     const value = obj[key];
-    if (
-      value !== null &&
-      typeof value === 'object' &&
-      falcor.keys(value).length === 0
-    ) {
-      return;
+    if (value !== null && typeof value === 'object') {
+      // Check if it's an empty object and if then don't add it
+      if (falcor.keys(value).length === 0) {
+        return;
+      }
+      // Check recursively if all the keys in the object are undefined, then don't add it
+      if (isEmptyObject(value)) {
+        return;
+      }
     }
     ret[key] = cleanupFalcorKeys(obj[key]);
   });
