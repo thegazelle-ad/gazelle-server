@@ -476,3 +476,14 @@ export function cleanupFalcorKeys(obj) {
   delete obj.cleanupFalcorKeysMetaSeen; // eslint-disable-line no-param-reassign
   return ret;
 }
+
+export function parseFalcorPseudoArray(obj) {
+  let expectedKey = 0;
+  return falcor.keys(obj).map(key => {
+    if (key !== expectedKey) {
+      throw new Error("The pseudo array doesn't have consecutive keys from 0");
+    }
+    expectedKey += 1;
+    return obj[key];
+  });
+}
