@@ -477,13 +477,5 @@ export function cleanupFalcorKeys(obj) {
   return ret;
 }
 
-export function parseFalcorPseudoArray(obj) {
-  let expectedKey = 0;
-  return falcor.keys(obj).map(key => {
-    if (key !== expectedKey) {
-      throw new Error("The pseudo array doesn't have consecutive keys from 0");
-    }
-    expectedKey += 1;
-    return obj[key];
-  });
-}
+export const parseFalcorPseudoArray = obj =>
+  _.toArray(_.pick(obj, falcor.keys(obj)));
