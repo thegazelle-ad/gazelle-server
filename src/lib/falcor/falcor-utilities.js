@@ -416,22 +416,27 @@ export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
 }
 
 function isEmptyObject(obj) {
+  if ('isEmptyObjectSeen' in obj) {
+    // We have already been here so it must be empty as we didn't
+    // find any values yet (as in that case it would have stopped recursing)
+    return true;
+  }
   // We check whether there are any keys that actually recursively
   // store a value, if there is one we return false, otherwise true
-  return !falcor.keys(obj).some(key => {
-    if (key === 'isEmptyObjectSeen') {
-      return false;
-    }
+  obj.isEmptyObjectSeen = true; // eslint-disable-line no-param-reassign
+  const recursivelyHasValue = falcor.keys(obj).some(key => {
+    // This is the extra key we added so don't care about that one
+    if (key === 'isEmptyObjectSeen') return false;
     const value = obj[key];
     if (value !== null && typeof value === 'object') {
       // It is an object so we recurse
-      value.isEmptyObjectSeen = true; // eslint-disable-line no-param-reassign
       const isEmpty = isEmptyObject(value);
-      delete value.isEmptyObjectSeen; // eslint-disable-line no-param-reassign
       return !isEmpty;
     }
     return value !== undefined;
   });
+  delete obj.isEmptyObjectSeen; // eslint-disable-line no-param-reassign
+  return !recursivelyHasValue;
 }
 
 /**
@@ -469,25 +474,5 @@ export function cleanupFalcorKeys(obj) {
   });
   // Cleanup to not have mutated the object
   delete obj.cleanupFalcorKeysMetaSeen; // eslint-disable-line no-param-reassign
-  return ret;
-}
-
-/**
- * We want to phase this function out as it's only here for compatibility
- * with our legacy code, so please don't use it again, try using the falcor HOCs
- * and just working with the value that Falcor gives you
- * @param {Object} jsonGraphArg - "dirty" falcor JSON graph argument
- * @returns {Object} cleaned up version of falcor JSON graph argument
- */
-export function cleanupJsonGraphArg(jsonGraphArg) {
-  if (has.call(jsonGraphArg, '$type')) {
-    // Then this is the final part we can substitute
-    return jsonGraphArg.value;
-  }
-  // Else we recurse
-  const ret = {};
-  Object.keys(jsonGraphArg).forEach(key => {
-    ret[key] = cleanupJsonGraphArg(jsonGraphArg[key]);
-  });
   return ret;
 }
