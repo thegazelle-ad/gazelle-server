@@ -415,14 +415,35 @@ export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
   return update(oldData, dataUpdates);
 }
 
+/**
+ * We want to phase this function out as it's only here for compatibility
+ * with our legacy code, so please don't use it again, try using the falcor HOCs
+ * and just working with the value that Falcor gives you
+ * @param {Object} obj - "dirty" falcor return value
+ * @returns {Object} cleaned up version of falcor return value
+ */
 export function cleanupFalcorKeys(obj) {
-  if (obj === null || typeof obj !== 'object' || obj.cleanupFalcorKeysMetaSeen)
+  if (
+    obj === null ||
+    typeof obj !== 'object' ||
+    obj.cleanupFalcorKeysMetaSeen
+  ) {
     return obj;
+  }
   const ret = {};
   // In order to handle circular objects, the key name is convoluted to make sure it's unique
   obj.cleanupFalcorKeysMetaSeen = true; // eslint-disable-line no-param-reassign
   falcor.keys(obj).forEach(key => {
     if (key === 'cleanupFalcorKeysMetaSeen') return;
+    // Check if it's an empty object and if then don't add it
+    const value = obj[key];
+    if (
+      value !== null &&
+      typeof value === 'object' &&
+      falcor.keys(value).length === 0
+    ) {
+      return;
+    }
     ret[key] = cleanupFalcorKeys(obj[key]);
   });
   // Cleanup to not have mutated the object
@@ -430,6 +451,13 @@ export function cleanupFalcorKeys(obj) {
   return ret;
 }
 
+/**
+ * We want to phase this function out as it's only here for compatibility
+ * with our legacy code, so please don't use it again, try using the falcor HOCs
+ * and just working with the value that Falcor gives you
+ * @param {Object} jsonGraphArg - "dirty" falcor JSON graph argument
+ * @returns {Object} cleaned up version of falcor JSON graph argument
+ */
 export function cleanupJsonGraphArg(jsonGraphArg) {
   if (has.call(jsonGraphArg, '$type')) {
     // Then this is the final part we can substitute
