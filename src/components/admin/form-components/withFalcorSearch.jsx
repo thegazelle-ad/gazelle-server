@@ -13,8 +13,15 @@ export const withFalcorSearch = (fields, formatter, mode) => WrappedField => {
     constructor(props) {
       super(props);
       this.getSuggestions = this.getSuggestions.bind(this);
+      this.debounceSuggestions = this.debounceSuggestions.bind(this)();
+    }
 
-      this.debounceSuggestions = debounce(query => {
+    getSuggestions(query) {
+      return Promise.resolve(this.debounceSuggestions(query));
+    }
+
+    debounceSuggestions() {
+      return debounce(query => {
         if (!query.trim()) {
           return Promise.resolve({});
         }
@@ -57,10 +64,6 @@ export const withFalcorSearch = (fields, formatter, mode) => WrappedField => {
           });
         });
       }, debounceTime);
-    }
-
-    getSuggestions(query) {
-      return Promise.resolve(this.debounceSuggestions(query));
     }
 
     render() {

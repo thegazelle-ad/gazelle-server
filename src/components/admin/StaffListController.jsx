@@ -2,7 +2,7 @@ import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import { slugifyStaff } from 'lib/utilities';
 import { browserHistory } from 'react-router';
-import { SearchableAuthors } from 'components/admin/form-components/searchable-categories';
+import { SearchableAuthors } from 'components/admin/form-components/searchables';
 import { updateFieldValue } from './lib/form-field-updaters';
 
 // material-ui

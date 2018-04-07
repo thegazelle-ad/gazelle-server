@@ -1,6 +1,6 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
-import { SearchableArticlesWithPubDate } from 'components/admin/form-components/searchable-categories';
+import { SearchableArticlesWithPubDate } from 'components/admin/form-components/searchables';
 import { ArticleList } from 'components/admin/ArticleList';
 import _ from 'lodash';
 import update from 'react-addons-update';

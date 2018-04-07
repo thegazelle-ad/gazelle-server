@@ -4,7 +4,7 @@ import update from 'react-addons-update';
 import _ from 'lodash';
 
 import { capFirstLetter } from 'lib/utilities';
-import { SearchableAuthors } from 'components/admin/form-components/searchable-categories';
+import { SearchableAuthors } from 'components/admin/form-components/searchables';
 
 // material-ui
 import Chip from 'material-ui/Chip';
@@ -52,7 +52,7 @@ class SearchableSelector extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (!this.props.disabled && this.props.value !== prevProps.value) {
+    if (!this.props.disabled && this.props.elements !== prevProps.elements) {
       this.props.onChange();
     }
   }
@@ -63,7 +63,7 @@ class SearchableSelector extends React.Component {
 
     const { id, title, slug } = object;
     const alreadyAdded =
-      this.props.value.find(
+      this.props.elements.find(
         baseObject =>
           !('slug' in baseObject)
             ? this.props.slugify(baseObject.name) === slug
@@ -76,7 +76,7 @@ class SearchableSelector extends React.Component {
       );
       return;
     }
-    const newObjects = update(this.props.value, {
+    const newObjects = update(this.props.elements, {
       $push: [{ id, name: title, slug }],
     });
     this.props.onUpdate(newObjects);
@@ -88,7 +88,7 @@ class SearchableSelector extends React.Component {
 
     const objectSlug = !slug ? this.props.slugify(title) : slug;
 
-    const index = this.props.value.findIndex(
+    const index = this.props.elements.findIndex(
       baseObject =>
         !('slug' in baseObject)
           ? this.props.slugify(baseObject.name) === objectSlug
@@ -100,7 +100,7 @@ class SearchableSelector extends React.Component {
           "This shouldn't happen, please let the developers know that it did.",
       );
     }
-    const newObjects = update(this.props.value, { $splice: [[index, 1]] });
+    const newObjects = update(this.props.elements, { $splice: [[index, 1]] });
     this.props.onUpdate(newObjects);
   }
 
@@ -113,8 +113,8 @@ class SearchableSelector extends React.Component {
     };
 
     const objectChips =
-      this.props.value.length > 0
-        ? _.map(this.props.value, object => (
+      this.props.elements.length > 0
+        ? _.map(this.props.elements, object => (
             <ObjectChip
               key={object.id !== null ? object.id : object.name}
               id={object.id}
@@ -152,7 +152,7 @@ class SearchableSelector extends React.Component {
 }
 
 SearchableSelector.propTypes = {
-  value: PropTypes.arrayOf(
+  elements: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number,
       name: PropTypes.string.isRequired,

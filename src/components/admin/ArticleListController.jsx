@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, browserHistory } from 'react-router';
 import FalcorController from 'lib/falcor/FalcorController';
-import { SearchableArticlesWithPubDate } from 'components/admin/form-components/searchable-categories';
+import { SearchableArticlesWithPubDate } from 'components/admin/form-components/searchables';
 import { ArticleList } from 'components/admin/ArticleList';
 import moment from 'moment';
 
