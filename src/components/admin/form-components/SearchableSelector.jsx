@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import update from 'react-addons-update';
 import _ from 'lodash';
 
-import { capFirstLetter, slugify } from 'lib/utilities';
+import { capFirstLetter } from 'lib/utilities';
 import { SearchableAuthors } from 'components/admin/form-components/searchable-categories';
 
 // material-ui
@@ -66,13 +66,13 @@ class SearchableSelector extends React.Component {
       this.props.value.find(
         baseObject =>
           !('slug' in baseObject)
-            ? slugify(this.props.category, baseObject.name) === slug
+            ? this.props.slugify(baseObject.name) === slug
             : baseObject.slug === slug,
       ) !== undefined;
 
     if (alreadyAdded) {
       await this.props.displayAlert(
-        `The ${this.props.category} ${title} has already been added.`,
+        `The ${this.props.mode} ${title} has already been added.`,
       );
       return;
     }
@@ -86,12 +86,12 @@ class SearchableSelector extends React.Component {
     // disabled this if saving
     if (this.props.disabled) return;
 
-    const objectSlug = !slug ? slugify(this.props.category, title) : slug;
+    const objectSlug = !slug ? this.props.slugify(title) : slug;
 
     const index = this.props.value.findIndex(
       baseObject =>
         !('slug' in baseObject)
-          ? slugify(this.props.category, baseObject.name) === objectSlug
+          ? this.props.slugify(baseObject.name) === objectSlug
           : baseObject.slug === objectSlug,
     );
     if (index === -1) {
@@ -129,7 +129,7 @@ class SearchableSelector extends React.Component {
 
     const noObjectsMessage = (
       <span style={{ color: 'rgba(0, 0, 0, 0.3)' }}>
-        No {this.props.category} are currently assigned to this article
+        No {this.props.mode} are currently assigned to this article
       </span>
     );
 
@@ -137,13 +137,14 @@ class SearchableSelector extends React.Component {
       <div>
         <br />
         <p style={{ marginTop: 0, marginBottom: 10 }}>
-          {capFirstLetter(this.props.category)}
+          {capFirstLetter(this.props.mode)}
         </p>
         <div style={styles.wrapper}>{objectChips || noObjectsMessage}</div>
         <SearchableAuthors
           length={3}
           handleClick={this.handleClickAdd}
-          enableAdd
+          enableAdd={this.props.enableAdd}
+          slugify={this.props.slugify}
         />
       </div>
     );
@@ -160,15 +161,18 @@ SearchableSelector.propTypes = {
   onChange: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,
   displayAlert: PropTypes.func.isRequired,
+  slugify: PropTypes.func.isRequired,
   // It isn't a typo and they are required in SearchBar so no need for defaults
   /* eslint-disable react/no-typos, react/require-default-props */
-  category: React.PropTypes.oneOf(['staff', 'articles']).isRequired,
+  mode: React.PropTypes.oneOf(['staff', 'articles']).isRequired,
   /* eslint-enable react/no-typos, react/require-default-props */
   disabled: PropTypes.bool,
+  enableAdd: PropTypes.bool,
 };
 
 SearchableSelector.defaultProps = {
   disabled: false,
+  enableAdd: false,
 };
 
 const EnhancedSearchableSelector = withModals(SearchableSelector);

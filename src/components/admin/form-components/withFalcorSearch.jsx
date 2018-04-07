@@ -35,7 +35,7 @@ export const withFalcorSearch = (fields, formatter, mode) => WrappedField => {
               mode,
               query,
               { length: this.props.length },
-              _.uniq([...fields, ...this.props.fields, 'id']),
+              _.uniq([...fields, ...this.props.fields, 'id', 'slug']),
             ],
           ],
         );
@@ -110,6 +110,6 @@ export const withFalcorSearch = (fields, formatter, mode) => WrappedField => {
     extraPathSets: [[]],
   };
 
-  Searchable.displayName = `SearchableConcept(${getDisplayName(WrappedField)})`;
+  Searchable.displayName = `FalcorSearch(${getDisplayName(WrappedField)})`;
   return withFalcor(Searchable);
 };

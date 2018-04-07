@@ -112,15 +112,6 @@ export function slugifyStaff(staffSlug) {
 }
 /* eslint-enable */
 
-export function slugify(category, item) {
-  if (category === 'articles') return slugifyPost(item);
-  if (category === 'staff') return slugifyStaff(item);
-  throw new Error(
-    `The category ${category} is not valid ` +
-      `and so the item ${JSON.stringify(item)} cannot be slugified.`,
-  );
-}
-
 export function formatDate(date) {
   const yyyy = date.getFullYear();
   const mm = date.getMonth() + 1; // getMonth() is zero-based

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
-import { capFirstLetter, slugify } from 'lib/utilities';
+import { capFirstLetter } from 'lib/utilities';
 
 import TextField from 'material-ui/TextField';
 import Menu from 'material-ui/Menu';
@@ -31,9 +31,6 @@ export class SearchBar extends React.Component {
   render() {
     const searchBarClass = 'search-bar';
     const searchBarResultClass = 'search-bar-result';
-    const slug = this.props.enableAdd
-      ? slugify(this.props.mode, this.state.value)
-      : '';
     return (
       <div className={`${searchBarClass} ${searchBarClass}-${this.props.mode}`}>
         <TextField
@@ -54,7 +51,7 @@ export class SearchBar extends React.Component {
                   className={`${searchBarResultClass} search-bar-${
                     this.props.mode
                   }`}
-                  key={slug}
+                  key={this.props.slugify(this.state.value.trim())}
                 >
                   {/* eslint-disable react/jsx-no-bind */}
                   <MenuItem
@@ -62,7 +59,7 @@ export class SearchBar extends React.Component {
                     primaryText={this.state.value.trim()}
                     onClick={this.handleClick.bind(this, {
                       title: this.state.value.trim(),
-                      slug,
+                      slug: this.props.slugify(this.state.value.trim()),
                       id: null,
                     })}
                     disabled={this.props.disabled}
@@ -101,10 +98,20 @@ SearchBar.propTypes = {
   fullWidth: PropTypes.bool,
   disabled: PropTypes.bool,
   enableAdd: PropTypes.bool,
+  slugify(props, propName) {
+    if (
+      props.enableAdd === true &&
+      (props[propName] === undefined || typeof props[propName] !== 'function')
+    ) {
+      return new Error('Please provide a slugify function!');
+    }
+    return null;
+  },
 };
 
 SearchBar.defaultProps = {
   fullWidth: false,
   disabled: false,
   enableAdd: false,
+  slugify: () => {},
 };
