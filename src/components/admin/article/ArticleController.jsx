@@ -308,7 +308,11 @@ class ArticleController extends FalcorController {
     };
 
     if (this.state.ready) {
-      if (!this.state.data || !this.state.data.articles.bySlug) {
+      if (
+        !this.state.data ||
+        !this.state.data.articles ||
+        !this.state.data.articles.bySlug
+      ) {
         return (
           <div>
             <p>Error: No articles match this slug</p>

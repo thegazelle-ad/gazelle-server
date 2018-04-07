@@ -4,7 +4,6 @@ import { slugifyStaff } from 'lib/utilities';
 import { browserHistory } from 'react-router';
 import SearchBar from './SearchBar';
 import { updateFieldValue } from './lib/form-field-updaters';
-import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -90,8 +89,7 @@ class StaffListController extends FalcorController {
 
     // Check if the slug is already taken
     this.props.model.get(['staff', 'bySlug', slug, 'slug']).then(x => {
-      if (x) {
-        x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
+      if (x.json.staff.bySlug[slug].slug !== undefined) {
         // Something was found, which means the slug is taken
         this.props.displayAlert(
           'This slug is already taken, please change to another one',

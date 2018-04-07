@@ -117,7 +117,11 @@ export default class ArticleListController extends FalcorController {
   render() {
     if (this.state.ready) {
       // If trying to access inacessible page, redirect to page 1
-      if (!this.state.data.articles.byPage) {
+      if (
+        !this.state.data ||
+        !this.state.data.articles ||
+        !this.state.data.articles.byPage
+      ) {
         return (
           <p>
             You have tried accessing a page that doesn{"'"}t exist. Please press
