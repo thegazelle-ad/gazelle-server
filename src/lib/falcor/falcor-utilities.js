@@ -477,5 +477,14 @@ export function cleanupFalcorKeys(obj) {
   return ret;
 }
 
+/**
+ * Takes a Falcor psuedo array and outputs an array containing the values of the
+ * keys are filtering out the Falcor meta data. Note that even if you have an object
+ * with number keys such as from 60 - 90, an array with indices 0 - 30 will still
+ * be created
+ * @param {Object} obj - The psuedo array from Falcor, should work with object
+ * that has any key values, whether strings or numbers
+ * @returns {any[]}
+ */
 export const parseFalcorPseudoArray = obj =>
   _.toArray(_.pick(obj, falcor.keys(obj)));
