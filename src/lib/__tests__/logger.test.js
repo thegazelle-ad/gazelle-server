@@ -4,11 +4,6 @@ console.log = jest.fn();
 console.warn = jest.fn();
 console.error = jest.fn();
 
-// Mock process.exit
-global.process.exit = jest.fn();
-
-const modulePath = '../logger';
-
 describe('logger', () => {
   let logger;
   let initializeLogger;
@@ -17,7 +12,7 @@ describe('logger', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetModules();
-    ({ logger, initializeLogger, updateDisplayAlert } = require(modulePath));
+    ({ logger, initializeLogger, updateDisplayAlert } = require('../logger'));
   });
 
   it('throws when uninitialized', () => {
@@ -64,6 +59,9 @@ describe('logger', () => {
   });
 
   it('calls console.error and exits on fatal serverside error', () => {
+    // Mock process.exit
+    global.process.exit = jest.fn();
+
     initializeLogger(false);
     logger.fatal('fatal error');
 
