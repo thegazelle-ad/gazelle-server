@@ -26,9 +26,6 @@ export class ModalProvider extends React.Component {
       modalMessage: '',
       modalType: '',
     };
-
-    /** Make the logger use this prettier display function */
-    updateDisplayAlert(this.displayAlert);
   }
 
   getChildContext() {
@@ -36,6 +33,11 @@ export class ModalProvider extends React.Component {
       displayAlert: this.displayAlert,
       displayConfirm: this.displayConfirm,
     };
+  }
+
+  componentWillMount() {
+    /** Make the logger use this prettier display function */
+    updateDisplayAlert(this.displayAlert);
   }
 
   initializeModal(message) {
