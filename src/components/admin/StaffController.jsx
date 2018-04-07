@@ -277,7 +277,7 @@ class StaffController extends FalcorController {
   render() {
     const ID = 'staff-editor';
     if (this.state.ready) {
-      if (!this.state.data) {
+      if (!this.state.data || !this.state.data.staff) {
         return (
           <div id={ID}>
             <p>No staff match the slug given in the URL</p>

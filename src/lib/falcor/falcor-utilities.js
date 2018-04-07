@@ -415,6 +415,30 @@ export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
   return update(oldData, dataUpdates);
 }
 
+function isEmptyObject(obj) {
+  if ('isEmptyObjectSeen' in obj) {
+    // We have already been here so it must be empty as we didn't
+    // find any values yet (as in that case it would have stopped recursing)
+    return true;
+  }
+  // We check whether there are any keys that actually recursively
+  // store a value, if there is one we return false, otherwise true
+  obj.isEmptyObjectSeen = true; // eslint-disable-line no-param-reassign
+  const recursivelyHasValue = falcor.keys(obj).some(key => {
+    // This is the extra key we added so don't care about that one
+    if (key === 'isEmptyObjectSeen') return false;
+    const value = obj[key];
+    if (value !== null && typeof value === 'object') {
+      // It is an object so we recurse
+      const isEmpty = isEmptyObject(value);
+      return !isEmpty;
+    }
+    return value !== undefined;
+  });
+  delete obj.isEmptyObjectSeen; // eslint-disable-line no-param-reassign
+  return !recursivelyHasValue;
+}
+
 /**
  * We want to phase this function out as it's only here for compatibility
  * with our legacy code, so please don't use it again, try using the falcor HOCs
@@ -435,14 +459,16 @@ export function cleanupFalcorKeys(obj) {
   obj.cleanupFalcorKeysMetaSeen = true; // eslint-disable-line no-param-reassign
   falcor.keys(obj).forEach(key => {
     if (key === 'cleanupFalcorKeysMetaSeen') return;
-    // Check if it's an empty object and if then don't add it
     const value = obj[key];
-    if (
-      value !== null &&
-      typeof value === 'object' &&
-      falcor.keys(value).length === 0
-    ) {
-      return;
+    if (value !== null && typeof value === 'object') {
+      // Check if it's an empty object and if then don't add it
+      if (falcor.keys(value).length === 0) {
+        return;
+      }
+      // Check recursively if all the keys in the object are undefined, then don't add it
+      if (isEmptyObject(value)) {
+        return;
+      }
     }
     ret[key] = cleanupFalcorKeys(obj[key]);
   });
@@ -452,21 +478,13 @@ export function cleanupFalcorKeys(obj) {
 }
 
 /**
- * We want to phase this function out as it's only here for compatibility
- * with our legacy code, so please don't use it again, try using the falcor HOCs
- * and just working with the value that Falcor gives you
- * @param {Object} jsonGraphArg - "dirty" falcor JSON graph argument
- * @returns {Object} cleaned up version of falcor JSON graph argument
+ * Takes a Falcor psuedo array and outputs an array containing the values of the
+ * keys are filtering out the Falcor meta data. Note that even if you have an object
+ * with number keys such as from 60 - 90, an array with indices 0 - 30 will still
+ * be created
+ * @param {Object} obj - The psuedo array from Falcor, should work with object
+ * that has any key values, whether strings or numbers
+ * @returns {any[]}
  */
-export function cleanupJsonGraphArg(jsonGraphArg) {
-  if (has.call(jsonGraphArg, '$type')) {
-    // Then this is the final part we can substitute
-    return jsonGraphArg.value;
-  }
-  // Else we recurse
-  const ret = {};
-  Object.keys(jsonGraphArg).forEach(key => {
-    ret[key] = cleanupJsonGraphArg(jsonGraphArg[key]);
-  });
-  return ret;
-}
+export const parseFalcorPseudoArray = obj =>
+  _.toArray(_.pick(obj, falcor.keys(obj)));

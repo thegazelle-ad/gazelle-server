@@ -456,7 +456,7 @@ class MainIssueController extends FalcorController {
 
   render() {
     if (this.state.ready) {
-      if (!this.state.data) {
+      if (!this.state.data || !this.state.data.issues) {
         return <p>This issue does not exist</p>;
       }
       const published = Boolean(
