@@ -4,6 +4,8 @@ console.log = jest.fn();
 console.warn = jest.fn();
 console.error = jest.fn();
 
+const hasStackTraceRegex = /\/src\/lib\/logger\.js:\d+:\d+\)$/m;
+
 describe('logger', () => {
   let logger;
   let initializeLogger;
@@ -41,9 +43,7 @@ describe('logger', () => {
     expect(console.warn).toHaveBeenCalled();
     expect(console.warn.mock.calls[0][0]).toBeInstanceOf(Error);
     expect(console.warn.mock.calls[0][0].message).toBe('some warning');
-    expect(console.warn.mock.calls[0][0].stack).toMatch(
-      /\/src\/lib\/logger\.js:\d+:\d+\)$/m,
-    );
+    expect(console.warn.mock.calls[0][0].stack).toMatch(hasStackTraceRegex);
   });
 
   it('calls console.log with error object in logger.debug', () => {
@@ -53,9 +53,7 @@ describe('logger', () => {
     expect(console.log).toHaveBeenCalled();
     expect(console.log.mock.calls[0][0]).toBeInstanceOf(Error);
     expect(console.log.mock.calls[0][0].message).toBe('some debug statement');
-    expect(console.log.mock.calls[0][0].stack).toMatch(
-      /\/src\/lib\/logger\.js:\d+:\d+\)$/m,
-    );
+    expect(console.log.mock.calls[0][0].stack).toMatch(hasStackTraceRegex);
   });
 
   it('calls console.error and exits on fatal serverside error', () => {
@@ -68,9 +66,7 @@ describe('logger', () => {
     expect(console.error).toHaveBeenCalledTimes(2);
     expect(console.error.mock.calls[1][0]).toBeInstanceOf(Error);
     expect(console.error.mock.calls[1][0].message).toBe('fatal error');
-    expect(console.error.mock.calls[1][0].stack).toMatch(
-      /\/src\/lib\/logger\.js:\d+:\d+\)$/m,
-    );
+    expect(console.error.mock.calls[1][0].stack).toMatch(hasStackTraceRegex);
     expect(process.exit).toHaveBeenCalledWith(1);
   });
 
