@@ -7,33 +7,23 @@ import { withFalcor } from 'components/hocs/falcor-hocs';
 import { debounce } from 'lib/utilities';
 import { getDisplayName } from 'lib/higher-order-helpers';
 
-export const withSearchableConcept = (
-  fields,
-  formatter,
-  category,
-) => WrappedField => {
+export const withFalcorSearch = (fields, formatter, mode) => WrappedField => {
   const debounceTime = 250;
   class Searchable extends React.Component {
     constructor(props) {
       super(props);
-      this.state = {
-        suggestions: [],
-      };
-
-      this.handleChange = this.handleChange.bind(this);
-      this.handleClick = this.handleClick.bind(this);
+      this.getSuggestions = this.getSuggestions.bind(this);
 
       this.debounceSuggestions = debounce(query => {
         if (!query.trim()) {
-          this.setState({ suggestions: [] });
-          return;
+          return Promise.resolve({});
         }
 
         let pathSets = this.props.extraPathSets || [];
         pathSets = pathSets.reduce(
           (arr, pathSet) => {
             arr.push(
-              ['search', category, query, { length: this.props.length }].concat(
+              ['search', mode, query, { length: this.props.length }].concat(
                 pathSet,
               ),
             );
@@ -42,7 +32,7 @@ export const withSearchableConcept = (
           [
             [
               'search',
-              category,
+              mode,
               query,
               { length: this.props.length },
               _.uniq([...fields, ...this.props.fields, 'id']),
@@ -50,41 +40,36 @@ export const withSearchableConcept = (
           ],
         );
 
-        this.props.falcor.get(...pathSets).then(x => {
-          if (!x) {
-            this.setState({ suggestions: [] });
-            return;
-          }
-          x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
-          const suggestions = _.toArray(x.json.search[category][query])
-            .filter(item => item !== undefined)
-            .map(item => ({
-              title: formatter(item),
-              id: item.id,
-              slug: item.slug,
-            }));
-          this.setState({ suggestions });
+        return new Promise(resolve => {
+          this.props.falcor.get(...pathSets).then(x => {
+            if (!x) {
+              return resolve({ suggestions: [] });
+            }
+            x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
+            const suggestions = _.toArray(x.json.search[mode][query])
+              .filter(item => item !== undefined)
+              .map(item => ({
+                title: formatter(item),
+                id: item.id,
+                slug: item.slug,
+              }));
+            return resolve({ suggestions });
+          });
         });
       }, debounceTime);
     }
 
-    handleChange(query) {
-      this.debounceSuggestions(query);
-    }
-
-    handleClick(item) {
-      this.setState({ suggestions: [] });
-      this.props.handleClick(item);
+    getSuggestions(query) {
+      return Promise.resolve(this.debounceSuggestions(query));
     }
 
     render() {
       const passedProps = _.omit(this.props, 'handleClick');
       return (
         <WrappedField
-          suggestions={this.state.suggestions}
-          updateSuggestions={this.handleChange}
-          category={category}
-          handleClick={this.handleClick}
+          getSuggestions={this.getSuggestions}
+          mode={mode}
+          handleClick={this.props.handleClick}
           {...passedProps}
         />
       );
@@ -95,9 +80,9 @@ export const withSearchableConcept = (
     falcor: PropTypes.shape({
       get: PropTypes.func.isRequired,
     }).isRequired,
+    handleClick: PropTypes.func.isRequired,
     length: PropTypes.number,
     fields: PropTypes.arrayOf(PropTypes.string),
-    handleClick: PropTypes.func.isRequired,
     extraPathSets: PropTypes.arrayOf(
       PropTypes.arrayOf(
         (propValue, key, componentName, location, propFullName) => {
@@ -125,6 +110,6 @@ export const withSearchableConcept = (
     extraPathSets: [[]],
   };
 
-  Searchable.displayName = `SearchableField(${getDisplayName(WrappedField)})`;
+  Searchable.displayName = `SearchableConcept(${getDisplayName(WrappedField)})`;
   return withFalcor(Searchable);
 };

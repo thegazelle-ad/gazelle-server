@@ -1,21 +1,21 @@
 import moment from 'moment';
 
-import { withSearchableConcept } from 'components/admin/form-components/withSearchBar';
+import { withFalcorSearch } from 'components/admin/form-components/withFalcorSearch';
 import { SearchBar } from 'components/admin/form-components/SearchBar';
 
-export const SearchableAuthors = withSearchableConcept(
+export const SearchableAuthors = withFalcorSearch(
   ['name', 'slug'],
   item => item.name,
   'staff',
 )(SearchBar);
 
-export const SearchableArticles = withSearchableConcept(
+export const SearchableArticles = withFalcorSearch(
   ['title', 'slug'],
   item => item.title,
   'articles',
 )(SearchBar);
 
-export const SearchableArticlesWithPubDate = withSearchableConcept(
+export const SearchableArticlesWithPubDate = withFalcorSearch(
   ['title', 'slug', 'published_at'],
   item => {
     const date =

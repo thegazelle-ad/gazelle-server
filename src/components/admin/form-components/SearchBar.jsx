@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import { capFirstLetter, slugify } from 'lib/utilities';
 
@@ -11,17 +12,19 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 export class SearchBar extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { value: '' };
+    this.state = { value: '', suggestions: [] };
     this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(event) {
+    this.props.getSuggestions(event.target.value).then(result => {
+      this.setState({ suggestions: _.get(result, 'suggestions', []) });
+    });
     this.setState({ value: event.target.value });
-    this.props.updateSuggestions(event.target.value);
   }
 
   handleClick(item) {
-    this.setState({ value: '' });
+    this.setState({ value: '', suggestions: [] });
     this.props.handleClick(item);
   }
 
@@ -29,17 +32,13 @@ export class SearchBar extends React.Component {
     const searchBarClass = 'search-bar';
     const searchBarResultClass = 'search-bar-result';
     const slug = this.props.enableAdd
-      ? slugify(this.props.category, this.state.value)
+      ? slugify(this.props.mode, this.state.value)
       : '';
     return (
-      <div
-        className={`${searchBarClass} ${searchBarClass}-${this.props.category}`}
-      >
+      <div className={`${searchBarClass} ${searchBarClass}-${this.props.mode}`}>
         <TextField
-          floatingLabelText={`Search for ${capFirstLetter(
-            this.props.category,
-          )}`}
-          hintText={capFirstLetter(this.props.category)}
+          floatingLabelText={`Search for ${capFirstLetter(this.props.mode)}`}
+          hintText={capFirstLetter(this.props.mode)}
           fullWidth={this.props.fullWidth}
           value={this.state.value}
           onChange={this.handleChange}
@@ -49,20 +48,20 @@ export class SearchBar extends React.Component {
             style={this.props.fullWidth ? { width: '100%' } : { width: 200 }}
           >
             {this.props.enableAdd &&
-              this.props.suggestions.length === 0 &&
-              this.state.value && (
+              this.state.suggestions.length === 0 &&
+              this.state.value.trim() && (
                 <div
                   className={`${searchBarResultClass} search-bar-${
-                    this.props.category
+                    this.props.mode
                   }`}
                   key={slug}
                 >
                   {/* eslint-disable react/jsx-no-bind */}
                   <MenuItem
                     leftIcon={<ContentAdd />}
-                    primaryText={this.state.value}
+                    primaryText={this.state.value.trim()}
                     onClick={this.handleClick.bind(this, {
-                      title: this.state.value,
+                      title: this.state.value.trim(),
                       slug,
                       id: null,
                     })}
@@ -72,10 +71,10 @@ export class SearchBar extends React.Component {
                 </div>
               )}
             {/* eslint-disable react/jsx-no-bind */
-            this.props.suggestions.map(item => (
+            this.state.suggestions.map(item => (
               <div
                 className={`${searchBarResultClass} search-bar-${
-                  this.props.category
+                  this.props.mode
                 }`}
                 key={item.id}
               >
@@ -97,22 +96,14 @@ export class SearchBar extends React.Component {
 
 SearchBar.propTypes = {
   handleClick: PropTypes.func.isRequired,
-  suggestions: PropTypes.arrayOf(
-    PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      slug: PropTypes.string,
-      id: PropTypes.number.isRequired,
-    }),
-  ),
-  updateSuggestions: PropTypes.func.isRequired,
+  getSuggestions: PropTypes.func.isRequired,
+  mode: PropTypes.string.isRequired,
   fullWidth: PropTypes.bool,
   disabled: PropTypes.bool,
   enableAdd: PropTypes.bool,
-  category: PropTypes.string.isRequired,
 };
 
 SearchBar.defaultProps = {
-  suggestions: [],
   fullWidth: false,
   disabled: false,
   enableAdd: false,
