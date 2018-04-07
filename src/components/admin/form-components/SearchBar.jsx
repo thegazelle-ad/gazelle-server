@@ -9,11 +9,50 @@ import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 
+class SearchResult extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.onClick = () =>
+      this.props.handleClick({
+        id: this.props.id,
+        title: this.props.title,
+        slug: this.props.slug,
+      });
+  }
+
+  render() {
+    return (
+      <MenuItem
+        {...this.props.enableAdd && { leftIcon: <ContentAdd /> }}
+        primaryText={this.props.title}
+        onClick={this.onClick}
+        disabled={this.props.disabled}
+      />
+    );
+  }
+}
+
+SearchResult.propTypes = {
+  title: PropTypes.string.isRequired,
+  slug: PropTypes.string.isRequired,
+  handleClick: PropTypes.func.isRequired,
+  id: PropTypes.number,
+  disabled: PropTypes.bool,
+  enableAdd: PropTypes.bool,
+};
+
+SearchResult.defaultProps = {
+  id: null,
+  disabled: false,
+  enableAdd: false,
+};
+
 export class SearchBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = { value: '', suggestions: [] };
     this.handleChange = this.handleChange.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   handleChange(event) {
@@ -53,37 +92,32 @@ export class SearchBar extends React.Component {
                   }`}
                   key={this.props.slugify(this.state.value.trim())}
                 >
-                  {/* eslint-disable react/jsx-no-bind */}
-                  <MenuItem
-                    leftIcon={<ContentAdd />}
-                    primaryText={this.state.value.trim()}
-                    onClick={this.handleClick.bind(this, {
-                      title: this.state.value.trim(),
-                      slug: this.props.slugify(this.state.value.trim()),
-                      id: null,
-                    })}
+                  <SearchResult
+                    id={null}
+                    title={this.state.value.trim()}
+                    slug={this.props.slugify(this.state.value.trim())}
+                    handleClick={this.handleClick}
                     disabled={this.props.disabled}
+                    enableAdd={this.props.enableAdd}
                   />
-                  {/* eslint-enable react/jsx-no-bind */}
                 </div>
               )}
-            {/* eslint-disable react/jsx-no-bind */
-            this.state.suggestions.map(item => (
+            {this.state.suggestions.map(item => (
               <div
                 className={`${searchBarResultClass} search-bar-${
                   this.props.mode
                 }`}
                 key={item.id}
               >
-                <MenuItem
-                  primaryText={item.title}
-                  onClick={this.handleClick.bind(this, item)}
+                <SearchResult
+                  id={item.id}
+                  title={item.title}
+                  slug={item.slug}
+                  handleClick={this.handleClick}
                   disabled={this.props.disabled}
                 />
               </div>
-            ))
-            /* eslint-enable react/jsx-no-bind */
-            }
+            ))}
           </Menu>
         </div>
       </div>
