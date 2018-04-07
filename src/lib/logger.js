@@ -1,3 +1,21 @@
+const uninitializedLogger = () => {
+  throw new Error('The logger has yet to be initialized');
+};
+
+/**
+ * This is the object you will have to actually import for your logging.
+ * initializeLogger has to be called once at the start of the global scope
+ * for it to work though, but this has probably already been setup by someone
+ * else for you if you are in doubt about what that means, and you can therefore
+ * just use it.
+ */
+export const logger = {
+  fatal: uninitializedLogger,
+  error: uninitializedLogger,
+  warn: uninitializedLogger,
+  debug: uninitializedLogger,
+};
+
 /**
  * Note that all the methods use arrow functions to bind 'this', this is so we
  * can pass them to the logger object to be called outside of the immediate
@@ -87,17 +105,6 @@ class Logger {
     console.log(errorObject);
   };
 }
-
-const uninitializedLogger = () => {
-  throw new Error('The logger has yet to be initialized');
-};
-
-export const logger = {
-  fatal: uninitializedLogger,
-  error: uninitializedLogger,
-  warn: uninitializedLogger,
-  debug: uninitializedLogger,
-};
 
 let loggerInstance;
 
