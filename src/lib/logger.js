@@ -31,6 +31,8 @@ class Logger {
   fatal = async err => {
     const errorObject = err instanceof Error ? err : new Error(err);
     if (this.isClient) {
+      // We are actually lying currently, as developers haven't been notified
+      // when we hook up sentry we will be notifying developers though
       await this.displayAlert(
         'A fatal error has occurred, and the developers' +
           ' have been notified. We apologize for the inconvenience, and we are afraid' +
@@ -63,11 +65,11 @@ class Logger {
   /**
    * Logs a warning. This should be called when an event occurs that is usually unwanted
    * but under certain circumstances could be okay
-   * @param {Error | string} warn - The warning to be logged, either a string or
+   * @param {Error | string} warning - The warning to be logged, either a string or
    * an Error object
    */
-  warning = warn => {
-    const errorObject = warn instanceof Error ? warn : new Error(warn);
+  warn = warning => {
+    const errorObject = warning instanceof Error ? warning : new Error(warning);
     // eslint-disable-next-line no-console
     console.warn(errorObject);
   };
@@ -82,7 +84,7 @@ class Logger {
   debug = msg => {
     const errorObject = msg instanceof Error ? msg : new Error(msg);
     // eslint-disable-next-line no-console
-    console.warn(errorObject);
+    console.log(errorObject);
   };
 }
 
@@ -93,7 +95,7 @@ const uninitializedLogger = () => {
 export const logger = {
   fatal: uninitializedLogger,
   error: uninitializedLogger,
-  warning: uninitializedLogger,
+  warn: uninitializedLogger,
   debug: uninitializedLogger,
 };
 
@@ -108,7 +110,7 @@ export const initializeLogger = (...args) => {
   loggerInstance = new Logger(...args);
   logger.fatal = loggerInstance.fatal;
   logger.error = loggerInstance.error;
-  logger.warning = loggerInstance.warning;
+  logger.warn = loggerInstance.warn;
   logger.debug = loggerInstance.debug;
 };
 
@@ -129,6 +131,6 @@ export const updateDisplayAlert = displayAlert => {
   loggerInstance = new Logger(true, displayAlert);
   logger.fatal = loggerInstance.fatal;
   logger.error = loggerInstance.error;
-  logger.warning = loggerInstance.warning;
+  logger.warn = loggerInstance.warn;
   logger.debug = loggerInstance.debug;
 };
