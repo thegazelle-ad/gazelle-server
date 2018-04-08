@@ -37,6 +37,15 @@ describe('articlesByPage falcor routes', () => {
       }),
     ).rejects.toThrow());
 
+  it('throws on negative page index requested', () =>
+    expect(
+      articlesByPageRoutes[0].get({
+        pageLengths: [1],
+        pageIndices: [-1],
+        indicesOnPage: [0],
+      }),
+    ).rejects.toThrow());
+
   it('throws on negative pageLength requested', () =>
     expect(
       articlesByPageRoutes[0].get({
