@@ -19,7 +19,7 @@ describe('articlesByPage falcor routes', () => {
 
   it('returns correct path values', async () => {
     const pageLength = 5;
-    const pageIndex = 0;
+    const pageIndex = 2;
     const pathValues = await articlesByPageRoutes[0].get({
       pageLengths: [pageLength],
       pageIndices: [pageIndex],
