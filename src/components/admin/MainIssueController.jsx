@@ -2,7 +2,7 @@ import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
 import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
-import { hasHttpsURL, returnsFirstRelativeURL } from './lib/article-validators';
+import { hasNonHttpsURL, returnsFirstRelativeURL } from './lib/article-validators';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -147,7 +147,7 @@ export default class MainIssueController extends FalcorController {
             window.alert(`${article.title} has no authors. Please correct this`);
             return false;
           }
-          if (!hasHttpsURL(article.html)) { // if the function returns true, the url is correct
+          if (hasNonHttpsURL(article.html)) { // if the function returns true, the url is correct
             if (!window.confirm(
                 `${article.title} has a non https link in it's body. ` +
                 'please make sure this link is not an image/video etc. being loaded in. ' +

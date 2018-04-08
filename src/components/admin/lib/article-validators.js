@@ -1,11 +1,11 @@
-export function hasHttpsURL(html) {
+export function hasNonHttpsURL(html) {
   // if (/http:\/\/[\S]+\.[a-zA-Z]{2,}/.test(html) || /http(?!s)/.test(html)) {
   if (/<a.*?href\s*?=\s*?["'](http(?!s))(.*?)["'] *?>/.test(html)) {
-    return false;
+    return true;
   } else if (/<img.*?src\s*?=\s*?["'](http)(?!s)(.*?)["'] .*?>/.test(html)) {
-    return false;
+    return true;
   }
-  return true;
+  return false;
 }
 export function returnsFirstRelativeURL(html) {
   const relativeUrlRegexLink = /<a.*?href\s*?=\s*?["'](?!http)(.*?)["'] *?>/;
