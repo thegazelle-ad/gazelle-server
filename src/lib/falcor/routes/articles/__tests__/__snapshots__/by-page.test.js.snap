@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`articlesByPage falcor routes returns correct path values 1`] = `
+Array [
+  Object {
+    "path": Array [
+      "articles",
+      "byPage",
+      5,
+      0,
+      0,
+    ],
+    "value": Object {
+      "$type": "ref",
+      "value": Array [
+        "articles",
+        "bySlug",
+        "slug-0",
+      ],
+    },
+  },
+  Object {
+    "path": Array [
+      "articles",
+      "byPage",
+      5,
+      0,
+      1,
+    ],
+    "value": Object {
+      "$type": "ref",
+      "value": Array [
+        "articles",
+        "bySlug",
+        "slug-1",
+      ],
+    },
+  },
+  Object {
+    "path": Array [
+      "articles",
+      "byPage",
+      5,
+      0,
+      2,
+    ],
+    "value": Object {
+      "$type": "ref",
+      "value": Array [
+        "articles",
+        "bySlug",
+        "slug-2",
+      ],
+    },
+  },
+  Object {
+    "path": Array [
+      "articles",
+      "byPage",
+      5,
+      0,
+      3,
+    ],
+    "value": Object {
+      "$type": "ref",
+      "value": Array [
+        "articles",
+        "bySlug",
+        "slug-3",
+      ],
+    },
+  },
+  Object {
+    "path": Array [
+      "articles",
+      "byPage",
+      5,
+      0,
+      4,
+    ],
+    "value": Object {
+      "$type": "ref",
+      "value": Array [
+        "articles",
+        "bySlug",
+        "slug-4",
+      ],
+    },
+  },
+]
+`;
