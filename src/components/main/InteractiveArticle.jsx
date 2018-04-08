@@ -28,8 +28,8 @@ export default class InteractiveArticle extends FalcorController {
 
   evaluateJavascript() {
     const articleData = this.state.data.articles.bySlug[this.props.params.articleSlug];
-    // eslint-disable-next-line no-eval
-    eval(articleData.interactiveData.js || '');
+    // eslint-disable-next-line no-new-func
+    new Function(articleData.interactiveData.js || '')();
     this.safeSetState({ didEval: true });
   }
 

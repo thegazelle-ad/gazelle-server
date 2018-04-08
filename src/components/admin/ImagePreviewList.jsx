@@ -7,14 +7,29 @@ export default class ImagePreviewList extends BaseComponent {
   }
 
   render() {
+    const styles = {
+      imgList: {
+        borderRight: 'none',
+        borderLeft: 'none',
+        borderTop: 'none',
+        borderBottom: 'none',
+        paddingBottom: '1rem',
+        paddingTop: '1rem',
+        background: '#eaf9ff',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+      },
+      previewText: {
+        color: 'rgba(0, 0, 0, 0.3)',
+      },
+    };
     const { images } = this.props;
     if (images && images.length) {
-      return <div className="imgPreviewList">{images}</div>;
+      return <div style={styles.imgList} className="imgPreviewList">{images}</div>;
     }
     return (
-      <div className="imgPreviewList">
-        <div className="previewText">
-          Please select image(s) for preview
+      <div style={styles.imgList} className="imgPreviewList">
+        <div className="previewText" style={styles.previewText}>
+          Your images will appear here.
         </div>
       </div>
     );

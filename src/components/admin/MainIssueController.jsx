@@ -2,11 +2,16 @@ import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
 import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
+import { updateFieldValue } from './lib/form-field-updaters';
+import { debounce } from 'lib/utilities';
 import { hasNonHttpsURL, returnsFirstRelativeURL } from './lib/article-validators';
+import moment from 'moment';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
 import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
+import DatePicker from 'material-ui/DatePicker';
 
 const styles = {
   paper: {
@@ -29,6 +34,10 @@ const styles = {
   publishingButtons: {
     margin: 12,
   },
+  nameField: {
+    fontSize: '1.5em',
+    fontWeight: 'bold',
+  },
 };
 
 const ARTICLE_FIELDS = ['title', 'teaser', 'category', 'image', 'slug', 'html'];
@@ -39,12 +48,72 @@ export default class MainIssueController extends FalcorController {
     super(props);
     this.publishIssue = this.publishIssue.bind(this);
     this.unpublishIssue = this.unpublishIssue.bind(this);
+    this.fieldUpdaters = {
+      name: updateFieldValue.bind(this, 'name', undefined),
+      issueNumber: updateFieldValue.bind(this, 'issueNumber', undefined),
+    };
+    this.handleSaveChanges = this.handleSaveChanges.bind(this);
     this.safeSetState({
       publishing: false,
+      name: '',
+      issueNumber: '',
+      published_at: null,
+      changed: false,
+      saving: false,
+    });
+
+    this.debouncedHandleFormStateChanges = debounce(() => {
+      // We don't want the debounced event to happen if we're saving
+      if (this.state.saving || this.state.publishing) return;
+
+      const changedFlag = this.isFormChanged();
+      if (changedFlag !== this.state.changed) {
+        this.safeSetState({ changed: changedFlag });
+      }
+    }, 500);
+
+    this.handleDateChange = (event, date) => {
+      this.safeSetState({ published_at: date });
+    };
+  }
+
+  static getFalcorPathSets(params) {
+    return ['issues', 'byNumber', params.issueNumber, ['name', 'published_at', 'issueNumber']];
+  }
+
+  componentWillMount() {
+    const falcorCallback = (data) => {
+      const issue = data.issues.byNumber[this.props.params.issueNumber];
+      const name = issue.name || '';
+      const publishedAt = new Date(issue.published_at) || null;
+      const issueNumber = issue.issueNumber || '';
+      this.safeSetState({ name, published_at: publishedAt, issueNumber });
+    };
+    super.componentWillMount(falcorCallback);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const falcorCallback = (data) => {
+      const issue = data.issues.byNumber[nextProps.params.issueNumber];
+      const name = issue.name || '';
+      const publishedAt = new Date(issue.published_at) || null;
+      const issueNumber = issue.issueNumber || '';
+      this.safeSetState({ name, published_at: publishedAt, issueNumber });
+    };
+    super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
+    this.safeSetState({
+      changed: false,
+      saving: false,
     });
   }
-  static getFalcorPathSets(params) {
-    return ['issues', 'byNumber', params.issueNumber, 'published_at'];
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.isSameIssue(prevProps, this.props) &&
+        this.formHasUpdated(prevState, this.state) &&
+        this.state.ready) {
+      // The update wasn't due to a change in issue
+      this.debouncedHandleFormStateChanges();
+    }
   }
 
   publishIssue() {
@@ -179,7 +248,7 @@ export default class MainIssueController extends FalcorController {
           return;
         }
         // The issue is valid, we can publish it
-        this.safeSetState({ publishing: true });
+        this.safeSetState({ publishing: true, published_at: moment.tz('Asia/Dubai') });
         this.falcorCall(['issues', 'byNumber', issueNumber, 'publishIssue'],
           [issue.id], undefined, undefined, undefined, callback);
       }
@@ -210,6 +279,89 @@ export default class MainIssueController extends FalcorController {
     }, undefined, callback);
   }
 
+  isFormFieldChanged(userInput, falcorData) {
+    return ((userInput !== falcorData) && !(!userInput && !falcorData));
+  }
+
+  isFormChanged() {
+    const falcorData = this.state.data.issues.byNumber[this.props.params.issueNumber];
+    const changedFlag =
+      this.isFormFieldChanged(this.state.name, falcorData.name) ||
+      this.isFormFieldChanged(this.state.published_at.getTime(), falcorData.published_at) ||
+      this.isFormFieldChanged(parseInt(this.state.issueNumber, 10), falcorData.issueNumber);
+    return changedFlag;
+  }
+
+  isSameIssue(prevProps, props) {
+    return prevProps.params.issueNumber === props.params.issueNumber;
+  }
+
+  formHasUpdated(prevState, state) {
+    return (
+      this.isFormFieldChanged(prevState.name, state.name) ||
+      this.isFormFieldChanged(prevState.published_at, state.published_at) ||
+      this.isFormFieldChanged(prevState.issueNumber, state.issueNumber));
+  }
+
+  handleSaveChanges(event) {
+    event.preventDefault();
+
+    const issueNumber = this.props.params.issueNumber;
+    const falcorData = this.state.data.issues.byNumber[issueNumber];
+    const parsedIssueNumber = parseInt(this.state.issueNumber, 10);
+
+    if (!this.isFormChanged()) {
+      throw new Error(
+        'Tried to save changes but there were no changes. ' +
+        'the save changes button is supposed to be disabled in this case'
+      );
+    }
+
+    if (this.isFormFieldChanged(parsedIssueNumber, falcorData.issueNumber)) {
+      if (!window.confirm('You are about to change the issue number, ' +
+        'which will change the URL to all articles in this issue, ' +
+        'among other things. It is strongly recommended not to change the ' +
+        'issue number unless it is very crucial. Are you sure you wish to proceed?'
+        )) {
+        return;
+      }
+    }
+    const resetState = () => {
+      this.safeSetState({
+        changed: false,
+      });
+      // This is purely so the 'saved' message can be seen by the user for a second
+      setTimeout(() => { this.safeSetState({ saving: false }); }, 1000);
+    };
+
+    // Build the jsonGraphEnvelope
+    const jsonGraphEnvelope = {
+      paths: [
+        ['issues', 'byNumber', issueNumber, ['published_at', 'name', 'issueNumber']],
+      ],
+      jsonGraph: {
+        issues: {
+          byNumber: {
+            [issueNumber]: {},
+          },
+        },
+      },
+    };
+    // Fill in the data
+    jsonGraphEnvelope.jsonGraph.issues.byNumber[issueNumber].published_at =
+      this.state.published_at.getTime();
+    jsonGraphEnvelope.jsonGraph.issues.byNumber[issueNumber].name = this.state.name;
+    jsonGraphEnvelope.jsonGraph.issues.byNumber[issueNumber].issueNumber =
+      parsedIssueNumber;
+    // Update the values
+    this.falcorUpdate(jsonGraphEnvelope, undefined, resetState);
+    this.safeSetState({ saving: true });
+  }
+
+  disableDate(date) {
+    return (moment(date) > moment());
+  }
+
   render() {
     if (this.state.ready) {
       if (!this.state.data) {
@@ -218,8 +370,62 @@ export default class MainIssueController extends FalcorController {
       const published = Boolean(
         this.state.data.issues.byNumber[this.props.params.issueNumber].published_at
       );
+
+      let changedStateMessage;
+      if (!this.state.changed) {
+        if (!this.state.saving) {
+          changedStateMessage = 'No Changes';
+        } else {
+          changedStateMessage = 'Saved';
+        }
+      } else {
+        if (!this.state.saving) {
+          changedStateMessage = 'Save Changes';
+        } else {
+          changedStateMessage = 'Saving';
+        }
+      }
+
       return (
         <div style={styles.tabs}>
+          <form onSubmit={this.handleSaveChanges}>
+            <TextField
+              name="name"
+              type="text"
+              floatingLabelText="Issue Name"
+              value={this.state.name}
+              style={styles.nameField}
+              onChange={this.fieldUpdaters.name}
+              disabled={this.state.saving || this.state.publishing}
+              fullWidth
+            />
+            <br />
+            <TextField
+              name="number"
+              floatingLabelText="Issue Number"
+              value={this.state.issueNumber}
+              onChange={this.fieldUpdaters.issueNumber}
+              disabled
+            />
+            <br />
+            <DatePicker
+              disabled={!published || this.state.saving || this.state.publishing}
+              floatingLabelText="Published At"
+              firstDayOfWeek={0}
+              shouldDisableDate={this.disableDate}
+              value={this.state.published_at}
+              onChange={this.handleDateChange}
+            />
+            <br />
+            <RaisedButton
+              type="submit"
+              label={changedStateMessage}
+              primary
+              style={styles.buttons}
+              disabled={!this.state.changed || this.state.saving || this.state.publishing}
+            />
+          </form>
+          <br />
           <RaisedButton
             label={
               !published
@@ -229,7 +435,8 @@ export default class MainIssueController extends FalcorController {
             primary
             style={styles.publishingButtons}
             onTouchTap={this.publishIssue}
-            disabled={published}
+            disabled={published || this.state.changed ||
+              this.state.saving || this.state.publishing}
           />
           <RaisedButton
             label={
@@ -240,7 +447,8 @@ export default class MainIssueController extends FalcorController {
             secondary
             style={styles.publishingButtons}
             onTouchTap={this.unpublishIssue}
-            disabled={!published}
+            disabled={!published || this.state.changed ||
+              this.state.saving || this.state.publishing}
           />
           {this.state.publishing
           ? <h4>Publishing...</h4>

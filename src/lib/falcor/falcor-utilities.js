@@ -74,7 +74,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
     It returns whether this key and all branches from the pathSet that follow
     this key are in the cache as it continues recursively.
     */
-    if (!curObject.hasOwnProperty(key)) {
+    if (!curObject.hasOwnProperty(key) || curObject[key] === null) {
       return false;
     }
     const val = curObject[key];
