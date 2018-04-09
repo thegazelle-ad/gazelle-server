@@ -138,7 +138,7 @@ exports.down = async knex => {
   // First recreate the dropped tables
   await executeDump(knex, 'oldPostsTables.dump');
 
-  const articleRows = knex.select('*').from('articles');
+  const articleRows = await knex.select('*').from('articles');
 
   // Build the rows we need to insert into the posts and posts_meta tables
   const postRows = articleRows.map(row => ({
