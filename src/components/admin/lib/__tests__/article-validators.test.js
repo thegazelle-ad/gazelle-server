@@ -47,19 +47,19 @@ describe('hasNonHttpsURL', () => {
   });
 });
 describe('returnsFirstRelativeURL', () => {
-  it('Returns null if an href has an absolute URL', () => {
+  it('Returns null if there are no relative urls', () => {
     expect(
       returnsFirstRelativeURL(
         '<a href=\'http://www.w3schools.com\'>Visit W3Schools</a>'
       )
     ).toBe(null);
   });
-  it('Returns the first relative url if an href does not have an absolute url', () => {
+  it('Returns the first relative url if there is at least one', () => {
     expect(
       returnsFirstRelativeURL('<a href=\'www.w3schools.com\'>Title</a>')
     ).toBe('www.w3schools.com');
   });
-  it('Returns null if an img tag does have an absolute url', () => {
+  it('Returns null if an img tag has a relative url', () => {
     expect(
       returnsFirstRelativeURL(
         '<img src=\'https://image.com\' alt=\'Mountain View\'>'
@@ -71,7 +71,7 @@ describe('returnsFirstRelativeURL', () => {
       )
     ).toBe(null);
   });
-  it('Returns the first relative url if an image tag does not have an absolute url', () => {
+  it('Returns the first relative url if an image tag', () => {
     expect(
       returnsFirstRelativeURL('<img src=\'www.image.com\' alt=\'Mountain View\'>')
     ).toBe('www.image.com');

@@ -216,7 +216,7 @@ export default class MainIssueController extends FalcorController {
             window.alert(`${article.title} has no authors. Please correct this`);
             return false;
           }
-          if (hasNonHttpsURL(article.html)) { // if the function returns true, the url is correct
+          if (hasNonHttpsURL(article.html)) {
             if (!window.confirm(
                 `${article.title} has a non https link in it's body. ` +
                 'please make sure this link is not an image/video etc. being loaded in. ' +
