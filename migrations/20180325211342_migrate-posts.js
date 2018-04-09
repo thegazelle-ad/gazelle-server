@@ -1,6 +1,7 @@
 exports.up = async knex => {
   // Create the new table where relevant posts and posts_meta will go in
   await knex.schema.createTable('articles', table => {
+    table.charset('utf8');
     table
       .increments('id')
       .primary()
