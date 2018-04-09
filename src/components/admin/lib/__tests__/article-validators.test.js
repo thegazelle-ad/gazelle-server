@@ -13,7 +13,7 @@ describe('hasNonHttpsURL', () => {
   });
   it('Returns false if it finds an https in an href', () => {
     expect(
-      hasNonHttpsURL('<a href=\'https://www.w3schools.com\'> Title\'hello\'</a>')
+      hasNonHttpsURL('http://www.facebook.com<a href=\'https://www.w3schools.com\'> Title\'hello\'</a>')
     ).toBe(false);
   });
   it('Returns true if it finds an http (not s) link in an img tag', () => {
@@ -22,7 +22,7 @@ describe('hasNonHttpsURL', () => {
     ).toBe(true);
     expect(
       hasNonHttpsURL(
-        '<img src=\'http://image.com\' alt=\'HTML tutorial\' style=\'width:42px;height:42px;border:0;\'>'
+        '<img src=\'http://image.com\' alt=\'HTML tutorial\' style=\'width:42px;height:42px;border:0;\' align = \'top\'>'
       )
     ).toBe(true);
   });
@@ -62,7 +62,7 @@ describe('returnsFirstRelativeURL', () => {
     ).toBe(null);
     expect(
       returnsFirstRelativeURL(
-        '<img src=\'http://image.com\' alt=\'HTML tutorial\' style=\'width:42px;height:42px;border:0;\'>'
+        '<p>www.youtube.com<p><img src=\'http://image.com\' alt=\'HTML tutorial\' style=\'width:42px;height:42px;border:0;\'>'
       )
     ).toBe(null);
   });
