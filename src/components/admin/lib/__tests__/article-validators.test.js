@@ -39,8 +39,13 @@ describe('hasNonHttpsURL', () => {
       )
     ).toBe(false);
   });
+  it('Returns true when the link has http, even if another tag has https', () => {
+    expect(
+      hasNonHttpsURL('<img src=\'http://image.com\' alt=\'https://smile.com\' style=\'width:42px;height:42px;border:0;\' align = \'top\'>'
+      )
+    ).toBe(true);
+  });
 });
-
 describe('returnsFirstRelativeURL', () => {
   it('Returns null if an href has an absolute URL', () => {
     expect(
