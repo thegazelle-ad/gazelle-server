@@ -72,18 +72,7 @@ exports.up = async knex => {
 
   // We need to split them up in chunks or mysql throws errors because of too big single request
   const chunkSize = 100;
-  const n = articleRows.length;
-  const promises = [];
-  for (let startIndex = 0; startIndex < n; startIndex += chunkSize) {
-    const subArray = articleRows.slice(startIndex, startIndex + chunkSize);
-    promises.push(knex('articles').insert(subArray));
-    if (promises.length === 10) {
-      // eslint-disable-next-line no-await-in-loop
-      await Promise.all(promises);
-      promises.length = 0;
-    }
-  }
-  await Promise.all(promises);
+  await knex.batchInsert('articles', articleRows, chunkSize);
 
   // Now we need to update all the foreign keys that were referencing any of the two tables
   await Promise.all([
@@ -160,33 +149,9 @@ exports.down = async knex => {
     is_interactive: row.is_interactive,
   }));
 
-  // Insert the rows into the old tables
-  // We need to split them up in chunks or mysql throws errors because of too big single request
   const chunkSize = 100;
-  const n = articleRows.length;
-  const promises = [];
-  for (let startIndex = 0; startIndex < n; startIndex += chunkSize) {
-    const subArray = postRows.slice(startIndex, startIndex + chunkSize);
-    promises.push(knex('posts').insert(subArray));
-    if (promises.length === 10) {
-      // eslint-disable-next-line no-await-in-loop
-      await Promise.all(promises);
-      promises.length = 0;
-    }
-  }
-  await Promise.all(promises);
-
-  promises.length = 0;
-  for (let startIndex = 0; startIndex < n; startIndex += chunkSize) {
-    const subArray = metaRows.slice(startIndex, startIndex + chunkSize);
-    promises.push(knex('posts_meta').insert(subArray));
-    if (promises.length === 10) {
-      // eslint-disable-next-line no-await-in-loop
-      await Promise.all(promises);
-      promises.length = 0;
-    }
-  }
-  await Promise.all(promises);
+  await knex.batchInsert('posts', postRows, chunkSize);
+  await knex.batchInsert('posts_meta', metaRows, chunkSize);
 
   // Now we need to update all the foreign keys that were referencing articles
   await knex.schema.renameTable('articles_tags', 'posts_tags');
