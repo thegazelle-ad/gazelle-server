@@ -130,11 +130,13 @@ SearchBar.propTypes = {
   fullWidth: PropTypes.bool,
   disabled: PropTypes.bool,
   enableAdd: PropTypes.bool,
-  slugify(props, propName) {
+  slugify(props, propName, componentName) {
     // We only check that slugify is given
     // if enableAdd is true.
     if (props.enableAdd === true && !_.isFunction(props[propName])) {
-      return new Error('Please provide a slugify function!');
+      return new Error(
+        `Invalid prop ${propName} supplied to ${componentName}. Prop must be a slugify function!`,
+      );
     }
     return null;
   },
@@ -144,5 +146,5 @@ SearchBar.defaultProps = {
   fullWidth: false,
   disabled: false,
   enableAdd: false,
-  slugify: () => {},
+  slugify: null,
 };
