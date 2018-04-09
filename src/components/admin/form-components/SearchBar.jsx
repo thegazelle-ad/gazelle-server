@@ -10,20 +10,18 @@ import MenuItem from 'material-ui/MenuItem';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 
 class SearchResult extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.onClick = () =>
-      this.props.handleClick({
-        id: this.props.id,
-        title: this.props.title,
-        slug: this.props.slug,
-      });
-  }
+  onClick = () => {
+    this.props.handleClick({
+      id: this.props.id,
+      title: this.props.title,
+      slug: this.props.slug,
+    });
+  };
 
   render() {
     return (
       <MenuItem
-        {...this.props.enableAdd && { leftIcon: <ContentAdd /> }}
+        {...this.props.isNew && { leftIcon: <ContentAdd /> }}
         primaryText={this.props.title}
         onClick={this.onClick}
         disabled={this.props.disabled}
@@ -38,13 +36,13 @@ SearchResult.propTypes = {
   handleClick: PropTypes.func.isRequired,
   id: PropTypes.number,
   disabled: PropTypes.bool,
-  enableAdd: PropTypes.bool,
+  isNew: PropTypes.bool,
 };
 
 SearchResult.defaultProps = {
   id: null,
   disabled: false,
-  enableAdd: false,
+  isNew: false,
 };
 
 export class SearchBar extends React.Component {
@@ -98,7 +96,7 @@ export class SearchBar extends React.Component {
                     slug={this.props.slugify(this.state.value.trim())}
                     handleClick={this.handleClick}
                     disabled={this.props.disabled}
-                    enableAdd={this.props.enableAdd}
+                    isNew
                   />
                 </div>
               )}
@@ -133,10 +131,9 @@ SearchBar.propTypes = {
   disabled: PropTypes.bool,
   enableAdd: PropTypes.bool,
   slugify(props, propName) {
-    if (
-      props.enableAdd === true &&
-      (props[propName] === undefined || typeof props[propName] !== 'function')
-    ) {
+    // We only check that slugify is given
+    // if enableAdd is true.
+    if (props.enableAdd === true && !_.isFunction(props[propName])) {
       return new Error('Please provide a slugify function!');
     }
     return null;

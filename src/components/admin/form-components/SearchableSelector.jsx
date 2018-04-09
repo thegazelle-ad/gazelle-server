@@ -13,11 +13,8 @@ import Chip from 'material-ui/Chip';
 import { withModals } from 'components/admin/hocs/modals/withModals';
 
 class ObjectChip extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.onClick = () =>
-      this.props.onDelete(this.props.id, this.props.title, this.props.slug);
-  }
+  onClick = () =>
+    this.props.onDelete(this.props.id, this.props.title, this.props.slug);
 
   render() {
     return (
