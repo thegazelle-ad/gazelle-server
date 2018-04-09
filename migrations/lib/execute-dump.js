@@ -13,6 +13,6 @@ module.exports.executeDump = async (knex, fileName) => {
   // eslint-disable-next-line no-restricted-syntax
   for (const singleCommand of commands) {
     // eslint-disable-next-line no-await-in-loop
-    await knex.schema.raw(`${singleCommand};`);
+    await knex.raw(`${singleCommand};`);
   }
 };
