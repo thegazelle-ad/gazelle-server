@@ -157,7 +157,7 @@ class IssueCategoryController extends FalcorController {
 
   render() {
     if (this.state.ready) {
-      if (!this.state.data) {
+      if (!this.state.data || !this.state.data.issues) {
         return (
           <div style={styles.tabs}>
             <Paper style={styles.paper} zDepth={1}>
