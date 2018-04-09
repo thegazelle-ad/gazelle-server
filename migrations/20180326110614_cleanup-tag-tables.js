@@ -22,10 +22,40 @@ exports.up = async knex => {
   ]);
 };
 
-// eslint-disable-next-line no-unused-vars
-exports.down = knex => {
-  // It is probably impossible to revert all the lost data that is
-  // delete through the migration as it was no longer needed so
-  // we don't even try this as there are not nullable columns
-  // without default values that we dropped, so we can't make it work
+exports.down = async knex => {
+  await Promise.all([
+    knex.schema.alterTable('tags', table => {
+      table.integer('uuid').notNullable();
+      table.string('description', 200).defaultTo(null);
+      table.text('image');
+      table.integer('parent_id');
+      table
+        .string('visibility', 150)
+        .notNullable()
+        .defaultTo('public');
+      table.string('meta_title', 150);
+      table.string('meta_description', 200);
+      table
+        .datetime('created_at')
+        .notNullable()
+        // This default wasn't part of the original table but we only add it
+        // since we lost the actual value of this table and for it to automatically
+        // put in dummy data
+        .defaultTo(knex.fn.now());
+      table
+        .integer('created_by')
+        .notNullable()
+        // Again not in the original table
+        .defaultTo(1);
+      table.datetime('updated_at');
+      table.integer('updated_by');
+    }),
+    knex.schema.alterTable('articles_tags', table => {
+      table
+        .integer('sort_order')
+        .unsigned()
+        .notNullable()
+        .defaultTo(0);
+    }),
+  ]);
 };
