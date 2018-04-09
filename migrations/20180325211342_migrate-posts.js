@@ -1,3 +1,5 @@
+const { executeDump } = require('./lib/execute-dump');
+
 exports.up = async knex => {
   // Create the new table where relevant posts and posts_meta will go in
   await knex.schema.createTable('articles', table => {
@@ -85,7 +87,7 @@ exports.up = async knex => {
 
   // Now we need to update all the foreign keys that were referencing any of the two tables
   await Promise.all([
-    await knex.schema.alterTable('authors_posts', table => {
+    knex.schema.alterTable('authors_posts', table => {
       table.dropForeign('post_id');
       table.renameColumn('post_id', 'article_id');
       table
@@ -95,7 +97,7 @@ exports.up = async knex => {
         .onDelete('CASCADE')
         .onUpdate('CASCADE');
     }),
-    await knex.schema.alterTable('interactive_meta', table => {
+    knex.schema.alterTable('interactive_meta', table => {
       table.dropForeign('id');
       table
         .foreign('id')
@@ -104,7 +106,7 @@ exports.up = async knex => {
         .onDelete('CASCADE')
         .onUpdate('CASCADE');
     }),
-    await knex.schema.alterTable('issues_posts_order', table => {
+    knex.schema.alterTable('issues_posts_order', table => {
       table.dropForeign('post_id');
       table.renameColumn('post_id', 'article_id');
       table
@@ -114,7 +116,7 @@ exports.up = async knex => {
         .onDelete('CASCADE')
         .onUpdate('CASCADE');
     }),
-    await knex.schema.alterTable('posts_tags', table => {
+    knex.schema.alterTable('posts_tags', table => {
       table.dropForeign('post_id');
       table.renameColumn('post_id', 'article_id');
       table
@@ -132,7 +134,104 @@ exports.up = async knex => {
   await knex.schema.dropTable('posts');
 };
 
-// eslint-disable-next-line no-unused-vars
-exports.down = knex => {
-  // It is too bothersome to write the reverse migration here, so I simply won't <.<
+exports.down = async knex => {
+  // First recreate the dropped tables
+  await executeDump(knex, 'oldPostsTables.dump');
+
+  const articleRows = knex.select('*').from('articles');
+
+  // Build the rows we need to insert into the posts and posts_meta tables
+  const postRows = articleRows.map(row => ({
+    id: row.id,
+    title: row.title,
+    slug: row.slug,
+    markdown: row.markdown,
+    html: row.html,
+    image: row.image_url,
+    meta_description: row.teaser,
+    created_at: row.created_at,
+  }));
+
+  const metaRows = articleRows.map(row => ({
+    id: row.id,
+    category_id: row.category_id,
+    views: row.views,
+    gazelle_published_at: row.published_at,
+    is_interactive: row.is_interactive,
+  }));
+
+  // Insert the rows into the old tables
+  // We need to split them up in chunks or mysql throws errors because of too big single request
+  const chunkSize = 100;
+  const n = articleRows.length;
+  const promises = [];
+  for (let startIndex = 0; startIndex < n; startIndex += chunkSize) {
+    const subArray = postRows.slice(startIndex, startIndex + chunkSize);
+    promises.push(knex('posts').insert(subArray));
+    if (promises.length === 10) {
+      // eslint-disable-next-line no-await-in-loop
+      await Promise.all(promises);
+      promises.length = 0;
+    }
+  }
+  await Promise.all(promises);
+
+  promises.length = 0;
+  for (let startIndex = 0; startIndex < n; startIndex += chunkSize) {
+    const subArray = metaRows.slice(startIndex, startIndex + chunkSize);
+    promises.push(knex('posts_meta').insert(subArray));
+    if (promises.length === 10) {
+      // eslint-disable-next-line no-await-in-loop
+      await Promise.all(promises);
+      promises.length = 0;
+    }
+  }
+  await Promise.all(promises);
+
+  // Now we need to update all the foreign keys that were referencing articles
+  await knex.schema.renameTable('articles_tags', 'posts_tags');
+  await Promise.all([
+    knex.schema.alterTable('authors_posts', table => {
+      table.dropForeign('article_id');
+      table.renameColumn('article_id', 'post_id');
+      table
+        .foreign('post_id')
+        .references('id')
+        .inTable('posts')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE');
+    }),
+    knex.schema.alterTable('interactive_meta', table => {
+      table.dropForeign('id');
+      table
+        .foreign('id')
+        .references('id')
+        .inTable('posts')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE');
+    }),
+    knex.schema.alterTable('issues_posts_order', table => {
+      table.dropForeign('article_id');
+      table.renameColumn('article_id', 'post_id');
+      table
+        .foreign('post_id')
+        .references('id')
+        .inTable('posts')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE');
+    }),
+    knex.schema.alterTable('posts_tags', table => {
+      table.dropForeign('article_id');
+      table.renameColumn('article_id', 'post_id');
+      table
+        .foreign('post_id')
+        .references('id')
+        .inTable('posts')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE');
+    }),
+  ]);
+
+  // And now we can drop the new table table
+  await knex.schema.dropTable('articles');
 };

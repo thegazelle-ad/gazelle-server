@@ -1,5 +1,4 @@
-const fs = require('fs');
-const path = require('path');
+const { executeDump } = require('./lib/execute-dump.js');
 
 exports.up = async knex => {
   /**
@@ -9,19 +8,7 @@ exports.up = async knex => {
    * tedious (and error prone) writing out the create table statements for all the Ghost tables
    * as we have also already stopped using them.
    */
-  const initializerDump = fs.readFileSync(
-    path.join(__dirname, 'initialTables.dump'),
-    'utf8',
-  );
-  const commands = initializerDump
-    .split(';')
-    .map(x => x.trim())
-    .filter(x => x);
-  // eslint-disable-next-line no-restricted-syntax
-  for (const singleCommand of commands) {
-    // eslint-disable-next-line no-await-in-loop
-    await knex.schema.raw(`${singleCommand};`);
-  }
+  await executeDump(knex, 'initialTables.dump');
 };
 
 exports.down = async knex => {
