@@ -111,7 +111,7 @@ export const initializeLogger = (updatedIsClient, updatedDisplayAlert) => {
   }
   if (updatedIsClient && !_.isFunction(updatedDisplayAlert)) {
     throw new Error(
-      'on the client initializeLogger needs a displayAlert function supplied',
+      'On the client initializeLogger needs a displayAlert function supplied',
     );
   }
   isClient = updatedIsClient;

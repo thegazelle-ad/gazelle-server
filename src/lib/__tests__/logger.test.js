@@ -18,10 +18,13 @@ describe('logger', () => {
   });
 
   it('throws when uninitialized', async () => {
-    await expect(logger.fatal('fatal error')).rejects.toThrow();
-    expect(logger.error).toThrow();
-    expect(logger.warn).toThrow();
-    expect(logger.debug).toThrow();
+    const uninitializedErrorMessage = 'The logger has yet to be initialized';
+    await expect(logger.fatal('fatal error')).rejects.toThrow(
+      uninitializedErrorMessage,
+    );
+    expect(logger.error).toThrow(uninitializedErrorMessage);
+    expect(logger.warn).toThrow(uninitializedErrorMessage);
+    expect(logger.debug).toThrow(uninitializedErrorMessage);
   });
 
   it('calls console.error with error object in logger.error', () => {

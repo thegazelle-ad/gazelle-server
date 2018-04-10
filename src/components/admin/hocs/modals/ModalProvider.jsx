@@ -36,7 +36,7 @@ export class ModalProvider extends React.Component {
   }
 
   componentWillMount() {
-    /** Make the logger use this prettier display function */
+    // Make the logger use this prettier display function
     updateDisplayAlert(this.displayAlert);
   }
 
