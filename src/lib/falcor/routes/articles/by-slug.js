@@ -11,7 +11,6 @@ import {
   relatedArticleQuery,
   addView,
 } from 'lib/db';
-import { cleanupJsonGraphArg } from 'lib/falcor/falcor-utilities';
 import { has } from 'lib/utilities';
 
 const $ref = falcor.Model.ref;
@@ -42,7 +41,6 @@ export default [
       return results;
     },
     set: async jsonGraphArg => {
-      jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
       const articles = jsonGraphArg.articles.bySlug;
       const flag = await updateArticles(articles);
       if (!flag) {
@@ -77,7 +75,6 @@ export default [
       }),
     set: jsonGraphArg =>
       new Promise(resolve => {
-        jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
         const articles = jsonGraphArg.articles.bySlug;
         const slugs = Object.keys(articles);
         const results = [];

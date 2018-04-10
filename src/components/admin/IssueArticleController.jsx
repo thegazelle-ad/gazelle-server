@@ -552,7 +552,7 @@ class IssueArticleController extends FalcorController {
 
   render() {
     if (this.state.ready) {
-      if (!this.state.data) {
+      if (!this.state.data || !this.state.data.issues) {
         return <div>This issue could not be found</div>;
       }
       const modes = ['picks', 'featured', 'main'];

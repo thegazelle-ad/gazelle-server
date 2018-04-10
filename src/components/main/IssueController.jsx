@@ -172,6 +172,7 @@ export default class IssueController extends FalcorController {
     if (this.state.ready) {
       if (
         !this.state.data ||
+        !this.state.data.issues ||
         (this.props.params.issueNumber && !this.state.data.issues.byNumber)
       ) {
         return <NotFound />;
