@@ -1,6 +1,9 @@
-const { deleteExistingData } = require('./lib/delete-existing-data');
-const { addDummyArticles } = require('./lib/add-dummy-articles');
-const { addDummyCategories } = require('./lib/add-dummy-categories');
+const {
+  deleteExistingData,
+  addDummyArticles,
+  addDummyCategories,
+  addDummyInfoPages,
+} = require('./lib/index');
 
 exports.seed = async knex => {
   const numArticles = 50;
@@ -8,4 +11,5 @@ exports.seed = async knex => {
   await deleteExistingData(knex);
   await addDummyArticles(knex, numArticles);
   await addDummyCategories(knex, numCategories);
+  await addDummyInfoPages(knex);
 };
