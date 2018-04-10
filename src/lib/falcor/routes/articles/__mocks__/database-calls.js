@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 export async function getPaginatedArticle(pageLength, pageIndex) {
   const articles = [];
   for (
