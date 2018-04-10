@@ -5,7 +5,7 @@ import { getPaginatedArticle } from './database-calls';
 
 const $ref = falcor.Model.ref;
 
-export const articlesByPageRoutes = [
+export const routes = [
   {
     /*
     Get articles by page (they are also in chronological order, articles['byPage'][pageLength][1][0]

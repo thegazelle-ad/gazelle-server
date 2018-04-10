@@ -1,4 +1,4 @@
-import { articlesByPageRoutes } from './by-page';
+import { routes as articlesByPageRoutes } from './by-page';
 import bySlug from './by-slug';
 import meta from './meta';
 
