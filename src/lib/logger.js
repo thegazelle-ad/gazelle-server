@@ -1,3 +1,17 @@
+/**
+ * This file exposes our logger in a module form. It has the private variables
+ * isClient and displayAlert that can only be accessed through the exposed API
+ * of initializeLogger and updateDisplayAlert. If you come from the object
+ * oriented programming paradigm this is equivalent to the singleton pattern,
+ * except we never even created a class so we don't need to bother with making
+ * sure it only gets instantiated once as it is now impossible.
+ *
+ * the logger object is the actual logger to be imported, but before it is used
+ * initializeLogger should be called somewhere in the global scope, and if on the
+ * client side and you want to add a prettier displayAlert function that is not necessarily
+ * available at the start of the process, you can later call updateDisplayAlert
+ * to make this your displayAlert function.
+ */
 import _ from 'lodash';
 
 let isClient = null;
@@ -8,13 +22,6 @@ function validateInitialization() {
     throw new Error('The logger has yet to be initialized');
 }
 
-/**
- * This is the object you will have to actually import for your logging.
- * initializeLogger has to be called once at the start of the global scope
- * for it to work though, but this has probably already been setup by someone
- * else for you if you are in doubt about what that means, and you can therefore
- * just use it.
- */
 export const logger = {
   /**
    * Logs a fatal error. This should only be called if an error occurred that
@@ -57,6 +64,7 @@ export const logger = {
    */
   error(err) {
     validateInitialization();
+
     const errorObject = err instanceof Error ? err : new Error(err);
     // eslint-disable-next-line no-console
     console.error(errorObject);
@@ -70,6 +78,7 @@ export const logger = {
    */
   warn(warning) {
     validateInitialization();
+
     const errorObject = warning instanceof Error ? warning : new Error(warning);
     // eslint-disable-next-line no-console
     console.warn(errorObject);
@@ -84,6 +93,7 @@ export const logger = {
    */
   debug(msg) {
     validateInitialization();
+
     const errorObject = msg instanceof Error ? msg : new Error(msg);
     // eslint-disable-next-line no-console
     console.log(errorObject);
