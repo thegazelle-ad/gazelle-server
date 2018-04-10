@@ -1,5 +1,5 @@
 import staff from './staff';
-import posts from './posts';
+import articles from './articles';
 import teams from './teams';
 
-export default [].concat(staff, posts, teams);
+export default [].concat(staff, articles, teams);
