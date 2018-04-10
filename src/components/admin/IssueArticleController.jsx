@@ -4,7 +4,7 @@ import SearchBar from 'components/admin/SearchBar';
 import List from 'components/admin/List';
 import _ from 'lodash';
 import update from 'react-addons-update';
-import { formatDate } from 'lib/utilities';
+import moment from 'moment';
 import LoadingOverlay from './LoadingOverlay';
 
 // material-ui
@@ -473,7 +473,7 @@ export default class IssueArticleController extends FalcorController {
   createArticleListElement(mode, article) {
     let date;
     if (article.published_at) {
-      date = formatDate(new Date(article.published_at));
+      date = moment(new Date(article.published_at).format('YYYY-MM-DD'));
     } else {
       date = 'Unpublished';
     }
