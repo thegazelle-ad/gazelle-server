@@ -17,8 +17,8 @@ describe('logger', () => {
     ({ logger, initializeLogger, updateDisplayAlert } = require('../logger'));
   });
 
-  it('throws when uninitialized', () => {
-    expect(logger.fatal).toThrow();
+  it('throws when uninitialized', async () => {
+    await expect(logger.fatal('fatal error')).rejects.toThrow();
     expect(logger.error).toThrow();
     expect(logger.warn).toThrow();
     expect(logger.debug).toThrow();
