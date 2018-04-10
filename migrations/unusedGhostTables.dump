@@ -34,7 +34,7 @@ CREATE TABLE `accesstokens` (
   KEY `accesstokens_client_id_foreign` (`client_id`),
   CONSTRAINT `accesstokens_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`),
   CONSTRAINT `accesstokens_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2383 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2386 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -128,34 +128,6 @@ CREATE TABLE `client_trusted_domains` (
   KEY `client_trusted_domains_client_id_foreign` (`client_id`),
   CONSTRAINT `client_trusted_domains_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `clients`
---
-
-DROP TABLE IF EXISTS `clients`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `clients` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `uuid` varchar(36) NOT NULL,
-  `name` varchar(150) NOT NULL,
-  `slug` varchar(150) NOT NULL,
-  `secret` varchar(150) NOT NULL,
-  `redirection_uri` varchar(2000) DEFAULT NULL,
-  `logo` varchar(2000) DEFAULT NULL,
-  `status` varchar(150) NOT NULL DEFAULT 'development',
-  `type` varchar(150) NOT NULL DEFAULT 'ua',
-  `description` varchar(200) DEFAULT NULL,
-  `created_at` datetime NOT NULL,
-  `created_by` int(11) NOT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `clients_name_unique` (`name`),
-  UNIQUE KEY `clients_slug_unique` (`slug`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -371,6 +343,34 @@ CREATE TABLE `users` (
   UNIQUE KEY `users_email_unique` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `clients`
+--
+
+DROP TABLE IF EXISTS `clients`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `clients` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `slug` varchar(150) NOT NULL,
+  `secret` varchar(150) NOT NULL,
+  `redirection_uri` varchar(2000) DEFAULT NULL,
+  `logo` varchar(2000) DEFAULT NULL,
+  `status` varchar(150) NOT NULL DEFAULT 'development',
+  `type` varchar(150) NOT NULL DEFAULT 'ua',
+  `description` varchar(200) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `clients_name_unique` (`name`),
+  UNIQUE KEY `clients_slug_unique` (`slug`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -381,4 +381,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-09 14:26:51
+-- Dump completed on 2018-04-10 12:15:08
