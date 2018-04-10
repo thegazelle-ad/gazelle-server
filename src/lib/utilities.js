@@ -12,23 +12,25 @@ export function debounce(func, timeout, addInstantFlag = false) {
   const debouncedFunction = function(...args) {
     // eslint-disable-line func-names
     const now = new Date();
-    if (lastCalled === null || (!scheduled && now - lastCalled >= timeout)) {
-      lastCalled = now;
-      if (addInstantFlag) {
-        // add a flag that says this function was called instantly,
-        // and didn't wait for the debounce, in case you want a different
-        // reaction to an instant call (for example not using state as that
-        // is asynchronous and won't get the newest values)
-        args.push(true);
+    return new Promise(resolve => {
+      if (lastCalled === null || (!scheduled && now - lastCalled >= timeout)) {
+        lastCalled = now;
+        if (addInstantFlag) {
+          // add a flag that says this function was called instantly,
+          // and didn't wait for the debounce, in case you want a different
+          // reaction to an instant call (for example not using state as that
+          // is asynchronous and won't get the newest values)
+          args.push(true);
+        }
+        resolve(func.apply(this, args));
+      } else if (!scheduled) {
+        scheduled = true;
+        setTimeout(() => {
+          scheduled = false;
+          resolve(func.apply(this, args));
+        }, timeout - (now - lastCalled));
       }
-      func.apply(this, args);
-    } else if (!scheduled) {
-      scheduled = true;
-      setTimeout(() => {
-        func.apply(this, args);
-        scheduled = false;
-      }, timeout - (now - lastCalled));
-    }
+    });
   };
   return debouncedFunction;
 }
