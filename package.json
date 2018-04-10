@@ -16,7 +16,7 @@
     "build:emulate-ci": "CI=true CIRCLECI=true npm run build:production",
     "test:unit": "jest --config='__tests__/config/jest.unit.config.js' --testLocationInResults",
     "test:e2e": "jest --config='__tests__/config/jest.e2e.config.js' --testLocationInResults --runInBand",
-    "lint": "eslint --max-warnings 0 '{src,__tests__,webpack}/**/*.{js,jsx}'",
+    "lint": "eslint --max-warnings 0 '{src,__tests__,webpack,migrations}/**/*.{js,jsx}'",
     "lint:fix": "npm run lint -- --fix",
     "db:migrate": "knex migrate:latest",
     "db:rollback": "knex migrate:rollback",
