@@ -782,7 +782,7 @@ or missing category at issue number ${issueNumber} index ${i}`);
     });
   }
 
-  searchPostsQuery(queries, min, max) {
+  searchMixQuery(queries, min, max) {
     return new Promise((resolve) => {
       let queriesReturned = 0;
       const results = {};
@@ -792,6 +792,30 @@ or missing category at issue number ${issueNumber} index ${i}`);
         .leftJoin('posts_meta', 'posts.id', '=', 'posts_meta.id')
         .where('title', 'like', `%${query}%`)
         .orderByRaw('ISNULL(gazelle_published_at) DESC, gazelle_published_at DESC')
+        .limit(max - min + 1)
+        .offset(min)
+        .then((rows) => {
+          queriesReturned++;
+          results[query] = _.map(rows, row => row.slug);
+          if (queriesReturned >= queries.length) {
+            resolve(results);
+          }
+        });
+      });
+    });
+  }
+
+  searchPostsQuery(queries, min, max) {
+    return new Promise((resolve) => {
+      let queriesReturned = 0;
+      const results = {};
+      queries.forEach((query) => {
+        database.select('posts.slug')
+        .from('posts')
+        .leftJoin('authors_posts', 'authors_posts.post_id', '=', 'posts.id')
+        .leftJoin('authors', 'authors.id', '=', 'authors_posts.author_id')
+        .where('posts.title', 'like', `%${query}%`, 'OR',
+        'authors.name', 'like', `%${query}%`, ')')
         .limit(max - min + 1)
         .offset(min)
         .then((rows) => {
