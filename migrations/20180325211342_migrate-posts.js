@@ -1,4 +1,5 @@
 const { executeDump } = require('./lib/execute-dump');
+const { batchInsert } = require('./lib/batch-insert');
 
 exports.up = async knex => {
   // Create the new table where relevant posts and posts_meta will go in
@@ -72,7 +73,7 @@ exports.up = async knex => {
 
   // We need to split them up in chunks or mysql throws errors because of too big single request
   const chunkSize = 100;
-  await knex.batchInsert('articles', articleRows, chunkSize);
+  await batchInsert(knex, 'articles', articleRows, chunkSize);
 
   // Now we need to update all the foreign keys that were referencing any of the two tables
   await Promise.all([
@@ -150,8 +151,8 @@ exports.down = async knex => {
   }));
 
   const chunkSize = 100;
-  await knex.batchInsert('posts', postRows, chunkSize);
-  await knex.batchInsert('posts_meta', metaRows, chunkSize);
+  await batchInsert(knex, 'posts', postRows, chunkSize);
+  await batchInsert(knex, 'posts_meta', metaRows, chunkSize);
 
   // Now we need to update all the foreign keys that were referencing articles
   await knex.schema.renameTable('articles_tags', 'posts_tags');
