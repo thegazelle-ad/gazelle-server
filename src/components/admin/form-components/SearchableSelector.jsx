@@ -4,7 +4,7 @@ import update from 'react-addons-update';
 import _ from 'lodash';
 
 import { capFirstLetter } from 'lib/utilities';
-import SearchBar from 'components/admin/SearchBar';
+import { SearchableAuthors } from 'components/admin/form-components/searchables';
 
 // material-ui
 import Chip from 'material-ui/Chip';
@@ -13,10 +13,8 @@ import Chip from 'material-ui/Chip';
 import { withModals } from 'components/admin/hocs/modals/withModals';
 
 class ObjectChip extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.onClick = () => this.props.onDelete(this.props.id);
-  }
+  onClick = () =>
+    this.props.onDelete(this.props.id, this.props.title, this.props.slug);
 
   render() {
     return (
@@ -29,12 +27,16 @@ class ObjectChip extends React.PureComponent {
 
 ObjectChip.propTypes = {
   onDelete: PropTypes.func.isRequired,
-  id: PropTypes.number.isRequired,
+  id: PropTypes.number,
+  title: PropTypes.string.isRequired,
+  slug: PropTypes.string,
   style: PropTypes.shape({}),
   children: PropTypes.node,
 };
 
 ObjectChip.defaultProps = {
+  id: null,
+  slug: null,
   style: {},
   children: null,
 };
@@ -47,7 +49,7 @@ class SearchableSelector extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (!this.props.disabled && this.props.value !== prevProps.value) {
+    if (!this.props.disabled && this.props.elements !== prevProps.elements) {
       this.props.onChange();
     }
   }
@@ -56,30 +58,46 @@ class SearchableSelector extends React.Component {
     // disable this if saving
     if (this.props.disabled) return;
 
-    const { id, name } = object;
+    const { id, title, slug } = object;
     const alreadyAdded =
-      this.props.value.find(baseObject => baseObject.id === id) !== undefined;
+      this.props.elements.find(
+        baseObject =>
+          !('slug' in baseObject)
+            ? this.props.slugify(baseObject.name) === slug
+            : baseObject.slug === slug,
+      ) !== undefined;
 
     if (alreadyAdded) {
-      await this.props.displayAlert('Already added');
+      await this.props.displayAlert(
+        `The ${this.props.mode} ${title} has already been added.`,
+      );
       return;
     }
-    const newObjects = update(this.props.value, { $push: [{ id, name }] });
+    const newObjects = update(this.props.elements, {
+      $push: [{ id, name: title, slug }],
+    });
     this.props.onUpdate(newObjects);
   };
 
-  handleDelete(id) {
+  handleDelete(id, title, slug) {
     // disabled this if saving
     if (this.props.disabled) return;
 
-    const index = this.props.value.findIndex(object => object.id === id);
+    const objectSlug = !slug ? this.props.slugify(title) : slug;
+
+    const index = this.props.elements.findIndex(
+      baseObject =>
+        !('slug' in baseObject)
+          ? this.props.slugify(baseObject.name) === objectSlug
+          : baseObject.slug === objectSlug,
+    );
     if (index === -1) {
       throw new Error(
         'You tried to delete an object not currently selected. ' +
           "This shouldn't happen, please let the developers know that it did.",
       );
     }
-    const newObjects = update(this.props.value, { $splice: [[index, 1]] });
+    const newObjects = update(this.props.elements, { $splice: [[index, 1]] });
     this.props.onUpdate(newObjects);
   }
 
@@ -92,11 +110,12 @@ class SearchableSelector extends React.Component {
     };
 
     const objectChips =
-      this.props.value.length > 0
-        ? _.map(this.props.value, object => (
+      this.props.elements.length > 0
+        ? _.map(this.props.elements, object => (
             <ObjectChip
-              key={object.id}
+              key={object.id !== null ? object.id : object.name}
               id={object.id}
+              title={object.name}
               onDelete={this.handleDelete}
               style={{ margin: 4 }}
             >
@@ -118,12 +137,11 @@ class SearchableSelector extends React.Component {
           {capFirstLetter(this.props.mode)}
         </p>
         <div style={styles.wrapper}>{objectChips || noObjectsMessage}</div>
-        <SearchBar
-          model={this.props.model}
-          mode={this.props.mode}
-          fields={['id']}
+        <SearchableAuthors
           length={3}
           handleClick={this.handleClickAdd}
+          enableAdd={this.props.enableAdd}
+          slugify={this.props.slugify}
         />
       </div>
     );
@@ -131,25 +149,27 @@ class SearchableSelector extends React.Component {
 }
 
 SearchableSelector.propTypes = {
-  value: PropTypes.arrayOf(
+  elements: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.number.isRequired,
+      id: PropTypes.number,
       name: PropTypes.string.isRequired,
     }),
   ).isRequired,
   onChange: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,
   displayAlert: PropTypes.func.isRequired,
+  slugify: PropTypes.func.isRequired,
   // It isn't a typo and they are required in SearchBar so no need for defaults
   /* eslint-disable react/no-typos, react/require-default-props */
-  mode: SearchBar.propTypes.mode,
-  model: SearchBar.propTypes.model,
+  mode: React.PropTypes.oneOf(['staff', 'articles']).isRequired,
   /* eslint-enable react/no-typos, react/require-default-props */
   disabled: PropTypes.bool,
+  enableAdd: PropTypes.bool,
 };
 
 SearchableSelector.defaultProps = {
   disabled: false,
+  enableAdd: false,
 };
 
 const EnhancedSearchableSelector = withModals(SearchableSelector);

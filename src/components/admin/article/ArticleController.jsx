@@ -3,7 +3,7 @@ import { browserHistory } from 'react-router';
 import _ from 'lodash';
 
 // Lib
-import { debounce } from 'lib/utilities';
+import { debounce, slugifyStaff } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 
 // Custom Components
@@ -373,12 +373,12 @@ class ArticleController extends FalcorController {
           />
           <br />
           <SearchableSelector
-            value={this.state.authors}
+            elements={this.state.authors}
             onChange={this.debouncedHandleFormStateChanges}
             onUpdate={this.updateAuthors}
             disabled={this.state.saving}
-            model={this.props.model}
             mode="staff"
+            slugify={slugifyStaff}
           />
           <br />
           <Divider />

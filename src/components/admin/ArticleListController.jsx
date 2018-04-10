@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, browserHistory } from 'react-router';
 import FalcorController from 'lib/falcor/FalcorController';
-import SearchBar from 'components/admin/SearchBar';
+import { SearchableArticlesWithPubDate } from 'components/admin/form-components/searchables';
 import { ArticleList } from 'components/admin/ArticleList';
 import moment from 'moment';
 
@@ -146,13 +146,10 @@ export default class ArticleListController extends FalcorController {
               <h2>Select an Article</h2>
               <Divider />
               <br />
-              <SearchBar
-                model={this.props.model}
-                mode="articles"
+              <SearchableArticlesWithPubDate
                 handleClick={this.clickSearchSuggestion}
                 length={3}
-                fields={[]}
-                showPubDate
+                fullWidth
               />
               <ArticleList
                 elements={data}
