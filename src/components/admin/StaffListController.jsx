@@ -2,7 +2,7 @@ import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import { slugifyStaff } from 'lib/utilities';
 import { browserHistory } from 'react-router';
-import SearchBar from './SearchBar';
+import { SearchableAuthors } from 'components/admin/form-components/searchables';
 import { updateFieldValue } from './lib/form-field-updaters';
 
 // material-ui
@@ -130,12 +130,11 @@ class StaffListController extends FalcorController {
                 <div id={`${ID}-edit-tab`} style={styles.tabs}>
                   <h2>Edit Staff</h2>
                   <Divider />
-                  <SearchBar
-                    model={this.props.model}
-                    mode="staff"
+                  <SearchableAuthors
                     fields={['slug']}
                     length={3}
                     handleClick={this.handleClickStaff}
+                    fullWidth
                   />
                 </div>
               </Tab>
