@@ -20,6 +20,7 @@
     "lint:fix": "npm run lint -- --fix",
     "db:migrate": "knex migrate:latest",
     "db:rollback": "knex migrate:rollback",
+    "db:seed": "knex seed:run",
     "//": [
       "The precommit script below is a hack to allow us to do patch committing, and it then has the special",
       "for when we are merging that it will just run lint-staged as otherwise the git stash messes with gits internal",
