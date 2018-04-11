@@ -1,6 +1,6 @@
 const { loremIpsum } = require('./constants');
 
-module.exports.addDummyInfoPages = async knex => {
+module.exports.addDummyInfoPages = knex => {
   const loremIpsumHtml = `<p>${loremIpsum}</p>`;
   const rows = [
     {
@@ -16,5 +16,5 @@ module.exports.addDummyInfoPages = async knex => {
       html: loremIpsumHtml,
     },
   ];
-  await knex('info_pages').insert(rows);
+  return knex('info_pages').insert(rows);
 };

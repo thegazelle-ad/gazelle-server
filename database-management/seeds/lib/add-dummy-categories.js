@@ -1,4 +1,4 @@
-module.exports.addDummyCategories = async (knex, numCategories) => {
+module.exports.addDummyCategories = (knex, numCategories) => {
   const hardcodedCategories = ['news', 'features', 'opinion', 'multimedia'];
 
   const rows = [];
@@ -17,5 +17,5 @@ module.exports.addDummyCategories = async (knex, numCategories) => {
       name,
     });
   }
-  await knex('categories').insert(rows);
+  return knex('categories').insert(rows);
 };
