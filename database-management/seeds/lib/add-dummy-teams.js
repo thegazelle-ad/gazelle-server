@@ -15,7 +15,7 @@ module.exports.addDummyTeams = (knex, numTeams) => {
     if (i < numTeams) {
       [name, slug] = [hardcodedTeams[i], hardcodedTeams[i]];
     } else {
-      [name, slug] = [`team${i}`, `team${i}`];
+      [name, slug] = [`team${id}`, `team${id}`];
     }
     rows.push({
       id,

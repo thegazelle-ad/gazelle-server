@@ -8,4 +8,5 @@ module.exports = {
   addDummyTeams: require('./add-dummy-teams').addDummyTeams,
   addDummyTags: require('./add-dummy-tags').addDummyTags,
   addDummyIssues: require('./add-dummy-issues').addDummyIssues,
+  addDummySemesters: require('./add-dummy-semesters').addDummySemesters,
 };

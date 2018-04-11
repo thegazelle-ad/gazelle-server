@@ -7,6 +7,7 @@ const {
   addDummyTeams,
   addDummyTags,
   addDummyIssues,
+  addDummySemesters,
 } = require('./lib/index');
 
 exports.seed = async knex => {
@@ -16,6 +17,7 @@ exports.seed = async knex => {
   const numTeams = 5;
   const numTags = 10;
   const numIssues = 2;
+  const numSemesters = 1;
   await deleteExistingData(knex);
   // We parallelize in batches of independant jobs with jobs
   // that rely on it, being placed in the next batch
@@ -25,6 +27,7 @@ exports.seed = async knex => {
     addDummyTeams(knex, numTeams),
     addDummyTags(knex, numTags),
     addDummyIssues(knex, numIssues),
+    addDummySemesters(knex, numSemesters),
   ]);
   await Promise.all([
     addDummyArticles(knex, numArticles, numCategories),

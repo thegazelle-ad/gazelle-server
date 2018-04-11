@@ -9,7 +9,7 @@ module.exports.addDummyCategories = (knex, numCategories) => {
     if (i < numCategories) {
       [name, slug] = [hardcodedCategories[i], hardcodedCategories[i]];
     } else {
-      [name, slug] = [`category${i}`, `category${i}`];
+      [name, slug] = [`category${id}`, `category${id}`];
     }
     rows.push({
       id,
