@@ -6,4 +6,5 @@ module.exports = {
   addDummyInfoPages: require('./add-dummy-info-pages').addDummyInfoPages,
   addDummyStaff: require('./add-dummy-staff').addDummyStaff,
   addDummyTeams: require('./add-dummy-teams').addDummyTeams,
+  addDummyTags: require('./add-dummy-tags').addDummyTags,
 };
