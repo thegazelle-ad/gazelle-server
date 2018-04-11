@@ -9,4 +9,6 @@ module.exports = {
   addDummyTags: require('./add-dummy-tags').addDummyTags,
   addDummyIssues: require('./add-dummy-issues').addDummyIssues,
   addDummySemesters: require('./add-dummy-semesters').addDummySemesters,
+  addIssueCategoryOrdering: require('./add-issue-category-ordering')
+    .addIssueCategoryOrdering,
 };

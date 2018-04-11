@@ -8,6 +8,7 @@ const {
   addDummyTags,
   addDummyIssues,
   addDummySemesters,
+  addIssueCategoryOrdering,
 } = require('./lib/index');
 
 exports.seed = async knex => {
@@ -32,6 +33,7 @@ exports.seed = async knex => {
   await Promise.all([
     addDummyArticles(knex, numArticles, numCategories),
     addDummyStaff(knex, numStaff, numTeams),
+    addIssueCategoryOrdering(knex, numIssues, numCategories),
   ]);
 
   // Note that we have purposefully not added dummy interactive articles at this time
