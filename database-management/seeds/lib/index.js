@@ -11,4 +11,6 @@ module.exports = {
   addDummySemesters: require('./add-dummy-semesters').addDummySemesters,
   addIssueCategoryOrdering: require('./add-issue-category-ordering')
     .addIssueCategoryOrdering,
+  addArticleTagRelationship: require('./add-article-tag-relationship')
+    .addArticleTagRelationship,
 };
