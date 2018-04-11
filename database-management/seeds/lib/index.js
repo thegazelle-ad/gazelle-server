@@ -13,4 +13,6 @@ module.exports = {
     .addIssueCategoryOrdering,
   addArticleTagRelationship: require('./add-article-tag-relationship')
     .addArticleTagRelationship,
+  addArticleAuthorRelationship: require('./add-article-author-relationship')
+    .addArticleAuthorRelationship,
 };
