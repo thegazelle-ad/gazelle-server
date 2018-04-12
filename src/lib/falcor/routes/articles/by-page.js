@@ -1,11 +1,11 @@
 import falcor from 'falcor';
 import _ from 'lodash';
 
-import { getPaginatedArticle } from 'lib/db';
+import { getPaginatedArticle } from './database-calls';
 
 const $ref = falcor.Model.ref;
 
-export default [
+export const routes = [
   {
     /*
     Get articles by page (they are also in chronological order, articles['byPage'][pageLength][1][0]
@@ -16,7 +16,7 @@ export default [
     where {length: pageLength} makes use of falcor's range object.
     */
     route:
-      "articles['byPage'][{integers:pageLengths}][{integers:pageIndices}][{integers:indicesOnPage}]", // eslint-disable-line max-len
+      "articles['byPage'][{integers:pageLengths}][{integers:pageIndices}][{integers:indicesOnPage}]",
     get: async pathSet => {
       validatePaginationQuery(
         pathSet.pageLengths,
@@ -28,9 +28,9 @@ export default [
       const pageIndex = pathSet.pageIndices[0];
 
       const articles = await getPaginatedArticle(pageLength, pageIndex);
-      const results = articles.map((singleArticle, index) => ({
+      const results = articles.map(({ slug }, index) => ({
         path: ['articles', 'byPage', pageLength, pageIndex, index],
-        value: $ref(['articles', 'bySlug', singleArticle.slug]),
+        value: $ref(['articles', 'bySlug', slug]),
       }));
       return results;
     },
