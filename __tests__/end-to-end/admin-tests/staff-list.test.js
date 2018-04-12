@@ -53,25 +53,19 @@ describe('Admin interface staff member list', () => {
     );
   });
 
-  it('handles gibberish search', () => {
-    expect.assertions(1);
-
-    return (
-      getLoggedInState(nightmare, '/staff')
-        .wait(searchInputSelector)
-        // We first make sure there are actual results present so we can check for the difference
-        .insert(searchInputSelector, 'firstname1 lastname1')
-        .wait(searchItemSelector)
-        // We know insert gibberish that shouldn't give any results
-        .insert(searchInputSelector, 'Not the name of a staff member')
-        .wait(
-          selector => document.querySelector(selector) === null,
-          searchItemSelector,
-        )
-        .end()
-    );
-    // We click on the Material UI element where the onClick handler is actually set
-  });
+  it('handles gibberish search', () =>
+    getLoggedInState(nightmare, '/staff')
+      .wait(searchInputSelector)
+      // We first make sure there are actual results present so we can check for the difference
+      .insert(searchInputSelector, 'firstname1 lastname1')
+      .wait(searchItemSelector)
+      // We know insert gibberish that shouldn't give any results
+      .insert(searchInputSelector, 'Not the name of a staff member')
+      .wait(
+        selector => document.querySelector(selector) === null,
+        searchItemSelector,
+      )
+      .end());
 
   it('correctly switches tabs', () =>
     getLoggedInState(nightmare, '/staff')
