@@ -1,4 +1,4 @@
-/* eslint-disable */
+const { executeDump } = require('./lib/execute-dump.js');
 
 exports.up = async knex => {
   const tablesToDrop = [
@@ -11,19 +11,24 @@ exports.up = async knex => {
     'permissions_apps',
     'permissions_roles',
     'permissions_users',
-    'roles',
     'refreshtokens',
+    'roles',
     'roles_users',
     'settings',
     'subscribers',
     'users',
     'clients',
   ];
-  for (tableName of tablesToDrop) {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const tableName of tablesToDrop) {
+    // eslint-disable-next-line no-await-in-loop
     await knex.schema.dropTable(tableName);
   }
 };
 
-exports.down = knex => {
-  // It is too bothersome to write the reverse migration here, so I simply won't <.<
+exports.down = async knex => {
+  /**
+   * We used the same technique as in the initialize-tables migration
+   */
+  await executeDump(knex, 'unusedGhostTables.dump');
 };

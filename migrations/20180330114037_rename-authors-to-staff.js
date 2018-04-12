@@ -12,6 +12,6 @@ exports.down = async knex => {
     table.renameColumn('staff_id', 'author_id');
     table.renameColumn('staff_order', 'author_order');
   });
-  await knex.schema.renameTable('staff', 'author');
+  await knex.schema.renameTable('staff', 'authors');
   await knex.schema.renameTable('teams_staff', 'teams_authors');
 };
