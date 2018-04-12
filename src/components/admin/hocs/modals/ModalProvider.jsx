@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Alert } from './Alert';
 import { Confirm } from './Confirm';
 import EventListener from 'react-event-listener';
+import { updateDisplayAlert } from 'lib/logger';
 
 const MODAL_TYPE_ALERT = 'alert';
 const MODAL_TYPE_CONFIRM = 'confirm';
@@ -32,6 +33,11 @@ export class ModalProvider extends React.Component {
       displayAlert: this.displayAlert,
       displayConfirm: this.displayConfirm,
     };
+  }
+
+  componentWillMount() {
+    // Make the logger use this prettier display function
+    updateDisplayAlert(this.displayAlert);
   }
 
   initializeModal(message) {

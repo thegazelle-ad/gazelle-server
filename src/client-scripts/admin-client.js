@@ -24,6 +24,13 @@ import HttpDataSource from 'falcor-http-datasource';
 import { MuiThemeProvider } from 'material-ui';
 import { Provider as FalcorProvider } from 'react-falcor';
 
+/** We need to initialize the logger */
+import { initializeLogger } from 'lib/logger';
+
+// We start with window.alert as our alert function but later will replace
+// it with our alert function from ModalProvider
+initializeLogger(true, window.alert);
+
 // Set app ready so falcor doesn't try to load from cache
 setAppReady();
 
