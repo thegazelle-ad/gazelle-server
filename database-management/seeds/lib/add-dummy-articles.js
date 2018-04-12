@@ -1,6 +1,6 @@
 const moment = require('moment');
 const { loremIpsum, placeImg } = require('./constants');
-const { getCategoryId } = require('./get-category-id');
+const { getCategoryId } = require('./utilities');
 
 module.exports.addDummyArticles = (knex, numArticles, numCategories) => {
   const rows = [];

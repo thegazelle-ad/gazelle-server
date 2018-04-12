@@ -12,11 +12,11 @@ module.exports.addTeamStaffRelationship = (
   }
   const rows = [];
   let id = 0;
-  const numStaffInTeam = [];
-  for (let i = 0; i < numTeams; i++) {
-    numStaffInTeam.push(0);
-  }
   for (let teamId = 1; teamId <= numTeams; teamId++) {
+    const numStaffInTeam = [];
+    for (let k = 0; k < numTeams; k++) {
+      numStaffInTeam.push(0);
+    }
     for (let staffId = 1; staffId <= numStaff; staffId++) {
       const staffInTeam = (staffId - 1) % numTeams + 1 === teamId;
       if (staffInTeam) {

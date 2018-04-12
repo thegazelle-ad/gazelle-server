@@ -1,4 +1,4 @@
-const { getCategoryId } = require('./get-category-id');
+const { getCategoryId, getIssueId } = require('./utilities');
 /**
  * Note that the ordering we store here is not actually really used in the code
  * as of right now as we don't have the ability to edit anything but order of
@@ -27,20 +27,20 @@ module.exports.addIssueArticleOrdering = (
 ) => {
   const rows = [];
   let id = 0;
-  const numArticlesPerCategory = [];
-  for (let i = 0; i < numCategories; i++) {
-    numArticlesPerCategory.push(0);
-  }
-  let numFeaturedArticles = 0;
-  let numEditorsPicks = 0;
 
   for (let i = 0; i < numIssues; i++) {
+    const numArticlesPerCategory = [];
+    for (let k = 0; k < numCategories; k++) {
+      numArticlesPerCategory.push(0);
+    }
+    let numFeaturedArticles = 0;
+    let numEditorsPicks = 0;
     for (let j = 0; j < numArticles; j++) {
-      const isInIssue = j % numIssues === i;
+      const issueId = i + 1;
+      const articleId = j + 1;
+      const isInIssue = getIssueId(articleId, numIssues) === issueId;
       if (isInIssue) {
         id += 1;
-        const issueId = i + 1;
-        const articleId = j + 1;
         let type;
         let articleOrder;
         if (numFeaturedArticles === 0) {

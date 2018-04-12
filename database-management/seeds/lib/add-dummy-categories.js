@@ -1,5 +1,10 @@
 module.exports.addDummyCategories = (knex, numCategories) => {
-  const hardcodedCategories = ['news', 'features', 'opinion', 'multimedia'];
+  const hardcodedCategories = [
+    { name: 'news', slug: 'news' },
+    { name: 'features', slug: 'features' },
+    { name: 'opinion', slug: 'opinion' },
+    { name: 'multimedia', slug: 'media' },
+  ];
 
   const rows = [];
   for (let i = 0; i < numCategories; i++) {
@@ -7,7 +12,7 @@ module.exports.addDummyCategories = (knex, numCategories) => {
     let name;
     let slug;
     if (i < numCategories) {
-      [name, slug] = [hardcodedCategories[i], hardcodedCategories[i]];
+      ({ name, slug } = hardcodedCategories[i]);
     } else {
       [name, slug] = [`category${id}`, `category${id}`];
     }
