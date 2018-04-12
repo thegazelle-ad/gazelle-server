@@ -6,7 +6,7 @@ import databaseConnectionConfig from 'config/database.config.json5';
 import _ from 'lodash';
 import { has, formatDate, formatDateTime } from 'lib/utilities';
 
-const database = knex({
+export const database = knex({
   client: 'mysql',
   connection: databaseConnectionConfig,
   pool: {
@@ -1803,25 +1803,4 @@ export async function updateArticles(jsonGraphArg) {
 
   // It hasn't thrown an error yet so it must have been a success
   return true;
-}
-
-/**
- * @typedef PaginationArticle
- * @param {string} slug - The slug of the article
- */
-/**
- * Fetches a page of articles where pages are a given length
- * @param {number} pageLength - Length of page to be fetched
- * @param {number} pageIndex - Which page to fetch of size pageLength
- * @returns {Promise<PaginationArticle[]>} - An array of articles on the page
- */
-export async function getPaginatedArticle(pageLength, pageIndex) {
-  const offset = pageLength * pageIndex;
-  const articles = await database
-    .select('slug')
-    .from('articles')
-    .orderBy('created_at', 'DESC')
-    .limit(pageLength)
-    .offset(offset);
-  return articles;
 }
