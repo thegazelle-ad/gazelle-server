@@ -1,7 +1,8 @@
 const { executeDump } = require('./lib/execute-dump.js');
 
 exports.up = async knex => {
-  const tablesToDrop = [
+  // These tables don't have any tables referencing them
+  const unReferencedTablesToDrop = [
     'accesstokens',
     'app_fields',
     'app_settings',
@@ -16,14 +17,13 @@ exports.up = async knex => {
     'roles_users',
     'settings',
     'subscribers',
-    'users',
-    'clients',
   ];
-  // eslint-disable-next-line no-restricted-syntax
-  for (const tableName of tablesToDrop) {
-    // eslint-disable-next-line no-await-in-loop
-    await knex.schema.dropTable(tableName);
-  }
+  // These tables are referenced by the above tables
+  const referencedTablesToDrop = ['users', 'clients'];
+  await Promise.all(
+    unReferencedTablesToDrop.map(x => knex.schema.dropTable(x)),
+  );
+  await Promise.all(referencedTablesToDrop.map(x => knex.schema.dropTable(x)));
 };
 
 exports.down = async knex => {

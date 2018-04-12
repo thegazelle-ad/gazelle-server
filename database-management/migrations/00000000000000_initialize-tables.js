@@ -12,11 +12,11 @@ exports.up = async knex => {
 };
 
 exports.down = async knex => {
-  const tablesToDrop = [
+  // Tables that don't have any foreign keys referencing them
+  const unReferencedTablesToDrop = [
     'accesstokens',
     'app_fields',
     'app_settings',
-    'apps',
     'authors_posts',
     'client_trusted_domains',
     'info_pages',
@@ -34,21 +34,24 @@ exports.down = async knex => {
     'settings',
     'subscribers',
     'teams_authors',
+  ];
+  // Tables that have foreign keys referencing them
+  const tablesToDropRound2 = [
+    'apps',
     'posts_meta',
     'semesters',
     'tags',
     'clients',
     'users',
-    'categories',
     'authors',
     'issues',
-    'posts',
-    'teams',
   ];
+  // Tables that had tables from round 1 AND 2 referencing them
+  const tablesToDropRound3 = ['categories', 'posts', 'teams'];
 
-  // eslint-disable-next-line no-restricted-syntax
-  for (const tableName of tablesToDrop) {
-    // eslint-disable-next-line no-await-in-loop
-    await knex.schema.dropTable(tableName);
-  }
+  await Promise.all(
+    unReferencedTablesToDrop.map(x => knex.schema.dropTable(x)),
+  );
+  await Promise.all(tablesToDropRound2.map(x => knex.schema.dropTable(x)));
+  await Promise.all(tablesToDropRound3.map(x => knex.schema.dropTable(x)));
 };
