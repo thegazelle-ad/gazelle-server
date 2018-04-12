@@ -12,6 +12,7 @@ const {
   addArticleTagRelationship,
   addArticleAuthorRelationship,
   addIssueArticleOrdering,
+  addTeamStaffRelationship,
 } = require('./lib/index');
 
 exports.seed = async knex => {
@@ -42,6 +43,7 @@ exports.seed = async knex => {
     addArticleTagRelationship(knex, numArticles, numTags),
     addArticleAuthorRelationship(knex, numArticles, numStaff),
     addIssueArticleOrdering(knex, numIssues, numCategories, numArticles),
+    addTeamStaffRelationship(knex, numTeams, numStaff, numSemesters),
   ]);
 
   // Note that we have purposefully not added dummy interactive articles at this time

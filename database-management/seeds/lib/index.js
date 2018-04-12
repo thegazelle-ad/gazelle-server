@@ -17,4 +17,6 @@ module.exports = {
     .addArticleAuthorRelationship,
   addIssueArticleOrdering: require('./add-issue-article-ordering')
     .addIssueArticleOrdering,
+  addTeamStaffRelationship: require('./add-team-staff-relationship')
+    .addTeamStaffRelationship,
 };
