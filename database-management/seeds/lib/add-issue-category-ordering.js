@@ -1,10 +1,11 @@
 module.exports.addIssueCategoryOrdering = (knex, numIssues, numCategories) => {
   const rows = [];
+  let id = 0;
   for (let i = 0; i < numIssues; i++) {
     for (let j = 0; j < numCategories; j++) {
-      const id = i * numCategories + j + 1;
+      id += 1;
       const issueId = i + 1;
-      const categoryId = j % numCategories + 1;
+      const categoryId = j + 1;
       rows.push({
         id,
         issue_id: issueId,
