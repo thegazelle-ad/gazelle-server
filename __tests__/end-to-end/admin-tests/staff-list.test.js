@@ -40,7 +40,7 @@ describe('Admin interface staff member list', () => {
     return (
       getLoggedInState(nightmare, '/staff')
         .wait(searchInputSelector)
-        .insert(searchInputSelector, 'Emil Goldsmith Olesen')
+        .insert(searchInputSelector, 'firstname1 lastname1')
         .wait(searchItemSelector)
         // We click on the Material UI element where the onClick handler is actually set
         .click(`${searchItemSelector} span[role="menuitem"]`)
@@ -48,7 +48,7 @@ describe('Admin interface staff member list', () => {
         .path()
         .end()
         .then(path => {
-          expect(path).toBe('/staff/emil-goldsmith-olesen');
+          expect(path).toBe('/staff/staff1');
         })
     );
   });
