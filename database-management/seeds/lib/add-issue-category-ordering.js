@@ -1,5 +1,14 @@
 const { issueHasCategory } = require('./utilities');
 
+/**
+ * This table stores which categories are present in an issue and
+ * in which order they should appear on the main page
+ * @param {*} knex - The database instance
+ * @param {number} numIssues - Number of issues
+ * @param {number} numCategories - Number of categories
+ * @param {number} numArticles - Number of articles
+ * @returns {Promise}
+ */
 module.exports.addIssueCategoryOrdering = (
   knex,
   numIssues,

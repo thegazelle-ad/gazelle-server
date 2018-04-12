@@ -23,7 +23,7 @@ module.exports.addTeamStaffRelationship = (
         id += 1;
         const teamOrder = teamId - 1;
         const staffOrder = numStaffInTeam[teamOrder];
-        staffOrder[teamOrder] += 1;
+        numStaffInTeam[teamOrder] += 1;
         rows.push({
           id,
           team_id: teamId,

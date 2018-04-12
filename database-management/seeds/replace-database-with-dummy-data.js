@@ -16,12 +16,12 @@ const {
 } = require('./lib/index');
 
 exports.seed = async knex => {
-  const numArticles = 50;
+  const numArticles = 200;
   const numCategories = 4;
-  const numStaff = 10;
+  const numStaff = 30;
   const numTeams = 5;
   const numTags = 10;
-  const numIssues = 2;
+  const numIssues = 6;
   const numSemesters = 1;
   await deleteExistingData(knex);
   // We parallelize in batches of independant jobs with jobs
