@@ -32,19 +32,11 @@ describe('The Gazelle server side rendering', () => {
   it('renders non-default issue page correctly', () =>
     testPathServersideRender(nightmare, HOST, '/issue/100'));
   it('renders search page correctly', () =>
-    testPathServersideRender(nightmare, HOST, '/search?q=abu%20dhabi'));
+    testPathServersideRender(nightmare, HOST, '/search?q=title-1'));
   it('renders article page correctly', () =>
-    testPathServersideRender(
-      nightmare,
-      HOST,
-      '/issue/100/letters/letter-from-the-editors-celebrating-100-issues',
-    ));
+    testPathServersideRender(nightmare, HOST, '/issue/1/news/slug-1'));
   it('renders staff member page correctly', () =>
-    testPathServersideRender(
-      nightmare,
-      HOST,
-      '/staff-member/khadeeja-farooqui',
-    ));
+    testPathServersideRender(nightmare, HOST, '/staff-member/staff1'));
   // This should definitely return a 404 but it isn't implemented right now so we'll make it a todo
   it('renders not found page correctly', () =>
     testPathServersideRender(
