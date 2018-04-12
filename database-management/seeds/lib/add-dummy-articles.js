@@ -1,11 +1,11 @@
 const moment = require('moment');
 const { loremIpsum, placeImg } = require('./constants');
+const { getCategoryId } = require('./get-category-id');
 
 module.exports.addDummyArticles = (knex, numArticles, numCategories) => {
   const rows = [];
   const START_DATE = moment('2000-01-01');
   for (let i = 1; i <= numArticles; i++) {
-    const categoryId = (i - 0) % numCategories + 1;
     rows.push({
       id: i,
       slug: `slug-${i}`,
@@ -21,7 +21,7 @@ module.exports.addDummyArticles = (knex, numArticles, numCategories) => {
       published_at: START_DATE.add(i + 1, 'days').toDate(),
       is_interactive: false,
       // We set the category later
-      category_id: categoryId,
+      category_id: getCategoryId(i, numCategories),
     });
   }
   return knex('articles').insert(rows);

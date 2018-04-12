@@ -15,4 +15,6 @@ module.exports = {
     .addArticleTagRelationship,
   addArticleAuthorRelationship: require('./add-article-author-relationship')
     .addArticleAuthorRelationship,
+  addIssueArticleOrdering: require('./add-issue-article-ordering')
+    .addIssueArticleOrdering,
 };
