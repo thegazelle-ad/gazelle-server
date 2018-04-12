@@ -59,7 +59,7 @@ describe('Admin interface staff member list', () => {
       // We first make sure there are actual results present so we can check for the difference
       .insert(searchInputSelector, 'firstname1 lastname1')
       .wait(searchItemSelector)
-      // We know insert gibberish that shouldn't give any results
+      // We now insert gibberish that shouldn't give any results
       .insert(searchInputSelector, 'Not the name of a staff member')
       .wait(
         selector => document.querySelector(selector) === null,
