@@ -1,27 +1,42 @@
-/* eslint-disable */
 exports.up = async knex => {
   // Create the new table where relevant posts and posts_meta will go in
   await knex.schema.createTable('articles', table => {
-    table.increments('id').primary().unsigned().unique().notNullable();
-    table.string('slug', 150).unique().notNullable();
+    table.charset('utf8');
+    table
+      .increments('id')
+      .primary()
+      .unsigned()
+      .unique()
+      .notNullable();
+    table
+      .string('slug', 150)
+      .unique()
+      .notNullable();
     table.string('title', 150).notNullable();
     table.text('markdown', 'mediumtext');
     table.text('html', 'mediumtext');
     table.string('image_url');
     table.string('teaser');
-    table.integer('views').unsigned().notNullable().defaultTo(0);
+    table
+      .integer('views')
+      .unsigned()
+      .notNullable()
+      .defaultTo(0);
     table.dateTime('created_at').notNullable();
     table.dateTime('published_at');
-    table.boolean('is_interactive').notNullable().defaultTo(false);
-    table.integer('category_id').unsigned().references('id').inTable('categories')
-      .onDelete('SET NULL').onUpdate('CASCADE');
+    table
+      .boolean('is_interactive')
+      .notNullable()
+      .defaultTo(false);
+    table
+      .integer('category_id')
+      .unsigned()
+      .references('id')
+      .inTable('categories')
+      .onDelete('SET NULL')
+      .onUpdate('CASCADE');
   });
   // Now we copy over the data from the two tables into the new one
-
-  // We first have to convert the posts table to latin1 so we correctly interpret it
-  const tableName = 'posts';
-  const charset = 'latin1';
-  await knex.schema.raw(`ALTER TABLE ${tableName} CONVERT TO CHARACTER SET ${charset}`);
 
   const postRows = await knex.select('*').from('posts');
   const metaRows = await knex.select('*').from('posts_meta');
@@ -45,7 +60,8 @@ exports.up = async knex => {
   }));
 
   const articleRows = convertedPostRows.map(postRow => {
-    const metaRow = convertedMetaRows.find(_metaRow => _metaRow.id === postRow.id) || {};
+    const metaRow =
+      convertedMetaRows.find(_metaRow => _metaRow.id === postRow.id) || {};
     return {
       ...postRow,
       ...metaRow,
@@ -60,6 +76,7 @@ exports.up = async knex => {
     const subArray = articleRows.slice(startIndex, startIndex + chunkSize);
     promises.push(knex('articles').insert(subArray));
     if (promises.length === 10) {
+      // eslint-disable-next-line no-await-in-loop
       await Promise.all(promises);
       promises.length = 0;
     }
@@ -71,25 +88,41 @@ exports.up = async knex => {
     await knex.schema.alterTable('authors_posts', table => {
       table.dropForeign('post_id');
       table.renameColumn('post_id', 'article_id');
-      table.foreign('article_id').references('id').inTable('articles')
-        .onDelete('CASCADE').onUpdate('CASCADE');
+      table
+        .foreign('article_id')
+        .references('id')
+        .inTable('articles')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE');
     }),
     await knex.schema.alterTable('interactive_meta', table => {
       table.dropForeign('id');
-      table.foreign('id').references('id').inTable('articles')
-        .onDelete('CASCADE').onUpdate('CASCADE');
+      table
+        .foreign('id')
+        .references('id')
+        .inTable('articles')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE');
     }),
     await knex.schema.alterTable('issues_posts_order', table => {
       table.dropForeign('post_id');
       table.renameColumn('post_id', 'article_id');
-      table.foreign('article_id').references('id').inTable('articles')
-        .onDelete('CASCADE').onUpdate('CASCADE');
+      table
+        .foreign('article_id')
+        .references('id')
+        .inTable('articles')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE');
     }),
     await knex.schema.alterTable('posts_tags', table => {
       table.dropForeign('post_id');
       table.renameColumn('post_id', 'article_id');
-      table.foreign('article_id').references('id').inTable('articles')
-        .onDelete('CASCADE').onUpdate('CASCADE');
+      table
+        .foreign('article_id')
+        .references('id')
+        .inTable('articles')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE');
     }),
   ]);
   await knex.schema.renameTable('posts_tags', 'articles_tags');
@@ -99,6 +132,7 @@ exports.up = async knex => {
   await knex.schema.dropTable('posts');
 };
 
+// eslint-disable-next-line no-unused-vars
 exports.down = knex => {
   // It is too bothersome to write the reverse migration here, so I simply won't <.<
 };
