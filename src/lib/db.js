@@ -162,6 +162,25 @@ export async function articleQuery(slugs, columns) {
     .whereIn('articles.slug', slugs);
 }
 
+export async function articleIdQuery(ids, columns) {
+  const processedColumns = columns.map(col => {
+    // make it compatible for the sql query
+    if (col === 'category') {
+      return 'categories.slug as category';
+    }
+    return `articles.${col}`;
+  });
+  // In order to be able to identify the rows we get back we need to include the slug
+  if (!processedColumns.includes('articles.id')) {
+    processedColumns.push('articles.id');
+  }
+  return database
+    .select(...processedColumns)
+    .from('articles')
+    .innerJoin('categories', 'articles.category_id', '=', 'categories.id')
+    .whereIn('articles.id', ids);
+}
+
 export function articleIssueQuery(slugs) {
   // the parameter is the slugs the issueNumber is being requested from
   return new Promise(resolve => {
@@ -232,6 +251,41 @@ export function articleAuthorQuery(slugs) {
             data[row.articleSlug] = [row.authorSlug];
           } else {
             data[row.articleSlug].push(row.authorSlug);
+          }
+        });
+        // database.destroy();
+        resolve(data);
+      })
+      .catch(e => {
+        // database.destroy();
+        throw new Error(e);
+      });
+  });
+}
+
+export function articleAuthorIdQuery(ids) {
+  // slugs function parameter is an array of article slugs
+  // of which to fetch the staff member of.
+  // The function returns an object with article slugs
+  // as keys and values being arrays of author slugs.
+  return new Promise(resolve => {
+    database
+      .select('articles.id as articleId', 'staff.slug as authorSlug')
+      .from('staff')
+      .innerJoin('authors_articles', 'staff.id', '=', 'author_id')
+      .innerJoin('articles', 'articles.id', '=', 'article_id')
+      .whereIn('articles.id', ids)
+      .orderBy('authors_articles.id', 'asc')
+      .then(rows => {
+        // rows is an array of objects with keys authorSlug and articleSlug
+        const data = {};
+        rows.forEach(row => {
+          // This will input them in ascending order by id (which represents time they were
+          // inserted as author of that article) as the query was structured so.
+          if (!has.call(data, row.articleId)) {
+            data[row.articleId] = [row.authorSlug];
+          } else {
+            data[row.articleId].push(row.authorSlug);
           }
         });
         // database.destroy();

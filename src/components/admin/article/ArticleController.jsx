@@ -64,19 +64,21 @@ class ArticleController extends FalcorController {
     }, 500);
   }
 
-  async save(jsonGraphEnvelope, processedAuthors, articleSlug, falcorData) {
+  async save(jsonGraphEnvelope, processedAuthors, articleId, falcorData) {
     // Update the values
     this.safeSetState({ saving: true });
-    await this.falcorUpdate(jsonGraphEnvelope);
+    const dbUpdates = [this.falcorUpdate(jsonGraphEnvelope)];
 
     if (processedAuthors !== null) {
-      await this.falcorCall(
-        ['articles', 'bySlug', this.state.slug, 'authors', 'updateAuthors'],
-        [falcorData.id, processedAuthors],
-        [['name'], ['slug']],
+      dbUpdates.push(
+        this.falcorCall(
+          ['articles', 'byId', articleId, 'authors', 'updateAuthors'],
+          [falcorData.id, processedAuthors],
+          [['name'], ['slug']],
+        ),
       );
     }
-
+    await Promise.all(dbUpdates);
     // Reset state after save is done
     this.safeSetState({
       changed: false,
@@ -95,8 +97,8 @@ class ArticleController extends FalcorController {
     return [
       [
         'articles',
-        'bySlug',
-        params.slug,
+        'byId',
+        params.id,
         [
           'title',
           'slug',
@@ -109,8 +111,8 @@ class ArticleController extends FalcorController {
       ],
       [
         'articles',
-        'bySlug',
-        params.slug,
+        'byId',
+        params.id,
         'authors',
         { length: 10 },
         ['id', 'name'],
@@ -119,7 +121,7 @@ class ArticleController extends FalcorController {
     ];
   }
   falcorToState(data) {
-    const article = data.articles.bySlug[this.props.params.slug];
+    const article = data.articles.byId[this.props.params.id];
     const title = article.title || '';
     const slug = article.slug || '';
     const teaser = article.teaser || '';
@@ -150,7 +152,7 @@ class ArticleController extends FalcorController {
   }
 
   isSameArticle(prevProps, props) {
-    return prevProps.params.slug === props.params.slug;
+    return prevProps.params.id === props.params.id;
   }
 
   formHasUpdated(prevState, state) {
@@ -181,13 +183,13 @@ class ArticleController extends FalcorController {
     const { page } = this.props.params;
     const pathname = `/articles/page/${page}`;
 
-    const location = { pathname, state: { refresh: this.state.saved } };
+    const location = { pathname, state: { refresh: this.state.refresh } };
     browserHistory.push(location);
   }
 
   handleSaveChanges = async () => {
-    const articleSlug = this.props.params.slug;
-    const falcorData = this.state.data.articles.bySlug[articleSlug];
+    const articleId = this.props.params.id;
+    const falcorData = this.state.data.articles.byId[articleId];
 
     if (!this.isFormChanged()) {
       throw new Error(
@@ -254,35 +256,33 @@ class ArticleController extends FalcorController {
       : ['title', 'slug', 'teaser', 'image_url'];
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
-      paths: [['articles', 'bySlug', articleSlug, fields]],
+      paths: [['articles', 'byId', articleId, fields]],
       jsonGraph: {
         articles: {
-          bySlug: {
-            [articleSlug]: {},
+          byId: {
+            [articleId]: {},
           },
         },
       },
     };
     // Fill in the data
-    jsonGraphEnvelope.jsonGraph.articles.bySlug[
-      articleSlug
+    jsonGraphEnvelope.jsonGraph.articles.byId[
+      articleId
     ].title = this.state.title;
-    jsonGraphEnvelope.jsonGraph.articles.bySlug[
-      articleSlug
-    ].slug = this.state.slug;
-    jsonGraphEnvelope.jsonGraph.articles.bySlug[
-      articleSlug
+    jsonGraphEnvelope.jsonGraph.articles.byId[articleId].slug = this.state.slug;
+    jsonGraphEnvelope.jsonGraph.articles.byId[
+      articleId
     ].teaser = this.state.teaser;
-    jsonGraphEnvelope.jsonGraph.articles.bySlug[
-      articleSlug
+    jsonGraphEnvelope.jsonGraph.articles.byId[
+      articleId
     ].image_url = this.state.imageUrl;
     if (shouldUpdateCategory) {
-      jsonGraphEnvelope.jsonGraph.articles.bySlug[
-        articleSlug
+      jsonGraphEnvelope.jsonGraph.articles.byId[
+        articleId
       ].category = this.state.category;
     }
 
-    this.save(jsonGraphEnvelope, processedAuthors, articleSlug, falcorData);
+    this.save(jsonGraphEnvelope, processedAuthors, articleId, falcorData);
   };
 
   isFormFieldChanged(userInput, falcorData) {
@@ -303,7 +303,7 @@ class ArticleController extends FalcorController {
   }
 
   isFormChanged() {
-    const falcorData = this.state.data.articles.bySlug[this.props.params.slug];
+    const falcorData = this.state.data.articles.byId[this.props.params.id];
     const changedFlag =
       this.isFormFieldChanged(this.state.title, falcorData.title) ||
       this.isFormFieldChanged(this.state.slug, falcorData.slug) ||
@@ -323,21 +323,20 @@ class ArticleController extends FalcorController {
     };
 
     if (this.state.ready) {
-      if (!this.state.data || !this.state.data.articles.bySlug) {
+      if (!this.state.data || !this.state.data.articles.byId) {
         return (
           <div>
-            <p>Error: No articles match this slug</p>
+            <p>Error: No articles match this id</p>
           </div>
         );
       }
 
-      const { slug } = this.props.params;
-      const article = this.state.data.articles.bySlug[slug];
+      const { id } = this.props.params;
+      const article = this.state.data.articles.byId[id];
 
       // If it is a new article it won't have any meta data yet so we use the default
       const categories = _.toArray(this.state.data.categories.byIndex);
       categories.push({ name: 'none', slug: 'none' });
-
       const actionButtons = [
         <SaveButton
           onClick={this.handleSaveChanges}
@@ -411,7 +410,7 @@ class ArticleController extends FalcorController {
           <br />
           <UnpublishButton
             save={this.save}
-            slug={this.props.params.slug}
+            id={this.props.params.id}
             falcorUpdate={this.falcorUpdate}
             style={styles.buttons}
             published_at={article.published_at}

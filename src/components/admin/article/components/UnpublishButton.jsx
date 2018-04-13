@@ -12,13 +12,13 @@ export default class UnpublishButton extends React.Component {
   }
 
   unpublish() {
-    const { slug } = this.props;
+    const { id } = this.props;
     const jsonGraphEnvelope = {
-      paths: [['articles', 'bySlug', slug, 'published_at']],
+      paths: [['articles', 'byId', id, 'published_at']],
       jsonGraph: {
         articles: {
-          bySlug: {
-            [slug]: {
+          byId: {
+            [id]: {
               published_at: null,
             },
           },
@@ -52,7 +52,7 @@ export default class UnpublishButton extends React.Component {
 }
 
 UnpublishButton.propTypes = {
-  slug: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
   save: PropTypes.func.isRequired,
   published_at: PropTypes.number,
   style: PropTypes.shape({}),

@@ -67,7 +67,7 @@ export default class ArticleListController extends FalcorController {
         NUM_ARTICLES_IN_PAGE,
         parseInt(params.page, 10),
         { length: NUM_ARTICLES_IN_PAGE },
-        ['title', 'slug', 'teaser', 'published_at'],
+        ['title', 'id', 'teaser', 'published_at'],
       ],
       ['articles', 'length'],
     ];
@@ -82,7 +82,7 @@ export default class ArticleListController extends FalcorController {
 
   clickSearchSuggestion(article) {
     const { page } = this.props.params;
-    const path = `/articles/page/${page}/slug/${article.slug}`;
+    const path = `/articles/page/${page}/id/${article.id}`;
     browserHistory.push(path);
   }
 
@@ -95,10 +95,7 @@ export default class ArticleListController extends FalcorController {
       publishedDate = 'Unpublished';
     }
     return (
-      <Link
-        to={`/articles/page/${page}/slug/${article.slug}`}
-        key={article.slug}
-      >
+      <Link to={`/articles/page/${page}/id/${article.id}`} key={article.id}>
         <ListItem
           primaryText={article.title}
           secondaryText={
