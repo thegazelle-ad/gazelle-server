@@ -1823,7 +1823,7 @@ export async function updateArticles(keyField, jsonGraphArg) {
 export async function getPaginatedArticle(pageLength, pageIndex) {
   const offset = pageLength * pageIndex;
   const articles = await database
-    .select('slug')
+    .select('id')
     .from('articles')
     .orderBy('created_at', 'DESC')
     .limit(pageLength)

@@ -30,7 +30,7 @@ export default [
       const articles = await getPaginatedArticle(pageLength, pageIndex);
       const results = articles.map((singleArticle, index) => ({
         path: ['articles', 'byPage', pageLength, pageIndex, index],
-        value: $ref(['articles', 'bySlug', singleArticle.slug]),
+        value: $ref(['articles', 'byId', singleArticle.id]),
       }));
       return results;
     },
