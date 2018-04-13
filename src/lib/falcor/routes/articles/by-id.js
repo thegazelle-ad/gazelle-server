@@ -2,8 +2,8 @@ import falcor from 'falcor';
 import _ from 'lodash';
 
 import {
-  articleIdQuery,
-  articleAuthorIdQuery,
+  articleQuery,
+  articleAuthorQuery,
   updateArticles,
   updateAuthors,
 } from 'lib/db';
@@ -16,10 +16,11 @@ const $ref = falcor.Model.ref;
 export default [
   {
     // Get custom article data from MariaDB
-    route: "articles['byId'][{keys:ids}]", // eslint-disable-line max-len
+    route:
+      "articles['byId'][{keys:ids}]['id', 'image_url', 'slug', 'title', 'markdown', 'html', 'teaser', 'category', 'published_at', 'views', 'is_interactive']", // eslint-disable-line max-len
     get: async pathSet => {
       const requestedFields = pathSet[3];
-      const data = await articleIdQuery(pathSet.ids, requestedFields);
+      const data = await articleQuery('id', pathSet.ids, requestedFields);
       const results = data
         .map(article => {
           const processedArticle = { ...article };
@@ -30,7 +31,7 @@ export default [
             processedArticle.published_at = processedArticle.published_at.getTime();
           }
           return requestedFields.map(field => ({
-            path: ['articles', 'byId', processedArticle.id],
+            path: ['articles', 'byId', processedArticle.id, field],
             value: processedArticle[field],
           }));
         })
@@ -40,8 +41,7 @@ export default [
     set: async jsonGraphArg => {
       jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
       const articles = jsonGraphArg.articles.byId;
-      const articlesToUpdate = _.mapKeys(articles, value => value.slug);
-      const flag = await updateArticles(articlesToUpdate);
+      const flag = await updateArticles('id', articles);
       if (!flag) {
         throw new Error(
           'For unknown reasons updatePostMeta returned a non-true flag',
@@ -61,7 +61,7 @@ export default [
     route: "articles['byId'][{keys:ids}]['authors'][{integers:indices}]",
     get: pathSet =>
       new Promise(resolve => {
-        articleAuthorIdQuery(pathSet.ids).then(data => {
+        articleAuthorQuery('id', pathSet.ids).then(data => {
           // We receive the data as an object with keys equalling article ids
           // and values being an array of author ids in no particular order
           const results = [];

@@ -23,7 +23,7 @@ export default [
       "articles['bySlug'][{keys:slugs}]['id', 'image_url', 'slug', 'title', 'markdown', 'html', 'teaser', 'category', 'published_at', 'views', 'is_interactive']", // eslint-disable-line max-len
     get: async pathSet => {
       const requestedFields = pathSet[3];
-      const data = await articleQuery(pathSet.slugs, requestedFields);
+      const data = await articleQuery('slug', pathSet.slugs, requestedFields);
       const results = data
         .map(article => {
           const processedArticle = { ...article };
@@ -44,7 +44,7 @@ export default [
     set: async jsonGraphArg => {
       jsonGraphArg = cleanupJsonGraphArg(jsonGraphArg); // eslint-disable-line no-param-reassign
       const articles = jsonGraphArg.articles.bySlug;
-      const flag = await updateArticles(articles);
+      const flag = await updateArticles('slug', articles);
       if (!flag) {
         throw new Error(
           'For unknown reasons updatePostMeta returned a non-true flag',
@@ -95,7 +95,7 @@ export default [
     route: "articles['bySlug'][{keys:slugs}]['authors'][{integers:indices}]",
     get: pathSet =>
       new Promise(resolve => {
-        articleAuthorQuery(pathSet.slugs).then(data => {
+        articleAuthorQuery('slug', pathSet.slugs).then(data => {
           // We receive the data as an object with keys equalling article slugs
           // and values being an array of author slugs in no particular order
           const results = [];
