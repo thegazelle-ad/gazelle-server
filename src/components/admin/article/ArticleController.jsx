@@ -366,7 +366,7 @@ class ArticleController extends FalcorController {
             floatingLabelText={`Slug${
               !article.published_at
                 ? ''
-                : ' - You cannot edit the slug of a published article. Unpublish this article to edit the slug.'
+                : ' - You cannot edit the slug of a published article. Unpublish this article to edit the slug'
             }`}
             value={this.state.slug}
             onUpdate={this.updateSlug}
