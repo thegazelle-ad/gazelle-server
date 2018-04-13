@@ -155,7 +155,7 @@ class IssueListController extends FalcorController {
 
   render() {
     if (this.state.ready) {
-      if (!this.state.data) {
+      if (!this.state.data || !this.state.data.issues) {
         return (
           <div>
             An error occured while fetching issue data, please contact the

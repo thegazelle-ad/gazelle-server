@@ -52,7 +52,7 @@ export default class SearchController extends FalcorController {
       if (!this.props.location.query.q) {
         return null;
       }
-      if (!this.state.data) {
+      if (!this.state.data || Object.keys(this.state.data).length === 0) {
         return (
           <div className="search__no-data">
             Oops! No Results found. <br />

@@ -24,6 +24,11 @@ import { filterByEnvironment } from 'lib/utilities';
 import runMainServer from 'server-code/main-server';
 import runAdminServer from 'server-code/admin-server';
 
+/* We need to initialize the logger for the whole application */
+import { initializeLogger } from 'lib/logger';
+
+initializeLogger(false);
+
 /* Server code starts */
 // Announce the build version for clarity
 const args = ['DEVELOPMENT BUILD', 'STAGING BUILD', 'PRODUCTION BUILD'];

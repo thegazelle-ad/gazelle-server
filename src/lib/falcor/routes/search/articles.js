@@ -7,8 +7,8 @@ const $ref = falcor.Model.ref;
 
 export default [
   {
-    // Search for posts
-    route: "search['posts'][{keys:queries}][{integers:indices}]",
+    // Search for articles
+    route: "search['articles'][{keys:queries}][{integers:indices}]",
     get: pathSet =>
       new Promise(resolve => {
         let minIndex = pathSet.indices[0];
@@ -32,7 +32,7 @@ export default [
             processedPathSet.indices.forEach(index => {
               if (index < queryResults.length) {
                 results.push({
-                  path: ['search', 'posts', query, index],
+                  path: ['search', 'articles', query, index],
                   value: $ref(['articles', 'bySlug', queryResults[index]]),
                 });
               }

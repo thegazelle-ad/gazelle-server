@@ -28,7 +28,10 @@ export default class ArchivesController extends FalcorController {
 
   render() {
     if (this.state.ready) {
-      if (this.state.data === null) {
+      if (
+        this.state.data === null ||
+        Object.keys(this.state.data).length === 0
+      ) {
         return <NotFound />;
       }
       const data = _.filter(
