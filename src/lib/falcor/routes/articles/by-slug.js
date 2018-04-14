@@ -41,13 +41,11 @@ export default [
       return results;
     },
     set: async jsonGraphArg => {
-      const articles = jsonGraphArg.articles.bySlug;
-      const flag = await updateArticles(
-        'slug',
-        _.mapValues(articles, fields =>
-          _.mapValues(fields, field => field.value || field.valueOf),
-        ),
+      // Map to handle Atom values sent by refs
+      const articles = _.mapValues(jsonGraphArg.articles.bySlug, fields =>
+        _.mapValues(fields, field => field.value || field.valueOf),
       );
+      const flag = await updateArticles('slug', articles);
       if (!flag) {
         throw new Error(
           'For unknown reasons updatePostMeta returned a non-true flag',
@@ -58,8 +56,17 @@ export default [
           path: ['articles', 'bySlug', slug, field],
           value,
         })),
-      ).flatten();
-      return results;
+      );
+      // If any Article slugs have been changed, invalidate refs
+      if (
+        _.some(
+          articles,
+          (singleArticle, originalSlug) => singleArticle.slug !== originalSlug,
+        )
+      ) {
+        results.push({ path: ['articles', 'byId'], invalidated: true });
+      }
+      return results.flatten();
     },
   },
   {
@@ -94,19 +101,19 @@ export default [
   },
   {
     // Get author information from article
-    route: "articles['bySlug'][{keys:slugs}]['authors'][{integers:indices}]",
+    route: "articles['bySlug'][{keys:slugs}]['staff'][{integers:indices}]",
     get: pathSet =>
       new Promise(resolve => {
         articleAuthorQuery('slug', pathSet.slugs).then(data => {
           // We receive the data as an object with keys equalling article slugs
           // and values being an array of author slugs in no particular order
           const results = [];
-          _.forEach(data, (authorSlugArray, postSlug) => {
+          _.forEach(data, (staffSlugArray, postSlug) => {
             pathSet.indices.forEach(index => {
-              if (index < authorSlugArray.length) {
+              if (index < staffSlugArray.length) {
                 results.push({
-                  path: ['articles', 'bySlug', postSlug, 'authors', index],
-                  value: $ref(['staff', 'bySlug', authorSlugArray[index]]),
+                  path: ['articles', 'bySlug', postSlug, 'staff', index],
+                  value: $ref(['staff', 'bySlug', staffSlugArray[index]]),
                 });
               }
             });
@@ -143,8 +150,8 @@ export default [
       }),
   },
   {
-    // Add authors to an article
-    route: "articles['bySlug'][{keys:slugs}]['authors']['updateAuthors']",
+    // Add staff to an article
+    route: "articles['bySlug'][{keys:slugs}]['staff']['updateStaff']",
     call: (callPath, args) => {
       // the falcor.model.call only takes a path not a pathset
       // so it is not possible to call this function for more
@@ -156,9 +163,9 @@ export default [
       }
       return new Promise(resolve => {
         const articleId = args[0];
-        const newAuthors = args[1];
+        const newStaff = args[1];
         const articleSlug = callPath.slugs[0];
-        updateAuthors(articleId, newAuthors).then(data => {
+        updateAuthors(articleId, newStaff).then(data => {
           const results = [];
           // Invalidate all the old data
           results.push({
