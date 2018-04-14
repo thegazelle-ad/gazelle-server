@@ -366,7 +366,7 @@ class ArticleController extends FalcorController {
             }`}
             value={this.state.slug}
             onUpdate={this.updateSlug}
-            disabled={this.state.saving || article.published_at !== null}
+            disabled={this.state.saving || Boolean(article.published_at)}
             fullWidth
           />
           <ListSelector
