@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
-import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
+import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
 import { withFalcor } from 'components/hocs/falcor-hocs';
 import { debounce } from 'lib/utilities';
 import { getDisplayName } from 'lib/higher-order-helpers';
@@ -39,11 +39,10 @@ export const withFalcorSearch = (fields, formatter, mode) => WrappedField => {
       );
 
       return this.props.falcor.get(...pathSets).then(x => {
-        if (!x) {
+        if (!x.json.search[mode][query][0]) {
           return { suggestions: [] };
         }
-        x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
-        const suggestions = _.toArray(x.json.search[mode][query])
+        const suggestions = parseFalcorPseudoArray(x.json.search[mode][query])
           .filter(item => item !== undefined)
           .map(item => ({
             title: formatter(item),
