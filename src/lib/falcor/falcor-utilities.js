@@ -92,7 +92,7 @@ export function pathSetsInCache(cache, falcorPathSets) {
     }
     const val = curObject[key];
     // With Falcor 2 update, null values are no longer given $type
-    if (val && val.$type) {
+    if (_.has(val, '$type')) {
       switch (val.$type) {
         case 'error':
         case 'atom':
