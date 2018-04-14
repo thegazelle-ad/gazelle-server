@@ -139,7 +139,7 @@ export function infoPagesQuery(slugs, columns) {
 
 /**
  * Fetches direct meta data of articles from the articles database table
- * @param {string[]} queryField - Indicates which field to query by
+ * @param {string} queryField - Indicates which field to query by
  * @param {string[]} queryParams - Array of parameters of type queryField of articles to fetch
  * @param {string[]} columns - Which columns of the articles table to fetch
  * @returns {Promise<Object[]>}
@@ -232,7 +232,7 @@ export function articleAuthorQuery(queryField, queryParams) {
         rows.forEach(row => {
           // This will input them in ascending order by id (which represents time they were
           // inserted as author of that article) as the query was structured so.
-          if (!has.call(data, row.articleSlug)) {
+          if (!has.call(data, row.articleQueryField)) {
             data[row.articleQueryField] = [row.authorSlug];
           } else {
             data[row.articleQueryField].push(row.authorSlug);
@@ -1761,7 +1761,7 @@ async function updateArticleCategories(jsonGraphArg) {
 
 /**
  * Updates articles directly tied to an article
- * @param {string[]} keyField - A String which indicates which db field is used as the primary key in jsonGraphArg
+ * @param {string} keyField - A String which indicates which db field is used as the primary key in jsonGraphArg
  * @param {Object} jsonGraphArg - An object of type { [keyFields]: articleUpdateObject[] }
  * @returns {Promise<boolean>} - Whether the update was a success
  */

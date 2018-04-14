@@ -42,7 +42,12 @@ export default [
     },
     set: async jsonGraphArg => {
       const articles = jsonGraphArg.articles.bySlug;
-      const flag = await updateArticles('slug', articles);
+      const flag = await updateArticles(
+        'slug',
+        _.mapValues(articles, fields =>
+          _.mapValues(fields, field => field.value || field.valueOf),
+        ),
+      );
       if (!flag) {
         throw new Error(
           'For unknown reasons updatePostMeta returned a non-true flag',
