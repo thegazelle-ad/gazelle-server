@@ -1125,6 +1125,81 @@ export function createStaff(staffObject) {
   });
 }
 
+/**
+ * Adds a tag to the database.
+ * @param {slug, name} tagObject the tag object to insert.
+ */
+
+export function addTag(tagObject) {
+  return new Promise(resolve => {
+    database('tags')
+      .insert(tagObject)
+      .then(() => {
+        // Insert statements should throw errors themselves if they fail.
+        resolve(true);
+      });
+  });
+}
+
+/**
+ * Queries the tags table in the database for all tags with the given slugs selecting for
+ * the given columns.
+ * @param  {string[]}    slugs   the tags to select
+ * @param  {string[]}    columns the columns of tags to return
+ * @returns{Object[]}    rows    the result.
+ */
+export function tagQuery(slugs, columns) {
+  if (!_.isArray(slugs) || !_.isArray(columns)) {
+    throw new Error(
+      `tagQuery must be called with slugs and columns as arrays. Received slugs ${slugs} and columns ${columns}`,
+    );
+  }
+
+  return new Promise(resolve => {
+    // Slug is required for the falcor router.
+    const processedColumns = _.uniq(columns.concat(['slug']));
+    database
+      .select(...processedColumns)
+      .from('tags')
+      .whereIn('slug', slugs)
+      .then(rows => {
+        resolve(rows);
+      })
+      .catch(e => {
+        throw new Error(e);
+      });
+  });
+}
+
+/**
+ * Update tags given a json graph.
+ * @param   {Object}   jsonGraphArg - the json graph to update
+ * @returns {boolean}
+ */
+export function updateTag(jsonGraphArg) {
+  return new Promise(resolve => {
+    const updatesCalled = Object.keys(jsonGraphArg).length;
+    let updatesReturned = 0;
+    _.forEach(jsonGraphArg, (tagObject, slug) => {
+      database('tag')
+        .where('slug', '=', slug)
+        .update(tagObject)
+        .then(data => {
+          if (data !== 1) {
+            throw new Error(`Problems updating tag with slug: ${slug}`);
+          }
+          updatesReturned += 1;
+          if (updatesReturned >= updatesCalled) {
+            resolve(true);
+          }
+        })
+        .catch(e => {
+          throw e;
+        });
+    });
+  });
+}
+
 export function updateIssueArticles(
   issueNumber,
   featuredArticles,
