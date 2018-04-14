@@ -6,6 +6,7 @@ import {
   updateArticles,
   articleIssueQuery,
   articleAuthorQuery,
+  articleTagQuery,
   interactiveArticleQuery,
   updateAuthors,
   relatedArticleQuery,
@@ -102,6 +103,29 @@ export default [
                 results.push({
                   path: ['articles', 'bySlug', postSlug, 'authors', index],
                   value: $ref(['staff', 'bySlug', authorSlugArray[index]]),
+                });
+              }
+            });
+          });
+          resolve(results);
+        });
+      }),
+  },
+  {
+    // Get tag information from article
+    route: "articles['bySlug'][{keys:slugs}]['tags'][{integers:indices}]",
+    get: pathSet =>
+      new Promise(resolve => {
+        articleTagQuery(pathSet.slugs).then(data => {
+          // We receive the data as an object with keys equalling article slugs
+          // and values being an array of author slugs in no particular order
+          const results = [];
+          _.forEach(data, (tagSlugArray, articleSlug) => {
+            pathSet.indices.forEach(index => {
+              if (index < tagSlugArray.length) {
+                results.push({
+                  path: ['articles', 'bySlug', articleSlug, 'tags', index],
+                  value: $ref(['tags', 'bySlug', tagSlugArray[index]]),
                 });
               }
             });

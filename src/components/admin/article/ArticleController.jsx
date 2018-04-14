@@ -107,6 +107,14 @@ class ArticleController extends FalcorController {
         { length: 10 },
         ['id', 'name'],
       ],
+      [
+        'articles',
+        'bySlug',
+        params.slug,
+        'tags',
+        { length: 10 },
+        ['id', 'name'],
+      ],
       ['categories', 'byIndex', { length: 30 }, ['name', 'slug']],
     ];
   }
