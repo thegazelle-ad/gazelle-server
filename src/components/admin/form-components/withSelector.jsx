@@ -114,7 +114,7 @@ export const withSelector = Finder => {
         this.props.elements.length > 0
           ? _.map(this.props.elements, object => (
               <ObjectChip
-                key={object.id !== null ? object.id : object.name}
+                key={_.get(object, 'id', object.name)}
                 id={object.id}
                 title={object.name}
                 onDelete={this.handleDelete}
@@ -138,11 +138,7 @@ export const withSelector = Finder => {
             {capFirstLetter(this.props.mode)}
           </p>
           <div style={styles.wrapper}>{objectChips || noObjectsMessage}</div>
-          <Finder
-            length={3}
-            handleClick={this.handleClickAdd}
-            {...this.props}
-          />
+          <Finder handleClick={this.handleClickAdd} {...this.props} />
         </div>
       );
     }
@@ -163,6 +159,7 @@ export const withSelector = Finder => {
     mode: PropTypes.oneOf(['staff', 'articles']).isRequired,
     disabled: PropTypes.bool,
     enableAdd: PropTypes.bool,
+    ...Finder.propTypes,
   };
 
   Selector.defaultProps = {
