@@ -12,7 +12,7 @@ import Chip from 'material-ui/Chip';
 // HOCs
 import { withModals } from 'components/admin/hocs/modals/withModals';
 
-export const withSelector = WrappedField => {
+export const withSelector = Finder => {
   class ObjectChip extends React.PureComponent {
     onClick = () =>
       this.props.onDelete(this.props.id, this.props.title, this.props.slug);
@@ -138,7 +138,7 @@ export const withSelector = WrappedField => {
             {capFirstLetter(this.props.mode)}
           </p>
           <div style={styles.wrapper}>{objectChips || noObjectsMessage}</div>
-          <WrappedField
+          <Finder
             length={3}
             handleClick={this.handleClickAdd}
             {...this.props}
@@ -159,10 +159,8 @@ export const withSelector = WrappedField => {
     onUpdate: PropTypes.func.isRequired,
     displayAlert: PropTypes.func.isRequired,
     slugify: PropTypes.func.isRequired,
-    // It isn't a typo and they are required in SearchBar so no need for defaults
-    /* eslint-disable react/no-typos, react/require-default-props */
-    mode: React.PropTypes.oneOf(['staff', 'articles']).isRequired,
-    /* eslint-enable react/no-typos, react/require-default-props */
+    // eslint-disable-next-line react/require-default-props
+    mode: PropTypes.oneOf(['staff', 'articles']).isRequired,
     disabled: PropTypes.bool,
     enableAdd: PropTypes.bool,
   };
@@ -172,6 +170,6 @@ export const withSelector = WrappedField => {
     enableAdd: false,
   };
 
-  Selector.displayName = `withSelector(${getDisplayName(WrappedField)})`;
+  Selector.displayName = `withSelector(${getDisplayName(Finder)})`;
   return withModals(Selector);
 };
