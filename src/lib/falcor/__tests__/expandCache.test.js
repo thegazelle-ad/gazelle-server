@@ -13,6 +13,11 @@ describe('expandCache', () => {
     });
   });
 
+  it('handles null values', () => {
+    const cache = { key: null };
+    expect(expandCache(cache)).toEqual(cache);
+  });
+
   it('does expand refs', () => {
     const cache = {
       a: { $type: 'ref', value: ['b'] },
