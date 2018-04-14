@@ -114,7 +114,7 @@ export const withSelector = Finder => {
         this.props.elements.length > 0
           ? _.map(this.props.elements, object => (
               <ObjectChip
-                key={_.get(object, 'id', object.name)}
+                key={object.id || object.id === 0 ? object.id : object.name}
                 id={object.id}
                 title={object.name}
                 onDelete={this.handleDelete}
