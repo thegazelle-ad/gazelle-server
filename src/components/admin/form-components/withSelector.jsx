@@ -158,13 +158,11 @@ export const withSelector = Finder => {
     // eslint-disable-next-line react/require-default-props
     mode: PropTypes.oneOf(['staff', 'articles']).isRequired,
     disabled: PropTypes.bool,
-    enableAdd: PropTypes.bool,
     ...Finder.propTypes,
   };
 
   Selector.defaultProps = {
     disabled: false,
-    enableAdd: false,
   };
 
   Selector.displayName = `withSelector(${getDisplayName(Finder)})`;
