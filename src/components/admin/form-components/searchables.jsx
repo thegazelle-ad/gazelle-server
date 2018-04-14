@@ -1,6 +1,7 @@
 import moment from 'moment';
 
 import { withFalcorSearch } from 'components/admin/form-components/withFalcorSearch';
+import { withSelector } from 'components/admin/form-components/withSelector';
 import { SearchBar } from 'components/admin/form-components/SearchBar';
 
 export const SearchableAuthors = withFalcorSearch(
@@ -26,3 +27,7 @@ export const SearchableArticlesWithPubDate = withFalcorSearch(
   },
   'articles',
 )(SearchBar);
+
+export const SearchableAuthorsSelector = withSelector(
+  withFalcorSearch(['name', 'slug'], item => item.name, 'staff')(SearchBar),
+);

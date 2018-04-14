@@ -39,7 +39,7 @@ export const withFalcorSearch = (fields, formatter, mode) => WrappedField => {
       );
 
       return this.props.falcor.get(...pathSets).then(x => {
-        if (!x.json.search[mode][query][0]) {
+        if (!x || !x.json.search[mode][query][0]) {
           return { suggestions: [] };
         }
         const suggestions = parseFalcorPseudoArray(x.json.search[mode][query])
