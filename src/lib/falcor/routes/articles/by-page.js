@@ -28,9 +28,9 @@ export const routes = [
       const pageIndex = pathSet.pageIndices[0];
 
       const articles = await getPaginatedArticle(pageLength, pageIndex);
-      const results = articles.map(({ id }, index) => ({
+      const results = articles.map(({ slug }, index) => ({
         path: ['articles', 'byPage', pageLength, pageIndex, index],
-        value: $ref(['articles', 'byId', id]),
+        value: $ref(['articles', 'bySlug', slug]),
       }));
       return results;
     },

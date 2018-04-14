@@ -41,10 +41,8 @@ export default [
       return results;
     },
     set: async jsonGraphArg => {
-      // Map to handle Atom values sent by refs
-      const articles = _.mapValues(jsonGraphArg.articles.bySlug, fields =>
-        _.mapValues(fields, field => field.value || field.valueOf),
-      );
+      const articles = jsonGraphArg.articles.bySlug;
+      console.log(articles);
       const flag = await updateArticles('slug', articles);
       if (!flag) {
         throw new Error(
@@ -65,6 +63,7 @@ export default [
         )
       ) {
         results.push({ path: ['articles', 'byId'], invalidated: true });
+        results.push({ path: ['articles', 'byPage'], invalidated: true });
       }
       return results.flatten();
     },
