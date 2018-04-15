@@ -804,40 +804,13 @@ export function searchPostsQuery(queries, min, max) {
   });
 }
 
-export function searchScoredRawQuery(queries, min, max) {
-  return new Promise((resolve) => {
-    let queriesReturned = 0;
-    const results = {};
-    queries.forEach((query) => {
-      database.select(
-        database.raw(`slug from \
-      (select title, 
-        ( (MATCH(title) AGAINST('${query}' in NATURAL LANGUAGE MODE))*5
-        + (MATCH(markdown) AGAINST('${query}' in NATURAL LANGUAGE MODE) )
-          as tot_score 
-          from posts) temp_table
-      where temp_table.tot_score > 0
-      ORDER BY tot_score desc`))
-      .limit(max - min + 1)
-      .offset(min)
-      .then((rows) => {
-        queriesReturned++;
-        results[query] = _.map(rows, row => row.slug);
-        if (queriesReturned >= queries.length) {
-          resolve(results);
-        }
-      });
-    });
-  });
-}
-
 export function searchScoredQuery(queries, min, max) {
   return new Promise((resolve) => {
     let queriesReturned = 0;
     const results = {};
     queries.forEach((query) => {
       database.select('slug')
-      .from(function name() {
+      .from(function getScore() {
         this.select('slug', database.raw('( ' +
           '( MATCH(title) AGAINST(:query in NATURAL LANGUAGE MODE) )*3 ' +
           '+ ( MATCH(markdown) AGAINST(:query in NATURAL LANGUAGE MODE) ) ' +
@@ -845,7 +818,6 @@ export function searchScoredQuery(queries, min, max) {
           query,
         })).from('posts').as('temp_table');
       })
-      .as('ignored_alias')
       .where('temp_table.tot_score', '>', 0)
       .orderBy('temp_table.tot_score', 'desc')
       .limit(max - min + 1)
