@@ -10,14 +10,15 @@ import { has } from 'lib/utilities';
 
 const $ref = falcor.Model.ref;
 
+/* 
+ * In the majority of cases, this route serves as simply a reference
+ * to the byId route for getting and setting values of an article.
+ * However, this route implements specific calls which are only run
+ * on the Public facing page (where everything is run by slug), 
+ * to avoid introducing a totally unnessecary double SQL query. 
+ */
 export default [
   {
-    /* 
-     * Get custom article id from MariaDB and create ref
-     * to that article bySlug. To avoid multiple SQL queries,
-     * when unneccesary, this file holds all calls that are
-     * exclusively used by the Main page
-     */
     route: "articles['bySlug'][{keys:slugs}]", // eslint-disable-line max-len
     get: async pathSet => {
       const data = await articleQuery('slug', pathSet.slugs, ['slug', 'id']);

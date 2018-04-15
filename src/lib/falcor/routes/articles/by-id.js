@@ -110,7 +110,7 @@ export default [
     route: "articles['byId'][{keys:ids}]['issueNumber']",
     get: pathSet =>
       new Promise(resolve => {
-        articleIssueQuery(pathSet.ids).then(data => {
+        articleIssueQuery('id', pathSet.ids).then(data => {
           const results = [];
           data.forEach(row => {
             results.push({

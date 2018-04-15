@@ -163,11 +163,19 @@ export async function articleQuery(queryField, queryParams, columns) {
     .whereIn(`articles.${queryField}`, queryParams);
 }
 
-export function articleIssueQuery(slugs) {
-  // the parameter is the slugs the issueNumber is being requested from
+/**
+ * Fetches the issue number of articles
+ * @param {string} queryField - Indicates which field to query by
+ * @param {string[]} queryParams - Array of parameters of type queryField of articles to fetch
+ * @returns {Promise<Object[]>}
+ */
+export function articleIssueQuery(queryField, queryParams) {
   return new Promise(resolve => {
     database
-      .select('issue_order as issueNumber', 'articles.slug as slug')
+      .select(
+        'issue_order as issueNumber',
+        `articles.${queryField} as queryFieldVal`,
+      )
       .from('articles')
       .innerJoin(
         'issues_articles_order',
@@ -176,8 +184,8 @@ export function articleIssueQuery(slugs) {
         'articles.id',
       )
       .innerJoin('issues', 'issues.id', '=', 'issues_articles_order.issue_id')
-      .whereIn('articles.slug', slugs)
-      .orderBy('articles.slug')
+      .whereIn(`articles.${queryField}`, queryParams)
+      .orderBy(`articles.${queryField}`)
       .then(rows => {
         // We always want to return the first issue the article was published in
         // and no more (currently we don't support falcor fetching all issues an
@@ -185,16 +193,16 @@ export function articleIssueQuery(slugs) {
         const toDelete = [];
         const lastRow = null;
         rows.forEach((row, index) => {
-          if (lastRow && row.slug === lastRow.slug) {
+          if (lastRow && row.queryField === lastRow.queryField) {
             if (row.issueNumber < lastRow.issueNumber) {
               toDelete.push(index - 1);
             } else if (row.issueNumber > lastRow.issueNumber) {
               toDelete.push(index);
             } else {
               throw new Error(
-                `Data corrupted, article: ${row.slug} occurs twice in issue ${
-                  lastRow.issueNumber
-                }`,
+                `Data corrupted, article: ${
+                  row.queryField
+                } occurs twice in issue ${lastRow.issueNumber}`,
               );
             }
           }
