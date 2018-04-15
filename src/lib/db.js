@@ -218,11 +218,13 @@ export function articleIssueQuery(queryField, queryParams) {
   });
 }
 
+/**
+ * Fetches the authors of articles
+ * @param {string} queryField - Indicates which field to query by
+ * @param {string[]} queryParams - Array of parameters of type queryField of articles to fetch
+ * @returns {Promise<Object[]>}
+ */
 export function articleAuthorQuery(queryField, queryParams) {
-  // slugs function parameter is an array of article slugs
-  // of which to fetch the staff member of.
-  // The function returns an object with article slugs
-  // as keys and values being arrays of author slugs.
   return new Promise(resolve => {
     database
       .select(
@@ -235,7 +237,7 @@ export function articleAuthorQuery(queryField, queryParams) {
       .whereIn(`articles.${queryField}`, queryParams)
       .orderBy('authors_articles.id', 'asc')
       .then(rows => {
-        // rows is an array of objects with keys authorSlug and articleSlug
+        // rows is an array of objects with keys authorSlug and articleQueryField
         const data = {};
         rows.forEach(row => {
           // This will input them in ascending order by id (which represents time they were
