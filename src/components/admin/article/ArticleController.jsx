@@ -405,7 +405,7 @@ class ArticleController extends FalcorController {
             onChange={this.debouncedHandleFormStateChanges}
             onUpdate={this.updateAuthors}
             disabled={this.state.saving}
-            mode="authors"
+            mode="staff"
             slugify={slugifyStaff}
           />
           <br />
