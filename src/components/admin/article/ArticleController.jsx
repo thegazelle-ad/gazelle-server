@@ -7,7 +7,7 @@ import { debounce, slugifyStaff } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 
 // Custom Components
-import { SearchableSelector } from 'components/admin/form-components/SearchableSelector';
+import { SearchableAuthorsSelector } from 'components/admin/form-components/searchables';
 import LoadingOverlay from 'components/admin/LoadingOverlay';
 import SaveButton from 'components/admin/article/components/SaveButton';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton';
@@ -400,7 +400,7 @@ class ArticleController extends FalcorController {
             onUpdate={this.updateTeaser}
           />
           <br />
-          <SearchableSelector
+          <SearchableAuthorsSelector
             elements={this.state.authors}
             onChange={this.debouncedHandleFormStateChanges}
             onUpdate={this.updateAuthors}
