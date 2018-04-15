@@ -161,7 +161,7 @@ SearchableSelector.propTypes = {
   slugify: PropTypes.func.isRequired,
   // It isn't a typo and they are required in SearchBar so no need for defaults
   /* eslint-disable react/no-typos, react/require-default-props */
-  mode: React.PropTypes.oneOf(['staff', 'articles']).isRequired,
+  mode: React.PropTypes.oneOf(['authors', 'articles']).isRequired,
   /* eslint-enable react/no-typos, react/require-default-props */
   disabled: PropTypes.bool,
   enableAdd: PropTypes.bool,

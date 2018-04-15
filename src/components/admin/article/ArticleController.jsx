@@ -37,7 +37,7 @@ class ArticleController extends FalcorController {
     this.falcorToState = this.falcorToState.bind(this);
     this.updateTitle = title => this.safeSetState({ title });
     this.updateSlug = slug => this.safeSetState({ slug });
-    this.updateStaff = staff => this.safeSetState({ staff });
+    this.updateAuthors = authors => this.safeSetState({ authors });
     this.updateTeaser = teaser => this.safeSetState({ teaser });
     this.updateImage = imageUrl => this.safeSetState({ imageUrl });
     this.updateCategory = category => this.safeSetState({ category });
@@ -47,7 +47,7 @@ class ArticleController extends FalcorController {
       refresh: false,
       title: '',
       slug: '',
-      staff: [],
+      authors: [],
       teaser: '',
       category: '',
       imageUrl: '',
@@ -64,16 +64,16 @@ class ArticleController extends FalcorController {
     }, 500);
   }
 
-  async save(jsonGraphEnvelope, processedStaff, articleId, falcorData) {
+  async save(jsonGraphEnvelope, processedAuthors, articleId, falcorData) {
     // Update the values
     this.safeSetState({ saving: true });
     const dbUpdates = [this.falcorUpdate(jsonGraphEnvelope)];
 
-    if (processedStaff !== null) {
+    if (processedAuthors !== null) {
       dbUpdates.push(
         this.falcorCall(
-          ['articles', 'byId', articleId, 'staff', 'updateStaff'],
-          [falcorData.id, processedStaff],
+          ['articles', 'byId', articleId, 'authors', 'updateAuthors'],
+          [falcorData.id, processedAuthors],
           [['name'], ['slug']],
         ),
       );
@@ -83,9 +83,9 @@ class ArticleController extends FalcorController {
     this.safeSetState({
       changed: false,
       refresh: true,
-      staffAdded: [],
-      staffDeleted: {},
-      changesObject: { mainForm: false, staff: false },
+      authorsAdded: [],
+      authorsDeleted: {},
+      changesObject: { mainForm: false, authors: false },
     });
     // This is purely so the 'saved' message can be seen by the user for a second
     setTimeout(() => {
@@ -109,7 +109,14 @@ class ArticleController extends FalcorController {
           'published_at',
         ],
       ],
-      ['articles', 'byId', params.id, 'staff', { length: 10 }, ['id', 'name']],
+      [
+        'articles',
+        'byId',
+        params.id,
+        'authors',
+        { length: 10 },
+        ['id', 'name'],
+      ],
       ['categories', 'byIndex', { length: 30 }, ['name', 'slug']],
     ];
   }
@@ -120,14 +127,14 @@ class ArticleController extends FalcorController {
     const teaser = article.teaser || '';
     const category = article.category || '';
     const imageUrl = article.image_url || '';
-    const staff = _.toArray(article.staff);
+    const authors = _.toArray(article.authors);
     this.safeSetState({
       title,
       slug,
       teaser,
       category,
       imageUrl,
-      staff,
+      authors,
     });
   }
 
@@ -151,7 +158,7 @@ class ArticleController extends FalcorController {
     return (
       this.isFormFieldChanged(prevState.title, state.title) ||
       this.isFormFieldChanged(prevState.slug, state.slug) ||
-      this.isFormFieldChanged(prevState.staff, state.staff) ||
+      this.isFormFieldChanged(prevState.authors, state.authors) ||
       this.isFormFieldChanged(prevState.teaser, state.teaser) ||
       this.isFormFieldChanged(prevState.category, state.category) ||
       this.isFormFieldChanged(prevState.imageUrl, state.imageUrl)
@@ -190,18 +197,18 @@ class ArticleController extends FalcorController {
       );
     }
 
-    let processedStaff = this.state.staff.map(author => author.id);
-    // Check that all staff are unique
-    if (_.uniq(processedStaff).length !== processedStaff.length) {
+    let processedAuthors = this.state.authors.map(author => author.id);
+    // Check that all authors are unique
+    if (_.uniq(processedAuthors).length !== processedAuthors.length) {
       this.props.displayAlert(
-        "You have duplicate staff, as this shouldn't be able" +
+        "You have duplicate authors, as this shouldn't be able" +
           ' to happen, please contact developers. And if you know all the actions' +
           ' you did previously to this and can reproduce them that would be of' +
           ' great help. The save has been cancelled',
       );
       return;
     }
-    if (processedStaff.length === 0) {
+    if (processedAuthors.length === 0) {
       this.props.displayAlert(
         "Sorry, because of some non-trivial issues we currently don't have" +
           ' deleting every single author implemented.' +
@@ -235,11 +242,11 @@ class ArticleController extends FalcorController {
     }
 
     if (
-      processedStaff.length === 0 &&
-      (!falcorData.staff || Object.keys(falcorData.staff).length === 0)
+      processedAuthors.length === 0 &&
+      (!falcorData.authors || Object.keys(falcorData.authors).length === 0)
     ) {
-      // Indicate that we won't update staff as there were none before and none were added
-      processedStaff = null;
+      // Indicate that we won't update authors as there were none before and none were added
+      processedAuthors = null;
     }
 
     const shouldUpdateCategory = this.state.category;
@@ -274,20 +281,20 @@ class ArticleController extends FalcorController {
       ].category = this.state.category;
     }
 
-    this.save(jsonGraphEnvelope, processedStaff, articleId, falcorData);
+    this.save(jsonGraphEnvelope, processedAuthors, articleId, falcorData);
   };
 
   isFormFieldChanged(userInput, falcorData) {
     return userInput !== falcorData && !(!userInput && !falcorData);
   }
 
-  areStaffChanged(currentStaff, falcorStaff) {
-    const falcorStaffArray = _.map(falcorStaff, author => author);
+  areAuthorsChanged(currentAuthors, falcorAuthors) {
+    const falcorAuthorsArray = _.map(falcorAuthors, author => author);
     return (
-      falcorStaffArray.length !== currentStaff.length ||
-      currentStaff.some(
+      falcorAuthorsArray.length !== currentAuthors.length ||
+      currentAuthors.some(
         author =>
-          falcorStaffArray.find(
+          falcorAuthorsArray.find(
             falcorAuthor => author.id === falcorAuthor.id,
           ) === undefined,
       )
@@ -302,7 +309,7 @@ class ArticleController extends FalcorController {
       this.isFormFieldChanged(this.state.teaser, falcorData.teaser) ||
       this.isFormFieldChanged(this.state.category, falcorData.category) ||
       this.isFormFieldChanged(this.state.imageUrl, falcorData.image_url) ||
-      this.areStaffChanged(this.state.staff, falcorData.staff);
+      this.areAuthorsChanged(this.state.authors, falcorData.authors);
     return changedFlag;
   }
 
@@ -394,11 +401,11 @@ class ArticleController extends FalcorController {
           />
           <br />
           <SearchableSelector
-            elements={this.state.staff}
+            elements={this.state.authors}
             onChange={this.debouncedHandleFormStateChanges}
-            onUpdate={this.updateStaff}
+            onUpdate={this.updateAuthors}
             disabled={this.state.saving}
-            mode="staff"
+            mode="authors"
             slugify={slugifyStaff}
           />
           <br />
