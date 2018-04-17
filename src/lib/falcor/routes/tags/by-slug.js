@@ -5,7 +5,6 @@ import { has } from 'lib/utilities';
 
 export default [
   {
-    // eslint-disable-next-line max-len
     route: "tags['bySlug'][{keys:slugs}]['id', 'name', 'slug']",
     get: pathSet =>
       new Promise(resolve => {
@@ -30,7 +29,7 @@ export default [
       new Promise((resolve, reject) => {
         const tagsBySlug = jsonGraphArg.tags.bySlug;
         db
-          .updateTag(tagsBySlug)
+          .updateTags(tagsBySlug)
           .then(flag => {
             if (!flag) {
               throw new Error(

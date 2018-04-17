@@ -1176,12 +1176,12 @@ export function tagQuery(slugs, columns) {
  * @param   {Object}   jsonGraphArg - the json graph to update
  * @returns {boolean}
  */
-export function updateTag(jsonGraphArg) {
+export function updateTags(jsonGraphArg) {
   return new Promise(resolve => {
     const updatesCalled = Object.keys(jsonGraphArg).length;
     let updatesReturned = 0;
     _.forEach(jsonGraphArg, (tagObject, slug) => {
-      database('tag')
+      database('tags')
         .where('slug', '=', slug)
         .update(tagObject)
         .then(data => {
@@ -1197,6 +1197,35 @@ export function updateTag(jsonGraphArg) {
           throw e;
         });
     });
+  });
+}
+
+/**
+ * Updates the tags for a given article.
+ * @param   {int}      articleId   The id of the article.
+ * @param   {int[]}    newTags     The ids of the tags.
+ * @returns {string[]} slugs       The edited slugs.
+ */
+export function updateArticleTags(articleId, newTags) {
+  return new Promise(resolve => {
+    database('articles_tags')
+      .where('article_id', '=', articleId)
+      .del()
+      .then(() => {
+        const insertArray = _.map(newTags, tagId => ({
+          article_id: articleId,
+          tagId,
+        }));
+        return database('articles_tags').insert(insertArray);
+      })
+      .then(() => {
+        database
+          .select('slug')
+          .from('articles_tags')
+          .innerJoin('tags', 'tags.id', '=', 'articles_tags.tag_id')
+          .where('article_id', '=', articleId)
+          .then(rows => resolve(rows.map(row => row.slug)));
+      });
   });
 }
 

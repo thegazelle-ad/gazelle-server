@@ -9,6 +9,7 @@ import {
   articleTagQuery,
   interactiveArticleQuery,
   updateAuthors,
+  updateArticleTags,
   relatedArticleQuery,
   addView,
 } from 'lib/db';
@@ -178,6 +179,40 @@ export default [
         const newAuthors = args[1];
         const articleSlug = callPath.slugs[0];
         updateAuthors(articleId, newAuthors).then(data => {
+          const results = [];
+          // Invalidate all the old data
+          results.push({
+            path: ['articles', 'bySlug', articleSlug, 'staff'],
+            invalidated: true,
+          });
+          data.forEach((slug, index) => {
+            results.push({
+              path: ['articles', 'bySlug', articleSlug, 'staff', index],
+              value: $ref(['staff', 'bySlug', slug]),
+            });
+          });
+          resolve(results);
+        });
+      });
+    },
+  },
+  {
+    // Add tags to an article
+    route: "articles['bySlug'][{keys:slugs}]['tags']['updateTags']",
+    call: (callPath, args) => {
+      // the falcor.model.call only takes a path not a pathset
+      // so it is not possible to call this function for more
+      // than 1 article at a time, therefore we know keys:slugs is length 1
+      if (callPath.slugs > 1) {
+        throw new Error(
+          'updateTags falcor function was called illegally with more than 1 article slug',
+        );
+      }
+      return new Promise(resolve => {
+        const articleId = args[0];
+        const newTags = args[1];
+        const articleSlug = callPath.slugs[0];
+        updateArticleTags(articleId, newTags).then(data => {
           const results = [];
           // Invalidate all the old data
           results.push({

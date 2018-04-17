@@ -35,6 +35,7 @@ class ArticleController extends FalcorController {
     this.falcorToState = this.falcorToState.bind(this);
     this.updateTitle = title => this.safeSetState({ title });
     this.updateAuthors = authors => this.safeSetState({ authors });
+    this.updateTags = tags => this.safeSetState({ tags });
     this.updateTeaser = teaser => this.safeSetState({ teaser });
     this.updateImage = imageUrl => this.safeSetState({ imageUrl });
     this.updateCategory = category => this.safeSetState({ category });
@@ -44,6 +45,7 @@ class ArticleController extends FalcorController {
       refresh: false,
       title: '',
       authors: [],
+      tags: '',
       teaser: '',
       category: '',
       imageUrl: '',
