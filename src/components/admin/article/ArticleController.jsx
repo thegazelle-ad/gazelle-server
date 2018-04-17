@@ -3,7 +3,7 @@ import { browserHistory } from 'react-router';
 import _ from 'lodash';
 
 // Lib
-import { debounce, slugifyStaff } from 'lib/utilities';
+import { debounce, slugifyStaff, slugifyTags } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 
 // Custom Components
@@ -45,7 +45,7 @@ class ArticleController extends FalcorController {
       refresh: false,
       title: '',
       authors: [],
-      tags: '',
+      tags: [],
       teaser: '',
       category: '',
       imageUrl: '',
@@ -122,13 +122,15 @@ class ArticleController extends FalcorController {
   }
   falcorToState(data) {
     const article = data.articles.bySlug[this.props.params.slug];
-    const title = article.title || '';
     const teaser = article.teaser || '';
+    const title = article.title || '';
     const category = article.category || '';
     const imageUrl = article.image_url || '';
     const authors = _.toArray(article.authors);
+    const tags = _.toArray(article.tags);
 
     this.safeSetState({
+      tags,
       title,
       teaser,
       category,
@@ -155,6 +157,7 @@ class ArticleController extends FalcorController {
 
   formHasUpdated(prevState, state) {
     return (
+      this.isFormFieldChanged(prevState.tags, state.tags) ||
       this.isFormFieldChanged(prevState.title, state.title) ||
       this.isFormFieldChanged(prevState.authors, state.authors) ||
       this.isFormFieldChanged(prevState.teaser, state.teaser) ||
@@ -389,6 +392,17 @@ class ArticleController extends FalcorController {
             disabled={this.state.saving}
             mode="staff"
             slugify={slugifyStaff}
+          />
+          <br />
+          <Divider />
+          <br />
+          <SearchableAuthorsSelector
+            elements={this.state.tags}
+            onChange={this.debouncedHandleFormStateChanges}
+            onUpdate={this.updateTags}
+            disabled={this.state.saving}
+            mode="tags"
+            slugify={slugifyTags}
           />
           <br />
           <Divider />
