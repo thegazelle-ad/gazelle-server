@@ -170,7 +170,8 @@ class ArticleController extends FalcorController {
     const { page } = this.props.params;
     const pathname = `/articles/page/${page}`;
 
-    const location = { pathname, state: { refresh: this.state.saved } };
+    const location = { pathname, state: { refresh: this.state.refresh } };
+    this.safeSetState({ refresh: false });
     browserHistory.push(location);
   }
 

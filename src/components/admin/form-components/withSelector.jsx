@@ -151,18 +151,19 @@ export const withSelector = Finder => {
         name: PropTypes.string.isRequired,
       }),
     ).isRequired,
-    onChange: PropTypes.func.isRequired,
     onUpdate: PropTypes.func.isRequired,
     displayAlert: PropTypes.func.isRequired,
     slugify: PropTypes.func.isRequired,
     // eslint-disable-next-line react/require-default-props
     mode: PropTypes.oneOf(['staff', 'articles']).isRequired,
+    onChange: PropTypes.func,
     disabled: PropTypes.bool,
     ...Finder.propTypes,
   };
 
   Selector.defaultProps = {
     disabled: false,
+    onChange: () => undefined,
   };
 
   Selector.displayName = `withSelector(${getDisplayName(Finder)})`;
