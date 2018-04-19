@@ -100,8 +100,8 @@ class ArticleController extends FalcorController {
           [filteredTagObject],
         );
       });
-      // Resolve with the creates which returns
-      // an array of the tag ids.
+      // Execute create promises and return
+      // the ids from the newly created tags.
       return Promise.all(createPromises)
         .then(() =>
           newTags.map(tagObject =>
@@ -122,6 +122,9 @@ class ArticleController extends FalcorController {
           return resolve(ids);
         });
     }).then(ids => {
+      // If we have some tags, add the newly
+      // created ones to the update tags array,
+      // and then add the promise.
       if (ids !== null) {
         // Add tags to update promises.
         let updateTags = processedTags
