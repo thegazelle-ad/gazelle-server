@@ -4,10 +4,14 @@ import _ from 'lodash';
 
 // Lib
 import { debounce, slugifyStaff, slugifyTags } from 'lib/utilities';
+import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 
 // Custom Components
-import { SearchableAuthorsSelector } from 'components/admin/form-components/searchables';
+import {
+  SearchableAuthorsSelector,
+  SearchableTagsSelector,
+} from 'components/admin/form-components/searchables';
 import LoadingOverlay from 'components/admin/LoadingOverlay';
 import SaveButton from 'components/admin/article/components/SaveButton';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton';
@@ -62,7 +66,13 @@ class ArticleController extends FalcorController {
     }, 500);
   }
 
-  save(jsonGraphEnvelope, processedAuthors, articleSlug, falcorData) {
+  save(
+    jsonGraphEnvelope,
+    processedAuthors,
+    processedTags,
+    articleSlug,
+    falcorData,
+  ) {
     // Update the values
     this.safeSetState({ saving: true });
     const updatePromises = [this.falcorUpdate(jsonGraphEnvelope)];
@@ -77,19 +87,73 @@ class ArticleController extends FalcorController {
       );
     }
 
-    Promise.all(updatePromises).then(() => {
-      // Reset state after save is done
-      this.safeSetState({
-        changed: false,
-        refresh: true,
-        authorsAdded: [],
-        authorsDeleted: {},
-        changesObject: { mainForm: false, authors: false },
+    new Promise(resolve => {
+      // Jump to next functon if no tags are to be
+      // processed.
+      if (processedTags === null) return resolve(null);
+      // Create tags that don't exist yet.
+      const newTags = processedTags.filter(tagObject => tagObject.id === null);
+      const createPromises = newTags.map(tagObject => {
+        const filteredTagObject = _.omit(tagObject, 'id');
+        return this.falcorCall(
+          ['tags', 'bySlug', 'addTag'],
+          [filteredTagObject],
+        );
       });
-      // This is purely so the 'saved' message can be seen by the user for a second
-      setTimeout(() => {
-        this.safeSetState({ saving: false });
-      }, 1000);
+      // Resolve with the creates which returns
+      // an array of the tag ids.
+      return Promise.all(createPromises)
+        .then(() =>
+          newTags.map(tagObject =>
+            this.props.model.get(['tags', 'bySlug', [tagObject.slug], 'id']),
+          ),
+        )
+        .then(idPromises => Promise.all(idPromises))
+        .then(idData => {
+          if (!idData) return resolve([]);
+          const slugs = newTags.map(tagObject => tagObject.slug);
+          const idsBySlugs = idData.reduce(
+            (acc, cur) => Object.assign(acc, cur.json.tags.bySlug),
+            {},
+          );
+          const ids = slugs
+            .map(slug => parseFalcorPseudoArray(idsBySlugs[slug]))
+            .flatten();
+          return resolve(ids);
+        });
+    }).then(ids => {
+      if (ids !== null) {
+        // Add tags to update promises.
+        let updateTags = processedTags
+          .filter(tagObject => tagObject.id !== null)
+          .map(tagObject => tagObject.id);
+        if (ids.length > 0) {
+          updateTags = updateTags.concat(ids);
+        }
+
+        updatePromises.push(
+          this.falcorCall(
+            ['articles', 'bySlug', articleSlug, 'tags', 'updateTags'],
+            [falcorData.id, updateTags],
+            [['name'], ['slug']],
+          ),
+        );
+      }
+
+      Promise.all(updatePromises).then(() => {
+        // Reset state after save is done
+        this.safeSetState({
+          changed: false,
+          refresh: true,
+          authorsAdded: [],
+          authorsDeleted: {},
+          changesObject: { mainForm: false, authors: false },
+        });
+        // This is purely so the 'saved' message can be seen by the user for a second
+        setTimeout(() => {
+          this.safeSetState({ saving: false });
+        }, 1000);
+      });
     });
   }
 
@@ -115,11 +179,12 @@ class ArticleController extends FalcorController {
         params.slug,
         'tags',
         { length: 10 },
-        ['id', 'name'],
+        ['id', 'name', 'slug'],
       ],
       ['categories', 'byIndex', { length: 30 }, ['name', 'slug']],
     ];
   }
+
   falcorToState(data) {
     const article = data.articles.bySlug[this.props.params.slug];
     const teaser = article.teaser || '';
@@ -219,6 +284,18 @@ class ArticleController extends FalcorController {
       return;
     }
 
+    // Copy the array of tags.
+    let processedTags = _.clone(this.state.tags);
+    if (_.uniqWith(processedTags, _.isEqual).length !== processedTags.length) {
+      this.props.displayAlert(
+        "You have duplicate tags, as this shouldn't be able" +
+          ' to happen, please contact developers. And if you know all the actions' +
+          ' you did previously to this and can reproduce them that would be of' +
+          ' great help. The save has been cancelled',
+      );
+      return;
+    }
+
     // Check the special case of someone trying to reassign a category as none
     if (this.state.category === 'none' && falcorData.category !== 'none') {
       this.props.displayAlert(
@@ -248,6 +325,14 @@ class ArticleController extends FalcorController {
     ) {
       // Indicate that we won't update authors as there were none before and none were added
       processedAuthors = null;
+    }
+
+    if (
+      processedTags.length === 0 &&
+      (!falcorData.tags || Object.keys(falcorData.tags).length === 0)
+    ) {
+      // Indicate that we won't update tags as there were none before and none were added
+      processedTags = null;
     }
 
     const shouldUpdateCategory = this.state.category;
@@ -281,7 +366,13 @@ class ArticleController extends FalcorController {
       ].category = this.state.category;
     }
 
-    this.save(jsonGraphEnvelope, processedAuthors, articleSlug, falcorData);
+    this.save(
+      jsonGraphEnvelope,
+      processedAuthors,
+      processedTags,
+      articleSlug,
+      falcorData,
+    );
   };
 
   isFormFieldChanged(userInput, falcorData) {
@@ -301,6 +392,10 @@ class ArticleController extends FalcorController {
     );
   }
 
+  areTagsChanged(currentTags, falcorTags) {
+    return !_.isEqual(currentTags, _.toArray(falcorTags));
+  }
+
   isFormChanged() {
     const falcorData = this.state.data.articles.bySlug[this.props.params.slug];
     const changedFlag =
@@ -308,7 +403,8 @@ class ArticleController extends FalcorController {
       this.isFormFieldChanged(this.state.teaser, falcorData.teaser) ||
       this.isFormFieldChanged(this.state.category, falcorData.category) ||
       this.isFormFieldChanged(this.state.imageUrl, falcorData.image_url) ||
-      this.areAuthorsChanged(this.state.authors, falcorData.authors);
+      this.areAuthorsChanged(this.state.authors, falcorData.authors) ||
+      this.areTagsChanged(this.state.tags, falcorData.tags);
     return changedFlag;
   }
 
@@ -396,12 +492,13 @@ class ArticleController extends FalcorController {
           <br />
           <Divider />
           <br />
-          <SearchableAuthorsSelector
+          <SearchableTagsSelector
             elements={this.state.tags}
             onChange={this.debouncedHandleFormStateChanges}
             onUpdate={this.updateTags}
             disabled={this.state.saving}
             mode="tags"
+            enableAdd
             slugify={slugifyTags}
           />
           <br />

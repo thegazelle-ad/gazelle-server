@@ -33,7 +33,7 @@ export default [
           .then(flag => {
             if (!flag) {
               throw new Error(
-                'For unknown reasons updateMainStaffData returned a non-true flag',
+                'For unknown reasons updateTags returned a non-true flag',
               );
             }
             const results = [];
@@ -64,7 +64,7 @@ export default [
         }
         db.addTag(tagObject).then(flag => {
           if (flag !== true) {
-            throw new Error('Create Staff function returned non-true flag');
+            throw new Error('Create Tag function returned non-true flag');
           }
           const results = [];
           const tagSlug = tagObject.slug;

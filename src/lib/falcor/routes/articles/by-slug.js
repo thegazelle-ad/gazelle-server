@@ -216,13 +216,13 @@ export default [
           const results = [];
           // Invalidate all the old data
           results.push({
-            path: ['articles', 'bySlug', articleSlug, 'staff'],
+            path: ['articles', 'bySlug', articleSlug, 'tags'],
             invalidated: true,
           });
           data.forEach((slug, index) => {
             results.push({
-              path: ['articles', 'bySlug', articleSlug, 'staff', index],
-              value: $ref(['staff', 'bySlug', slug]),
+              path: ['articles', 'bySlug', articleSlug, 'tags', index],
+              value: $ref(['tags', 'bySlug', slug]),
             });
           });
           resolve(results);
