@@ -37,7 +37,7 @@ const styles = {
 
 const NUM_ARTICLES_IN_PAGE = 50;
 
-export default class ArticleListController extends FalcorController {
+export class ArticleListController extends FalcorController {
   constructor(props) {
     super(props);
     this.getNewPagePath = this.getNewPagePath.bind(this);
@@ -174,11 +174,13 @@ export default class ArticleListController extends FalcorController {
             </div>
           </Paper>
           {this.props.children}
-          <FloatingActionButton
-            style={{ position: 'fixed', bottom: '50px', right: '100px' }}
-          >
-            <ContentAdd />
-          </FloatingActionButton>
+          <Link to={`/articles/page/${this.props.params.page}/new`}>
+            <FloatingActionButton
+              style={{ position: 'fixed', bottom: '50px', right: '100px' }}
+            >
+              <ContentAdd />
+            </FloatingActionButton>
+          </Link>
         </div>
       );
     }
