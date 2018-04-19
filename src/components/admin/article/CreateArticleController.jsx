@@ -14,6 +14,7 @@ import ListSelector from 'components/admin/form-components/ListSelector';
 import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
 import { MAX_TEASER_LENGTH } from 'components/admin/lib/constants';
 import { SearchableAuthorsSelector } from 'components/admin/form-components/searchables';
+import { FullPageLoadingOverlay } from 'components/admin/FullPageLoadingOverlay';
 
 // Material UI
 import Dialog from 'material-ui/Dialog';
@@ -133,8 +134,10 @@ CreateArticleController.propTypes = {
   ).isRequired,
 };
 
-const EnhancedCreateArticleController = withFalcorData(falcorPaths, propMerger)(
-  CreateArticleController,
-);
+const EnhancedCreateArticleController = withFalcorData(
+  falcorPaths,
+  propMerger,
+  FullPageLoadingOverlay,
+)(CreateArticleController);
 
 export { EnhancedCreateArticleController as CreateArticleController };
