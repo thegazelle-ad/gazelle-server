@@ -22,7 +22,7 @@ export const getDatabaseConnection = databaseName =>
     },
   });
 
-export const createTestDatabase = databaseName =>
+const createTestDatabase = databaseName =>
   new Promise((resolve, reject) => {
     const connection = mysql.createConnection(
       _.omit(databaseConnectionConfig, 'database'),
@@ -36,6 +36,16 @@ export const createTestDatabase = databaseName =>
     });
     connection.end();
   });
+
+export const initializeTestDatabase = async (database, databaseName) => {
+  await createTestDatabase(databaseName);
+  await database.migrate.latest({
+    directory: path.join(__dirname, '../../database-management/migrations'),
+  });
+  await database.seed.run({
+    directory: path.join(__dirname, '../../database-management/seeds'),
+  });
+};
 
 export const cleanupTestDatabase = databaseName =>
   new Promise((resolve, reject) => {

@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getPaginatedArticle fetches expected rows from database 1`] = `
+Array [
+  Object {
+    "slug": "slug-200",
+  },
+  Object {
+    "slug": "slug-199",
+  },
+  Object {
+    "slug": "slug-198",
+  },
+  Object {
+    "slug": "slug-197",
+  },
+  Object {
+    "slug": "slug-196",
+  },
+]
+`;
