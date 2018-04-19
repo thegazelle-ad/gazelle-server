@@ -878,6 +878,28 @@ export function searchStaffQuery(queries, min, max) {
   });
 }
 
+export function searchTagsQuery(queries, min, max) {
+  return new Promise(resolve => {
+    let queriesReturned = 0;
+    const results = {};
+    queries.forEach(query => {
+      database
+        .select('slug')
+        .from('tags')
+        .where('name', 'like', `%${query}%`)
+        .limit(max - min + 1)
+        .offset(min)
+        .then(rows => {
+          queriesReturned += 1;
+          results[query] = _.map(rows, row => row.slug);
+          if (queriesReturned >= queries.length) {
+            resolve(results);
+          }
+        });
+    });
+  });
+}
+
 export function searchPostsQuery(queries, min, max) {
   return new Promise(resolve => {
     let queriesReturned = 0;
@@ -1214,7 +1236,7 @@ export function updateArticleTags(articleId, newTags) {
       .then(() => {
         const insertArray = _.map(newTags, tagId => ({
           article_id: articleId,
-          tagId,
+          tag_id: tagId,
         }));
         return database('articles_tags').insert(insertArray);
       })
