@@ -1,4 +1,4 @@
-import articles from './articles';
+import { articles } from './articles';
 import staff from './staff';
 import categories from './categories';
 import infoPages from './info-pages';

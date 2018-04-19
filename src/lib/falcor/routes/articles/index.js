@@ -1,5 +1,9 @@
 import { routes as articlesByPageRoutes } from './by-page';
 import bySlug from './by-slug';
-import meta from './meta';
+import { routes as articlesMetaRoutes } from './meta';
 
-export default [].concat(articlesByPageRoutes, bySlug, meta);
+export const articles = [].concat(
+  articlesByPageRoutes,
+  bySlug,
+  articlesMetaRoutes,
+);

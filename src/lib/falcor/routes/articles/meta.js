@@ -1,6 +1,6 @@
 import { getNumArticles } from 'lib/db';
 
-export default [
+export const routes = [
   {
     route: "articles['length']",
     get: async () => {
@@ -11,6 +11,12 @@ export default [
           value: length,
         },
       ];
+    },
+  },
+  {
+    route: "articles['createNew']",
+    call: async (callPath, args) => {
+      return [];
     },
   },
 ];

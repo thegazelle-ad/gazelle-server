@@ -15,19 +15,19 @@ import CircularProgress from 'material-ui/CircularProgress';
 export const withFalcor = (({
   prop = 'falcorModel',
 } = {}) => WrappedComponent => {
-  const InjectFalcorModel = (props, context) => (
+  const withFalcorModel = (props, context) => (
     <WrappedComponent {...props} {...{ [prop]: context.falcor.model }} />
   );
 
-  InjectFalcorModel.displayName = `injectFalcorModel(${getDisplayName(
+  withFalcorModel.displayName = `withFalcor(${getDisplayName(
     WrappedComponent,
   )})`;
 
-  InjectFalcorModel.contextTypes = {
+  withFalcorModel.contextTypes = {
     falcor: falcorShape,
   };
 
-  return InjectFalcorModel;
+  return withFalcorModel;
 })({ prop: 'falcor' });
 
 const Loading = () => (

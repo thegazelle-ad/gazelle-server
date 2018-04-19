@@ -6,6 +6,7 @@ import _ from 'lodash';
 // Helpers
 import { slugifyStaff } from 'lib/utilities';
 import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
+import { compose } from 'lib/higher-order-helpers';
 
 // Custom Components
 import ImageUrlField from 'components/admin/article/components/ImageUrlField';
@@ -21,7 +22,11 @@ import Dialog from 'material-ui/Dialog';
 import RaisedButton from 'material-ui/RaisedButton';
 
 // HOCs
-import { withFalcorData, buildPropMerger } from 'components/hocs/falcor-hocs';
+import {
+  withFalcorData,
+  withFalcor,
+  buildPropMerger,
+} from 'components/hocs/falcor-hocs';
 
 const falcorPaths = [
   ['categories', 'byIndex', { length: 30 }, ['name', 'slug']],
@@ -65,7 +70,10 @@ class CreateArticleController extends React.Component {
     browserHistory.push(location);
   };
 
-  handleCreateArticle = () => {};
+  handleCreateArticle = async () => {
+    const { title, slug } = this.state;
+    await this.props.falcor.call(['articles', 'createNew'], [{ title, slug }]);
+  };
 
   render() {
     const actionButtons = [
@@ -132,12 +140,14 @@ CreateArticleController.propTypes = {
       name: PropTypes.string.isRequired,
     }),
   ).isRequired,
+  falcor: PropTypes.shape({
+    call: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
-const EnhancedCreateArticleController = withFalcorData(
-  falcorPaths,
-  propMerger,
-  FullPageLoadingOverlay,
+const EnhancedCreateArticleController = compose(
+  withFalcorData(falcorPaths, propMerger, FullPageLoadingOverlay),
+  withFalcor,
 )(CreateArticleController);
 
 export { EnhancedCreateArticleController as CreateArticleController };
