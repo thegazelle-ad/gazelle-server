@@ -1,9 +1,11 @@
 import React from 'react';
 import { browserHistory } from 'react-router';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 // Helpers
 import { slugifyStaff } from 'lib/utilities';
+import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
 
 // Custom Components
 import ImageUrlField from 'components/admin/article/components/ImageUrlField';
@@ -17,7 +19,24 @@ import { SearchableAuthorsSelector } from 'components/admin/form-components/sear
 import Dialog from 'material-ui/Dialog';
 import RaisedButton from 'material-ui/RaisedButton';
 
-export class CreateArticleController extends React.Component {
+// HOCs
+import { withFalcorData, buildPropMerger } from 'components/hocs/falcor-hocs';
+
+const falcorPaths = [
+  ['categories', 'byIndex', { length: 30 }, ['name', 'slug']],
+];
+
+const propMerger = buildPropMerger((data, currentProps) => {
+  const categories = parseFalcorPseudoArray(data.categories.byIndex).filter(
+    category => _.get(category, 'slug') && _.get(category, 'name'),
+  );
+  return {
+    ...currentProps,
+    categories,
+  };
+});
+
+class CreateArticleController extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -77,7 +96,7 @@ export class CreateArticleController extends React.Component {
           label="Category"
           chosenElement={this.state.category}
           update={this.updateCategory}
-          elements={[{ name: 'name', slug: 'slug' }]}
+          elements={this.props.categories}
         />
         <ImageUrlField
           imageUrl={this.state.imageUrl}
@@ -106,4 +125,16 @@ CreateArticleController.propTypes = {
   params: PropTypes.shape({
     page: PropTypes.string.isRequired,
   }).isRequired,
+  categories: PropTypes.arrayOf(
+    PropTypes.shape({
+      slug: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
 };
+
+const EnhancedCreateArticleController = withFalcorData(falcorPaths, propMerger)(
+  CreateArticleController,
+);
+
+export { EnhancedCreateArticleController as CreateArticleController };
