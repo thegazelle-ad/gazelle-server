@@ -99,19 +99,19 @@ export default [
   },
   {
     // Get author information from article
-    route: "articles['bySlug'][{keys:slugs}]['staff'][{integers:indices}]",
+    route: "articles['bySlug'][{keys:slugs}]['authors'][{integers:indices}]",
     get: pathSet =>
       new Promise(resolve => {
         articleAuthorQuery('slug', pathSet.slugs).then(data => {
           // We receive the data as an object with keys equalling article slugs
           // and values being an array of author slugs in no particular order
           const results = [];
-          _.forEach(data, (staffSlugArray, postSlug) => {
+          _.forEach(data, (authorsSlugArray, postSlug) => {
             pathSet.indices.forEach(index => {
-              if (index < staffSlugArray.length) {
+              if (index < authorsSlugArray.length) {
                 results.push({
-                  path: ['articles', 'bySlug', postSlug, 'staff', index],
-                  value: $ref(['staff', 'bySlug', staffSlugArray[index]]),
+                  path: ['articles', 'bySlug', postSlug, 'authors', index],
+                  value: $ref(['staff', 'bySlug', authorsSlugArray[index]]),
                 });
               }
             });
@@ -148,8 +148,8 @@ export default [
       }),
   },
   {
-    // Add staff to an article
-    route: "articles['bySlug'][{keys:slugs}]['staff']['updateStaff']",
+    // Add authors to an article
+    route: "articles['bySlug'][{keys:slugs}]['authors']['updateAuthors']",
     call: (callPath, args) => {
       // the falcor.model.call only takes a path not a pathset
       // so it is not possible to call this function for more
@@ -161,18 +161,18 @@ export default [
       }
       return new Promise(resolve => {
         const articleId = args[0];
-        const newStaff = args[1];
+        const newAuthors = args[1];
         const articleSlug = callPath.slugs[0];
-        updateAuthors(articleId, newStaff).then(data => {
+        updateAuthors(articleId, newAuthors).then(data => {
           const results = [];
           // Invalidate all the old data
           results.push({
-            path: ['articles', 'bySlug', articleSlug, 'staff'],
+            path: ['articles', 'bySlug', articleSlug, 'authors'],
             invalidated: true,
           });
           data.forEach((slug, index) => {
             results.push({
-              path: ['articles', 'bySlug', articleSlug, 'staff', index],
+              path: ['articles', 'bySlug', articleSlug, 'authors', index],
               value: $ref(['staff', 'bySlug', slug]),
             });
           });
