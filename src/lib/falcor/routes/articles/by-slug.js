@@ -14,6 +14,8 @@ import {
   addView,
 } from 'lib/db';
 import { has } from 'lib/utilities';
+import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
+import { serverModel } from 'index';
 
 const $ref = falcor.Model.ref;
 
@@ -208,11 +210,42 @@ export default [
           'updateTags falcor function was called illegally with more than 1 article slug',
         );
       }
-      return new Promise(resolve => {
+      return new Promise(async resolve => {
         const articleId = args[0];
-        const newTags = args[1];
+        const tags = args[1];
         const articleSlug = callPath.slugs[0];
-        updateArticleTags(articleId, newTags).then(data => {
+
+        const newTags = tags.filter(tagObject => tagObject.id === null);
+        const createPromises = newTags.map(tagObject => {
+          const filteredTagObject = _.omit(tagObject, 'id');
+          return serverModel.call(
+            ['tags', 'bySlug', 'addTag'],
+            [filteredTagObject],
+          );
+        });
+        await Promise.all(createPromises);
+        const idData = await Promise.all(
+          newTags.map(tagObject =>
+            serverModel.get(['tags', 'bySlug', [tagObject.slug], 'id']),
+          ),
+        );
+        const slugs = newTags.map(tagObject => tagObject.slug);
+        const idsBySlugs = idData.reduce(
+          (acc, cur) => Object.assign(acc, cur.json.tags.bySlug),
+          {},
+        );
+        const ids = slugs
+          .map(slug => parseFalcorPseudoArray(idsBySlugs[slug]))
+          .flatten();
+
+        let updateTags = tags
+          .filter(tagObject => tagObject.id !== null)
+          .map(tagObject => tagObject.id);
+        if (ids.length > 0) {
+          updateTags = updateTags.concat(ids);
+        }
+
+        updateArticleTags(articleId, updateTags).then(data => {
           const results = [];
           // Invalidate all the old data
           results.push({

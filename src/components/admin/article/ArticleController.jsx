@@ -4,7 +4,6 @@ import _ from 'lodash';
 
 // Lib
 import { debounce, slugifyStaff, slugifyTags } from 'lib/utilities';
-import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 
 // Custom Components
@@ -66,7 +65,7 @@ class ArticleController extends FalcorController {
     }, 500);
   }
 
-  save(
+  async save(
     jsonGraphEnvelope,
     processedAuthors,
     processedTags,
@@ -87,77 +86,29 @@ class ArticleController extends FalcorController {
       );
     }
 
-    new Promise(resolve => {
-      // Jump to next functon if no tags are to be
-      // processed.
-      if (processedTags === null) return resolve(null);
-      // Create tags that don't exist yet.
-      const newTags = processedTags.filter(tagObject => tagObject.id === null);
-      const createPromises = newTags.map(tagObject => {
-        const filteredTagObject = _.omit(tagObject, 'id');
-        return this.falcorCall(
-          ['tags', 'bySlug', 'addTag'],
-          [filteredTagObject],
-        );
-      });
-      // Execute create promises and return
-      // the ids from the newly created tags.
-      return Promise.all(createPromises)
-        .then(() =>
-          newTags.map(tagObject =>
-            this.props.model.get(['tags', 'bySlug', [tagObject.slug], 'id']),
-          ),
-        )
-        .then(idPromises => Promise.all(idPromises))
-        .then(idData => {
-          if (!idData) return resolve([]);
-          const slugs = newTags.map(tagObject => tagObject.slug);
-          const idsBySlugs = idData.reduce(
-            (acc, cur) => Object.assign(acc, cur.json.tags.bySlug),
-            {},
-          );
-          const ids = slugs
-            .map(slug => parseFalcorPseudoArray(idsBySlugs[slug]))
-            .flatten();
-          return resolve(ids);
-        });
-    }).then(ids => {
-      // If we have some tags, add the newly
-      // created ones to the update tags array,
-      // and then add the promise.
-      if (ids !== null) {
-        // Add tags to update promises.
-        let updateTags = processedTags
-          .filter(tagObject => tagObject.id !== null)
-          .map(tagObject => tagObject.id);
-        if (ids.length > 0) {
-          updateTags = updateTags.concat(ids);
-        }
+    if (!processedTags !== null) {
+      updatePromises.push(
+        this.falcorCall(
+          ['articles', 'bySlug', articleSlug, 'tags', 'updateTags'],
+          [falcorData.id, processedTags],
+          [['name'], ['slug']],
+        ),
+      );
+    }
 
-        updatePromises.push(
-          this.falcorCall(
-            ['articles', 'bySlug', articleSlug, 'tags', 'updateTags'],
-            [falcorData.id, updateTags],
-            [['name'], ['slug']],
-          ),
-        );
-      }
-
-      Promise.all(updatePromises).then(() => {
-        // Reset state after save is done
-        this.safeSetState({
-          changed: false,
-          refresh: true,
-          authorsAdded: [],
-          authorsDeleted: {},
-          changesObject: { mainForm: false, authors: false },
-        });
-        // This is purely so the 'saved' message can be seen by the user for a second
-        setTimeout(() => {
-          this.safeSetState({ saving: false });
-        }, 1000);
-      });
+    await Promise.all(updatePromises);
+    // Reset state after save is done
+    this.safeSetState({
+      changed: false,
+      refresh: true,
+      authorsAdded: [],
+      authorsDeleted: {},
+      changesObject: { mainForm: false, authors: false },
     });
+    // This is purely so the 'saved' message can be seen by the user for a second
+    setTimeout(() => {
+      this.safeSetState({ saving: false });
+    }, 1000);
   }
 
   static getFalcorPathSets(params) {
