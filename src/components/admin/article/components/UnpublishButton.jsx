@@ -31,13 +31,6 @@ export default class UnpublishButton extends React.Component {
   render() {
     return (
       <div>
-        {this.props.published_at !== null
-          ? `This article was published on ${moment(
-              this.props.published_at,
-            ).format('MMMM DD, YYYY')}.`
-          : 'The article has yet to be published. It will be published automatically ' +
-            'when you publish the issue that contains it.'}
-        <br />
         <RaisedButton
           label="Unpublish Article"
           secondary
@@ -46,6 +39,13 @@ export default class UnpublishButton extends React.Component {
           onClick={this.unpublish}
           icon={<Warning />}
         />
+        <br />
+        {this.props.published_at !== null
+          ? `This article was published on ${moment(
+              this.props.published_at,
+            ).format('MMMM DD, YYYY')}.`
+          : 'The article has yet to be published. It will be published automatically ' +
+            'when you publish the issue that contains it.'}
       </div>
     );
   }

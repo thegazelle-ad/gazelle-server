@@ -15,12 +15,11 @@ import ImageUrlField from 'components/admin/article/components/ImageUrlField';
 import TitleField from 'components/admin/article/components/TitleField';
 import ListSelector from 'components/admin/form-components/ListSelector';
 import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
+import { MarkdownEditor } from 'components/admin/editor/MarkdownEditor';
 import { MAX_TEASER_LENGTH } from 'components/admin/lib/constants';
 
 // material-ui
-import Dialog from 'material-ui/Dialog';
 import CircularProgress from 'material-ui/CircularProgress';
-import Divider from 'material-ui/Divider';
 
 // HOCs
 import { withModals } from 'components/admin/hocs/modals/withModals';
@@ -301,9 +300,19 @@ class ArticleController extends FalcorController {
 
   render() {
     const styles = {
+      grid: {
+        display: 'grid',
+        gridGap: '10px',
+        gridTemplateColumns: '40% 20% 40% ',
+        gridTemplateRows: '5% 90% 5%',
+        gridTemplateAreas:
+          '"header header header" "sidebar content content" "negative positive positive"',
+        height: '100%',
+      },
       buttons: {
         marginTop: 24,
         marginBottom: 12,
+        width: '100%',
       },
     };
 
@@ -327,70 +336,68 @@ class ArticleController extends FalcorController {
       const categories = _.toArray(this.state.data.categories.byIndex);
       categories.push({ name: 'none', slug: 'none' });
 
-      const actionButtons = [
-        <SaveButton
-          onClick={this.handleSaveChanges}
-          style={styles.buttons}
-          saving={this.state.saving}
-          changed={this.state.changed}
-        />,
-      ];
-
       return (
-        <Dialog
-          title="Article Editor"
-          actions={actionButtons}
-          open
-          modal={false}
-          autoScrollBodyContent
-          onRequestClose={this.handleDialogClose}
-        >
+        <div style={styles.grid}>
           {this.state.saving ? <LoadingOverlay /> : null}
-          <TitleField
-            title={this.state.title}
-            onUpdate={this.updateTitle}
-            disabled={this.state.saving}
-          />
-          <ListSelector
-            label="Category"
-            chosenElement={this.state.category}
-            update={this.updateCategory}
-            elements={categories}
-            disabled={this.state.saving}
-          />
-          <br />
-          <ImageUrlField
-            imageUrl={this.state.imageUrl}
-            updateImage={this.updateImage}
-            disabled={this.state.saving}
-          />
-          <br />
-          <MaxLenTextField
-            name="teaser"
-            value={this.state.teaser}
-            maxLen={MAX_TEASER_LENGTH}
-            onUpdate={this.updateTeaser}
-          />
-          <br />
-          <SearchableAuthorsSelector
-            elements={this.state.authors}
-            onChange={this.debouncedHandleFormStateChanges}
-            onUpdate={this.updateAuthors}
-            disabled={this.state.saving}
-            mode="staff"
-            slugify={slugifyStaff}
-          />
-          <br />
-          <Divider />
-          <br />
-          <UnpublishButton
-            save={this.save}
-            slug={this.props.params.slug}
-            falcorUpdate={this.falcorUpdate}
-            style={styles.buttons}
-            published_at={article.published_at}
-          />
-        </Dialog>
+          <h1 style={{ gridArea: 'header' }}>Article Editor</h1>
+          <div style={{ gridArea: 'sidebar', overflow: 'auto' }}>
+            <TitleField
+              title={this.state.title}
+              onUpdate={this.updateTitle}
+              disabled={this.state.saving}
+            />
+            <ListSelector
+              label="Category"
+              chosenElement={this.state.category}
+              update={this.updateCategory}
+              elements={categories}
+              disabled={this.state.saving}
+            />
+            <br />
+            <ImageUrlField
+              imageUrl={this.state.imageUrl}
+              updateImage={this.updateImage}
+              disabled={this.state.saving}
+            />
+            <br />
+            <MaxLenTextField
+              name="teaser"
+              value={this.state.teaser}
+              maxLen={MAX_TEASER_LENGTH}
+              onUpdate={this.updateTeaser}
+            />
+            <br />
+            <SearchableAuthorsSelector
+              elements={this.state.authors}
+              onChange={this.debouncedHandleFormStateChanges}
+              onUpdate={this.updateAuthors}
+              disabled={this.state.saving}
+              mode="staff"
+              slugify={slugifyStaff}
+            />
+            <br />
+          </div>
+          <div style={{ gridArea: 'content' }}>
+            <MarkdownEditor />
+          </div>
+          <div style={{ gridArea: 'negative' }}>
+            <UnpublishButton
+              save={this.save}
+              slug={this.props.params.slug}
+              falcorUpdate={this.falcorUpdate}
+              style={styles.buttons}
+              published_at={article.published_at}
+            />
+          </div>
+          <div style={{ gridArea: 'positive' }}>
+            <SaveButton
+              onClick={this.handleSaveChanges}
+              style={styles.buttons}
+              saving={this.state.saving}
+              changed={this.state.changed}
+            />
+          </div>
+        </div>
       );
     }
     return (
