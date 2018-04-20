@@ -21,3 +21,7 @@ export async function getPaginatedArticle(pageLength, pageIndex) {
     .offset(offset);
   return articles;
 }
+
+export async function createNewArticle() {
+  return [];
+}

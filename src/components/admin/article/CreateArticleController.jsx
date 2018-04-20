@@ -43,7 +43,7 @@ const propMerger = buildPropMerger((data, currentProps) => {
   };
 });
 
-class CreateArticleController extends React.PureComponent {
+class CreateArticleController extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
