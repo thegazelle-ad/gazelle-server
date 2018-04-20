@@ -64,7 +64,7 @@ class ArticleController extends FalcorController {
     }, 500);
   }
 
-  async save(jsonGraphEnvelope, processedAuthors, articleId, falcorData) {
+  async save(jsonGraphEnvelope, processedAuthors, articleId) {
     // Update the values
     this.safeSetState({ saving: true });
     const dbUpdates = [this.falcorUpdate(jsonGraphEnvelope)];
@@ -73,7 +73,7 @@ class ArticleController extends FalcorController {
       dbUpdates.push(
         this.falcorCall(
           ['articles', 'bySlug', this.state.slug, 'authors', 'updateAuthors'],
-          [falcorData.id, processedAuthors],
+          [articleId, processedAuthors],
           [['name'], ['slug']],
         ),
       );
@@ -281,7 +281,7 @@ class ArticleController extends FalcorController {
       ].category = this.state.category;
     }
 
-    this.save(jsonGraphEnvelope, processedAuthors, articleId, falcorData);
+    this.save(jsonGraphEnvelope, processedAuthors, articleId);
   };
 
   isFormFieldChanged(userInput, falcorData) {
