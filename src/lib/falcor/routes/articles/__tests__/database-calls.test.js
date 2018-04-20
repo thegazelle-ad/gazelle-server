@@ -6,9 +6,9 @@ import {
 } from '__tests__/helpers/db-helpers';
 import path from 'path';
 
-const name = path.basename(__filename).replace(/[.-]/g, '_');
+const name = path.basename(__filename).replace(/[.-]/g, '_').replace(/^_+/, '');
 
-const databaseName = `gazelle_test${name}${new Date().getTime()}`;
+const databaseName = `gazelle_test_${name}_${new Date().getTime()}`;
 
 const database = getDatabaseConnection(databaseName);
 
