@@ -1,5 +1,6 @@
 import { routes } from '../by-page';
 
+// database-calls is automatically mocked as seen in __mocks__
 jest.enableAutomock();
 jest.unmock('../by-page');
 jest.unmock('lodash');
