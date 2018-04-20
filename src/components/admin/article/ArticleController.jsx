@@ -166,7 +166,10 @@ class ArticleController extends FalcorController {
   formHasUpdated(prevState, state) {
     return (
       this.isFormFieldChanged(prevState.title, state.title) ||
-      this.isFormFieldChanged(prevState.markdown, state.markdown) ||
+      this.isFormFieldChanged(
+        Plain.serialize(prevState.markdown),
+        Plain.serialize(state.markdown),
+      ) ||
       this.isFormFieldChanged(prevState.slug, state.slug) ||
       this.isFormFieldChanged(prevState.authors, state.authors) ||
       this.isFormFieldChanged(prevState.teaser, state.teaser) ||
@@ -323,6 +326,10 @@ class ArticleController extends FalcorController {
     const changedFlag =
       this.isFormFieldChanged(this.state.title, falcorData.title) ||
       this.isFormFieldChanged(this.state.slug, falcorData.slug) ||
+      this.isFormFieldChanged(
+        Plain.serialize(this.state.markdown),
+        falcorData.markdown,
+      ) ||
       this.isFormFieldChanged(this.state.teaser, falcorData.teaser) ||
       this.isFormFieldChanged(this.state.category, falcorData.category) ||
       this.isFormFieldChanged(this.state.imageUrl, falcorData.image_url) ||
