@@ -140,11 +140,12 @@ export function infoPagesQuery(slugs, columns) {
 
 /**
  * Fetches direct meta data of articles from the articles database table
- * @param {string[]} slugs - Array of slugs of articles to fetch
+ * @param {string} queryField - Indicates which field to query by
+ * @param {string[]} queryParams - Array of parameters of type queryField of articles to fetch
  * @param {string[]} columns - Which columns of the articles table to fetch
  * @returns {Promise<Object[]>}
  */
-export async function articleQuery(slugs, columns) {
+export async function articleQuery(queryField, queryParams, columns) {
   const processedColumns = columns.map(col => {
     // make it compatible for the sql query
     if (col === 'category') {
@@ -153,14 +154,14 @@ export async function articleQuery(slugs, columns) {
     return `articles.${col}`;
   });
   // In order to be able to identify the rows we get back we need to include the slug
-  if (!processedColumns.includes('articles.slug')) {
-    processedColumns.push('articles.slug');
+  if (!processedColumns.includes(`articles.${queryField}`)) {
+    processedColumns.push(`articles.${queryField}`);
   }
   return database
     .select(...processedColumns)
     .from('articles')
     .innerJoin('categories', 'articles.category_id', '=', 'categories.id')
-    .whereIn('articles.slug', slugs);
+    .whereIn(`articles.${queryField}`, queryParams);
 }
 
 export function articleIssueQuery(slugs) {
@@ -210,29 +211,34 @@ export function articleIssueQuery(slugs) {
   });
 }
 
-export function articleAuthorQuery(slugs) {
-  // slugs function parameter is an array of article slugs
-  // of which to fetch the staff member of.
-  // The function returns an object with article slugs
-  // as keys and values being arrays of author slugs.
+/**
+ * Fetches the authors of articles
+ * @param {string} queryField - Indicates which field to query by
+ * @param {string[]} queryParams - Array of parameters of type queryField of articles to fetch
+ * @returns {Promise<Object[]>}
+ */
+export function articleAuthorQuery(queryField, queryParams) {
   return new Promise(resolve => {
     database
-      .select('articles.slug as articleSlug', 'staff.slug as authorSlug')
+      .select(
+        `articles.${queryField} as articleQueryField`,
+        'staff.slug as authorSlug',
+      )
       .from('staff')
       .innerJoin('authors_articles', 'staff.id', '=', 'author_id')
       .innerJoin('articles', 'articles.id', '=', 'article_id')
-      .whereIn('articles.slug', slugs)
+      .whereIn(`articles.${queryField}`, queryParams)
       .orderBy('authors_articles.id', 'asc')
       .then(rows => {
-        // rows is an array of objects with keys authorSlug and articleSlug
+        // rows is an array of objects with keys authorSlug and articleQueryField
         const data = {};
         rows.forEach(row => {
           // This will input them in ascending order by id (which represents time they were
           // inserted as author of that article) as the query was structured so.
-          if (!has.call(data, row.articleSlug)) {
-            data[row.articleSlug] = [row.authorSlug];
+          if (!has.call(data, row.articleQueryField)) {
+            data[row.articleQueryField] = [row.authorSlug];
           } else {
-            data[row.articleSlug].push(row.authorSlug);
+            data[row.articleQueryField].push(row.authorSlug);
           }
         });
         // database.destroy();
@@ -1776,18 +1782,19 @@ async function updateArticleCategories(jsonGraphArg) {
 
 /**
  * Updates articles directly tied to an article
- * @param {Object} jsonGraphArg - An object of type { [slugs]: articleUpdateObject[] }
+ * @param {string} keyField - A String which indicates which db field is used as the primary key in jsonGraphArg
+ * @param {Object} jsonGraphArg - An object of type { [keyFields]: articleUpdateObject[] }
  * @returns {Promise<boolean>} - Whether the update was a success
  */
-export async function updateArticles(jsonGraphArg) {
-  const updatePromises = _.map(jsonGraphArg, (articleUpdater, slug) => {
+export async function updateArticles(keyField, jsonGraphArg) {
+  const updatePromises = _.map(jsonGraphArg, (articleUpdater, key) => {
     const processedArticleUpdater = {
       ...articleUpdater,
     };
     // We only store a foreign key to the categories table so we won't update it in this query
     delete processedArticleUpdater.category;
     return database('articles')
-      .where('slug', '=', slug)
+      .where(`${keyField}`, '=', key)
       .update(processedArticleUpdater);
   });
   updatePromises.push(updateArticleCategories(jsonGraphArg));
@@ -1805,7 +1812,7 @@ export async function updateArticles(jsonGraphArg) {
         '=',
         'issues_articles_order.article_id',
       )
-      .whereIn('articles.slug', articlesWithChangedCategory);
+      .whereIn(`articles.${keyField}`, articlesWithChangedCategory);
 
     const issuesToUpdate = issueRows.map(row => row.issue_id);
     // If the articles were actually published in any issues
