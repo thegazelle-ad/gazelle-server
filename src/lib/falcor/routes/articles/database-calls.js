@@ -1,6 +1,5 @@
 import _ from 'lodash';
 
-import { database } from 'lib/db';
 import { has } from 'lib/utilities';
 
 /**
@@ -10,11 +9,12 @@ import { has } from 'lib/utilities';
 
 /**
  * Fetches a page of articles where pages are a given length
+ * @param {any} database - The knex instance to query on
  * @param {number} pageLength - Length of page to be fetched
  * @param {number} pageIndex - Which page to fetch of size pageLength
  * @returns {Promise<PaginationArticle[]>} - An array of articles on the page
  */
-export async function getPaginatedArticle(pageLength, pageIndex) {
+export async function getPaginatedArticle(database, pageLength, pageIndex) {
   const offset = pageLength * pageIndex;
   const articles = await database
     .select('slug')
@@ -27,11 +27,12 @@ export async function getPaginatedArticle(pageLength, pageIndex) {
 
 /**
  * Updates the tags for a given article.
+ * @param   {database} database    The database
  * @param   {int}      articleId   The id of the article.
  * @param   {int[]}    newTags     The ids of the tags.
  * @returns {string[]} slugs       The edited slugs.
  */
-export async function updateArticleTags(articleId, newTags) {
+export async function updateArticleTags(database, articleId, newTags) {
   // Delete old tags.
   await database('articles_tags')
     .where('article_id', '=', articleId)
@@ -54,10 +55,11 @@ export async function updateArticleTags(articleId, newTags) {
 }
 
 /**
- * @param   {string[]} slugs the slugs whose tags we receive
- * @returns {Object}   data  the data
+ * @param   {database} database    The database
+ * @param   {string[]} slugs       The slugs whose tags we receive
+ * @returns {Object}   data        The data
  */
-export async function articleTagQuery(slugs) {
+export async function articleTagQuery(database, slugs) {
   // slugs function parameter is an array of article slugs
   // of which to fetch the tag of.
   // The function returns an object with article slugs

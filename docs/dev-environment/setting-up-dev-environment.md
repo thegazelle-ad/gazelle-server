@@ -126,7 +126,7 @@ To exit any of these virtual environments at any point (though unless you're act
 
 Linting is included in webpack, so when building your code while developing check the linting errors to make sure you're following the recommended coding style.
 
-We also have precommit hooks setup, so every time you make a commit both the linter and all relevant unit tests will be run to check you didn't break anything in your commit. If you ever need to make a temporary commit for any reason that either breaks the linter or tests (sometimes you need to save work for for example switching a branch and your current changes may be a work in progress) just use the `--no-verify` option with `git commit`.
+You also want to make sure that tests are always passing (and that you write tests yourself for the code you develop so we can ship with confidence).
 
 If you ever want to run all the unit tests simply run
 
@@ -139,6 +139,20 @@ and for linting
 ```
 npm run lint
 ```
+
+There's also a nice trick if you have a lot of linting errors you don't want to fix where you can simply run
+
+```
+npm run lint:fix
+```
+
+and it'll automatically fix all the errors that auto fix is implemented for (which is most of the formatting related ones)
+
+# Git hooks
+
+We have both precommit and postmerge hooks setup. For the precommit hook this means that every time you make a commit both the linter and all relevant unit tests will be run to check you didn't break anything in your commit. If you ever need to make a temporary commit for any reason that either breaks the linter or tests (sometimes you need to save work for for example switching a branch and your current changes may be a work in progress) just use the `--no-verify` option with `git commit`.
+
+For the postmerge hook this automatically runs `npm install` to check whether any new dependencies were added, followed by `npm run db:migrate` to check that you have the newest version of the database. This is just added for convenience as many a build has failed because people forgot to run `npm install` after pulling / merging in master. You of course will still have to rebuild (if you're not already running `npm run build:watch`) as the code and dependencies may have changed, and probably restart the server as well if the database has changed.
 
 # Fun Facts
 
@@ -157,5 +171,5 @@ more about what isomorphism is, here's an article that might help:
 
 * MySQL error 1045 (you don't know what password was set)<br />
 For Ubuntu - Download and Install synaptic package manager.
-Using synaptic, remove all instances of mariadb. 
+Using synaptic, remove all instances of mariadb.
 Then, follow this guide and completely remove MySQL. https://askubuntu.com/questions/640899/how-do-i-uninstall-mysql-completely. Reinstall mariadb and make sure to set a different password this time when prompted. Hopefully the error does not repeat.

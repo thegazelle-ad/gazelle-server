@@ -1,4 +1,4 @@
-export async function getPaginatedArticle(pageLength, pageIndex) {
+export async function getPaginatedArticle(database, pageLength, pageIndex) {
   const articles = [];
   for (
     let i = pageIndex * pageLength;

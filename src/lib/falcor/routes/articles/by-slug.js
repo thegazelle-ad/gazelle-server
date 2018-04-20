@@ -10,6 +10,7 @@ import {
   updateAuthors,
   relatedArticleQuery,
   addView,
+  database,
 } from 'lib/db';
 import { updateArticleTags, articleTagQuery } from './database-calls';
 import { has } from 'lib/utilities';
@@ -118,7 +119,7 @@ export default [
     route: "articles['bySlug'][{keys:slugs}]['tags'][{integers:indices}]",
     get: pathSet =>
       new Promise(resolve => {
-        articleTagQuery(pathSet.slugs).then(data => {
+        articleTagQuery(database, pathSet.slugs).then(data => {
           // We receive the data as an object with keys equalling article slugs
           // and values being an array of author slugs in no particular order
           const results = [];
@@ -244,7 +245,7 @@ export default [
           updateTags = updateTags.concat(ids);
         }
 
-        updateArticleTags(articleId, updateTags).then(data => {
+        updateArticleTags(database, articleId, updateTags).then(data => {
           const results = [];
           // Invalidate all the old data
           results.push({
