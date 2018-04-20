@@ -37,6 +37,7 @@ class ArticleController extends FalcorController {
     this.updateTitle = title => this.safeSetState({ title });
     this.updateSlug = slug => this.safeSetState({ slug });
     this.updateAuthors = authors => this.safeSetState({ authors });
+    this.updateMarkdown = markdown => this.safeSetState({ markdown });
     this.updateTeaser = teaser => this.safeSetState({ teaser });
     this.updateImage = imageUrl => this.safeSetState({ imageUrl });
     this.updateCategory = category => this.safeSetState({ category });
@@ -50,6 +51,7 @@ class ArticleController extends FalcorController {
       teaser: '',
       category: '',
       imageUrl: '',
+      markdown: '',
     });
 
     this.debouncedHandleFormStateChanges = debounce(() => {
@@ -101,6 +103,7 @@ class ArticleController extends FalcorController {
         [
           'title',
           'slug',
+          'markdown',
           'category',
           'teaser',
           'image_url',
@@ -122,6 +125,7 @@ class ArticleController extends FalcorController {
   falcorToState(data) {
     const article = data.articles.byId[this.props.params.id];
     const title = article.title || '';
+    const markdown = article.markdown || '';
     const slug = article.slug || '';
     const teaser = article.teaser || '';
     const category = article.category || '';
@@ -129,6 +133,7 @@ class ArticleController extends FalcorController {
     const authors = _.toArray(article.authors);
     this.safeSetState({
       title,
+      markdown,
       slug,
       teaser,
       category,
@@ -156,6 +161,7 @@ class ArticleController extends FalcorController {
   formHasUpdated(prevState, state) {
     return (
       this.isFormFieldChanged(prevState.title, state.title) ||
+      this.isFormFieldChanged(prevState.markdown, state.markdown) ||
       this.isFormFieldChanged(prevState.slug, state.slug) ||
       this.isFormFieldChanged(prevState.authors, state.authors) ||
       this.isFormFieldChanged(prevState.teaser, state.teaser) ||
@@ -317,15 +323,13 @@ class ArticleController extends FalcorController {
       grid: {
         display: 'grid',
         gridGap: '10px',
-        gridTemplateColumns: '40% 20% 40% ',
-        gridTemplateRows: '5% 90% 5%',
+        gridTemplateColumns: '35% 25% 40% ',
+        gridTemplateRows: '10% 85% 5%',
         gridTemplateAreas:
-          '"header header header" "sidebar content content" "negative positive positive"',
-        height: '100%',
+          '"header content content" "sidebar content content" "negative positive positive"',
+        height: '80vh',
       },
       buttons: {
-        marginTop: 24,
-        marginBottom: 12,
         width: '100%',
       },
     };
@@ -345,15 +349,20 @@ class ArticleController extends FalcorController {
 
       const { id } = this.props.params;
       const article = this.state.data.articles.byId[id];
-
       // If it is a new article it won't have any meta data yet so we use the default
       const categories = _.toArray(this.state.data.categories.byIndex);
       categories.push({ name: 'none', slug: 'none' });
       return (
         <div style={styles.grid}>
           {this.state.saving ? <LoadingOverlay /> : null}
-          <h1 style={{ gridArea: 'header' }}>Article Editor</h1>
-          <div style={{ gridArea: 'sidebar', overflow: 'auto' }}>
+          <h2 style={{ gridArea: 'header' }}>Article Editor</h2>
+          <div
+            style={{
+              gridArea: 'sidebar',
+              overflowX: 'hidden',
+              overflowY: 'scroll',
+            }}
+          >
             <ShortRequiredTextField
               floatingLabelText="Title"
               value={this.state.title}
@@ -404,13 +413,16 @@ class ArticleController extends FalcorController {
               slugify={slugifyStaff}
             />
           </div>
-          <div style={{ gridArea: 'content' }}>
-            <MarkdownEditor />
+          <div style={{ gridArea: 'content', overflowY: 'scroll' }}>
+            <MarkdownEditor
+              onUpdate={this.updateMarkdown}
+              value={this.state.markdown}
+            />
           </div>
           <div style={{ gridArea: 'negative' }}>
             <UnpublishButton
               save={this.save}
-              slug={this.props.params.slug}
+              id={this.props.params.id}
               falcorUpdate={this.falcorUpdate}
               style={styles.buttons}
               published_at={article.published_at}

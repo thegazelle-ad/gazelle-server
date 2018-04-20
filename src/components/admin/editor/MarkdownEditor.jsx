@@ -8,9 +8,11 @@ import { GazellePlugin } from './GazellePlugin';
 const styles = {
   paper: {
     width: '100%',
-    height: '100%',
+    height: '99%',
+    marginTop: '1%',
+    overflowY: 'hidden',
   },
-  editor: { padding: 10 },
+  editor: { padding: 10, overflowY: 'scroll' },
 };
 
 export class MarkdownEditor extends React.Component {
