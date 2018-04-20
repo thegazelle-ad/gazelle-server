@@ -2,6 +2,7 @@ import falcor from 'falcor';
 import _ from 'lodash';
 
 import { getPaginatedArticle } from './database-calls';
+import { database } from 'lib/db';
 
 const $ref = falcor.Model.ref;
 
@@ -27,7 +28,11 @@ export const routes = [
       const pageLength = pathSet.pageLengths[0];
       const pageIndex = pathSet.pageIndices[0];
 
-      const articles = await getPaginatedArticle(pageLength, pageIndex);
+      const articles = await getPaginatedArticle(
+        database,
+        pageLength,
+        pageIndex,
+      );
       const results = articles.map(({ slug }, index) => ({
         path: ['articles', 'byPage', pageLength, pageIndex, index],
         value: $ref(['articles', 'bySlug', slug]),
