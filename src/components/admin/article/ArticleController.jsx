@@ -2,6 +2,7 @@ import React from 'react';
 import { browserHistory } from 'react-router';
 import _ from 'lodash';
 import Plain from 'slate-plain-serializer';
+import showdown from 'showdown';
 
 // Lib
 import { debounce, slugifyStaff } from 'lib/utilities';
@@ -37,6 +38,7 @@ class ArticleController extends FalcorController {
     this.handleDialogClose = this.handleDialogClose.bind(this);
     this.isFormChanged = this.isFormChanged.bind(this);
     this.falcorToState = this.falcorToState.bind(this);
+    this.converter = new showdown.Converter();
     this.updateTitle = title => this.safeSetState({ title });
     this.updateSlug = slug => this.safeSetState({ slug });
     this.updateAuthors = authors => this.safeSetState({ authors });
@@ -257,10 +259,11 @@ class ArticleController extends FalcorController {
       processedAuthors = null;
     }
 
+    const plainMarkdown = Plain.serialize(this.state.markdown);
     const shouldUpdateCategory = this.state.category;
     const fields = shouldUpdateCategory
-      ? ['title', 'slug', 'teaser', 'image_url', 'category']
-      : ['title', 'slug', 'teaser', 'image_url'];
+      ? ['title', 'slug', 'teaser', 'image_url', 'markdown', 'html', 'category']
+      : ['title', 'slug', 'teaser', 'image_url', 'markdown', 'html'];
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
       paths: [['articles', 'byId', articleId, fields]],
@@ -277,6 +280,12 @@ class ArticleController extends FalcorController {
       articleId
     ].title = this.state.title;
     jsonGraphEnvelope.jsonGraph.articles.byId[articleId].slug = this.state.slug;
+    jsonGraphEnvelope.jsonGraph.articles.byId[
+      articleId
+    ].markdown = plainMarkdown;
+    jsonGraphEnvelope.jsonGraph.articles.byId[
+      articleId
+    ].html = this.converter.makeHtml(plainMarkdown);
     jsonGraphEnvelope.jsonGraph.articles.byId[
       articleId
     ].teaser = this.state.teaser;
