@@ -17,7 +17,7 @@ export default class MaxLenTextField extends React.Component {
         floatingLabelText={
           `${capFirstLetter(this.props.name)} ` +
           `(${this.props.value.length} ` +
-          `of ${this.props.maxLen} characters) `
+          `of ${this.props.maxLen}) `
         }
         value={this.props.value}
         disabled={this.props.disabled}

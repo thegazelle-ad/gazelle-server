@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Editor } from 'slate-react';
-import Plain from 'slate-plain-serializer';
 import Paper from 'material-ui/Paper';
 import { GazellePlugin } from './GazellePlugin';
 
@@ -10,7 +9,7 @@ const styles = {
     width: '100%',
     height: '99%',
     marginTop: '1%',
-    overflowY: 'hidden',
+    overflowY: 'scroll',
   },
   editor: { padding: 10, overflowY: 'scroll' },
 };
@@ -23,16 +22,16 @@ export class MarkdownEditor extends React.Component {
   }
 
   onChange = ({ value }) => {
-    this.props.onUpdate(Plain.serialize(value));
+    this.props.onUpdate(value);
   };
 
   render() {
     return (
-      <Paper style={styles.paper} zDepth={2}>
+      <Paper style={styles.paper}>
         <Editor
           style={styles.editor}
           placeholder="Begin writing for the Gazelle :)"
-          value={Plain.deserialize(this.props.value)}
+          value={this.props.value}
           onChange={this.onChange}
           plugins={this.plugins}
           spellCheck
@@ -43,11 +42,6 @@ export class MarkdownEditor extends React.Component {
 }
 
 MarkdownEditor.propTypes = {
-  value: PropTypes.string,
-  onUpdate: PropTypes.func,
-};
-
-MarkdownEditor.defaultProps = {
-  value: '',
-  onUpdate: null,
+  value: PropTypes.shape({}).isRequired,
+  onUpdate: PropTypes.func.isRequired,
 };

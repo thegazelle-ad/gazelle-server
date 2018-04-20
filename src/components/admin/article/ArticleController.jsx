@@ -1,6 +1,7 @@
 import React from 'react';
 import { browserHistory } from 'react-router';
 import _ from 'lodash';
+import Plain from 'slate-plain-serializer';
 
 // Lib
 import { debounce, slugifyStaff } from 'lib/utilities';
@@ -22,6 +23,8 @@ import { MAX_TEASER_LENGTH } from 'components/admin/lib/constants';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 
 // HOCs
 import { withModals } from 'components/admin/hocs/modals/withModals';
@@ -51,7 +54,7 @@ class ArticleController extends FalcorController {
       teaser: '',
       category: '',
       imageUrl: '',
-      markdown: '',
+      markdown: Plain.deserialize(''),
     });
 
     this.debouncedHandleFormStateChanges = debounce(() => {
@@ -125,7 +128,7 @@ class ArticleController extends FalcorController {
   falcorToState(data) {
     const article = data.articles.byId[this.props.params.id];
     const title = article.title || '';
-    const markdown = article.markdown || '';
+    const markdown = Plain.deserialize(article.markdown || '');
     const slug = article.slug || '';
     const teaser = article.teaser || '';
     const category = article.category || '';
@@ -323,14 +326,34 @@ class ArticleController extends FalcorController {
       grid: {
         display: 'grid',
         gridGap: '10px',
-        gridTemplateColumns: '35% 25% 40% ',
-        gridTemplateRows: '10% 85% 5%',
+        gridTemplateColumns: '30% 70%',
+        gridTemplateRows: '10% 80% 10%',
         gridTemplateAreas:
-          '"header content content" "sidebar content content" "negative positive positive"',
-        height: '80vh',
+          '"header exit" "sidebar content" "negative positive"',
+        height: '79vh',
+        marginTop: '1vh',
+        padding: '10px',
+      },
+      header: { gridArea: 'header' },
+      exit: { gridArea: 'exit' },
+      content: { gridArea: 'content' },
+      positive: { gridArea: 'positive' },
+      negative: { gridArea: 'negative' },
+      sidebar: {
+        width: '95%',
+        gridArea: 'sidebar',
+        overflowX: 'hidden',
+        overflowY: 'scroll',
+      },
+      helpText: {
+        color: 'rgba(0, 0, 0, 0.4)',
+        fontSize: '1vw',
       },
       buttons: {
         width: '100%',
+      },
+      exitButton: {
+        float: 'right',
       },
     };
 
@@ -356,14 +379,17 @@ class ArticleController extends FalcorController {
       return (
         <div style={styles.grid}>
           {this.state.saving ? <LoadingOverlay /> : null}
-          <h2 style={{ gridArea: 'header' }}>Article Editor</h2>
-          <div
-            style={{
-              gridArea: 'sidebar',
-              overflowX: 'hidden',
-              overflowY: 'scroll',
-            }}
-          >
+          <h2 style={styles.header}>Article Editor</h2>
+          <div style={styles.exit}>
+            <FloatingActionButton
+              style={styles.exitButton}
+              onClick={this.handleDialogClose}
+            >
+              <ExitToApp />
+            </FloatingActionButton>
+          </div>
+
+          <div style={styles.sidebar}>
             <ShortRequiredTextField
               floatingLabelText="Title"
               value={this.state.title}
@@ -371,16 +397,17 @@ class ArticleController extends FalcorController {
               disabled={this.state.saving}
             />
             <ShortRequiredTextField
-              floatingLabelText={`Slug${
-                !article.published_at
-                  ? ''
-                  : ' - You cannot edit the slug of a published article. Unpublish this article to edit the slug'
-              }`}
+              floatingLabelText="Slug"
               value={this.state.slug}
               onUpdate={this.updateSlug}
               disabled={this.state.saving || Boolean(article.published_at)}
               fullWidth
             />
+            <span style={styles.helpText}>
+              {!article.published_at
+                ? ''
+                : 'You cannot edit the slug of a published article.'}
+            </span>
             <ListSelector
               label="Category"
               chosenElement={this.state.category}
@@ -414,13 +441,13 @@ class ArticleController extends FalcorController {
               slugify={slugifyStaff}
             />
           </div>
-          <div style={{ gridArea: 'content', overflowY: 'scroll' }}>
+          <div style={styles.content}>
             <MarkdownEditor
               onUpdate={this.updateMarkdown}
               value={this.state.markdown}
             />
           </div>
-          <div style={{ gridArea: 'negative' }}>
+          <div style={styles.negative}>
             <UnpublishButton
               save={this.save}
               id={this.props.params.id}
@@ -429,7 +456,7 @@ class ArticleController extends FalcorController {
               published_at={article.published_at}
             />
           </div>
-          <div style={{ gridArea: 'positive' }}>
+          <div style={styles.positive}>
             <SaveButton
               onClick={this.handleSaveChanges}
               style={styles.buttons}

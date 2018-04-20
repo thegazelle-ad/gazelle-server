@@ -10,8 +10,7 @@ export const gazelleRender = props => {
         <span
           style={{
             fontWeight: 'bold',
-            fontSize: '2.441em',
-            margin: '1em 0 0.5em 0',
+            fontSize: '2em',
             display: 'inline-block',
           }}
         >

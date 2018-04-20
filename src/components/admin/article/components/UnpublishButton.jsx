@@ -4,7 +4,6 @@ import moment from 'moment';
 
 import RaisedButton from 'material-ui/RaisedButton';
 import Warning from 'material-ui/svg-icons/alert/warning';
-import TextFieldLabel from 'material-ui/TextField/TextFieldLabel';
 
 export default class UnpublishButton extends React.Component {
   constructor(props) {
@@ -33,20 +32,20 @@ export default class UnpublishButton extends React.Component {
     return (
       <div>
         <RaisedButton
-          label="Unpublish Article"
+          label="Unpublish"
           secondary
           style={this.props.style}
           disabled={!this.props.published_at}
           onClick={this.unpublish}
           icon={<Warning />}
         />
-        <TextFieldLabel>
+        <span style={{ color: 'rgba(0, 0, 0, 0.5)', lineHeight: '22px' }}>
           {this.props.published_at !== null
             ? `Published on ${moment(this.props.published_at).format(
                 'MMMM DD, YYYY',
               )}.`
             : 'This article is not published'}
-        </TextFieldLabel>
+        </span>
       </div>
     );
   }
