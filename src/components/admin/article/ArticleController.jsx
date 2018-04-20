@@ -72,7 +72,7 @@ class ArticleController extends FalcorController {
     if (processedAuthors !== null) {
       dbUpdates.push(
         this.falcorCall(
-          ['articles', 'byId', articleId, 'authors', 'updateAuthors'],
+          ['articles', 'bySlug', this.state.slug, 'authors', 'updateAuthors'],
           [falcorData.id, processedAuthors],
           [['name'], ['slug']],
         ),
