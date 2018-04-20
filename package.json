@@ -16,15 +16,18 @@
     "build:emulate-ci": "CI=true CIRCLECI=true npm run build:production",
     "test:unit": "jest --config='__tests__/config/jest.unit.config.js' --testLocationInResults",
     "test:e2e": "jest --config='__tests__/config/jest.e2e.config.js' --testLocationInResults --runInBand",
-    "lint": "eslint --max-warnings 0 '{src,__tests__,webpack}/**/*.{js,jsx}'",
+    "lint": "eslint --max-warnings 0 '{src,__tests__,webpack,database-management}/**/*.{js,jsx}'",
     "lint:fix": "npm run lint -- --fix",
     "db:migrate": "knex migrate:latest",
+    "db:rollback": "knex migrate:rollback",
+    "db:seed": "knex seed:run",
     "//": [
       "The precommit script below is a hack to allow us to do patch committing, and it then has the special",
       "for when we are merging that it will just run lint-staged as otherwise the git stash messes with gits internal",
       "system of keeping track of merges"
     ],
-    "precommit": "if ! [ -s .git/MERGE_HEAD ]; then TEMP_STASH_OUTPUT=$(git stash --keep-index); if [ \"$TEMP_STASH_OUTPUT\" != 'No local changes to save' ]; then lint-staged; PRECOMMIT_PASSED=$(echo $?); MUTE=$(git stash pop); exit $PRECOMMIT_PASSED; fi; exit 0; fi; lint-staged"
+    "precommit": "if ! [ -s .git/MERGE_HEAD ]; then TEMP_STASH_OUTPUT=$(git stash --keep-index); if [ \"$TEMP_STASH_OUTPUT\" != 'No local changes to save' ]; then lint-staged; PRECOMMIT_PASSED=$(echo $?); MUTE=$(git stash pop); exit $PRECOMMIT_PASSED; fi; exit 0; fi; lint-staged",
+    "postmerge": "npm i && npm run db:migrate"
   },
   "lint-staged": {
     "*.{js,jsx}": "eslint --max-warnings 0",
@@ -72,7 +75,7 @@
     "eslint-plugin-react": "^7.7.0",
     "extract-text-webpack-plugin": "^3.0.2",
     "husky": "^0.14.3",
-    "jest": "^22.1.0",
+    "jest": "^22.4.3",
     "json5": "^1.0.1",
     "json5-loader": "^1.0.1",
     "lint-staged": "^5.0.0",
@@ -95,7 +98,7 @@
     "classnames": "^2.2.5",
     "compression": "^1.6.2",
     "express": "^4.13.4",
-    "falcor": "^1.0.3",
+    "falcor": "^2.0.0",
     "falcor-express": "^0.1.4",
     "falcor-http-datasource": "^0.1.3",
     "falcor-router": "^0.8.1",

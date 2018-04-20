@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, browserHistory } from 'react-router';
 import FalcorController from 'lib/falcor/FalcorController';
-import SearchBar from 'components/admin/SearchBar';
+import { SearchableArticlesWithPubDate } from 'components/admin/form-components/searchables';
 import { ArticleList } from 'components/admin/ArticleList';
 import moment from 'moment';
 
@@ -117,7 +117,11 @@ export default class ArticleListController extends FalcorController {
   render() {
     if (this.state.ready) {
       // If trying to access inacessible page, redirect to page 1
-      if (!this.state.data.articles.byPage) {
+      if (
+        !this.state.data ||
+        !this.state.data.articles ||
+        !this.state.data.articles.byPage
+      ) {
         return (
           <p>
             You have tried accessing a page that doesn{"'"}t exist. Please press
@@ -142,13 +146,10 @@ export default class ArticleListController extends FalcorController {
               <h2>Select an Article</h2>
               <Divider />
               <br />
-              <SearchBar
-                model={this.props.model}
-                mode="articles"
+              <SearchableArticlesWithPubDate
                 handleClick={this.clickSearchSuggestion}
                 length={3}
-                fields={[]}
-                showPubDate
+                fullWidth
               />
               <ArticleList
                 elements={data}

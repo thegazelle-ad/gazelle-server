@@ -3,11 +3,11 @@ import { browserHistory } from 'react-router';
 import _ from 'lodash';
 
 // Lib
-import { debounce } from 'lib/utilities';
+import { debounce, slugifyStaff } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 
 // Custom Components
-import { SearchableSelector } from 'components/admin/form-components/SearchableSelector';
+import { SearchableAuthorsSelector } from 'components/admin/form-components/searchables';
 import LoadingOverlay from 'components/admin/LoadingOverlay';
 import SaveButton from 'components/admin/article/components/SaveButton';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton';
@@ -308,7 +308,11 @@ class ArticleController extends FalcorController {
     };
 
     if (this.state.ready) {
-      if (!this.state.data || !this.state.data.articles.bySlug) {
+      if (
+        !this.state.data ||
+        !this.state.data.articles ||
+        !this.state.data.articles.bySlug
+      ) {
         return (
           <div>
             <p>Error: No articles match this slug</p>
@@ -368,13 +372,13 @@ class ArticleController extends FalcorController {
             onUpdate={this.updateTeaser}
           />
           <br />
-          <SearchableSelector
-            value={this.state.authors}
+          <SearchableAuthorsSelector
+            elements={this.state.authors}
             onChange={this.debouncedHandleFormStateChanges}
             onUpdate={this.updateAuthors}
             disabled={this.state.saving}
-            model={this.props.model}
             mode="staff"
+            slugify={slugifyStaff}
           />
           <br />
           <Divider />

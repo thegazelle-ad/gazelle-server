@@ -2,9 +2,8 @@ import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import { slugifyStaff } from 'lib/utilities';
 import { browserHistory } from 'react-router';
-import SearchBar from './SearchBar';
+import { SearchableAuthors } from 'components/admin/form-components/searchables';
 import { updateFieldValue } from './lib/form-field-updaters';
-import { cleanupFalcorKeys } from 'lib/falcor/falcor-utilities';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -90,8 +89,7 @@ class StaffListController extends FalcorController {
 
     // Check if the slug is already taken
     this.props.model.get(['staff', 'bySlug', slug, 'slug']).then(x => {
-      if (x) {
-        x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
+      if (x.json.staff.bySlug[slug].slug !== undefined) {
         // Something was found, which means the slug is taken
         this.props.displayAlert(
           'This slug is already taken, please change to another one',
@@ -132,12 +130,11 @@ class StaffListController extends FalcorController {
                 <div id={`${ID}-edit-tab`} style={styles.tabs}>
                   <h2>Edit Staff</h2>
                   <Divider />
-                  <SearchBar
-                    model={this.props.model}
-                    mode="staff"
+                  <SearchableAuthors
                     fields={['slug']}
                     length={3}
                     handleClick={this.handleClickStaff}
+                    fullWidth
                   />
                 </div>
               </Tab>

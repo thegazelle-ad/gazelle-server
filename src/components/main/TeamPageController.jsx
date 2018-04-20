@@ -28,7 +28,7 @@ export default class TeamPageController extends FalcorController {
 
   render() {
     if (this.state.ready) {
-      if (!this.state.data) {
+      if (!this.state.data || Object.keys(this.state.data).length === 0) {
         return <NotFound />;
       }
       const teamData = _.map(this.state.data.semesters.latest, team => ({

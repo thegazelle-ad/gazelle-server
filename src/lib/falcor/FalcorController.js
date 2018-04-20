@@ -2,7 +2,6 @@ import _ from 'lodash';
 import {
   isAppReady,
   expandCache,
-  pathSetsInCache,
   validateFalcorPathSets,
   cleanupFalcorKeys,
 } from 'lib/falcor/falcor-utilities';
@@ -303,11 +302,7 @@ export default class FalcorController extends BaseComponent {
     );
     if (!_.isEqual(oldPathSets, newPathSets)) {
       this.safeSetState({ ready: false });
-      if (pathSetsInCache(this.props.model.getCache(), newPathSets)) {
-        this.loadFalcorCache(newPathSets, falcorCallback);
-      } else {
-        this.falcorFetch(newPathSets, undefined, falcorCallback);
-      }
+      this.falcorFetch(newPathSets, undefined, falcorCallback);
     }
   }
 
@@ -322,10 +317,7 @@ export default class FalcorController extends BaseComponent {
       this.props.params,
       this.props.location.query,
     );
-    if (
-      !isAppReady() ||
-      pathSetsInCache(this.props.model.getCache(), falcorPathSets)
-    ) {
+    if (!isAppReady()) {
       this.loadFalcorCache(falcorPathSets, falcorCallback);
     } else {
       this.falcorFetch(falcorPathSets, undefined, falcorCallback);

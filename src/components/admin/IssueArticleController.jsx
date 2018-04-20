@@ -1,6 +1,6 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
-import SearchBar from 'components/admin/SearchBar';
+import { SearchableArticlesWithPubDate } from 'components/admin/form-components/searchables';
 import { ArticleList } from 'components/admin/ArticleList';
 import _ from 'lodash';
 import update from 'react-addons-update';
@@ -552,7 +552,7 @@ class IssueArticleController extends FalcorController {
 
   render() {
     if (this.state.ready) {
-      if (!this.state.data) {
+      if (!this.state.data || !this.state.data.issues) {
         return <div>This issue could not be found</div>;
       }
       const modes = ['picks', 'featured', 'main'];
@@ -644,15 +644,13 @@ class IssueArticleController extends FalcorController {
               Search By List
             </button>
             {/* eslint-disable react/jsx-no-bind */}
-            <SearchBar
-              model={this.props.model}
+            <SearchableArticlesWithPubDate
               handleClick={this.addArticle.bind(this, 'featured')}
               length={3}
               fields={ARTICLE_FIELDS}
               disabled={this.state.saving}
-              mode="articles"
               extraPathSets={[['staff', 0, 'slug']]}
-              showPubDate
+              fullWidth
             />
             {featuredArticles.map(article => (
               <div key={article.slug}>
@@ -682,15 +680,13 @@ class IssueArticleController extends FalcorController {
             >
               Search By List
             </button>
-            <SearchBar
-              model={this.props.model}
+            <SearchableArticlesWithPubDate
               handleClick={this.addArticle.bind(this, 'picks')}
               length={3}
               fields={ARTICLE_FIELDS}
               disabled={this.state.saving}
-              mode="articles"
               extraPathSets={[['staff', 0, 'slug']]}
-              showPubDate
+              fullWidth
             />
             {picks.map(article => (
               <div key={article.slug}>
@@ -720,15 +716,13 @@ class IssueArticleController extends FalcorController {
             >
               Search By List
             </button>
-            <SearchBar
-              model={this.props.model}
+            <SearchableArticlesWithPubDate
               handleClick={this.addArticle.bind(this, 'main')}
               length={3}
               fields={ARTICLE_FIELDS}
               disabled={this.state.saving}
-              mode="articles"
               extraPathSets={[['staff', 0, 'slug']]}
-              showPubDate
+              fullWidth
             />
             <div style={{ overflow: 'auto', maxHeight: '20vh' }}>
               {mainArticles.map(article => (
