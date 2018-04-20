@@ -17,7 +17,7 @@ npm install
 ```
 
 # Setup Database
-You should first install MariaDB, which can be done here: https://downloads.mariadb.org/mariadb/repositories. Simply follow the instructions to download MariaDB if you are using Linux. We use 10.1 in production / CircleCI so that's the recommended version. If you are not using Linux you should easily be able to Google how to download it for your operating system. If you are only setting up for development and not for deployment you can also use MySQL which is also 100% compatible.
+You should first install MariaDB, which for Linux can be done here: https://downloads.mariadb.org/mariadb/repositories, and a guide for MacOS is here: https://mariadb.com/kb/en/library/installing-mariadb-on-macos-using-homebrew/. We recommend using either a Linux distribution or MacOS as your operating system when developing for The Gazelle. We use version 10.1 in production / CircleCI so that's the recommended version. If you are only setting up for development and not for deployment you can also use MySQL which is 100% compatible.
 
 After having installed MariaDB (or MySQL) setting up a development database should be as easy as running these three commands:
 
@@ -35,7 +35,7 @@ When this is done copy database.config.example.json5 (it is in the config folder
 cp config/database.config.example.json5 config/database.config.json5
 ```
 
-It is important that you name it exactly as specified above.
+It is important that you name the config file exactly as specified above.
 
 Now change the config as necessary. The most important is the password and database name of the database being used in database.config.js. Most likely all you will have to change is the password though.
 
@@ -67,13 +67,11 @@ Make sure to keep watching the build window, in case there is a syntax error or 
 
 # Run server
 
-You need to re-run the server every time the code is rebuilt to serve the latest version. However, if you are just changing frontend, you can choose to not restart the server on change, and just refresh the page, and the frontend code will still be up to date time. The isomorphism will be broken, but it's not important for development.
+You need to re-run the server every time the code is rebuilt to serve the latest version. However, if you are just changing frontend code, and not anything in the server files, you can choose to not restart the server on change, and just refresh the page. In this case the frontend code will still be up to date. The isomorphism will be broken (which means the serverside and client side renders will be different), but it's not important for development.
 
 ```
 npm start
 ```
-
-If you are not restarting the server you may have to disable caching for refresh to work. There's an option in Chrome dev tools to do this.
 
 # Note on linters and tests
 
