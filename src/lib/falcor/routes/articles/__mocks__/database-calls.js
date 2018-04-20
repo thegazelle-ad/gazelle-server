@@ -5,7 +5,7 @@ export async function getPaginatedArticle(pageLength, pageIndex) {
     i < pageIndex * pageLength + pageLength;
     i++
   ) {
-    articles.push({ id: `${i}` });
+    articles.push({ slug: `slug-${i}` });
   }
   return articles;
 }

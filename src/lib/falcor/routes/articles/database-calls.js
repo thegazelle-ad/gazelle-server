@@ -14,7 +14,7 @@ import { database } from 'lib/db';
 export async function getPaginatedArticle(pageLength, pageIndex) {
   const offset = pageLength * pageIndex;
   const articles = await database
-    .select('id')
+    .select('slug')
     .from('articles')
     .orderBy('created_at', 'DESC')
     .limit(pageLength)
