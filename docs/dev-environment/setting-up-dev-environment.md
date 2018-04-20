@@ -55,7 +55,7 @@ For single build
 npm run build
 ```
 
-Or in watch mode (for active development), which will continously rebuild in a few seconds every time you change any code (some people have been confused by the errors given by ESlint thinking it stopped their code from building, but it doesn't don't worry, those are only formatting errors that need to be fixed by the time you submit a pull request)
+Or in watch mode (for active development), which will continously rebuild in a few seconds every time you change any code.
 
 ```
 npm run build:watch
@@ -63,7 +63,7 @@ npm run build:watch
 
 You will find the results in the `./build/` and `./static/build/` folders (not pushed to git)
 
-Make sure to keep watching the build window, in case there is a syntax error or something else preventing builds. Your code will not recompile if there are build errors (as in real syntax errors, as mentioned above not ESlint)
+Make sure to keep watching the build window, in case there is a syntax error or something else preventing builds. Your code will not recompile if there are build errors.
 
 # Run server
 
