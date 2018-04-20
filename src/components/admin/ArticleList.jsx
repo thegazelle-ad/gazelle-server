@@ -1,4 +1,3 @@
-import BaseComponent from 'lib/BaseComponent';
 import React from 'react';
 import _ from 'lodash';
 
@@ -18,27 +17,24 @@ const styles = {
   },
 };
 
-export class ArticleList extends BaseComponent {
-  render() {
-    if (this.props.elements) {
-      const { elements } = this.props;
-      return (
-        <Paper style={styles.paper} zDepth={1}>
-          <List style={{ overflow: 'auto', maxHeight: '400px' }}>
-            <Subheader>Recent Articles</Subheader>
-            {_.map(elements, this.props.createElement)}
-          </List>
-        </Paper>
-      );
-    }
+export const ArticleList = ({ elements, createElement }) => {
+  if (!elements) {
     return <div>This page does not exist</div>;
   }
-}
+  return (
+    <Paper style={styles.paper} zDepth={1}>
+      <List style={{ overflow: 'auto', maxHeight: '400px' }}>
+        <Subheader>Recent Articles</Subheader>
+        {_.map(elements, createElement)}
+      </List>
+    </Paper>
+  );
+};
 
 ArticleList.propTypes = {
   elements: React.PropTypes.oneOfType([
-    React.PropTypes.array,
-    React.PropTypes.object,
+    React.PropTypes.arrayOf(React.PropTypes.shape({})),
+    React.PropTypes.shape({}),
   ]).isRequired,
   createElement: React.PropTypes.func.isRequired,
 };

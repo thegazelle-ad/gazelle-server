@@ -23,7 +23,7 @@ export default class ListSelector extends React.Component {
         style={{ width: 200 }}
       >
         {this.props.elements.map(type => (
-          <MenuItem value={type.slug} key={type.slug} primaryText={type.name} />
+          <MenuItem value={type.id} key={type.id} primaryText={type.name} />
         ))}
       </SelectField>
     );
@@ -33,14 +33,14 @@ export default class ListSelector extends React.Component {
 ListSelector.propTypes = {
   elements: PropTypes.arrayOf(
     PropTypes.shape({
-      slug: PropTypes.string,
-      name: PropTypes.string,
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
     }),
   ).isRequired,
   update: PropTypes.func.isRequired,
   label: PropTypes.string,
   disabled: PropTypes.bool,
-  chosenElement: PropTypes.string,
+  chosenElement: PropTypes.number,
 };
 
 ListSelector.defaultProps = {

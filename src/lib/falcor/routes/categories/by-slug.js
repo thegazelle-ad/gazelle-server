@@ -8,7 +8,7 @@ const $ref = falcor.Model.ref;
 export default [
   {
     // get categories name
-    route: "categories['bySlug'][{keys:slugs}]['name', 'slug']",
+    route: "categories['bySlug'][{keys:slugs}]['id', 'name', 'slug']",
     get: pathSet =>
       new Promise(resolve => {
         const requestedFields = pathSet[3];

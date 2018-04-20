@@ -29,13 +29,11 @@ import {
 } from 'components/hocs/falcor-hocs';
 import { withModals } from 'components/admin/hocs/modals/withModals';
 
-const falcorPaths = [
-  ['categories', 'byIndex', { length: 30 }, ['name', 'slug']],
-];
+const falcorPaths = [['categories', 'byIndex', { length: 30 }, ['name', 'id']]];
 
 const propMerger = buildPropMerger((data, currentProps) => {
   const categories = parseFalcorPseudoArray(data.categories.byIndex).filter(
-    category => _.get(category, 'slug') && _.get(category, 'name'),
+    category => _.get(category, 'id') && _.get(category, 'name'),
   );
   return {
     ...currentProps,
@@ -51,7 +49,7 @@ class CreateArticleController extends React.Component {
       slug: '',
       authors: [],
       teaser: '',
-      category: '',
+      category: -1,
       imageUrl: '',
     };
   }
@@ -171,7 +169,7 @@ CreateArticleController.propTypes = {
   }).isRequired,
   categories: PropTypes.arrayOf(
     PropTypes.shape({
-      slug: PropTypes.string.isRequired,
+      id: PropTypes.number.isRequired,
       name: PropTypes.string.isRequired,
     }),
   ).isRequired,
