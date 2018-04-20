@@ -27,6 +27,7 @@ import {
   withFalcor,
   buildPropMerger,
 } from 'components/hocs/falcor-hocs';
+import { withModals } from 'components/admin/hocs/modals/withModals';
 
 const falcorPaths = [
   ['categories', 'byIndex', { length: 30 }, ['name', 'slug']],
@@ -42,7 +43,7 @@ const propMerger = buildPropMerger((data, currentProps) => {
   };
 });
 
-class CreateArticleController extends React.Component {
+class CreateArticleController extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -70,9 +71,43 @@ class CreateArticleController extends React.Component {
     browserHistory.push(location);
   };
 
+  validateArticle = async () => {
+    // Check that it has all the required fields
+    const requiredFields = ['title', 'slug'];
+    const errorMessage = requiredFields
+      .map(key => {
+        if (!this.state[key]) {
+          return `${key} is a required field`;
+        }
+        return null;
+      })
+      .filter(x => x !== null)
+      .join('\n');
+    if (errorMessage) {
+      await this.props.displayAlert(errorMessage);
+      return false;
+    }
+    return true;
+  };
+
   handleCreateArticle = async () => {
-    const { title, slug } = this.state;
-    await this.props.falcor.call(['articles', 'createNew'], [{ title, slug }]);
+    if (!await this.validateArticle()) {
+      return;
+    }
+
+    const createArticleArgument = _.pick(this.state, [
+      'title',
+      'slug',
+      'authors',
+      'teaser',
+      'category',
+      'imageUrl',
+    ]);
+
+    await this.props.falcor.call(
+      ['articles', 'createNew'],
+      [createArticleArgument],
+    );
   };
 
   render() {
@@ -143,11 +178,13 @@ CreateArticleController.propTypes = {
   falcor: PropTypes.shape({
     call: PropTypes.func.isRequired,
   }).isRequired,
+  displayAlert: PropTypes.func.isRequired,
 };
 
 const EnhancedCreateArticleController = compose(
   withFalcorData(falcorPaths, propMerger, FullPageLoadingOverlay),
   withFalcor,
+  withModals,
 )(CreateArticleController);
 
 export { EnhancedCreateArticleController as CreateArticleController };
