@@ -6,13 +6,12 @@ import {
   updateArticles,
   articleIssueQuery,
   articleAuthorQuery,
-  articleTagQuery,
   interactiveArticleQuery,
   updateAuthors,
-  updateArticleTags,
   relatedArticleQuery,
   addView,
 } from 'lib/db';
+import { updateArticleTags, articleTagQuery } from './database-calls';
 import { has } from 'lib/utilities';
 import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
 import { serverModel } from 'index';

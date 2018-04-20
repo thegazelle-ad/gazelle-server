@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import * as db from 'lib/db';
+import { tagQuery, updateTags, addTag } from './database-calls';
 import { has } from 'lib/utilities';
 
 export default [
@@ -11,7 +11,7 @@ export default [
         const requestedFields = pathSet[3];
         // TODO change to article query once Will's changes
         // are merged in.
-        db.tagQuery(pathSet.slugs, requestedFields).then(data => {
+        tagQuery(pathSet.slugs, requestedFields).then(data => {
           // always returns slug in the object no matter what.
           const results = [];
           data.forEach(tag => {
@@ -28,8 +28,7 @@ export default [
     set: jsonGraphArg =>
       new Promise((resolve, reject) => {
         const tagsBySlug = jsonGraphArg.tags.bySlug;
-        db
-          .updateTags(tagsBySlug)
+        updateTags(tagsBySlug)
           .then(flag => {
             if (!flag) {
               throw new Error(
@@ -62,7 +61,7 @@ export default [
             'When creating a tag you must provide both name and slug',
           );
         }
-        db.addTag(tagObject).then(flag => {
+        addTag(tagObject).then(flag => {
           if (flag !== true) {
             throw new Error('Create Tag function returned non-true flag');
           }

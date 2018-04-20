@@ -1,7 +1,7 @@
 import falcor from 'falcor';
 import _ from 'lodash';
 
-import { searchTagsQuery } from 'lib/db';
+import { searchTagsQuery } from './database-calls';
 
 const $ref = falcor.Model.ref;
 
