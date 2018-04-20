@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { tagQuery, updateTags, addTag } from './database-calls';
 import { has } from 'lib/utilities';
 
-export default [
+export const routes = [
   {
     route: "tags['bySlug'][{keys:slugs}]['id', 'name', 'slug']",
     get: pathSet =>

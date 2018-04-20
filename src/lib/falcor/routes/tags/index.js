@@ -1,3 +1,3 @@
-import bySlug from './by-slug';
+import { routes as bySlug } from './by-slug';
 
-export default bySlug;
+export default [].concat(bySlug);
