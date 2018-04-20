@@ -76,12 +76,11 @@ export function mapLegacyIssueSlugsToIssueNumber(slug) {
   }
 }
 
-/* eslint-disable */
-// Modified slightly from ghost/core/server/models/base.js
+// Modified from ghost/core/server/models/base.js
 export function slugifyPost(postSlug) {
   // Remove URL reserved chars: `:/?#[]@!$&'()*+,;=` as well as `\%<>|^~£"`
   let slug = postSlug
-    .replace(/[:\/\?#\[\]@!$&'()*+,;=\\%<>\|\^~£"]/g, '')
+    .replace(/[:/?#[\]@!$&'()*+,;=\\%<>|^~£"]/g, '')
     .replace(/(\s|\.)/g, '-')
     .replace(/-+/g, '-')
     .toLowerCase();
@@ -89,10 +88,6 @@ export function slugifyPost(postSlug) {
   while (slug.charAt(slug.length - 1) === '-') {
     slug = slug.substr(0, slug.length - 1);
   }
-  slug = /^(ghost|ghost\-admin|admin|wp\-admin|wp\-login|dashboard|logout|login|signin|signup|signout|register|archive|archives|category|categories|tag|tags|page|pages|post|posts|user|users|rss)$/g // eslint-disable-line max-len
-    .test(slug)
-    ? `${slug}-post`
-    : slug;
   return slug;
 }
 
@@ -100,7 +95,7 @@ export function slugifyPost(postSlug) {
 export function slugifyStaff(staffSlug) {
   // Remove URL reserved chars: `:/?#[]@!$&'()*+,;=` as well as `\%<>|^~£"`
   let slug = staffSlug
-    .replace(/[:\/\?#\[\]@!$&'()*+,;=\\%<>\|\^~£"]/g, '')
+    .replace(/[:/?#[\]@!$&'()*+,;=\\%<>|^~£"]/g, '')
     .replace(/(\s|\.)/g, '-')
     .replace(/-+/g, '-')
     .toLowerCase();
@@ -110,7 +105,6 @@ export function slugifyStaff(staffSlug) {
   }
   return slug;
 }
-/* eslint-enable */
 
 export function formatDate(date) {
   const yyyy = date.getFullYear();
