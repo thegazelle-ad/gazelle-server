@@ -36,7 +36,7 @@ exports.seed = async knex => {
   ]);
   await Promise.all([
     addDummyArticles(knex, numArticles, numCategories),
-    addDummyStaff(knex, numStaff, numTeams),
+    addDummyStaff(knex, numStaff),
     addIssueCategoryOrdering(knex, numIssues, numCategories, numArticles),
   ]);
   await Promise.all([
