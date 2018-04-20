@@ -68,7 +68,7 @@ jobs:
           key: v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
   unit_test:
-    <<: *defaults
+    <<: *defaults_with_database
     steps:
       - run:
           name: save SHA to a file
@@ -79,6 +79,10 @@ jobs:
       - restore_cache:
           keys:
             - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
+
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
       - run: npm run test:unit
 
