@@ -352,6 +352,7 @@ class ArticleController extends FalcorController {
       // If it is a new article it won't have any meta data yet so we use the default
       const categories = _.toArray(this.state.data.categories.byIndex);
       categories.push({ name: 'none', slug: 'none' });
+
       return (
         <div style={styles.grid}>
           {this.state.saving ? <LoadingOverlay /> : null}
