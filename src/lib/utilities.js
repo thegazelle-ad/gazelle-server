@@ -110,6 +110,21 @@ export function slugifyStaff(staffSlug) {
   }
   return slug;
 }
+
+// For now, this is the same as slugify staff.
+export function slugifyTags(tagSlug) {
+  // Remove URL reserved chars: `:/?#[]@!$&'()*+,;=` as well as `\%<>|^~£"`
+  let slug = tagSlug
+    .replace(/[:\/\?#\[\]@!$&'()*+,;=\\%<>\|\^~£"]/g, '')
+    .replace(/(\s|\.)/g, '-')
+    .replace(/-+/g, '-')
+    .toLowerCase();
+
+  while (slug.charAt(slug.length - 1) === '-') {
+    slug = slug.substr(0, slug.length - 1);
+  }
+  return slug;
+}
 /* eslint-enable */
 
 export function formatDate(date) {

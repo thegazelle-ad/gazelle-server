@@ -5,11 +5,14 @@ import Plain from 'slate-plain-serializer';
 import showdown from 'showdown';
 
 // Lib
-import { debounce, slugifyStaff } from 'lib/utilities';
+import { debounce, slugifyStaff, slugifyTags } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 
 // Custom Components
-import { SearchableAuthorsSelector } from 'components/admin/form-components/searchables';
+import {
+  SearchableAuthorsSelector,
+  SearchableTagsSelector,
+} from 'components/admin/form-components/searchables';
 import LoadingOverlay from 'components/admin/LoadingOverlay';
 import SaveButton from 'components/admin/article/components/SaveButton';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton';
@@ -44,6 +47,7 @@ class ArticleController extends FalcorController {
     this.updateSlug = slug => this.safeSetState({ slug });
     this.updateAuthors = authors => this.safeSetState({ authors });
     this.updateMarkdown = markdown => this.safeSetState({ markdown });
+    this.updateTags = tags => this.safeSetState({ tags });
     this.updateTeaser = teaser => this.safeSetState({ teaser });
     this.updateImage = imageUrl => this.safeSetState({ imageUrl });
     this.updateCategory = category => this.safeSetState({ category });
@@ -54,6 +58,7 @@ class ArticleController extends FalcorController {
       title: '',
       slug: '',
       authors: [],
+      tags: [],
       teaser: '',
       category: '',
       imageUrl: '',
@@ -71,7 +76,7 @@ class ArticleController extends FalcorController {
     }, 500);
   }
 
-  async save(jsonGraphEnvelope, processedAuthors, articleId) {
+  async save(jsonGraphEnvelope, processedAuthors, processedTags, articleId) {
     // Update the values
     this.safeSetState({ saving: true });
     const dbUpdates = [this.falcorUpdate(jsonGraphEnvelope)];
@@ -85,14 +90,23 @@ class ArticleController extends FalcorController {
         ),
       );
     }
+
+    if (processedTags !== null) {
+      dbUpdates.push(
+        this.falcorCall(
+          ['articles', 'bySlug', this.state.slug, 'tags', 'updateTags'],
+          [articleId, processedTags],
+          [['name'], ['slug']],
+        ),
+      );
+    }
+
     await Promise.all(dbUpdates);
+
     // Reset state after save is done
     this.safeSetState({
       changed: false,
       refresh: true,
-      authorsAdded: [],
-      authorsDeleted: {},
-      changesObject: { mainForm: false, authors: false },
     });
     // This is purely so the 'saved' message can be seen by the user for a second
     setTimeout(() => {
@@ -125,9 +139,18 @@ class ArticleController extends FalcorController {
         { length: 10 },
         ['id', 'name'],
       ],
+      [
+        'articles',
+        'byId',
+        params.id,
+        'tags',
+        { length: 10 },
+        ['id', 'name', 'slug'],
+      ],
       ['categories', 'byIndex', { length: 30 }, ['name', 'slug']],
     ];
   }
+
   falcorToState(data) {
     const article = data.articles.byId[this.props.params.id];
     const title = article.title || '';
@@ -137,7 +160,10 @@ class ArticleController extends FalcorController {
     const category = article.category || '';
     const imageUrl = article.image_url || '';
     const authors = _.toArray(article.authors);
+    const tags = _.toArray(article.tags);
+
     this.safeSetState({
+      tags,
       title,
       markdown,
       slug,
@@ -166,6 +192,7 @@ class ArticleController extends FalcorController {
 
   formHasUpdated(prevState, state) {
     return (
+      this.isFormFieldChanged(prevState.tags, state.tags) ||
       this.isFormFieldChanged(prevState.title, state.title) ||
       this.isFormFieldChanged(
         Plain.serialize(prevState.markdown),
@@ -232,6 +259,18 @@ class ArticleController extends FalcorController {
       return;
     }
 
+    // Copy the array of tags.
+    let processedTags = _.clone(this.state.tags);
+    if (_.uniqWith(processedTags, _.isEqual).length !== processedTags.length) {
+      this.props.displayAlert(
+        "You have duplicate tags, as this shouldn't be able" +
+          ' to happen, please contact developers. And if you know all the actions' +
+          ' you did previously to this and can reproduce them that would be of' +
+          ' great help. The save has been cancelled',
+      );
+      return;
+    }
+
     // Check the special case of someone trying to reassign a category as none
     if (this.state.category === 'none' && falcorData.category !== 'none') {
       this.props.displayAlert(
@@ -264,6 +303,14 @@ class ArticleController extends FalcorController {
     }
 
     const plainMarkdown = Plain.serialize(this.state.markdown);
+    if (
+      processedTags.length === 0 &&
+      (!falcorData.tags || Object.keys(falcorData.tags).length === 0)
+    ) {
+      // Indicate that we won't update tags as there were none before and none were added
+      processedTags = null;
+    }
+
     const shouldUpdateCategory = this.state.category;
     const fields = shouldUpdateCategory
       ? ['title', 'slug', 'teaser', 'image_url', 'markdown', 'html', 'category']
@@ -302,7 +349,7 @@ class ArticleController extends FalcorController {
       ].category = this.state.category;
     }
 
-    this.save(jsonGraphEnvelope, processedAuthors, articleId);
+    this.save(jsonGraphEnvelope, processedAuthors, processedTags, articleId);
   };
 
   isFormFieldChanged(userInput, falcorData) {
@@ -322,6 +369,10 @@ class ArticleController extends FalcorController {
     );
   }
 
+  areTagsChanged(currentTags, falcorTags) {
+    return !_.isEqual(currentTags, _.toArray(falcorTags));
+  }
+
   isFormChanged() {
     const falcorData = this.state.data.articles.byId[this.props.params.id];
     const changedFlag =
@@ -334,7 +385,8 @@ class ArticleController extends FalcorController {
       this.isFormFieldChanged(this.state.teaser, falcorData.teaser) ||
       this.isFormFieldChanged(this.state.category, falcorData.category) ||
       this.isFormFieldChanged(this.state.imageUrl, falcorData.image_url) ||
-      this.areAuthorsChanged(this.state.authors, falcorData.authors);
+      this.areAuthorsChanged(this.state.authors, falcorData.authors) ||
+      this.areTagsChanged(this.state.tags, falcorData.tags);
     return changedFlag;
   }
 
@@ -484,6 +536,15 @@ class ArticleController extends FalcorController {
             />
           </div>
         </Paper>
+          <SearchableTagsSelector
+            elements={this.state.tags}
+            onChange={this.debouncedHandleFormStateChanges}
+            onUpdate={this.updateTags}
+            disabled={this.state.saving}
+            mode="tags"
+            enableAdd
+            slugify={slugifyTags}
+          />
       );
     }
     return (

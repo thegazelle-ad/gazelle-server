@@ -40,14 +40,18 @@ forever restart <id>
 
 You can now run the E2E tests via the `test:e2e` script
 ```
-npm run test:e2e
+CIRCLECI_ADMIN_PASSWORD=password npm run test:e2e
 ```
+
+where password is the actual password which you should get from the lead engineers
 
 ## Debugging
 There are a few debugging tricks that are useful to know when writing these automated browser scripts. The first one is running the tests with the `nightmare` debug flag `nightmare*`:
 ```
 DEBUG=nightmare* npm run test:e2e
 ```
+
+You can also use `nightmare:actions*` or `nightmare:log*` as the debug environment variable, in order to either just see the actions or just see the logs.
 
 The second one is using our own `ELECTRON_SHOW_DISPLAY` environment variable which will change the shared config all our `nightmare` instances use. This will make the browser window actually show so you can see your tests running which can be very useful to see where it is the website stops reacting as you expect:
 ```
