@@ -15,6 +15,7 @@ import s3Config from 'config/s3.config';
 /* Helper libraries */
 import fs from 'fs';
 import { exec } from 'child_process';
+import path from 'path';
 // Helps us parse post requests from falcor
 import bodyParser from 'body-parser';
 
@@ -34,32 +35,44 @@ import { md5Hash, compressJPEG, deleteFile } from 'lib/server-utilities';
 
 export default function runAdminServer(serverFalcorModel) {
   // Create MD5 hash of static files for better cache performance
-  const clientScriptHash = md5Hash('./static/build/admin-client.js');
-  const cssHash = md5Hash('./static/admin.css');
+  let clientScriptHash = md5Hash(
+    path.join(__dirname, '../../static/build/admin-client.js'),
+  );
+  let cssHash = md5Hash(path.join(__dirname, '../../static/admin.css'));
 
-  const htmlString = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>The Gazelle's Admin Interface</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
-        <link rel="stylesheet" type="text/css" href="/admin.css?h=${cssHash}">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="google-signin-client_id" content="${googleClientID}">
-        <script>
-          // In order to avoid 'undefined has no property X' errors
-          window.THE_GAZELLE = {};
-        </script>
-        <script src="https://apis.google.com/js/platform.js" onload='window.THE_GAZELLE.googleAPILoaded=true' async defer></script>
-      </head>
-      <body>
-        <div id="main">
-          loading...
-        </div>
-        <script src="/build/admin-client.js?h=${clientScriptHash}"></script>
-      </body>
-    </html>
-  `;
+  const buildHtmlString = () => {
+    if (isDevelopment) {
+      // As described in the main server file we only recompute hashes in development
+      clientScriptHash = md5Hash(
+        path.join(__dirname, '../../static/build/admin-client.js'),
+      );
+      cssHash = md5Hash(path.join(__dirname, '../../static/admin.css'));
+    }
+
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>The Gazelle's Admin Interface</title>
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+          <link rel="stylesheet" type="text/css" href="/admin.css?h=${cssHash}">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <meta name="google-signin-client_id" content="${googleClientID}">
+          <script>
+            // In order to avoid 'undefined has no property X' errors
+            window.THE_GAZELLE = {};
+          </script>
+          <script src="https://apis.google.com/js/platform.js" onload='window.THE_GAZELLE.googleAPILoaded=true' async defer></script>
+        </head>
+        <body>
+          <div id="main">
+            loading...
+          </div>
+          <script src="/build/admin-client.js?h=${clientScriptHash}"></script>
+        </body>
+      </html>
+    `;
+  };
 
   // The server for the Admin website
   const app = express();
@@ -227,7 +240,7 @@ export default function runAdminServer(serverFalcorModel) {
   if (!isDevelopment) {
     // If we are in staging or production we redirect to a forced login
     app.get('/login', (req, res) => {
-      res.status(200).send(htmlString);
+      res.status(200).send(buildHtmlString());
     });
     app.get(/(?!\/restartserver|\/login|\/upload).*/, (req, res) => {
       res.redirect(307, `/login?url=${req.url}`);
@@ -239,7 +252,7 @@ export default function runAdminServer(serverFalcorModel) {
      * statements here
      */
     app.get(/(?!\/restartserver|\/upload).*/, (req, res) => {
-      res.status(200).send(htmlString);
+      res.status(200).send(buildHtmlString());
     });
   }
 
