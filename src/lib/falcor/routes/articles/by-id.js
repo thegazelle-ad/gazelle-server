@@ -1,6 +1,8 @@
 import falcor from 'falcor';
+import _ from 'lodash';
 
-import { articleQuery } from 'lib/db';
+import { articleQuery, database } from 'lib/db';
+import { articleTagQuery } from './database-calls';
 
 const $ref = falcor.Model.ref;
 
@@ -22,6 +24,19 @@ export default [
         value: $ref(['articles', 'bySlug', article.slug]),
       }));
       return results;
+    },
+  },
+  {
+    // Get tag information from article
+    route: "articles['byId'][{keys:ids}]['tags'][{integers:indices}]",
+    get: async pathSet => {
+      const data = await articleTagQuery(database, pathSet.ids);
+      return _.map(data, (tagsByArticle, articleSlug) =>
+        tagsByArticle.map((tagSlug, index) => ({
+          path: ['articles', 'bySlug', articleSlug, 'tags', index],
+          value: $ref(['tags', 'bySlug', tagSlug]),
+        })),
+      ).flatten();
     },
   },
 ];

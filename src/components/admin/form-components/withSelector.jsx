@@ -156,7 +156,7 @@ export const withSelector = Finder => {
     displayAlert: PropTypes.func.isRequired,
     slugify: PropTypes.func.isRequired,
     // eslint-disable-next-line react/require-default-props
-    mode: PropTypes.oneOf(['staff', 'articles']).isRequired,
+    mode: PropTypes.oneOf(['staff', 'articles', 'tags']).isRequired,
     disabled: PropTypes.bool,
     ...Finder.propTypes,
   };
