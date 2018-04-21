@@ -510,6 +510,15 @@ class ArticleController extends FalcorController {
               mode="staff"
               slugify={slugifyStaff}
             />
+            <SearchableTagsSelector
+              elements={this.state.tags}
+              onChange={this.debouncedHandleFormStateChanges}
+              onUpdate={this.updateTags}
+              disabled={this.state.saving}
+              mode="tags"
+              enableAdd
+              slugify={slugifyTags}
+            />
           </Paper>
           <div style={styles.content}>
             <MarkdownEditor
@@ -536,15 +545,6 @@ class ArticleController extends FalcorController {
             />
           </div>
         </Paper>
-          <SearchableTagsSelector
-            elements={this.state.tags}
-            onChange={this.debouncedHandleFormStateChanges}
-            onUpdate={this.updateTags}
-            disabled={this.state.saving}
-            mode="tags"
-            enableAdd
-            slugify={slugifyTags}
-          />
       );
     }
     return (
