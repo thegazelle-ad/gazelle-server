@@ -56,20 +56,20 @@ export async function updateArticleTags(database, articleId, newTags) {
 
 /**
  * @param   {database} database    The database
- * @param   {string[]} slugs       The slugs whose tags we receive
+ * @param   {string[]} ids       The ids whose tags we receive
  * @returns {Object}   data        The data
  */
-export async function articleTagQuery(database, slugs) {
-  // slugs function parameter is an array of article slugs
+export async function articleTagQuery(database, ids) {
+  // ids function parameter is an array of article ids
   // of which to fetch the tag of.
-  // The function returns an object with article slugs
-  // as keys and values being arrays of author slugs.
+  // The function returns an object with article ids
+  // as keys and values being arrays of author ids.
   const rows = await database
     .select('articles.slug as articleSlug', 'tags.slug as tagSlug')
     .from('tags')
     .innerJoin('articles_tags', 'tags.id', '=', 'tag_id')
     .innerJoin('articles', 'articles.id', '=', 'article_id')
-    .whereIn('articles.slug', slugs)
+    .whereIn('articles.id', ids)
     .orderBy('articles_tags.id', 'asc');
 
   const data = {};

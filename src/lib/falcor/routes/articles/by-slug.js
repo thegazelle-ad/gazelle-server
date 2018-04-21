@@ -12,7 +12,7 @@ import {
   addView,
   database,
 } from 'lib/db';
-import { updateArticleTags, articleTagQuery } from './database-calls';
+import { updateArticleTags } from './database-calls';
 import { has } from 'lib/utilities';
 import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
 import { serverModel } from 'index';
@@ -26,7 +26,7 @@ export default [
       "articles['bySlug'][{keys:slugs}]['id', 'image_url', 'slug', 'title', 'markdown', 'html', 'teaser', 'category', 'published_at', 'views', 'is_interactive']", // eslint-disable-line max-len
     get: async pathSet => {
       const requestedFields = pathSet[3];
-      const data = await articleQuery(pathSet.slugs, requestedFields);
+      const data = await articleQuery('slug', pathSet.slugs, requestedFields);
       const results = data
         .map(article => {
           const processedArticle = { ...article };
@@ -46,7 +46,7 @@ export default [
     },
     set: async jsonGraphArg => {
       const articles = jsonGraphArg.articles.bySlug;
-      const flag = await updateArticles(articles);
+      const flag = await updateArticles('slug', articles);
       if (!flag) {
         throw new Error(
           'For unknown reasons updatePostMeta returned a non-true flag',
@@ -57,8 +57,18 @@ export default [
           path: ['articles', 'bySlug', slug, field],
           value,
         })),
-      ).flatten();
-      return results;
+      );
+      // If any Article slugs have been changed, invalidate refs
+      if (
+        _.some(
+          articles,
+          (singleArticle, originalSlug) => singleArticle.slug !== originalSlug,
+        )
+      ) {
+        results.push({ path: ['articles', 'byId'], invalidated: true });
+        results.push({ path: ['articles', 'byPage'], invalidated: true });
+      }
+      return results.flatten();
     },
   },
   {
@@ -96,16 +106,16 @@ export default [
     route: "articles['bySlug'][{keys:slugs}]['authors'][{integers:indices}]",
     get: pathSet =>
       new Promise(resolve => {
-        articleAuthorQuery(pathSet.slugs).then(data => {
+        articleAuthorQuery('slug', pathSet.slugs).then(data => {
           // We receive the data as an object with keys equalling article slugs
           // and values being an array of author slugs in no particular order
           const results = [];
-          _.forEach(data, (authorSlugArray, postSlug) => {
+          _.forEach(data, (authorsSlugArray, postSlug) => {
             pathSet.indices.forEach(index => {
-              if (index < authorSlugArray.length) {
+              if (index < authorsSlugArray.length) {
                 results.push({
                   path: ['articles', 'bySlug', postSlug, 'authors', index],
-                  value: $ref(['staff', 'bySlug', authorSlugArray[index]]),
+                  value: $ref(['staff', 'bySlug', authorsSlugArray[index]]),
                 });
               }
             });
@@ -113,24 +123,6 @@ export default [
           resolve(results);
         });
       }),
-  },
-  {
-    // Get tag information from article
-    route: "articles['bySlug'][{keys:slugs}]['tags'][{integers:indices}]",
-    get: async pathSet => {
-      const data = await articleTagQuery(database, pathSet.slugs);
-      return Object.keys(data)
-        .reduce((acc, articleSlug) => {
-          const tagsByArticle = data[articleSlug];
-          return acc.concat(
-            tagsByArticle.map((tagSlug, index) => ({
-              path: ['articles', 'bySlug', articleSlug, 'tags', index],
-              value: $ref(['tags', 'bySlug', tagSlug]),
-            })),
-          );
-        }, [])
-        .flatten();
-    },
   },
   {
     route:
@@ -179,12 +171,12 @@ export default [
           const results = [];
           // Invalidate all the old data
           results.push({
-            path: ['articles', 'bySlug', articleSlug, 'staff'],
+            path: ['articles', 'bySlug', articleSlug, 'authors'],
             invalidated: true,
           });
           data.forEach((slug, index) => {
             results.push({
-              path: ['articles', 'bySlug', articleSlug, 'staff', index],
+              path: ['articles', 'bySlug', articleSlug, 'authors', index],
               value: $ref(['staff', 'bySlug', slug]),
             });
           });
