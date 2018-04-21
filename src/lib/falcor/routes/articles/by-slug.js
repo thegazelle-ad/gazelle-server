@@ -117,25 +117,20 @@ export default [
   {
     // Get tag information from article
     route: "articles['bySlug'][{keys:slugs}]['tags'][{integers:indices}]",
-    get: pathSet =>
-      new Promise(resolve => {
-        articleTagQuery(database, pathSet.slugs).then(data => {
-          // We receive the data as an object with keys equalling article slugs
-          // and values being an array of author slugs in no particular order
-          const results = [];
-          _.forEach(data, (tagSlugArray, articleSlug) => {
-            pathSet.indices.forEach(index => {
-              if (index < tagSlugArray.length) {
-                results.push({
-                  path: ['articles', 'bySlug', articleSlug, 'tags', index],
-                  value: $ref(['tags', 'bySlug', tagSlugArray[index]]),
-                });
-              }
-            });
-          });
-          resolve(results);
-        });
-      }),
+    get: async pathSet => {
+      const data = await articleTagQuery(database, pathSet.slugs);
+      return Object.keys(data)
+        .reduce((acc, articleSlug) => {
+          const tagsByArticle = data[articleSlug];
+          return acc.concat(
+            tagsByArticle.map((tagSlug, index) => ({
+              path: ['articles', 'bySlug', articleSlug, 'tags', index],
+              value: $ref(['tags', 'bySlug', tagSlug]),
+            })),
+          );
+        }, [])
+        .flatten();
+    },
   },
   {
     route:
@@ -201,7 +196,7 @@ export default [
   {
     // Add tags to an article
     route: "articles['bySlug'][{keys:slugs}]['tags']['updateTags']",
-    call: (callPath, args) => {
+    call: async (callPath, args) => {
       // the falcor.model.call only takes a path not a pathset
       // so it is not possible to call this function for more
       // than 1 article at a time, therefore we know keys:slugs is length 1
@@ -210,57 +205,56 @@ export default [
           'updateTags falcor function was called illegally with more than 1 article slug',
         );
       }
-      return new Promise(async resolve => {
-        const articleId = args[0];
-        const tags = args[1];
-        const articleSlug = callPath.slugs[0];
 
-        const newTags = tags.filter(tagObject => tagObject.id === null);
-        const createPromises = newTags.map(tagObject => {
-          const filteredTagObject = _.omit(tagObject, 'id');
-          return serverModel.call(
-            ['tags', 'bySlug', 'addTag'],
-            [filteredTagObject],
-          );
-        });
-        await Promise.all(createPromises);
-        const idData = await Promise.all(
-          newTags.map(tagObject =>
-            serverModel.get(['tags', 'bySlug', [tagObject.slug], 'id']),
-          ),
+      const articleId = args[0];
+      const tags = args[1];
+      const articleSlug = callPath.slugs[0];
+
+      const newTags = tags.filter(tagObject => tagObject.id === null);
+      const createPromises = newTags.map(tagObject => {
+        const filteredTagObject = _.omit(tagObject, 'id');
+        return serverModel.call(
+          ['tags', 'bySlug', 'addTag'],
+          [filteredTagObject],
         );
-        const slugs = newTags.map(tagObject => tagObject.slug);
-        const idsBySlugs = idData.reduce(
-          (acc, cur) => Object.assign(acc, cur.json.tags.bySlug),
-          {},
-        );
-        const ids = slugs
-          .map(slug => parseFalcorPseudoArray(idsBySlugs[slug]))
-          .flatten();
+      });
+      await Promise.all(createPromises);
+      const idData = await Promise.all(
+        newTags.map(tagObject =>
+          serverModel.get(['tags', 'bySlug', [tagObject.slug], 'id']),
+        ),
+      );
+      const slugs = newTags.map(tagObject => tagObject.slug);
+      const idsBySlugs = idData.reduce(
+        (acc, cur) => Object.assign(acc, cur.json.tags.bySlug),
+        {},
+      );
+      const ids = slugs
+        .map(slug => parseFalcorPseudoArray(idsBySlugs[slug]))
+        .flatten();
 
-        let updateTags = tags
-          .filter(tagObject => tagObject.id !== null)
-          .map(tagObject => tagObject.id);
-        if (ids.length > 0) {
-          updateTags = updateTags.concat(ids);
-        }
+      let updateTags = tags
+        .filter(tagObject => tagObject.id !== null)
+        .map(tagObject => tagObject.id);
+      if (ids.length > 0) {
+        updateTags = updateTags.concat(ids);
+      }
 
-        updateArticleTags(database, articleId, updateTags).then(data => {
-          const results = [];
-          // Invalidate all the old data
-          results.push({
-            path: ['articles', 'bySlug', articleSlug, 'tags'],
-            invalidated: true,
-          });
-          data.forEach((slug, index) => {
-            results.push({
-              path: ['articles', 'bySlug', articleSlug, 'tags', index],
-              value: $ref(['tags', 'bySlug', slug]),
-            });
-          });
-          resolve(results);
+      const data = await updateArticleTags(database, articleId, updateTags);
+      const results = [];
+      // Invalidate all the old data
+      results.push({
+        path: ['articles', 'bySlug', articleSlug, 'tags'],
+        invalidated: true,
+      });
+      data.forEach((slug, index) => {
+        results.push({
+          path: ['articles', 'bySlug', articleSlug, 'tags', index],
+          value: $ref(['tags', 'bySlug', slug]),
         });
       });
+
+      return results;
     },
   },
   {

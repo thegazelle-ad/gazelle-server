@@ -70,11 +70,7 @@ export async function articleTagQuery(database, slugs) {
     .innerJoin('articles_tags', 'tags.id', '=', 'tag_id')
     .innerJoin('articles', 'articles.id', '=', 'article_id')
     .whereIn('articles.slug', slugs)
-    .orderBy('articles_tags.id', 'asc')
-    .catch(e => {
-      // database.destroy();
-      throw new Error(e);
-    });
+    .orderBy('articles_tags.id', 'asc');
 
   const data = {};
   rows.forEach(row => {

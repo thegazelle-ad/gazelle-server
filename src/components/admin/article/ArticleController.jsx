@@ -86,7 +86,7 @@ class ArticleController extends FalcorController {
       );
     }
 
-    if (!processedTags !== null) {
+    if (processedTags !== null) {
       updatePromises.push(
         this.falcorCall(
           ['articles', 'bySlug', articleSlug, 'tags', 'updateTags'],
@@ -101,9 +101,6 @@ class ArticleController extends FalcorController {
     this.safeSetState({
       changed: false,
       refresh: true,
-      authorsAdded: [],
-      authorsDeleted: {},
-      changesObject: { mainForm: false, authors: false },
     });
     // This is purely so the 'saved' message can be seen by the user for a second
     setTimeout(() => {
