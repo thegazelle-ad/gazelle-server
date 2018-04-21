@@ -1,4 +1,5 @@
 import falcor from 'falcor';
+import _ from 'lodash';
 
 import { articleQuery, database } from 'lib/db';
 import { articleTagQuery } from './database-calls';
@@ -30,17 +31,12 @@ export default [
     route: "articles['byId'][{keys:ids}]['tags'][{integers:indices}]",
     get: async pathSet => {
       const data = await articleTagQuery(database, pathSet.ids);
-      return Object.keys(data)
-        .reduce((acc, articleSlug) => {
-          const tagsByArticle = data[articleSlug];
-          return acc.concat(
-            tagsByArticle.map((tagSlug, index) => ({
-              path: ['articles', 'bySlug', articleSlug, 'tags', index],
-              value: $ref(['tags', 'bySlug', tagSlug]),
-            })),
-          );
-        }, [])
-        .flatten();
+      return _.map(data, (tagsByArticle, articleSlug) =>
+        tagsByArticle.map((tagSlug, index) => ({
+          path: ['articles', 'bySlug', articleSlug, 'tags', index],
+          value: $ref(['tags', 'bySlug', tagSlug]),
+        })),
+      ).flatten();
     },
   },
 ];

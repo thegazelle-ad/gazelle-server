@@ -1,4 +1,5 @@
 import falcor from 'falcor';
+import _ from 'lodash';
 
 import { searchTagsQuery } from './database-calls';
 
@@ -20,18 +21,13 @@ export default [
         }
       });
       const data = await searchTagsQuery(pathSet.queries, minIndex, maxIndex);
-      return Object.keys(data)
-        .reduce((acc, query) => {
-          const tagsByQuery = data[query];
-          return acc.concat(
-            tagsByQuery.map((tagSlug, index) => ({
-              // Map down indices to match the ones returned from the db call.
-              path: ['search', 'tags', query, index - minIndex],
-              value: $ref(['tags', 'bySlug', tagsByQuery[index - minIndex]]),
-            })),
-          );
-        }, [])
-        .flatten();
+      return _.map(data, (tagsByQuery, query) =>
+        tagsByQuery.map((tagSlug, index) => ({
+          // Map down indices to match the ones returned from the db call.
+          path: ['search', 'tags', query, index - minIndex],
+          value: $ref(['tags', 'bySlug', tagsByQuery[index - minIndex]]),
+        })),
+      ).flatten();
     },
   },
 ];
