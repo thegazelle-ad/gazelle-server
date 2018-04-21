@@ -23,20 +23,41 @@ import express from 'express';
 /* Helper libraries */
 import _ from 'lodash';
 import compression from 'compression';
+import path from 'path';
+
 // Used for parsing post requests
 import bodyParser from 'body-parser';
 
 /* Our helper functions */
-import { isStaging, isCI, nothingAllowedRobotsTxt } from 'lib/utilities';
+import {
+  isStaging,
+  isCI,
+  isDevelopment,
+  nothingAllowedRobotsTxt,
+} from 'lib/utilities';
 import { md5Hash } from 'lib/server-utilities';
 import { injectModelCreateElement } from 'lib/falcor/falcor-utilities';
 
 export default function runMainServer(serverFalcorModel) {
   // Create MD5 hash of static files for better cache performance
-  const clientScriptHash = md5Hash('./static/build/main-client.js');
-  const cssHash = md5Hash('./static/build/main.css');
+  let clientScriptHash = md5Hash(
+    path.join(__dirname, '../../static/build/main-client.js'),
+  );
+  let cssHash = md5Hash(path.join(__dirname, '../../static/build/main.css'));
 
   const buildHtmlString = (body, cache) => {
+    if (isDevelopment) {
+      // If it's development we know that the scripts may change while the server is running
+      // and we can afford the computational cost of recomputing hashes. This allows us to just
+      // refresh the browser instead of having to restart the server in production on the
+      // other hand we assume the script won't change and don't want to compute the hash on
+      // every server side render
+      clientScriptHash = md5Hash(
+        path.join(__dirname, '../../static/build/main-client.js'),
+      );
+      cssHash = md5Hash(path.join(__dirname, '../../static/build/main.css'));
+    }
+
     const head = Helmet.rewind();
 
     return `<!DOCTYPE html>
