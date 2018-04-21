@@ -5,6 +5,7 @@ import infoPages from './info-pages';
 import issues from './issues';
 import placeholder from './placeholder';
 import search from './search';
+import tags from './tags';
 import teams from './teams';
 import trending from './trending';
 import semesters from './semesters';
@@ -17,6 +18,7 @@ export {
   issues,
   placeholder,
   search,
+  tags,
   teams,
   trending,
   semesters,
