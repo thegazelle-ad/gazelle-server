@@ -207,7 +207,12 @@ const generateWebpackConfig = config => {
               },
             },
             // Lint all that is compiled, notice the order so eslint runs before babel
-            'eslint-loader',
+            {
+              loader: 'eslint-loader',
+              options: {
+                emitWarning: true,
+              },
+            },
           ],
         },
         {
