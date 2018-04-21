@@ -39,7 +39,12 @@ export default class UnpublishButton extends React.Component {
           onClick={this.unpublish}
           icon={<Warning />}
         />
-        <span style={{ color: 'rgba(0, 0, 0, 0.5)', lineHeight: '22px' }}>
+        <span
+          style={{
+            color: 'rgba(0, 0, 0, 0.5)',
+            fontSize: '1vw',
+          }}
+        >
           {this.props.published_at !== null
             ? `Published on ${moment(this.props.published_at).format(
                 'MMMM DD, YYYY',

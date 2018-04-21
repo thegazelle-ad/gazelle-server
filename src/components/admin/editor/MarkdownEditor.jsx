@@ -7,8 +7,7 @@ import { GazellePlugin } from './GazellePlugin';
 const styles = {
   paper: {
     width: '100%',
-    height: '99%',
-    marginTop: '1%',
+    height: '100%',
     overflowY: 'scroll',
   },
   editor: { padding: 10, overflowY: 'scroll' },
@@ -27,7 +26,7 @@ export class MarkdownEditor extends React.Component {
 
   render() {
     return (
-      <Paper style={styles.paper}>
+      <Paper style={styles.paper} zIndex={this.props.zIndex}>
         <Editor
           style={styles.editor}
           placeholder="Begin writing for the Gazelle :)"
@@ -44,4 +43,9 @@ export class MarkdownEditor extends React.Component {
 MarkdownEditor.propTypes = {
   value: PropTypes.shape({}).isRequired,
   onUpdate: PropTypes.func.isRequired,
+  zIndex: PropTypes.number,
+};
+
+MarkdownEditor.defaultProps = {
+  zIndex: 0,
 };

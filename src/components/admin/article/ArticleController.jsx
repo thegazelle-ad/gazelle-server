@@ -23,8 +23,9 @@ import { MarkdownEditor } from 'components/admin/editor/MarkdownEditor';
 import { MAX_TEASER_LENGTH } from 'components/admin/lib/constants';
 
 // material-ui
+import Paper from 'material-ui/Paper';
 import CircularProgress from 'material-ui/CircularProgress';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
+import FlatButton from 'material-ui/FlatButton';
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 
 // HOCs
@@ -343,20 +344,20 @@ class ArticleController extends FalcorController {
         display: 'grid',
         gridGap: '10px',
         gridTemplateColumns: '30% 70%',
-        gridTemplateRows: '10% 80% 10%',
+        gridTemplateRows: '5% 83% 12%',
         gridTemplateAreas:
-          '"header exit" "sidebar content" "negative positive"',
-        height: '79vh',
-        marginTop: '1vh',
-        padding: '10px',
+          '"header header" "sidebar content" "negative positive"',
+        height: '80vh',
+        marginTop: '5vh',
+        padding: '2vmax',
       },
       header: { gridArea: 'header' },
-      exit: { gridArea: 'exit' },
       content: { gridArea: 'content' },
       positive: { gridArea: 'positive' },
       negative: { gridArea: 'negative' },
       sidebar: {
-        width: '95%',
+        padding: '5px',
+        width: '100%',
         gridArea: 'sidebar',
         overflowX: 'hidden',
         overflowY: 'scroll',
@@ -393,19 +394,20 @@ class ArticleController extends FalcorController {
       categories.push({ name: 'none', slug: 'none' });
 
       return (
-        <div style={styles.grid}>
+        <Paper style={styles.grid}>
           {this.state.saving ? <LoadingOverlay /> : null}
-          <h2 style={styles.header}>Article Editor</h2>
-          <div style={styles.exit}>
-            <FloatingActionButton
-              style={styles.exitButton}
-              onClick={this.handleDialogClose}
-            >
-              <ExitToApp />
-            </FloatingActionButton>
-          </div>
 
-          <div style={styles.sidebar}>
+          <div style={styles.header}>
+            <h2 style={{ display: 'inline' }}>Article Editor</h2>
+            <FlatButton
+              style={styles.exitButton}
+              label="Return to List"
+              labelPosition="before"
+              icon={<ExitToApp />}
+              onClick={this.handleDialogClose}
+            />
+          </div>
+          <Paper zIndex={2} style={styles.sidebar}>
             <ShortRequiredTextField
               floatingLabelText="Title"
               value={this.state.title}
@@ -456,9 +458,10 @@ class ArticleController extends FalcorController {
               mode="staff"
               slugify={slugifyStaff}
             />
-          </div>
+          </Paper>
           <div style={styles.content}>
             <MarkdownEditor
+              zIndex={2}
               onUpdate={this.updateMarkdown}
               value={this.state.markdown}
             />
@@ -480,7 +483,7 @@ class ArticleController extends FalcorController {
               changed={this.state.changed}
             />
           </div>
-        </div>
+        </Paper>
       );
     }
     return (
