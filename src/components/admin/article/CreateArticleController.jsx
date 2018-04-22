@@ -15,7 +15,10 @@ import {
 import ListSelector from 'components/admin/form-components/ListSelector';
 import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
 import { MAX_TEASER_LENGTH } from 'components/admin/lib/constants';
-import { SearchableAuthorsSelector } from 'components/admin/form-components/searchables';
+import {
+  SearchableAuthorsSelector,
+  SearchableTagsSelector,
+} from 'components/admin/form-components/searchables';
 import { FullPageLoadingOverlay } from 'components/admin/FullPageLoadingOverlay';
 
 // Material UI
@@ -49,6 +52,7 @@ class CreateArticleController extends React.Component {
       title: '',
       slug: '',
       authors: [],
+      tags: [],
       teaser: '',
       category: -1,
       imageUrl: '',
@@ -58,6 +62,7 @@ class CreateArticleController extends React.Component {
   updateTitle = title => this.setState({ title });
   updateSlug = slug => this.setState({ slug });
   updateAuthors = authors => this.setState({ authors });
+  updateTags = tags => this.setState({ tags });
   updateTeaser = teaser => this.setState({ teaser });
   updateImage = imageUrl => this.setState({ imageUrl });
   updateCategory = category => this.setState({ category });
@@ -131,35 +136,46 @@ class CreateArticleController extends React.Component {
           value={this.state.title}
           onUpdate={this.updateTitle}
         />
+        <br />
         <ShortRequiredTextField
           floatingLabelText="Slug"
           value={this.state.slug}
           onUpdate={this.updateSlug}
         />
+        <br />
         <ListSelector
           label="Category"
           chosenElement={this.state.category}
           update={this.updateCategory}
           elements={this.props.categories}
         />
+        <br />
         <HttpsUrlField
           floatingLabelText="Image"
           value={this.state.imageUrl}
           onUpdate={this.updateImage}
           fullWidth
         />
+        <br />
         <MaxLenTextField
           name="teaser"
           value={this.state.teaser}
           maxLen={MAX_TEASER_LENGTH}
           onUpdate={this.updateTeaser}
         />
+        <br />
         <SearchableAuthorsSelector
           elements={this.state.authors}
-          onChange={this.debouncedHandleFormStateChanges}
           onUpdate={this.updateAuthors}
           disabled={this.state.saving}
           mode="staff"
+        />
+        <br />
+        <SearchableTagsSelector
+          elements={this.state.tags}
+          onUpdate={this.updateTags}
+          mode="tags"
+          enableAdd
         />
       </Dialog>
     );
