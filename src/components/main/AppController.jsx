@@ -1,5 +1,4 @@
 import React from 'react';
-import { setAppReady } from 'lib/falcor/falcor-utilities';
 import ReactTransitionGroup from 'react-addons-transition-group';
 import _ from 'lodash';
 import { TransitionManager } from 'lib/loader';
@@ -13,11 +12,6 @@ import Footer from 'components/main/Footer';
 import Loader from 'components/main/Loader';
 
 export default class AppController extends FalcorController {
-  componentDidMount() {
-    super.componentDidMount();
-    setAppReady();
-  }
-
   // Data for rendering the navigation bar dynamically
   static getFalcorPathSets(params) {
     if (params.issueNumber) {

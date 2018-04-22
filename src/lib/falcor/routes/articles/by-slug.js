@@ -2,8 +2,6 @@ import falcor from 'falcor';
 import _ from 'lodash';
 
 import {
-  articleQuery,
-  updateArticles,
   articleIssueQuery,
   articleAuthorQuery,
   interactiveArticleQuery,
@@ -12,7 +10,11 @@ import {
   addView,
   database,
 } from 'lib/db';
-import { updateArticleTags } from './database-calls';
+import {
+  updateArticleTags,
+  updateArticles,
+  articleQuery,
+} from './database-calls';
 import { has } from 'lib/utilities';
 import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
 import { serverModel } from 'index';
@@ -23,10 +25,15 @@ export default [
   {
     // Get custom article data from MariaDB
     route:
-      "articles['bySlug'][{keys:slugs}]['id', 'image_url', 'slug', 'title', 'markdown', 'html', 'teaser', 'category', 'published_at', 'views', 'is_interactive']", // eslint-disable-line max-len
+      "articles['bySlug'][{keys:slugs}]['id', 'image_url', 'slug', 'title', 'markdown', 'html', 'teaser', 'published_at', 'views', 'is_interactive']",
     get: async pathSet => {
       const requestedFields = pathSet[3];
-      const data = await articleQuery('slug', pathSet.slugs, requestedFields);
+      const data = await articleQuery(
+        database,
+        'slug',
+        pathSet.slugs,
+        requestedFields,
+      );
       const results = data
         .map(article => {
           const processedArticle = { ...article };
@@ -46,7 +53,7 @@ export default [
     },
     set: async jsonGraphArg => {
       const articles = jsonGraphArg.articles.bySlug;
-      const flag = await updateArticles('slug', articles);
+      const flag = await updateArticles(database, 'slug', articles);
       if (!flag) {
         throw new Error(
           'For unknown reasons updatePostMeta returned a non-true flag',
@@ -69,6 +76,19 @@ export default [
         results.push({ path: ['articles', 'byPage'], invalidated: true });
       }
       return results.flatten();
+    },
+  },
+  {
+    route: "articles['bySlug'][{keys:slugs}]['category']",
+    get: async pathSet => {
+      const data = await articleQuery(database, 'slug', pathSet.slugs, [
+        'category_id',
+      ]);
+      const results = data.map(article => ({
+        path: ['articles', 'bySlug', article.slug, 'category'],
+        value: $ref(['categories', 'byId', article.category_id]),
+      }));
+      return results;
     },
   },
   {

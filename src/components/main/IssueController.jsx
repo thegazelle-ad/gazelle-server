@@ -28,7 +28,6 @@ export default class IssueController extends FalcorController {
       'title',
       'teaser',
       'issueNumber',
-      'category',
       'slug',
       'image_url',
       'is_interactive',
@@ -69,6 +68,15 @@ export default class IssueController extends FalcorController {
           issueNumber,
           'picks',
           { length: 2 },
+          'category',
+          'slug',
+        ],
+        [
+          'issues',
+          'byNumber',
+          issueNumber,
+          'picks',
+          { length: 2 },
           'authors',
           { length: 10 },
           authorFields,
@@ -76,6 +84,7 @@ export default class IssueController extends FalcorController {
 
         // Request first five Trending articles
         ['trending', { length: 6 }, articleFields],
+        ['trending', { length: 6 }, 'category', 'slug'],
         ['trending', { length: 6 }, 'authors', { length: 10 }, authorFields],
 
         // Request all category names and slugs (max 10 categories)
@@ -99,6 +108,17 @@ export default class IssueController extends FalcorController {
           { length: 30 },
           articleFields,
         ],
+        [
+          'issues',
+          'byNumber',
+          issueNumber,
+          'categories',
+          { length: 10 },
+          'articles',
+          { length: 30 },
+          'category',
+          'slug',
+        ],
 
         // Request author name and slug for each article (max 10 authors)
         [
@@ -121,10 +141,12 @@ export default class IssueController extends FalcorController {
 
       // Request the featured article
       ['issues', 'latest', 'featured', articleFields],
+      ['issues', 'latest', 'featured', 'category', 'slug'],
       ['issues', 'latest', 'featured', 'authors', { length: 10 }, authorFields],
 
       // Request first two Editor's Picks
       ['issues', 'latest', 'picks', { length: 2 }, articleFields],
+      ['issues', 'latest', 'picks', { length: 2 }, 'category', 'slug'],
       [
         'issues',
         'latest',
@@ -137,6 +159,7 @@ export default class IssueController extends FalcorController {
 
       // Request first five Trending articles
       ['trending', { length: 6 }, articleFields],
+      ['trending', { length: 6 }, 'category', 'slug'],
       ['trending', { length: 6 }, 'authors', { length: 10 }, authorFields],
 
       // Request all category names and slugs (max 10 categories)
@@ -151,6 +174,16 @@ export default class IssueController extends FalcorController {
         'articles',
         { length: 30 },
         articleFields,
+      ],
+      [
+        'issues',
+        'latest',
+        'categories',
+        { length: 10 },
+        'articles',
+        { length: 30 },
+        'category',
+        'slug',
       ],
 
       // Request author name and slug for each article (max 10 authors)

@@ -33,6 +33,7 @@ import {
 } from 'components/hocs/falcor-hocs';
 import { withModals } from 'components/admin/hocs/modals/withModals';
 
+// Define data needed by component
 const falcorPaths = [['categories', 'byIndex', { length: 30 }, ['name', 'id']]];
 
 const propMerger = buildPropMerger((data, currentProps) => {
