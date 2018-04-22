@@ -1,4 +1,4 @@
-import TextField from 'material-ui/TextField';
+import { DirectTextField } from 'components/admin/form-components/DirectTextField';
 
 // Higher Order Components
 import withValidate from 'components/admin/form-components/withValidate';
@@ -17,6 +17,18 @@ export const cannotNull = value => {
   return null;
 };
 
-export const ValidatedHttpsUrlField = withValidate(hasHttps)(TextField);
+export const shorterThanDbVarChar = value => {
+  if (value.length > 255) {
+    return 'The database restricts this field to a maximum value of 255 characters.';
+  }
+  return null;
+};
 
-export const RequiredTextField = withValidate(cannotNull)(TextField);
+export const HttpsUrlField = withValidate(hasHttps, shorterThanDbVarChar)(
+  DirectTextField,
+);
+
+export const ShortRequiredTextField = withValidate(
+  cannotNull,
+  shorterThanDbVarChar,
+)(DirectTextField);

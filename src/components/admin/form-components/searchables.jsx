@@ -31,3 +31,7 @@ export const SearchableArticlesWithPubDate = withFalcorSearch(
 export const SearchableAuthorsSelector = withSelector(
   withFalcorSearch(['name', 'slug'], item => item.name, 'staff')(SearchBar),
 );
+
+export const SearchableTagsSelector = withSelector(
+  withFalcorSearch(['name', 'slug'], item => item.name, 'tags')(SearchBar),
+);

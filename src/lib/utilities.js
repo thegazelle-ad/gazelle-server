@@ -77,24 +77,9 @@ export function mapLegacyIssueSlugsToIssueNumber(slug) {
 }
 
 // Modified from ghost/core/server/models/base.js
-export function slugifyPost(postSlug) {
+export function slugify(name) {
   // Remove URL reserved chars: `:/?#[]@!$&'()*+,;=` as well as `\%<>|^~£"`
-  let slug = postSlug
-    .replace(/[:/?#[\]@!$&'()*+,;=\\%<>|^~£"]/g, '')
-    .replace(/(\s|\.)/g, '-')
-    .replace(/-+/g, '-')
-    .toLowerCase();
-
-  while (slug.charAt(slug.length - 1) === '-') {
-    slug = slug.substr(0, slug.length - 1);
-  }
-  return slug;
-}
-
-// Modified from ghost/core/server/models/base.js
-export function slugifyStaff(staffSlug) {
-  // Remove URL reserved chars: `:/?#[]@!$&'()*+,;=` as well as `\%<>|^~£"`
-  let slug = staffSlug
+  let slug = name
     .replace(/[:/?#[\]@!$&'()*+,;=\\%<>|^~£"]/g, '')
     .replace(/(\s|\.)/g, '-')
     .replace(/-+/g, '-')

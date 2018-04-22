@@ -4,13 +4,14 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 // Helpers
-import { slugifyStaff } from 'lib/utilities';
 import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
 import { compose } from 'lib/higher-order-helpers';
 
 // Custom Components
-import ImageUrlField from 'components/admin/article/components/ImageUrlField';
-import TitleField from 'components/admin/article/components/TitleField';
+import {
+  HttpsUrlField,
+  ShortRequiredTextField,
+} from 'components/admin/form-components/validated-fields';
 import ListSelector from 'components/admin/form-components/ListSelector';
 import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
 import { MAX_TEASER_LENGTH } from 'components/admin/lib/constants';
@@ -125,13 +126,14 @@ class CreateArticleController extends React.Component {
         actions={actionButtons}
         onRequestClose={this.handleDialogClose}
       >
-        <TitleField title={this.state.title} onUpdate={this.updateTitle} />
-        {/* This is temporary until Will merges in his text fields with DB lengths */}
-        {/* We also want to make this required */}
-        <MaxLenTextField
-          name="slug"
+        <ShortRequiredTextField
+          floatingLabelText="Title"
+          value={this.state.title}
+          onUpdate={this.updateTitle}
+        />
+        <ShortRequiredTextField
+          floatingLabelText="Slug"
           value={this.state.slug}
-          maxLen={100}
           onUpdate={this.updateSlug}
         />
         <ListSelector
@@ -140,9 +142,11 @@ class CreateArticleController extends React.Component {
           update={this.updateCategory}
           elements={this.props.categories}
         />
-        <ImageUrlField
-          imageUrl={this.state.imageUrl}
-          updateImage={this.updateImage}
+        <HttpsUrlField
+          floatingLabelText="Image"
+          value={this.state.imageUrl}
+          onUpdate={this.updateImage}
+          fullWidth
         />
         <MaxLenTextField
           name="teaser"
@@ -156,7 +160,6 @@ class CreateArticleController extends React.Component {
           onUpdate={this.updateAuthors}
           disabled={this.state.saving}
           mode="staff"
-          slugify={slugifyStaff}
         />
       </Dialog>
     );

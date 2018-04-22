@@ -26,7 +26,7 @@ export default (
       <IndexRedirect to="page/1" />
       <Route path="page/:page" component={ArticleListController}>
         <Route path="new" component={CreateArticleController} />
-        <Route path="slug/:slug" component={ArticleController} />
+        <Route path="id/:id" component={ArticleController} />
       </Route>
     </Route>
     <Route path="staff" component={StaffListController}>

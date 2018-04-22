@@ -3,16 +3,21 @@ import { browserHistory } from 'react-router';
 import _ from 'lodash';
 
 // Lib
-import { debounce, slugifyStaff } from 'lib/utilities';
+import { debounce } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 
 // Custom Components
-import { SearchableAuthorsSelector } from 'components/admin/form-components/searchables';
+import {
+  SearchableAuthorsSelector,
+  SearchableTagsSelector,
+} from 'components/admin/form-components/searchables';
 import LoadingOverlay from 'components/admin/LoadingOverlay';
 import SaveButton from 'components/admin/article/components/SaveButton';
 import UnpublishButton from 'components/admin/article/components/UnpublishButton';
-import ImageUrlField from 'components/admin/article/components/ImageUrlField';
-import TitleField from 'components/admin/article/components/TitleField';
+import {
+  HttpsUrlField,
+  ShortRequiredTextField,
+} from 'components/admin/form-components/validated-fields';
 import ListSelector from 'components/admin/form-components/ListSelector';
 import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
 import { MAX_TEASER_LENGTH } from 'components/admin/lib/constants';
@@ -34,7 +39,9 @@ class ArticleController extends FalcorController {
     this.isFormChanged = this.isFormChanged.bind(this);
     this.falcorToState = this.falcorToState.bind(this);
     this.updateTitle = title => this.safeSetState({ title });
+    this.updateSlug = slug => this.safeSetState({ slug });
     this.updateAuthors = authors => this.safeSetState({ authors });
+    this.updateTags = tags => this.safeSetState({ tags });
     this.updateTeaser = teaser => this.safeSetState({ teaser });
     this.updateImage = imageUrl => this.safeSetState({ imageUrl });
     this.updateCategory = category => this.safeSetState({ category });
@@ -43,7 +50,9 @@ class ArticleController extends FalcorController {
       saving: false,
       refresh: false,
       title: '',
+      slug: '',
       authors: [],
+      tags: [],
       teaser: '',
       category: '',
       imageUrl: '',
@@ -60,66 +69,94 @@ class ArticleController extends FalcorController {
     }, 500);
   }
 
-  save(jsonGraphEnvelope, processedAuthors, articleSlug, falcorData) {
+  async save(jsonGraphEnvelope, processedAuthors, processedTags, articleId) {
     // Update the values
     this.safeSetState({ saving: true });
-    const updatePromises = [this.falcorUpdate(jsonGraphEnvelope)];
+    const dbUpdates = [this.falcorUpdate(jsonGraphEnvelope)];
 
     if (processedAuthors !== null) {
-      updatePromises.push(
+      dbUpdates.push(
         this.falcorCall(
-          ['articles', 'bySlug', articleSlug, 'authors', 'updateAuthors'],
-          [falcorData.id, processedAuthors],
+          ['articles', 'bySlug', this.state.slug, 'authors', 'updateAuthors'],
+          [articleId, processedAuthors],
           [['name'], ['slug']],
         ),
       );
     }
 
-    Promise.all(updatePromises).then(() => {
-      // Reset state after save is done
-      this.safeSetState({
-        changed: false,
-        refresh: true,
-        authorsAdded: [],
-        authorsDeleted: {},
-        changesObject: { mainForm: false, authors: false },
-      });
-      // This is purely so the 'saved' message can be seen by the user for a second
-      setTimeout(() => {
-        this.safeSetState({ saving: false });
-      }, 1000);
+    if (processedTags !== null) {
+      dbUpdates.push(
+        this.falcorCall(
+          ['articles', 'bySlug', this.state.slug, 'tags', 'updateTags'],
+          [articleId, processedTags],
+          [['name'], ['slug']],
+        ),
+      );
+    }
+
+    await Promise.all(dbUpdates);
+
+    // Reset state after save is done
+    this.safeSetState({
+      changed: false,
+      refresh: true,
     });
+    // This is purely so the 'saved' message can be seen by the user for a second
+    setTimeout(() => {
+      this.safeSetState({ saving: false });
+    }, 1000);
   }
 
   static getFalcorPathSets(params) {
     return [
       [
         'articles',
-        'bySlug',
-        params.slug,
-        ['title', 'category', 'teaser', 'image_url', 'id', 'published_at'],
+        'byId',
+        params.id,
+        [
+          'title',
+          'slug',
+          'category',
+          'teaser',
+          'image_url',
+          'id',
+          'published_at',
+        ],
       ],
       [
         'articles',
-        'bySlug',
-        params.slug,
+        'byId',
+        params.id,
         'authors',
         { length: 10 },
         ['id', 'name'],
       ],
+      [
+        'articles',
+        'byId',
+        params.id,
+        'tags',
+        { length: 10 },
+        ['id', 'name', 'slug'],
+      ],
       ['categories', 'byIndex', { length: 30 }, ['name', 'slug']],
     ];
   }
+
   falcorToState(data) {
-    const article = data.articles.bySlug[this.props.params.slug];
+    const article = data.articles.byId[this.props.params.id];
     const title = article.title || '';
+    const slug = article.slug || '';
     const teaser = article.teaser || '';
     const category = article.category || '';
     const imageUrl = article.image_url || '';
     const authors = _.toArray(article.authors);
+    const tags = _.toArray(article.tags);
 
     this.safeSetState({
+      tags,
       title,
+      slug,
       teaser,
       category,
       imageUrl,
@@ -140,12 +177,14 @@ class ArticleController extends FalcorController {
   }
 
   isSameArticle(prevProps, props) {
-    return prevProps.params.slug === props.params.slug;
+    return prevProps.params.id === props.params.id;
   }
 
   formHasUpdated(prevState, state) {
     return (
+      this.isFormFieldChanged(prevState.tags, state.tags) ||
       this.isFormFieldChanged(prevState.title, state.title) ||
+      this.isFormFieldChanged(prevState.slug, state.slug) ||
       this.isFormFieldChanged(prevState.authors, state.authors) ||
       this.isFormFieldChanged(prevState.teaser, state.teaser) ||
       this.isFormFieldChanged(prevState.category, state.category) ||
@@ -176,8 +215,8 @@ class ArticleController extends FalcorController {
   }
 
   handleSaveChanges = async () => {
-    const articleSlug = this.props.params.slug;
-    const falcorData = this.state.data.articles.bySlug[articleSlug];
+    const articleId = this.props.params.id;
+    const falcorData = this.state.data.articles.byId[articleId];
 
     if (!this.isFormChanged()) {
       throw new Error(
@@ -203,6 +242,18 @@ class ArticleController extends FalcorController {
           ' deleting every single author implemented.' +
           " You hopefully shouldn't need this function either." +
           ' Please re-add an author to be able to save',
+      );
+      return;
+    }
+
+    // Copy the array of tags.
+    let processedTags = _.clone(this.state.tags);
+    if (_.uniqWith(processedTags, _.isEqual).length !== processedTags.length) {
+      this.props.displayAlert(
+        "You have duplicate tags, as this shouldn't be able" +
+          ' to happen, please contact developers. And if you know all the actions' +
+          ' you did previously to this and can reproduce them that would be of' +
+          ' great help. The save has been cancelled',
       );
       return;
     }
@@ -238,38 +289,47 @@ class ArticleController extends FalcorController {
       processedAuthors = null;
     }
 
+    if (
+      processedTags.length === 0 &&
+      (!falcorData.tags || Object.keys(falcorData.tags).length === 0)
+    ) {
+      // Indicate that we won't update tags as there were none before and none were added
+      processedTags = null;
+    }
+
     const shouldUpdateCategory = this.state.category;
     const fields = shouldUpdateCategory
-      ? ['title', 'teaser', 'image_url', 'category']
-      : ['title', 'teaser', 'image_url'];
+      ? ['title', 'slug', 'teaser', 'image_url', 'category']
+      : ['title', 'slug', 'teaser', 'image_url'];
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
-      paths: [['articles', 'bySlug', articleSlug, fields]],
+      paths: [['articles', 'byId', articleId, fields]],
       jsonGraph: {
         articles: {
-          bySlug: {
-            [articleSlug]: {},
+          byId: {
+            [articleId]: {},
           },
         },
       },
     };
     // Fill in the data
-    jsonGraphEnvelope.jsonGraph.articles.bySlug[
-      articleSlug
+    jsonGraphEnvelope.jsonGraph.articles.byId[
+      articleId
     ].title = this.state.title;
-    jsonGraphEnvelope.jsonGraph.articles.bySlug[
-      articleSlug
+    jsonGraphEnvelope.jsonGraph.articles.byId[articleId].slug = this.state.slug;
+    jsonGraphEnvelope.jsonGraph.articles.byId[
+      articleId
     ].teaser = this.state.teaser;
-    jsonGraphEnvelope.jsonGraph.articles.bySlug[
-      articleSlug
+    jsonGraphEnvelope.jsonGraph.articles.byId[
+      articleId
     ].image_url = this.state.imageUrl;
     if (shouldUpdateCategory) {
-      jsonGraphEnvelope.jsonGraph.articles.bySlug[
-        articleSlug
+      jsonGraphEnvelope.jsonGraph.articles.byId[
+        articleId
       ].category = this.state.category;
     }
 
-    this.save(jsonGraphEnvelope, processedAuthors, articleSlug, falcorData);
+    this.save(jsonGraphEnvelope, processedAuthors, processedTags, articleId);
   };
 
   isFormFieldChanged(userInput, falcorData) {
@@ -289,14 +349,20 @@ class ArticleController extends FalcorController {
     );
   }
 
+  areTagsChanged(currentTags, falcorTags) {
+    return !_.isEqual(currentTags, _.toArray(falcorTags));
+  }
+
   isFormChanged() {
-    const falcorData = this.state.data.articles.bySlug[this.props.params.slug];
+    const falcorData = this.state.data.articles.byId[this.props.params.id];
     const changedFlag =
       this.isFormFieldChanged(this.state.title, falcorData.title) ||
+      this.isFormFieldChanged(this.state.slug, falcorData.slug) ||
       this.isFormFieldChanged(this.state.teaser, falcorData.teaser) ||
       this.isFormFieldChanged(this.state.category, falcorData.category) ||
       this.isFormFieldChanged(this.state.imageUrl, falcorData.image_url) ||
-      this.areAuthorsChanged(this.state.authors, falcorData.authors);
+      this.areAuthorsChanged(this.state.authors, falcorData.authors) ||
+      this.areTagsChanged(this.state.tags, falcorData.tags);
     return changedFlag;
   }
 
@@ -312,22 +378,21 @@ class ArticleController extends FalcorController {
       if (
         !this.state.data ||
         !this.state.data.articles ||
-        !this.state.data.articles.bySlug
+        !this.state.data.articles.byId
       ) {
         return (
           <div>
-            <p>Error: No articles match this slug</p>
+            <p>Error: No articles match this id</p>
           </div>
         );
       }
 
-      const { slug } = this.props.params;
-      const article = this.state.data.articles.bySlug[slug];
+      const { id } = this.props.params;
+      const article = this.state.data.articles.byId[id];
 
       // If it is a new article it won't have any meta data yet so we use the default
       const categories = _.toArray(this.state.data.categories.byIndex);
       categories.push({ name: 'none', slug: 'none' });
-
       const actionButtons = [
         <SaveButton
           onClick={this.handleSaveChanges}
@@ -347,10 +412,22 @@ class ArticleController extends FalcorController {
           onRequestClose={this.handleDialogClose}
         >
           {this.state.saving ? <LoadingOverlay /> : null}
-          <TitleField
-            title={this.state.title}
+          <ShortRequiredTextField
+            floatingLabelText="Title"
+            value={this.state.title}
             onUpdate={this.updateTitle}
             disabled={this.state.saving}
+          />
+          <ShortRequiredTextField
+            floatingLabelText={`Slug${
+              !article.published_at
+                ? ''
+                : ' - You cannot edit the slug of a published article. Unpublish this article to edit the slug'
+            }`}
+            value={this.state.slug}
+            onUpdate={this.updateSlug}
+            disabled={this.state.saving || Boolean(article.published_at)}
+            fullWidth
           />
           <ListSelector
             label="Category"
@@ -358,12 +435,15 @@ class ArticleController extends FalcorController {
             update={this.updateCategory}
             elements={categories}
             disabled={this.state.saving}
+            fullWidth
           />
           <br />
-          <ImageUrlField
-            imageUrl={this.state.imageUrl}
-            updateImage={this.updateImage}
+          <HttpsUrlField
+            floatingLabelText="Image"
+            value={this.state.imageUrl}
+            onUpdate={this.updateImage}
             disabled={this.state.saving}
+            fullWidth
           />
           <br />
           <MaxLenTextField
@@ -379,14 +459,24 @@ class ArticleController extends FalcorController {
             onUpdate={this.updateAuthors}
             disabled={this.state.saving}
             mode="staff"
-            slugify={slugifyStaff}
+          />
+          <br />
+          <Divider />
+          <br />
+          <SearchableTagsSelector
+            elements={this.state.tags}
+            onChange={this.debouncedHandleFormStateChanges}
+            onUpdate={this.updateTags}
+            disabled={this.state.saving}
+            mode="tags"
+            enableAdd
           />
           <br />
           <Divider />
           <br />
           <UnpublishButton
             save={this.save}
-            slug={this.props.params.slug}
+            id={this.props.params.id}
             falcorUpdate={this.falcorUpdate}
             style={styles.buttons}
             published_at={article.published_at}
