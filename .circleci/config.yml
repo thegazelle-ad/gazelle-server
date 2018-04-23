@@ -201,6 +201,7 @@ workflows:
       - install_dependencies:
           requires:
             - checkout_code
+            - prep_ssh
 
       - unit_test:
           requires:
