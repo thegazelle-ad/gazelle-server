@@ -1,5 +1,7 @@
 import _ from 'lodash';
 import {
+  isAppReady,
+  expandCache,
   validateFalcorPathSets,
   cleanupFalcorKeys,
 } from 'lib/falcor/falcor-utilities';
@@ -42,6 +44,46 @@ export default class FalcorController extends BaseComponent {
       'You must implement the getFalcorPathSets method ' +
         'in children of FalcorController',
     );
+  }
+
+  // Retrieves all the data for this component from the Falcor cache
+  // and store on state. Used for server side render and first client side render
+  // this should always contain all the data the component needs
+  loadFalcorCache(falcorPathSets, callback) {
+    const processedFalcorPathSets = validateFalcorPathSets(falcorPathSets);
+    if (processedFalcorPathSets === undefined) {
+      this.safeSetState({
+        ready: true,
+        data: null,
+      });
+      return;
+    }
+
+    const data = expandCache(
+      this.props.model.getCache(...processedFalcorPathSets),
+    );
+    if (data) {
+      this.safeSetState({
+        ready: true,
+        data: cleanupFalcorKeys(data),
+      });
+    } else {
+      if (process.env.NODE_ENV !== 'production') {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `Serverside render of component: ${this.constructor.name} ` +
+            'failed. Data not in cache. Falcor Path attempted fetched was: ' +
+            `${JSON.stringify(processedFalcorPathSets)}`,
+        );
+      }
+      this.safeSetState({
+        ready: true,
+        data: null,
+      });
+    }
+    if (callback) {
+      callback(cleanupFalcorKeys(data));
+    }
   }
 
   // Makes falcor fetch its paths
@@ -127,6 +169,23 @@ export default class FalcorController extends BaseComponent {
           this.props.location.query,
         );
         this.falcorFetch(pathSets, stateToSet, callback);
+        // if (x) {
+        //   const newData = mergeUpdatedData(this.state.data, x.json, 10)
+        //   Object.assign(stateToSet, {
+        //     ready: true,
+        //     fetching: false,
+        //     data: newData,
+        //   });
+        //   this.safeSetState(stateToSet);
+        //   if (callback) {
+        //     callback(newData);
+        //   }
+        // }
+        // else {
+        //   // No data was returned, this is exceptional behaviour from an update operation
+        //   throw new Error("Falcor update on the following paths: "
+        // + JSON.stringify(jsonGraphEnvelope.paths) + " returned no data.")
+        // }
       })
       .catch(e => {
         if (process.env.NODE_ENV !== 'production') {
@@ -181,6 +240,24 @@ export default class FalcorController extends BaseComponent {
           this.props.location.query,
         );
         this.falcorFetch(pathSets, stateToSet, callback);
+        // if (x) {
+        //   const newData = mergeUpdatedData(this.state.data, x.json, 10);
+        //   Object.assign(stateToSet, {
+        //     ready: true,
+        //     fetching: false,
+        //     data: newData,
+        //   });
+        //   this.safeSetState(stateToSet);
+        //   if (callback) {
+        //     callback(newData);
+        //   }
+        // }
+        // else {
+        //   // No data was returned, this is exceptional behaviour from a function call
+        //   throw new Error(
+        //    "Falcor function: " + JSON.stringify(functionPath) + " returned no data."
+        //   )
+        // }
       })
       .catch(e => {
         if (process.env.NODE_ENV !== 'production') {
@@ -229,6 +306,9 @@ export default class FalcorController extends BaseComponent {
     }
   }
 
+  // isAppReady() is always false on server, and false for first
+  // render on client only. This is to avoid an immediate falcorFetch
+  // on the first clientside render.
   // The falcorCallback argument will only ever be passed by an extended component
   // overwriting the function. This is so we don't have to copy the code and maintain
   // it several places
@@ -237,7 +317,11 @@ export default class FalcorController extends BaseComponent {
       this.props.params,
       this.props.location.query,
     );
-    this.falcorFetch(falcorPathSets, undefined, falcorCallback);
+    if (!isAppReady()) {
+      this.loadFalcorCache(falcorPathSets, falcorCallback);
+    } else {
+      this.falcorFetch(falcorPathSets, undefined, falcorCallback);
+    }
   }
 
   componentWillAppear(cb) {

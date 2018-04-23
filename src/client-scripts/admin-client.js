@@ -15,7 +15,10 @@ import ReactDOM from 'react-dom';
 import { Router, browserHistory } from 'react-router';
 import falcor from 'falcor';
 import routes from 'routes/admin-routes';
-import { injectModelCreateElement } from 'lib/falcor/falcor-utilities';
+import {
+  injectModelCreateElement,
+  setAppReady,
+} from 'lib/falcor/falcor-utilities';
 import { ModalProvider } from 'components/admin/hocs/modals/ModalProvider';
 import HttpDataSource from 'falcor-http-datasource';
 import { MuiThemeProvider } from 'material-ui';
@@ -27,6 +30,9 @@ import { initializeLogger } from 'lib/logger';
 // We start with window.alert as our alert function but later will replace
 // it with our alert function from ModalProvider
 initializeLogger(true, window.alert);
+
+// Set app ready so falcor doesn't try to load from cache
+setAppReady();
 
 const clientModel = new falcor.Model({
   source: new HttpDataSource('/model.json'),

@@ -2,6 +2,7 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
+import update from 'react-addons-update';
 import falcor from 'falcor';
 
 import { has, followPath } from 'lib/utilities';
@@ -23,6 +24,19 @@ export function injectModelCreateElement(model) {
     }
     return <Component {...props} />;
   };
+}
+
+// Turns to true on the client after the first render is entirely
+// completed. Should be set only by the toplevel appController
+// after it has mounted
+let appReady = false;
+
+export function isAppReady() {
+  return appReady;
+}
+
+export function setAppReady() {
+  appReady = true;
 }
 
 export function validateFalcorPathSets(falcorPathSets) {
@@ -199,6 +213,206 @@ export function pathSetsInCache(cache, falcorPathSets) {
   return processedFalcorPaths.every(pathSet =>
     checkSinglePathSetInCache(cache, pathSet),
   );
+}
+
+export function expandCache(cache) {
+  function assignByPath(path, value) {
+    // If using dot notation obj.key.key.key
+    let processedPath = path;
+    if (typeof path === 'string') {
+      processedPath = path.split('.');
+    }
+    // Parent also works for array length 1, aka initial keys
+    // Parent and Key variables are used for assigning new values later
+    const parent = followPath(
+      processedPath.slice(0, processedPath.length - 1),
+      cache,
+    );
+    const key = processedPath[processedPath.length - 1];
+    // The following key exists as it was pushed on to stack as a valid key
+    parent[key] = value;
+  }
+
+  function isObject(val) {
+    // We don't count arrays as objects here. This is to protect ourselves against an expanded atom
+    // This does still leave us vulnerable to an expanded object though, but in by far most cases
+    // it would be very bad form to put an object in an atom, so this is not supported at this time.
+    if (val === null || val instanceof Array) return false;
+    return typeof val === 'object';
+  }
+
+  function handleRef(pathToRef, refPath) {
+    const refPathsSet = new Set();
+    // pathToRef is an array path
+    if (!(pathToRef instanceof Array)) {
+      throw new Error(
+        'pathToRef was passed as a non-array. The value passed was: ' +
+          `${JSON.stringify(pathToRef)}`,
+      );
+    }
+    // So is refPath
+    if (!(pathToRef instanceof Array)) {
+      throw new Error(
+        `refPath was passed as a non-array. The value passed was: ${JSON.stringify(
+          refPath,
+        )}`,
+      );
+    }
+    refPathsSet.add(pathToRef.join('.'));
+    let val = followPath(refPath, cache);
+    let path = refPath.join('.');
+    if (val === undefined) {
+      throw new Error(
+        `Missing part of JSON graph in expandCache function at path: ${path}`,
+      );
+    }
+    while (isObject(val) && val.$type) {
+      switch (val.$type) {
+        case 'atom':
+          assignByPath(path, val.value);
+          val = followPath(path, cache);
+          break;
+        case 'error':
+          assignByPath(path, new Error(val.value));
+          val = followPath(path, cache);
+          break;
+        case 'ref':
+          if (refPathsSet.has(path)) {
+            let paths = '[';
+            refPathsSet.forEach(pathFromSet => {
+              paths += `${pathFromSet},`;
+            });
+            paths = `${paths.substring(0, paths.length - 2)}]`;
+            throw new Error(
+              'Neverending loop from ref to ref with no real values present in expandCache. ' +
+                `It is made up of the following paths: ${paths}`,
+            );
+          } else {
+            refPathsSet.add(path);
+            path = val.value.join('.');
+            val = followPath(val.value, cache);
+          }
+          break;
+        default:
+          throw new Error(
+            `expandCache encountered a new type of name: ${val.$type}. ` +
+              `And cannot read it at following path: ${path}`,
+          );
+      }
+    }
+    refPathsSet.forEach(pathFromSet => {
+      assignByPath(pathFromSet, val);
+    });
+  }
+
+  // If empty return itself
+  if (!cache) return cache;
+  // Expanding
+  const stack = [];
+  Object.keys(cache).forEach(key => {
+    stack.push([key]);
+  });
+  while (stack.length > 0) {
+    // pathArray is the path to the current location being checked
+    // and is an array with the keys in order of how they should be accessed
+    // it is always an array as we only push arrays onto the stack
+    const pathArray = stack.pop();
+    if (!(pathArray instanceof Array)) {
+      throw new Error(
+        'non-array popped off stack in expandCache. ' +
+          `Item popped off was: ${JSON.stringify(pathArray)}`,
+      );
+    }
+    const val = followPath(pathArray, cache);
+    if (val === undefined) {
+      throw new Error(
+        `Missing part of JSON graph in expandCache function at path: ${pathArray.join(
+          '.',
+        )}`,
+      );
+    }
+    if (isObject(val) && val.$type) {
+      switch (val.$type) {
+        case 'atom':
+          assignByPath(pathArray, val.value);
+          break;
+        case 'error':
+          assignByPath(pathArray, new Error(val.value));
+          break;
+        case 'ref':
+          handleRef(pathArray, val.value);
+          break;
+        default:
+          throw new Error(
+            `expandCache encountered a new type of name: ${val.$type}. ` +
+              `And cannot read it at following path: ${pathArray.join('.')}`,
+          );
+      }
+    } else if (isObject(val)) {
+      Object.keys(val).forEach(key => {
+        const next = pathArray.concat(key);
+        stack.push(next);
+      });
+    }
+  }
+  return cache;
+}
+
+export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
+  /* This function takes the updates returned by falcorUpdate
+  and merges them with as few copies as possible to a new object
+  with the updates integrated. We do this with react-addons-update
+  to help handle the immutability and not need to do a deep copy */
+
+  function isObject(val) {
+    if (val === null) return false;
+    return typeof val === 'object';
+  }
+
+  function recursivelyConvertObject(curObject, correspondingOldObject, depth) {
+    /*
+    This function recursively goes through an object and converts all
+    non-object values to a $set command for react-addons-update in place.
+    It has the depth argument so we can make sure that if it receives
+    a circular JSON structure it will terminate correctly
+    */
+
+    if (depth >= maxDepth) return;
+
+    /* eslint-disable no-param-reassign */
+    _.forEach(curObject, (value, key) => {
+      if (value instanceof Error) {
+        throw value;
+      }
+      if (has.call(correspondingOldObject, key)) {
+        if (isObject(value)) {
+          recursivelyConvertObject(
+            value,
+            correspondingOldObject[key],
+            depth + 1,
+          );
+        } else {
+          curObject[key] = { $set: value };
+        }
+      } else {
+        curObject[key] = { $set: value };
+      }
+    });
+
+    /* eslint-enable no-param-reassign */
+  }
+
+  // Function starts here
+
+  if (!oldData) {
+    // There was no this.state.data before
+    return dataUpdates;
+  }
+
+  recursivelyConvertObject(dataUpdates, oldData, 0);
+
+  // This command returns a copy of oldData with the new updates applied
+  return update(oldData, dataUpdates);
 }
 
 function isEmptyObject(obj) {
