@@ -12,6 +12,8 @@ import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
 import { darkBlack } from 'material-ui/styles/colors';
 import RaisedButton from 'material-ui/RaisedButton';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 
 const styles = {
   paper: {
@@ -169,6 +171,13 @@ export class ArticleListController extends FalcorController {
             </div>
           </Paper>
           {this.props.children}
+          <Link to={`/articles/page/${this.props.params.page}/new`}>
+            <FloatingActionButton
+              style={{ position: 'fixed', bottom: '50px', right: '100px' }}
+            >
+              <ContentAdd />
+            </FloatingActionButton>
+          </Link>
         </div>
       );
     }

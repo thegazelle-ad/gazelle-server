@@ -15,19 +15,19 @@ import CircularProgress from 'material-ui/CircularProgress';
 export const withFalcor = (({
   prop = 'falcorModel',
 } = {}) => WrappedComponent => {
-  const InjectFalcorModel = (props, context) => (
+  const withFalcorModel = (props, context) => (
     <WrappedComponent {...props} {...{ [prop]: context.falcor.model }} />
   );
 
-  InjectFalcorModel.displayName = `injectFalcorModel(${getDisplayName(
+  withFalcorModel.displayName = `withFalcor(${getDisplayName(
     WrappedComponent,
   )})`;
 
-  InjectFalcorModel.contextTypes = {
+  withFalcorModel.contextTypes = {
     falcor: falcorShape,
   };
 
-  return InjectFalcorModel;
+  return withFalcorModel;
 })({ prop: 'falcor' });
 
 const Loading = () => (
@@ -51,13 +51,33 @@ const Loading = () => (
  * output is going to be all the props your wrapped component will receive. The default simply places
  * the data in the props with names corresponding to the top level keys in the path sets.
  * see https://github.com/ratson/react-falcor/blob/0d2cefcbc71ca21465307182ec8495262e945362/src/components/falcorGet.js#L13-L22
- * for the default implementation
+ * for the default implementation.
+ * It is recommended to use the buildPropMerger function below to build your merger
+ * @param {React.Component} [loadingComponent] - The component to be displayed while fetching data
  * @returns {func} a HOC that can provide a component with the given pathSets to the specified props
  */
-export const withFalcorQuery = (pathSets, propMerger) =>
+export const withFalcorData = (pathSets, propMerger, loadingComponent) =>
   falcorGet(pathSets, propMerger, {
-    getDisplayName: name => `withFalcorQuery(${name})`,
+    getDisplayName: name => `withFalcorData(${name})`,
     pure: false,
     defer: true,
-    loadingComponent: Loading,
+    loadingComponent: loadingComponent || Loading,
   });
+
+/**
+ * This function handles some edge cases and tedious parts of writing a prop merger,
+ * for example empty responses and having to unwrap the JSONGraphEnvelope
+ * @param {function} propMerger - A function that takes the json of the values
+ * returned by falcor and the current props and returns the final props to be
+ * provided to the component
+ * @returns {function}
+ */
+export const buildPropMerger = propMerger => (response, currentProps) => {
+  const { json } = response || {};
+  if (!json) {
+    return {
+      ...currentProps,
+    };
+  }
+  return propMerger(json, currentProps);
+};
