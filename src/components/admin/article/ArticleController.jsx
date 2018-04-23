@@ -113,16 +113,9 @@ class ArticleController extends FalcorController {
         'articles',
         'byId',
         params.id,
-        [
-          'title',
-          'slug',
-          'category',
-          'teaser',
-          'image_url',
-          'id',
-          'published_at',
-        ],
+        ['title', 'slug', 'teaser', 'image_url', 'id', 'published_at'],
       ],
+      ['articles', 'byId', params.id, 'category', 'id'],
       [
         'articles',
         'byId',
@@ -148,7 +141,7 @@ class ArticleController extends FalcorController {
     const title = article.title || '';
     const slug = article.slug || '';
     const teaser = article.teaser || '';
-    const category = article.category || -1;
+    const category = _.get(article, 'category.id', -1);
     const imageUrl = article.image_url || '';
     const authors = _.toArray(article.authors);
     const tags = _.toArray(article.tags);
@@ -259,7 +252,10 @@ class ArticleController extends FalcorController {
     }
 
     // Check the special case of someone trying to reassign a category as none
-    if (this.state.category === -1 && falcorData.category !== 'none') {
+    if (
+      this.state.category === -1 &&
+      _.get(falcorData, 'category.id', -1) !== -1
+    ) {
       this.props.displayAlert(
         'Save cancelled, you cannot reset a category to none.' +
           ' If you wish to have this feature added, speak to the developers',

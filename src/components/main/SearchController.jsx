@@ -24,16 +24,9 @@ export default class SearchController extends FalcorController {
         'posts',
         queryParams.q,
         { length: 20 },
-        [
-          'title',
-          'teaser',
-          'issueNumber',
-          'category',
-          'slug',
-          'image_url',
-          'published_at',
-        ],
+        ['title', 'teaser', 'issueNumber', 'slug', 'image_url', 'published_at'],
       ],
+      ['search', 'posts', queryParams.q, { length: 20 }, 'category', 'slug'],
       [
         'search',
         'posts',
