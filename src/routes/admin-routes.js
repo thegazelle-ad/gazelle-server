@@ -3,7 +3,6 @@ import { Route, IndexRedirect } from 'react-router';
 import React from 'react';
 import { AppController } from 'components/admin/AppController';
 import { ArticleListController } from 'components/admin/ArticleListController';
-import { CreateArticleController } from 'components/admin/article/CreateArticleController';
 import { ArticleController } from 'components/admin/article/ArticleController';
 import { StaffListController } from 'components/admin/StaffListController';
 import { StaffController } from 'components/admin/StaffController';
@@ -25,7 +24,6 @@ export default (
     <Route path="articles">
       <IndexRedirect to="page/1" />
       <Route path="page/:page" component={ArticleListController}>
-        <Route path="new" component={CreateArticleController} />
         <Route path="id/:id" component={ArticleController} />
       </Route>
     </Route>

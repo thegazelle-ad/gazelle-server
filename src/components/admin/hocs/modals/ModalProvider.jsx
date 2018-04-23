@@ -109,8 +109,6 @@ export class ModalProvider extends React.Component {
     const dialogProps = {
       open: this.state.modalOpen,
       message: this.state.modalMessage,
-      // Make sure the modal is above other modals
-      style: { zIndex: 3000 },
     };
     let Modal;
     switch (this.state.modalType) {
