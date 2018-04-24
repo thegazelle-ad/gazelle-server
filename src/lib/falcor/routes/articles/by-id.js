@@ -164,14 +164,14 @@ export default [
       // the falcor.model.call only takes a path not a pathset
       // so it is not possible to call this function for more
       // than 1 article at a time, therefore we know keys:slugs is length 1
-      if (callPath.ids > 1) {
+      if (callPath.ids.length > 1) {
         throw new Error(
           'updateAuthors falcor function was called illegally with more than 1 article slug',
         );
       }
       return new Promise(resolve => {
         const articleId = args[0];
-        if (callPath.ids[0] !== articleId) {
+        if (callPath.ids[0].toString() !== articleId) {
           throw new Error('Inconsistent article ids');
         }
         const newAuthors = args[1];
@@ -199,15 +199,15 @@ export default [
     call: async (callPath, args) => {
       // the falcor.model.call only takes a path not a pathset
       // so it is not possible to call this function for more
-      // than 1 article at a time, therefore we know keys:slugs is length 1
-      if (callPath.ids > 1) {
+      // than 1 article at a time, therefore we know keys:ids is length 1
+      if (callPath.ids.length > 1) {
         throw new Error(
           'updateTags falcor function was called illegally with more than 1 article slug',
         );
       }
 
       const articleId = args[0];
-      if (callPath.ids[0] !== articleId) {
+      if (callPath.ids[0].toString() !== articleId) {
         throw new Error('Inconsistent article ids');
       }
       const tags = args[1];

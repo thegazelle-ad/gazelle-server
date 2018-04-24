@@ -570,7 +570,7 @@ or missing category at issue number ${issueNumber} index ${i}`);
           })
           .catch(e => {
             // database.destroy();
-            throw new Error(e);
+            throw e;
           });
       })
       .catch(e => {
@@ -949,8 +949,8 @@ export function updateIssueArticles(
                 // We sort them by category so we can keep track of
                 // the order within each category
                 mainArticles.sort((a, b) => {
-                  const categoryA = a.category;
-                  const categoryB = b.category;
+                  const categoryA = a.category.slug;
+                  const categoryB = b.category.slug;
                   if (!categoryA || !categoryB) {
                     throw new Error(
                       'all articles should have a category' +
@@ -970,8 +970,8 @@ export function updateIssueArticles(
                 mainArticles.forEach((article, index) => {
                   if (index > 0) {
                     if (
-                      mainArticles[index].category !==
-                      mainArticles[index - 1].category
+                      mainArticles[index].category.slug !==
+                      mainArticles[index - 1].category.slug
                     ) {
                       articleIssueOrder = 0;
                     }
@@ -993,7 +993,7 @@ export function updateIssueArticles(
                     // Get a list of all the categories
                     const seen = {};
                     mainArticles.forEach(article => {
-                      const { category } = article;
+                      const category = article.category.slug;
                       if (!seen[category]) {
                         seen[category] = true;
                       }
@@ -1108,7 +1108,8 @@ export function updateIssueArticles(
                             mainArticles.forEach((article, index) => {
                               if (index === 0) {
                                 // initialize it since mainArticles was non-empty
-                                const category = slugToObject[article.category];
+                                const category =
+                                  slugToObject[article.category.slug];
                                 data.categories = {
                                   [category.index]: {
                                     name: category.name,
@@ -1137,13 +1138,14 @@ export function updateIssueArticles(
                                   },
                                 };
                               } else if (
-                                mainArticles[index].category !==
-                                mainArticles[index - 1].category
+                                mainArticles[index].category.slug !==
+                                mainArticles[index - 1].category.slug
                               ) {
                                 // index > 0
                                 // It's a new category
                                 articleIndex = 0;
-                                const category = slugToObject[article.category];
+                                const category =
+                                  slugToObject[article.category.slug];
                                 data.categories[category.index] = {
                                   name: category.name,
                                   slug: category.slug,
@@ -1171,7 +1173,8 @@ export function updateIssueArticles(
                                 };
                               } else {
                                 // We're just adding to the old category
-                                const category = slugToObject[article.category];
+                                const category =
+                                  slugToObject[article.category.slug];
                                 data.categories[category.index].articles.push({
                                   path: [
                                     'issues',

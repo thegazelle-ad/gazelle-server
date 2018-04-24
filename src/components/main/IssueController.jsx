@@ -43,6 +43,7 @@ export default class IssueController extends FalcorController {
 
         // Request the featured article
         ['issues', 'byNumber', issueNumber, 'featured', articleFields],
+        ['issues', 'byNumber', issueNumber, 'featured', 'category', 'slug'],
         [
           'issues',
           'byNumber',
