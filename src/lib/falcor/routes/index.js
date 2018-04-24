@@ -1,6 +1,6 @@
 import { articles } from './articles';
 import staff from './staff';
-import categories from './categories';
+import { categories } from './categories';
 import infoPages from './info-pages';
 import issues from './issues';
 import placeholder from './placeholder';

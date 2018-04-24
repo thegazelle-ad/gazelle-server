@@ -233,17 +233,22 @@ function orderArticlesInIssues(database, issues) {
  * @returns {Promise<boolean>} - Whether the update was a success
  */
 export async function updateArticles(database, keyField, jsonGraphArg) {
+  const articlesWithChangedCategory = [];
   const updatePromises = _.map(jsonGraphArg, (articleUpdater, key) => {
     const processedArticleUpdater = {
-      ..._.omit(articleUpdater, 'category'),
-      category_id: articleUpdater.category,
+      ...articleUpdater,
     };
+    if (has.call(processedArticleUpdater, 'category')) {
+      // Rename it to category_id and note that this article had it's category changed
+      processedArticleUpdater.category_id = processedArticleUpdater.category;
+      delete processedArticleUpdater.category;
+      articlesWithChangedCategory.push(key);
+    }
     return database('articles')
-      .where(`${keyField}`, '=', key)
+      .where(keyField, '=', key)
       .update(processedArticleUpdater);
   });
-  const returnValues = await Promise.all(updatePromises);
-  const articlesWithChangedCategory = returnValues[returnValues.length - 1];
+  await Promise.all(updatePromises);
   // If categories changed make sure issue data is still consistent
   if (articlesWithChangedCategory.length > 0) {
     const issueRows = await database
