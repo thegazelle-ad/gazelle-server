@@ -54,7 +54,7 @@ class ArticleController extends FalcorController {
       authors: [],
       tags: [],
       teaser: '',
-      category: -1,
+      category: null,
       imageUrl: '',
     });
 
@@ -141,7 +141,7 @@ class ArticleController extends FalcorController {
     const title = article.title || '';
     const slug = article.slug || '';
     const teaser = article.teaser || '';
-    const category = _.get(article, 'category.id', -1);
+    const category = _.get(article, 'category.id', null);
     const imageUrl = article.image_url || '';
     const authors = _.toArray(article.authors);
     const tags = _.toArray(article.tags);
@@ -253,8 +253,8 @@ class ArticleController extends FalcorController {
 
     // Check the special case of someone trying to reassign a category as none
     if (
-      this.state.category === -1 &&
-      _.get(falcorData, 'category.id', -1) !== -1
+      this.state.category === null &&
+      _.get(falcorData, 'category.id', null) !== null
     ) {
       this.props.displayAlert(
         'Save cancelled, you cannot reset a category to none.' +
@@ -388,7 +388,7 @@ class ArticleController extends FalcorController {
 
       // If it is a new article it won't have any meta data yet so we use the default
       const categories = _.toArray(this.state.data.categories.byIndex);
-      categories.push({ name: 'none', id: -1 });
+      categories.push({ name: 'none', id: null });
       const actionButtons = [
         <SaveButton
           onClick={this.handleSaveChanges}
