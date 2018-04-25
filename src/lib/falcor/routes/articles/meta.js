@@ -25,13 +25,21 @@ export const routes = [
             "articles['createNew'] must be provided both a slug and a title",
           ),
         );
-        return [];
+        throw new Error(
+          'There was an error while creating a new article, the developers have been notified',
+        );
       }
-      const success = await createNewArticle(database, article);
-      if (!success) {
-        return [];
-      }
-      return [];
+      const id = await createNewArticle(database, article);
+      return [
+        {
+          path: ['articles', 'byId', id, 'id'],
+          value: id,
+        },
+        {
+          path: ['articles', 'byPage'],
+          invalidated: true,
+        },
+      ];
     },
   },
 ];

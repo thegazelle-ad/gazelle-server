@@ -6,6 +6,8 @@ import _ from 'lodash';
 // Helpers
 import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
 import { compose } from 'lib/higher-order-helpers';
+import { getArticleListPath, getArticlePath } from 'routes/admin-helpers';
+import { buildErrorMessage } from 'lib/error-helpers';
 
 // Custom Components
 import {
@@ -32,6 +34,9 @@ import {
   buildPropMerger,
 } from 'components/hocs/falcor-hocs';
 import { withModals } from 'components/admin/hocs/modals/withModals';
+
+// Misc.
+import { logger } from 'lib/logger';
 
 // Define data needed by component
 const falcorPaths = [['categories', 'byIndex', { length: 30 }, ['name', 'id']]];
@@ -69,9 +74,7 @@ class CreateArticleController extends React.Component {
   updateCategory = category => this.setState({ category });
 
   handleDialogClose = () => {
-    const { page } = this.props.params;
-    const pathname = `/articles/page/${page}`;
-
+    const pathname = getArticleListPath(this.props.params.page);
     const location = { pathname, state: { refresh: false } }; // TODO: Add proper refresh
     browserHistory.push(location);
   };
@@ -109,10 +112,27 @@ class CreateArticleController extends React.Component {
       'imageUrl',
     ]);
 
-    await this.props.falcor.call(
-      ['articles', 'createNew'],
-      [createArticleArgument],
-    );
+    let newArticle;
+    try {
+      const jsonGraph = await this.props.falcor.call(
+        ['articles', 'createNew'],
+        [createArticleArgument],
+      );
+      const createdArticles = parseFalcorPseudoArray(
+        jsonGraph.json.articles.byId,
+      );
+      if (createdArticles.length !== 1) {
+        logger.error(new Error('Expected exactly one article to be created'));
+        await this.props.displayAlert(buildErrorMessage());
+        return;
+      }
+      [newArticle] = createdArticles;
+    } catch (e) {
+      logger.error(e);
+      await this.props.displayAlert(buildErrorMessage());
+      return;
+    }
+    browserHistory.push(getArticlePath(newArticle.id, this.props.params.page));
   };
 
   render() {

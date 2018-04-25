@@ -4,6 +4,7 @@ import FalcorController from 'lib/falcor/FalcorController';
 import { SearchableArticlesWithPubDate } from 'components/admin/form-components/searchables';
 import { ArticleList } from 'components/admin/ArticleList';
 import moment from 'moment';
+import { getArticlePath } from 'routes/admin-helpers';
 
 // material-ui
 import ListItem from 'material-ui/List/ListItem';
@@ -83,9 +84,7 @@ export class ArticleListController extends FalcorController {
   }
 
   clickSearchSuggestion(article) {
-    const { page } = this.props.params;
-    const path = `/articles/page/${page}/id/${article.id}`;
-    browserHistory.push(path);
+    browserHistory.push(getArticlePath(article.id, this.props.params.page));
   }
 
   createListElement(article) {

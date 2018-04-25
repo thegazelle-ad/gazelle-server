@@ -152,9 +152,7 @@ class StaffController extends FalcorController {
 
   handleDialogClose() {
     if (this.state.saving) return;
-
-    const path = '/staff';
-    browserHistory.push(path);
+    browserHistory.push('/staff');
   }
 
   handleSaveChanges = async event => {

@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 import { logger } from 'lib/logger';
 import { has } from 'lib/utilities';
+import { buildErrorMessage } from 'lib/error-helpers';
 
 /**
  * @typedef PaginationArticle
@@ -57,15 +58,16 @@ export async function createNewArticle(database, articleData) {
   }
   // Remember to set created time
   insertObject.created_at = new Date();
+  let id;
   try {
-    await database('articles').insert(insertObject);
+    [id] = await database('articles').insert(insertObject);
   } catch (e) {
     logger.error(e);
-    return false;
+    throw new Error(buildErrorMessage());
   }
   // if (_.get(articleData.authors, 'length', 0) > 0) {
   // }
-  return true;
+  return id;
 }
 
 /**
