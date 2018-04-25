@@ -399,10 +399,10 @@ class ArticleController extends FalcorController {
       grid: {
         display: 'grid',
         gridGap: '10px',
-        gridTemplateColumns: '30% 70%',
-        gridTemplateRows: '5% 83% 12%',
+        gridTemplateColumns: '20% 30% 50%',
+        gridTemplateRows: '5% 85% 10%',
         gridTemplateAreas:
-          '"header header" "sidebar content" "negative positive"',
+          '"header header header" "sidebar content content" "sidebar negative positive"',
         height: '80vh',
         marginTop: '5vh',
         padding: '2vmax',
@@ -413,10 +413,18 @@ class ArticleController extends FalcorController {
       negative: { gridArea: 'negative' },
       sidebar: {
         padding: '5px',
+        /*  TODO: Make SearchBar scroll options into view
+         * When a user searches a tag at the bottom, the options are effectively hidden this padding-bottom
+         * makes this slightly better, but this should be replaced with a scrollIntoView on SearchBar expansion 
+         */
+        paddingBottom: '50px',
+        marginBottom: '5%',
         width: '100%',
         gridArea: 'sidebar',
         overflowX: 'hidden',
         overflowY: 'scroll',
+        background:
+          'linear-gradient(to top, rgba(0, 0, 0, .2) 0%, rgba(0, 0, 0, 0) 2%)',
       },
       helpText: {
         color: 'rgba(0, 0, 0, 0.4)',
@@ -463,7 +471,7 @@ class ArticleController extends FalcorController {
               onClick={this.handleDialogClose}
             />
           </div>
-          <Paper zIndex={2} style={styles.sidebar}>
+          <div style={styles.sidebar}>
             <ShortRequiredTextField
               floatingLabelText="Title"
               value={this.state.title}
@@ -521,7 +529,7 @@ class ArticleController extends FalcorController {
               mode="tags"
               enableAdd
             />
-          </Paper>
+          </div>
           <div style={styles.content}>
             <MarkdownEditor
               zIndex={2}
