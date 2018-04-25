@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
-import { capFirstLetter } from 'lib/utilities';
+import { capFirstLetter, slugify } from 'lib/utilities';
 
 import TextField from 'material-ui/TextField';
 import Menu from 'material-ui/Menu';
@@ -88,12 +88,12 @@ export class SearchBar extends React.Component {
                   className={`${searchBarResultClass} search-bar-${
                     this.props.mode
                   }`}
-                  key={this.props.slugify(this.state.value.trim())}
+                  key={slugify(this.state.value.trim())}
                 >
                   <SearchResult
                     id={null}
                     title={this.state.value.trim()}
-                    slug={this.props.slugify(this.state.value.trim())}
+                    slug={slugify(this.state.value.trim())}
                     handleClick={this.handleClick}
                     disabled={this.props.disabled}
                     isNew
@@ -130,21 +130,10 @@ SearchBar.propTypes = {
   fullWidth: PropTypes.bool,
   disabled: PropTypes.bool,
   enableAdd: PropTypes.bool,
-  slugify(props, propName, componentName) {
-    // We only check that slugify is given
-    // if enableAdd is true.
-    if (props.enableAdd === true && !_.isFunction(props[propName])) {
-      return new Error(
-        `Invalid prop ${propName} supplied to ${componentName}. Prop must be a slugify function!`,
-      );
-    }
-    return null;
-  },
 };
 
 SearchBar.defaultProps = {
   fullWidth: false,
   disabled: false,
   enableAdd: false,
-  slugify: null,
 };
