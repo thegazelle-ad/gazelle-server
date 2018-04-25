@@ -84,7 +84,7 @@ class ArticleController extends FalcorController {
       );
     }
 
-    if (processedTags !== null) {
+    if (processedTags && processedTags !== null) {
       dbUpdates.push(
         this.falcorCall(
           ['articles', 'bySlug', this.state.slug, 'tags', 'updateTags'],
