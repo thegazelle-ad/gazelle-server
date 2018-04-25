@@ -25,11 +25,11 @@ export default class ArticleController extends FalcorController {
           'html',
           'published_at',
           'issueNumber',
-          'category',
           'slug',
           'image_url',
         ],
       ],
+      ['articles', 'bySlug', params.articleSlug, 'category', 'slug'],
       [
         'articles',
         'bySlug',
@@ -55,6 +55,15 @@ export default class ArticleController extends FalcorController {
         params.articleSlug,
         'related',
         { length: 2 },
+        'category',
+        'slug',
+      ],
+      [
+        'articles',
+        'bySlug',
+        params.articleSlug,
+        'related',
+        { length: 2 },
         'authors',
         { length: 10 },
         ['name', 'slug'],
@@ -64,8 +73,9 @@ export default class ArticleController extends FalcorController {
       [
         'trending',
         { length: 6 },
-        ['title', 'issueNumber', 'category', 'slug', 'image_url'],
+        ['title', 'issueNumber', 'slug', 'image_url'],
       ],
+      ['trending', { length: 6 }, 'category', 'slug'],
       ['trending', { length: 6 }, 'authors', { length: 10 }, ['name', 'slug']],
     ];
   }
@@ -128,7 +138,7 @@ export default class ArticleController extends FalcorController {
           property: 'og:url',
           content:
             `www.thegazelle.org/issue/${articleData.issueNumber}/` +
-            `${articleData.category}/${articleData.slug}`,
+            `${articleData.category.slug}/${articleData.slug}`,
         },
         { property: 'og:image', content: articleMetaImage },
         { property: 'og:image:width', content: '540' }, // 1.8:1 ratio
@@ -148,7 +158,7 @@ export default class ArticleController extends FalcorController {
             featuredImage={articleData.image_url}
             url={
               `thegazelle.org/issue/${articleData.issueNumber}/` +
-              `${articleData.category}/${articleData.slug}`
+              `${articleData.category.slug}/${articleData.slug}`
             }
             trending={_.toArray(trendingData)}
             relatedArticles={_.toArray(relatedArticlesData)}

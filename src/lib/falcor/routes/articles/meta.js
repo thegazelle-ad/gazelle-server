@@ -1,6 +1,6 @@
 import { getNumArticles } from 'lib/db';
 
-export default [
+export const routes = [
   {
     route: "articles['length']",
     get: async () => {

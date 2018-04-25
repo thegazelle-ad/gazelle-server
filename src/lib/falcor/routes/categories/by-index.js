@@ -4,7 +4,7 @@ import * as db from 'lib/db';
 
 const $ref = falcor.Model.ref;
 
-export default [
+export const routes = [
   {
     // get categories by index
     route: "categories['byIndex'][{integers:indices}]",

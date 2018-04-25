@@ -24,7 +24,16 @@ export default class StaffMemberController extends FalcorController {
         params.staffSlug,
         'articles',
         { to: 50 },
-        ['title', 'image_url', 'teaser', 'issueNumber', 'category', 'slug'],
+        ['title', 'image_url', 'teaser', 'issueNumber', 'slug'],
+      ],
+      [
+        'staff',
+        'bySlug',
+        params.staffSlug,
+        'articles',
+        { to: 50 },
+        'category',
+        'slug',
       ],
       [
         'staff',
