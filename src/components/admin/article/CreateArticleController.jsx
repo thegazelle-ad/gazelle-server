@@ -74,9 +74,7 @@ class CreateArticleController extends React.Component {
   updateCategory = category => this.setState({ category });
 
   handleDialogClose = () => {
-    const pathname = getArticleListPath(this.props.params.page);
-    const location = { pathname, state: { refresh: false } }; // TODO: Add proper refresh
-    browserHistory.push(location);
+    browserHistory.push(getArticleListPath(this.props.params.page));
   };
 
   validateArticle = async () => {
@@ -132,7 +130,8 @@ class CreateArticleController extends React.Component {
       await this.props.displayAlert(buildErrorMessage());
       return;
     }
-    browserHistory.push(getArticlePath(newArticle.id, this.props.params.page));
+    const pathname = getArticlePath(newArticle.id, this.props.params.page);
+    browserHistory.push({ pathname, state: { refresh: true } });
   };
 
   render() {
