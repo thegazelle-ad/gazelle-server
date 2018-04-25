@@ -40,34 +40,71 @@ export async function getPaginatedArticle(database, pageLength, pageIndex) {
  */
 export async function createNewArticle(database, articleData) {
   // We first build the article object used for creation
-  const insertObject = {};
+  const articleRow = {};
   if (articleData.slug) {
-    insertObject.slug = articleData.slug;
+    articleRow.slug = articleData.slug;
   }
   if (articleData.title) {
-    insertObject.title = articleData.title;
+    articleRow.title = articleData.title;
   }
   if (articleData.teaser) {
-    insertObject.teaser = articleData.teaser;
+    articleRow.teaser = articleData.teaser;
   }
   if (articleData.imageUrl) {
-    insertObject.image_url = articleData.imageUrl;
+    articleRow.image_url = articleData.imageUrl;
   }
   if (articleData.category > 0) {
-    insertObject.category = articleData.category;
+    articleRow.category = articleData.category;
   }
   // Remember to set created time
-  insertObject.created_at = new Date();
-  let id;
+  articleRow.created_at = new Date();
   try {
-    [id] = await database('articles').insert(insertObject);
+    const [id] = await database('articles').insert(articleRow);
+    articleRow.id = id;
   } catch (e) {
     logger.error(e);
     throw new Error(buildErrorMessage());
   }
-  // if (_.get(articleData.authors, 'length', 0) > 0) {
-  // }
-  return id;
+  const inserts = [];
+  if (_.get(articleData.authors, 'length', 0) > 0) {
+    const authorArticleRows = articleData.authors.map(authorObject => {
+      if (!authorObject.id) {
+        logger.error(
+          new Error('All authors in new article must have an id passed'),
+        );
+        throw new Error(buildErrorMessage());
+      }
+      return {
+        author_id: authorObject.id,
+        article_id: articleRow.id,
+      };
+    });
+    inserts.push(database('authors_articles').insert(authorArticleRows));
+    articleRow.authors = authorArticleRows;
+  }
+  if (_.get(articleData.tags, 'length', 0) > 0) {
+    const articleTagRows = articleData.authors.map(tagObject => {
+      if (!tagObject.id) {
+        logger.error(
+          new Error('All tags in new article must have an id passed'),
+        );
+        throw new Error(buildErrorMessage());
+      }
+      return {
+        tag_id: tagObject.id,
+        article_id: articleRow.id,
+      };
+    });
+    inserts.push(database('articles_tags').insert(articleTagRows));
+    articleRow.tags = articleTagRows;
+  }
+  try {
+    await Promise.all(inserts);
+  } catch (e) {
+    logger.error(e);
+    throw new Error(buildErrorMessage());
+  }
+  return articleRow;
 }
 
 /**

@@ -60,7 +60,7 @@ class CreateArticleController extends React.Component {
       authors: [],
       tags: [],
       teaser: '',
-      category: -1,
+      category: null,
       imageUrl: '',
     };
   }
@@ -105,6 +105,7 @@ class CreateArticleController extends React.Component {
       'title',
       'slug',
       'authors',
+      'tags',
       'teaser',
       'category',
       'imageUrl',

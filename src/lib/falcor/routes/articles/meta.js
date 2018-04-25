@@ -1,6 +1,11 @@
 import { getNumArticles, database } from 'lib/db';
 import { logger } from 'lib/logger';
 import { createNewArticle } from './database-calls';
+import { buildErrorMessage } from 'lib/error-helpers';
+import { has } from 'lib/utilities';
+import falcor from 'falcor';
+
+const $ref = falcor.Model.ref;
 
 export const routes = [
   {
@@ -25,21 +30,66 @@ export const routes = [
             "articles['createNew'] must be provided both a slug and a title",
           ),
         );
-        throw new Error(
-          'There was an error while creating a new article, the developers have been notified',
+        throw new Error(buildErrorMessage());
+      }
+      const createdArticle = await createNewArticle(database, article);
+      if (!createdArticle.id) {
+        logger.error(
+          new Error('New article returned from db must include an id'),
+        );
+        throw new Error(buildErrorMessage());
+      }
+      const pathPrefix = ['articles', 'byId', createdArticle.id];
+      let processedFields = 0;
+      const standardFields = ['slug', 'title', 'teaser'];
+      const results = standardFields
+        .map(field => {
+          if (has.call(createdArticle, field)) {
+            processedFields += 1;
+            return {
+              path: pathPrefix.concat([field]),
+              value: createdArticle[field],
+            };
+          }
+          return null;
+        })
+        .filter(x => x !== null);
+      if (has.call(createdArticle, 'category')) {
+        processedFields += 1;
+        results.push({
+          path: pathPrefix.concat(['category']),
+          value: $ref(['categories', 'byId', createdArticle.id]),
+        });
+      }
+      if (has.call(createdArticle, 'authors')) {
+        processedFields += 1;
+        results.push(
+          ...createdArticle.authors.map((authorRow, index) => ({
+            path: pathPrefix.concat(['authors', index]),
+            value: $ref(['staff', 'byId', authorRow.author_id]),
+          })),
         );
       }
-      const id = await createNewArticle(database, article);
-      return [
-        {
-          path: ['articles', 'byId', id, 'id'],
-          value: id,
-        },
-        {
-          path: ['articles', 'byPage'],
-          invalidated: true,
-        },
-      ];
+      if (has.call(createdArticle, 'tags')) {
+        processedFields += 1;
+        results.push(
+          ...createdArticle.tags.map((tagRow, index) => ({
+            path: pathPrefix.concat(['tags', index]),
+            value: $ref(['tags', 'byId', tagRow.tag_id]),
+          })),
+        );
+      }
+
+      if (processedFields !== Object.keys(createdArticle).length) {
+        logger.warn(
+          new Error('Expected every key from the created article to be used'),
+        );
+      }
+
+      results.push({
+        path: ['articles', 'byPage'],
+        invalidated: true,
+      });
     },
   },
 ];
