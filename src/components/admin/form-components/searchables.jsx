@@ -19,10 +19,9 @@ export const SearchableArticles = withFalcorSearch(
 export const SearchableArticlesWithPubDate = withFalcorSearch(
   ['title', 'slug', 'published_at'],
   item => {
-    const date =
-      'published_at' in item
-        ? `Published: ${moment(item.published_at).format('MMM DD, YYYY')}`
-        : 'Unpublished';
+    const date = item.published_at
+      ? `Published: ${moment(item.published_at).format('MMM DD, YYYY')}`
+      : 'Unpublished';
     return `${item.title} - ${date}`;
   },
   'articles',

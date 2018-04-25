@@ -47,7 +47,7 @@ export async function createNewArticle(database, articleData) {
     insertObject.title = articleData.title;
   }
   if (articleData.teaser) {
-    insertObject.category = articleData.teaser;
+    insertObject.teaser = articleData.teaser;
   }
   if (articleData.imageUrl) {
     insertObject.image_url = articleData.imageUrl;
