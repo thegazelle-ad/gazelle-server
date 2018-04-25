@@ -46,14 +46,7 @@ const styles = {
   },
 };
 
-const ARTICLE_FIELDS = [
-  'title',
-  'teaser',
-  'category',
-  'image_url',
-  'slug',
-  'html',
-];
+const ARTICLE_FIELDS = ['title', 'teaser', 'image_url', 'slug', 'html'];
 const AUTHOR_FIELDS = ['id', 'name', 'slug'];
 
 class MainIssueController extends FalcorController {
@@ -159,6 +152,17 @@ class MainIssueController extends FalcorController {
         { length: 20 },
         'articles',
         { length: 50 },
+        'category',
+        'slug',
+      ],
+      [
+        'issues',
+        'byNumber',
+        this.props.params.issueNumber,
+        'categories',
+        { length: 20 },
+        'articles',
+        { length: 50 },
         'authors',
         0,
         AUTHOR_FIELDS,
@@ -169,6 +173,14 @@ class MainIssueController extends FalcorController {
         this.props.params.issueNumber,
         'featured',
         ARTICLE_FIELDS,
+      ],
+      [
+        'issues',
+        'byNumber',
+        this.props.params.issueNumber,
+        'featured',
+        'category',
+        'slug',
       ],
       [
         'issues',
@@ -186,6 +198,15 @@ class MainIssueController extends FalcorController {
         'picks',
         { length: 10 },
         ARTICLE_FIELDS,
+      ],
+      [
+        'issues',
+        'byNumber',
+        this.props.params.issueNumber,
+        'picks',
+        { length: 10 },
+        'category',
+        'slug',
       ],
       [
         'issues',
@@ -217,7 +238,7 @@ class MainIssueController extends FalcorController {
           // Check validity of the issue before publishing it
           const { issueNumber } = this.props.params;
           const issue = x.json.issues.byNumber[issueNumber];
-          const fields = ARTICLE_FIELDS;
+          const fields = ARTICLE_FIELDS.concat(['category.slug']);
           if (!issue.featured) {
             this.props.displayAlert('You need to add a featured article');
             return;
@@ -244,7 +265,7 @@ class MainIssueController extends FalcorController {
           }
           const articlesValid = allArticles.every(article => {
             const fieldsValid = fields.every(field => {
-              if (!article[field]) {
+              if (!_.get(article, field)) {
                 this.props.displayAlert(
                   `${article.title} has no ${field}. Please correct this`,
                 );

@@ -1,6 +1,6 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
-import { slugifyStaff } from 'lib/utilities';
+import { slugify } from 'lib/utilities';
 import { browserHistory } from 'react-router';
 import { SearchableAuthors } from 'components/admin/form-components/searchables';
 import { updateFieldValue } from './lib/form-field-updaters';
@@ -78,10 +78,10 @@ class StaffListController extends FalcorController {
     const slug = this.state.inputSlug;
     const name = this.state.inputName;
 
-    if (slug !== slugifyStaff(slug)) {
+    if (slug !== slugify(slug)) {
       this.props.displayAlert(
         'Your slug is not in the right format. Our programatically suggested ' +
-          `substitute is: ${slugifyStaff(slug)}. ` +
+          `substitute is: ${slugify(slug)}. ` +
           'Feel free to use it or change it to something else',
       );
       return;

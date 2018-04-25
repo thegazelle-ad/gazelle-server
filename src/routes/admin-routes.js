@@ -2,7 +2,7 @@
 import { Route, IndexRedirect } from 'react-router';
 import React from 'react';
 import { AppController } from 'components/admin/AppController';
-import ArticleListController from 'components/admin/ArticleListController';
+import { ArticleListController } from 'components/admin/ArticleListController';
 import { ArticleController } from 'components/admin/article/ArticleController';
 import { StaffListController } from 'components/admin/StaffListController';
 import { StaffController } from 'components/admin/StaffController';

@@ -10,9 +10,9 @@ import AuthorList from 'components/main/AuthorList';
 export default class ArticlePreview extends BaseComponent {
   render() {
     const { article } = this.props;
-    let url = `/issue/${article.issueNumber.toString()}/${article.category}/${
-      article.slug
-    }`;
+    let url = `/issue/${article.issueNumber.toString()}/${
+      article.category.slug
+    }/${article.slug}`;
     if (article.is_interactive) {
       // We don't use standard url for interactive articles
       url = `/interactive/${article.slug}`;
@@ -33,9 +33,9 @@ export default class ArticlePreview extends BaseComponent {
         </Link>
         {/* Article title with link to article */}
         <div className="article-preview__content">
-          <Link to={`/category/${article.category}`}>
+          <Link to={`/category/${article.category.slug}`}>
             <p className="article-preview__content__category-header">
-              {article.category.replace('-', ' ')}
+              {article.category.slug.replace('-', ' ')}
             </p>
           </Link>
 
@@ -67,7 +67,9 @@ ArticlePreview.propTypes = {
     // Teaser not used for Trending component
     teaser: React.PropTypes.string,
     issueNumber: React.PropTypes.number.isRequired,
-    category: React.PropTypes.string.isRequired,
+    category: React.PropTypes.shape({
+      slug: React.PropTypes.string.isRequired,
+    }).isRequired,
     slug: React.PropTypes.string.isRequired,
     authors: React.PropTypes.object,
   }),

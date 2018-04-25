@@ -76,31 +76,11 @@ export function mapLegacyIssueSlugsToIssueNumber(slug) {
   }
 }
 
-/* eslint-disable */
-// Modified slightly from ghost/core/server/models/base.js
-export function slugifyPost(postSlug) {
-  // Remove URL reserved chars: `:/?#[]@!$&'()*+,;=` as well as `\%<>|^~£"`
-  let slug = postSlug
-    .replace(/[:\/\?#\[\]@!$&'()*+,;=\\%<>\|\^~£"]/g, '')
-    .replace(/(\s|\.)/g, '-')
-    .replace(/-+/g, '-')
-    .toLowerCase();
-
-  while (slug.charAt(slug.length - 1) === '-') {
-    slug = slug.substr(0, slug.length - 1);
-  }
-  slug = /^(ghost|ghost\-admin|admin|wp\-admin|wp\-login|dashboard|logout|login|signin|signup|signout|register|archive|archives|category|categories|tag|tags|page|pages|post|posts|user|users|rss)$/g // eslint-disable-line max-len
-    .test(slug)
-    ? `${slug}-post`
-    : slug;
-  return slug;
-}
-
 // Modified from ghost/core/server/models/base.js
-export function slugifyStaff(staffSlug) {
+export function slugify(name) {
   // Remove URL reserved chars: `:/?#[]@!$&'()*+,;=` as well as `\%<>|^~£"`
-  let slug = staffSlug
-    .replace(/[:\/\?#\[\]@!$&'()*+,;=\\%<>\|\^~£"]/g, '')
+  let slug = name
+    .replace(/[:/?#[\]@!$&'()*+,;=\\%<>|^~£"]/g, '')
     .replace(/(\s|\.)/g, '-')
     .replace(/-+/g, '-')
     .toLowerCase();
@@ -110,22 +90,6 @@ export function slugifyStaff(staffSlug) {
   }
   return slug;
 }
-
-// For now, this is the same as slugify staff.
-export function slugifyTags(tagSlug) {
-  // Remove URL reserved chars: `:/?#[]@!$&'()*+,;=` as well as `\%<>|^~£"`
-  let slug = tagSlug
-    .replace(/[:\/\?#\[\]@!$&'()*+,;=\\%<>\|\^~£"]/g, '')
-    .replace(/(\s|\.)/g, '-')
-    .replace(/-+/g, '-')
-    .toLowerCase();
-
-  while (slug.charAt(slug.length - 1) === '-') {
-    slug = slug.substr(0, slug.length - 1);
-  }
-  return slug;
-}
-/* eslint-enable */
 
 // this currently only supports parsing links
 export function markdownLength(str) {
