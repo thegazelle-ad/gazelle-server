@@ -5,7 +5,7 @@ import { has } from 'lib/utilities';
 
 /**
  * @typedef PaginationArticle
- * @param {string} slug - The slug of the article
+ * @property {string} slug - The slug of the article
  */
 
 /**

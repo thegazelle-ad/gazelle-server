@@ -67,7 +67,7 @@ export class ArticleListController extends FalcorController {
         'articles',
         'byPage',
         NUM_ARTICLES_IN_PAGE,
-        parseInt(params.page, 10) - 1,
+        parseInt(params.page, 10),
         { length: NUM_ARTICLES_IN_PAGE },
         ['title', 'id', 'teaser', 'published_at'],
       ],
