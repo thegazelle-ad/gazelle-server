@@ -1,7 +1,7 @@
 import Nightmare from 'nightmare';
 
 import { NIGHTMARE_CONFIG } from '__tests__/end-to-end/e2e-constants';
-import { getLoggedInState } from './e2e-admin-utilities';
+import { getLoggedInState, restartServer } from './e2e-admin-utilities';
 
 describe('can unpublish article', () => {
   let nightmare = null;
@@ -33,7 +33,7 @@ describe('can unpublish article', () => {
         expect(path).toBe('/articles/page/1/id/150');
       }));
 
-  it('article is published', () =>
+  it('is article published', () =>
     getLoggedInState(nightmare, '/articles/page/1/id/150')
       .wait(articleEditor)
       .evaluate(
@@ -48,7 +48,7 @@ describe('can unpublish article', () => {
         );
       }));
 
-  it('unpublish article', () =>
+  it('unpublishes article', () =>
     getLoggedInState(nightmare, '/articles/page/1/id/150')
       .wait(articleEditor)
       .click(unpublishedButtonSelector)
@@ -57,9 +57,10 @@ describe('can unpublish article', () => {
       .end()
       .then(path => {
         expect(path).toBe(`/articles/page/1/id/150`);
-      }));
+      })
+      .then(() => restartServer(nightmare)));
 
-  it('article is unpublished', () =>
+  it('is article unpublished', () =>
     getLoggedInState(nightmare, '/articles/page/1/id/150')
       .wait(articleEditor)
       .evaluate(

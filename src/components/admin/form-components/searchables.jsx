@@ -3,6 +3,7 @@ import moment from 'moment';
 import { withFalcorSearch } from 'components/admin/form-components/withFalcorSearch';
 import { withSelector } from 'components/admin/form-components/withSelector';
 import { SearchBar } from 'components/admin/form-components/SearchBar';
+import { has } from 'lib/utilities';
 
 export const SearchableAuthors = withFalcorSearch(
   ['name', 'slug'],
@@ -20,7 +21,7 @@ export const SearchableArticlesWithPubDate = withFalcorSearch(
   ['title', 'slug', 'published_at'],
   item => {
     let date = 'Unpublished';
-    if ('published_at' in item && item.published_at !== null) {
+    if (has.call(item, 'published_at') && item.published_at !== null) {
       date = `Published: ${moment(item.published_at).format('MMM DD, YYYY')}`;
     }
     return `${item.title} - ${date}`;
