@@ -57,8 +57,9 @@ describe('can unpublish article', () => {
       .end()
       .then(path => {
         expect(path).toBe(`/articles/page/1/id/150`);
-      })
-      .then(() => restartServer(nightmare)));
+        nightmare = new Nightmare(NIGHTMARE_CONFIG);
+        return restartServer(nightmare);
+      }));
 
   it('is article unpublished', () =>
     getLoggedInState(nightmare, '/articles/page/1/id/150')
