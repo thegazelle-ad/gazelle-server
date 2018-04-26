@@ -19,7 +19,16 @@ export default class CategoryController extends FalcorController {
         params.category,
         'articles',
         { length: 10 },
-        ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image_url'],
+        ['title', 'teaser', 'issueNumber', 'slug', 'image_url'],
+      ],
+      [
+        'categories',
+        'bySlug',
+        params.category,
+        'articles',
+        { length: 10 },
+        'category',
+        'slug',
       ],
       [
         'categories',

@@ -1,11 +1,8 @@
 /* Falcor */
 import FalcorServer from 'falcor-express';
 import falcor from 'falcor';
-import { Provider as FalcorProvider } from 'react-falcor';
 
 /* React */
-import React from 'react';
-import { renderToString } from 'react-dom/server';
 // used to update the html <head>
 import Helmet from 'react-helmet';
 // components
@@ -13,7 +10,7 @@ import FalcorController from 'lib/falcor/FalcorController';
 
 /* React Router */
 // Serverside rendering functions
-import { match, RouterContext } from 'react-router';
+import { match } from 'react-router';
 // Our custom routes for thegazelle.org
 import routes from 'routes/main-routes';
 
@@ -36,7 +33,6 @@ import {
   nothingAllowedRobotsTxt,
 } from 'lib/utilities';
 import { md5Hash } from 'lib/server-utilities';
-import { injectModelCreateElement } from 'lib/falcor/falcor-utilities';
 
 export default function runMainServer(serverFalcorModel) {
   // Create MD5 hash of static files for better cache performance
@@ -132,36 +128,13 @@ export default function runMainServer(serverFalcorModel) {
       (falcorPaths[0].length === 0 && falcorPaths.length === 1)
     ) {
       return new Promise(resolve => {
-        resolve(
-          buildHtmlString(
-            renderToString(
-              // eslint-disable-next-line react/jsx-filename-extension
-              <FalcorProvider falcor={localModel}>
-                <RouterContext
-                  createElement={injectModelCreateElement(localModel)}
-                  {...renderProps}
-                />
-              </FalcorProvider>,
-            ),
-            localModel.getCache(),
-          ),
-        );
+        resolve(buildHtmlString('', localModel.getCache()));
       });
     }
 
     return localModel
       .preload(...falcorPaths)
-      .then(() =>
-        buildHtmlString(
-          renderToString(
-            <RouterContext
-              createElement={injectModelCreateElement(localModel)}
-              {...renderProps}
-            />,
-          ),
-          localModel.getCache(),
-        ),
-      );
+      .then(() => buildHtmlString('', localModel.getCache()));
   };
 
   // The Gazelle website server

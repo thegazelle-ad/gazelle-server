@@ -35,7 +35,7 @@ const styles = {
 
 const NUM_ARTICLES_IN_PAGE = 50;
 
-export default class ArticleListController extends FalcorController {
+export class ArticleListController extends FalcorController {
   constructor(props) {
     super(props);
     this.getNewPagePath = this.getNewPagePath.bind(this);

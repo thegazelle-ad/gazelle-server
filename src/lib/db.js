@@ -137,77 +137,37 @@ export function infoPagesQuery(slugs, columns) {
   });
 }
 
-/**
- * Fetches direct meta data of articles from the articles database table
- * @param {string} queryField - Indicates which field to query by
- * @param {string[]} queryParams - Array of parameters of type queryField of articles to fetch
- * @param {string[]} columns - Which columns of the articles table to fetch
- * @returns {Promise<Object[]>}
- */
-export async function articleQuery(queryField, queryParams, columns) {
-  const processedColumns = columns.map(col => {
-    // make it compatible for the sql query
-    if (col === 'category') {
-      return 'categories.slug as category';
+export async function articleIssueQuery(ids) {
+  const rows = await database
+    .select('article_id as articleId', 'issue_order as issueNumber')
+    .from('issues_articles_order')
+    .innerJoin('issues', 'issue_id', '=', 'issues.id')
+    .whereIn('article_id', ids)
+    .orderBy('article_id');
+  // We always want to return the first issue the article was published in
+  // and no more (currently we don't support falcor fetching all issues an
+  // article was published in, if needed that's not a problem though)
+  const toDelete = [];
+  rows.forEach((row, index) => {
+    const lastRow = index > 0 ? rows[index - 1] : null;
+    if (lastRow && row.articleId === lastRow.articleId) {
+      if (row.issueNumber < lastRow.issueNumber) {
+        toDelete.push(index - 1);
+      } else if (row.issueNumber > lastRow.issueNumber) {
+        toDelete.push(index);
+      } else {
+        throw new Error(
+          `Data corrupted, article: ${row.articleId} occurs twice in issue ${
+            lastRow.issueNumber
+          }`,
+        );
+      }
     }
-    return `articles.${col}`;
   });
-  // In order to be able to identify the rows we get back we need to include the slug
-  if (!processedColumns.includes(`articles.${queryField}`)) {
-    processedColumns.push(`articles.${queryField}`);
-  }
-  return database
-    .select(...processedColumns)
-    .from('articles')
-    .innerJoin('categories', 'articles.category_id', '=', 'categories.id')
-    .whereIn(`articles.${queryField}`, queryParams);
-}
-
-export function articleIssueQuery(slugs) {
-  // the parameter is the slugs the issueNumber is being requested from
-  return new Promise(resolve => {
-    database
-      .select('issue_order as issueNumber', 'articles.slug as slug')
-      .from('articles')
-      .innerJoin(
-        'issues_articles_order',
-        'issues_articles_order.article_id',
-        '=',
-        'articles.id',
-      )
-      .innerJoin('issues', 'issues.id', '=', 'issues_articles_order.issue_id')
-      .whereIn('articles.slug', slugs)
-      .orderBy('articles.slug')
-      .then(rows => {
-        // We always want to return the first issue the article was published in
-        // and no more (currently we don't support falcor fetching all issues an
-        // article was published in, if needed that's not a problem though)
-        const toDelete = [];
-        const lastRow = null;
-        rows.forEach((row, index) => {
-          if (lastRow && row.slug === lastRow.slug) {
-            if (row.issueNumber < lastRow.issueNumber) {
-              toDelete.push(index - 1);
-            } else if (row.issueNumber > lastRow.issueNumber) {
-              toDelete.push(index);
-            } else {
-              throw new Error(
-                `Data corrupted, article: ${row.slug} occurs twice in issue ${
-                  lastRow.issueNumber
-                }`,
-              );
-            }
-          }
-        });
-        toDelete.reverse().forEach(index => {
-          rows.splice(index, 1);
-        });
-        resolve(rows);
-      })
-      .catch(e => {
-        throw new Error(e);
-      });
+  toDelete.reverse().forEach(index => {
+    rows.splice(index, 1);
   });
+  return rows;
 }
 
 /**
@@ -273,33 +233,11 @@ export function interactiveArticleQuery(slugs, columns) {
   return new Promise(resolve => {
     const processedColumns = columns.map(col => `interactive_meta.${col}`);
     database
-      .select('slug', ...processedColumns)
+      .select('articles.id', ...processedColumns)
       .from('articles')
       .leftJoin('interactive_meta', 'interactive_meta.id', '=', 'articles.id')
       .whereIn('slug', slugs)
       .then(rows => resolve(rows))
-      .catch(e => {
-        throw new Error(e);
-      });
-  });
-}
-
-export function categoryQuery(slugs, columns) {
-  // slugs parameter is an array of category slugs
-  // to fetch the name of
-  return new Promise(resolve => {
-    let processedColumns = columns;
-    if (processedColumns.find(col => col === 'slug') === undefined) {
-      // Copy so as to not change pathSet
-      processedColumns = processedColumns.concat(['slug']);
-    }
-    database
-      .select(...processedColumns)
-      .from('categories')
-      .whereIn('slug', slugs)
-      .then(rows => {
-        resolve(rows);
-      })
       .catch(e => {
         throw new Error(e);
       });
@@ -316,41 +254,6 @@ export function categoryArrayQuery() {
       .orderBy('id', 'desc')
       .then(rows => resolve(_.map(rows, row => row.slug)))
       .catch(e => {
-        throw new Error(e);
-      });
-  });
-}
-
-export function categoryArticleQuery(slugs) {
-  // slugs parameter is an array of category slugs
-  // of which to fetch the articles from
-  // Will return object where keys are category slugs
-  // and values are arrays of articles from newest to oldest
-  return new Promise(resolve => {
-    database
-      .select('articles.slug as articleSlug', 'categories.slug as categorySlug')
-      .from('articles')
-      .innerJoin('categories', 'categories.id', '=', 'articles.category_id')
-      .whereIn('categories.slug', slugs)
-      .whereNotNull('published_at')
-      .orderBy('published_at', 'desc')
-      .then(rows => {
-        // rows is an array of objects with keys articleSlug and categorySlug
-        const data = {};
-        rows.forEach(row => {
-          // This will input them in chronological order as
-          // the query was structured as so.
-          if (!has.call(data, row.categorySlug)) {
-            data[row.categorySlug] = [row.articleSlug];
-          } else {
-            data[row.categorySlug].push(row.articleSlug);
-          }
-        });
-        // database.destroy();
-        resolve(data);
-      })
-      .catch(e => {
-        // database.destroy();
         throw new Error(e);
       });
   });
@@ -667,7 +570,7 @@ or missing category at issue number ${issueNumber} index ${i}`);
           })
           .catch(e => {
             // database.destroy();
-            throw new Error(e);
+            throw e;
           });
       })
       .catch(e => {
@@ -739,7 +642,7 @@ export function trendingQuery() {
   });
 }
 
-export function relatedArticleQuery(slugs) {
+export function relatedArticleQuery(ids) {
   return new Promise(resolve => {
     database
       .select('id')
@@ -752,8 +655,8 @@ export function relatedArticleQuery(slugs) {
         database
           .select(
             'tag_id',
-            'articles.slug',
             'issues_articles_order.issue_id',
+            'articles.id',
             'category_id',
           )
           .from('articles')
@@ -777,34 +680,34 @@ export function relatedArticleQuery(slugs) {
               'issues_articles_order.issue_id',
               '=',
               latestIssueId,
-            ).orWhereIn('slug', slugs);
+            ).orWhereIn('articles.id', ids);
           })
           .then(articleRows => {
             const articles = {};
             articleRows.forEach(post => {
-              const { slug } = post;
-              if (!articles[slug]) {
-                articles[slug] = post;
-                articles[slug].tags = [];
+              const { id } = post;
+              if (!articles[id]) {
+                articles[id] = post;
+                articles[id].tags = [];
               }
               // We could have several instances of the same article if it
               // exists in different issues, but it would only be relevant for the
               // target articles and therefore it's not a problem as we never iterate
               // through the target articles' tags.
               if (post.tag_id) {
-                articles[slug].tags.push(post.tag_id);
+                articles[id].tags.push(post.tag_id);
               }
             });
 
             const results = {};
-            slugs.forEach(slug => {
-              const post = articles[slug];
+            ids.forEach(id => {
+              const post = articles[id];
               if (post === undefined) {
                 // Most likely this means a garbage URL was accessed
                 if (process.env.NODEENV !== 'production') {
                   // eslint-disable-next-line no-console
                   console.warn(
-                    `Article ${slug} couldn't be found in related articles query`,
+                    `Article ${id} couldn't be found in related articles query`,
                   );
                 }
               } else {
@@ -853,7 +756,7 @@ export function relatedArticleQuery(slugs) {
                 // same values, also if there are no articles with related tags
                 // or categories. It should still be deterministic which article
                 // is the first unrelated one in the order
-                results[slug] = ranking.slice(0, 3);
+                results[id] = ranking.slice(0, 3);
               }
             });
             resolve(results);
@@ -954,143 +857,6 @@ export function updateAuthors(articleId, newAuthors) {
   });
 }
 
-export function orderArticlesInIssues(issues) {
-  // Issues is assumed to be an array of integers where
-  // the integers are the ids of issues
-  return new Promise(resolve => {
-    let updatesCalled = 0;
-    let updatesReturned = 0;
-    issues.forEach(issue_id => {
-      // Get the current categories so we know if we have to add new ones
-      // or delete old ones
-      database
-        .select('category_id', 'categories_order')
-        .from('issues_categories_order')
-        .where('issue_id', '=', issue_id)
-        .orderBy('categories_order', 'ASC')
-        .then(categoryRows => {
-          database
-            .select(
-              'issues_articles_order.id as id',
-              'category_id',
-              'article_order',
-            )
-            .from('issues_articles_order')
-            .innerJoin(
-              'articles',
-              'articles.id',
-              '=',
-              'issues_articles_order.article_id',
-            )
-            .where('type', '=', 0)
-            .where('issue_id', '=', issue_id)
-            .orderBy('category_id', 'ASC')
-            .orderBy('issues_articles_order.article_order', 'ASC')
-            .then(articleRows => {
-              let lastCategory = null;
-              let order = 0;
-              const toUpdate = [];
-              const newCategories = [];
-              articleRows.forEach(row => {
-                if (lastCategory !== row.category_id) {
-                  lastCategory = row.category_id;
-                  order = 0;
-                  newCategories.push(row.category_id);
-                }
-                if (order !== row.article_order) {
-                  toUpdate.push({
-                    id: row.id,
-                    update: {
-                      article_order: order,
-                    },
-                  });
-                }
-                order += 1;
-              });
-              updatesCalled += toUpdate.length;
-              toUpdate.forEach(obj => {
-                database('issues_articles_order')
-                  .where('id', '=', obj.id)
-                  .update(obj.update)
-                  .then(() => {
-                    updatesReturned += 1;
-                    if (updatesReturned >= updatesCalled) {
-                      resolve(true);
-                    }
-                  });
-              });
-              // Check if categories are still consistent
-              let newCategoriesWithOrder = [];
-              let consistent = true;
-              categoryRows.forEach(category => {
-                if (
-                  newCategories.find(cat => cat === category.category_id) !==
-                  undefined
-                ) {
-                  newCategoriesWithOrder.push(category);
-                } else {
-                  consistent = false;
-                }
-              });
-              newCategories.forEach(category_id => {
-                if (
-                  newCategoriesWithOrder.find(
-                    cat => cat.category_id === category_id,
-                  ) === undefined
-                ) {
-                  consistent = false;
-                  const foundHole = newCategoriesWithOrder.some(
-                    (cat, index) => {
-                      if (index !== cat.categories_order) {
-                        newCategoriesWithOrder.splice(index, 0, {
-                          category_id,
-                          categories_order: index,
-                        });
-                        return true;
-                      }
-                      return false;
-                    },
-                  );
-                  if (!foundHole) {
-                    newCategoriesWithOrder.push({
-                      category_id,
-                      categories_order: newCategoriesWithOrder.length,
-                    });
-                  }
-                }
-              });
-              if (!consistent) {
-                newCategoriesWithOrder = newCategoriesWithOrder.map(
-                  (cat, index) => ({
-                    ...cat,
-                    categories_order: index,
-                    issue_id,
-                  }),
-                );
-                updatesCalled += 1;
-                // Delete the current categories order and insert the new one
-                database('issues_categories_order')
-                  .where('issue_id', '=', issue_id)
-                  .del()
-                  .then(() => {
-                    database('issues_categories_order')
-                      .insert(newCategoriesWithOrder)
-                      .then(() => {
-                        updatesReturned += 1;
-                        if (updatesReturned >= updatesCalled) {
-                          resolve(true);
-                        }
-                      });
-                  });
-              } else if (updatesCalled === 0) {
-                resolve(true);
-              }
-            });
-        });
-    });
-  });
-}
-
 export function updateMainStaffData(jsonGraphArg) {
   return new Promise(resolve => {
     const updatesCalled = Object.keys(jsonGraphArg).length;
@@ -1183,8 +949,8 @@ export function updateIssueArticles(
                 // We sort them by category so we can keep track of
                 // the order within each category
                 mainArticles.sort((a, b) => {
-                  const categoryA = a.category;
-                  const categoryB = b.category;
+                  const categoryA = a.category.slug;
+                  const categoryB = b.category.slug;
                   if (!categoryA || !categoryB) {
                     throw new Error(
                       'all articles should have a category' +
@@ -1204,8 +970,8 @@ export function updateIssueArticles(
                 mainArticles.forEach((article, index) => {
                   if (index > 0) {
                     if (
-                      mainArticles[index].category !==
-                      mainArticles[index - 1].category
+                      mainArticles[index].category.slug !==
+                      mainArticles[index - 1].category.slug
                     ) {
                       articleIssueOrder = 0;
                     }
@@ -1227,7 +993,7 @@ export function updateIssueArticles(
                     // Get a list of all the categories
                     const seen = {};
                     mainArticles.forEach(article => {
-                      const { category } = article;
+                      const category = article.category.slug;
                       if (!seen[category]) {
                         seen[category] = true;
                       }
@@ -1342,7 +1108,8 @@ export function updateIssueArticles(
                             mainArticles.forEach((article, index) => {
                               if (index === 0) {
                                 // initialize it since mainArticles was non-empty
-                                const category = slugToObject[article.category];
+                                const category =
+                                  slugToObject[article.category.slug];
                                 data.categories = {
                                   [category.index]: {
                                     name: category.name,
@@ -1371,13 +1138,14 @@ export function updateIssueArticles(
                                   },
                                 };
                               } else if (
-                                mainArticles[index].category !==
-                                mainArticles[index - 1].category
+                                mainArticles[index].category.slug !==
+                                mainArticles[index - 1].category.slug
                               ) {
                                 // index > 0
                                 // It's a new category
                                 articleIndex = 0;
-                                const category = slugToObject[article.category];
+                                const category =
+                                  slugToObject[article.category.slug];
                                 data.categories[category.index] = {
                                   name: category.name,
                                   slug: category.slug,
@@ -1405,7 +1173,8 @@ export function updateIssueArticles(
                                 };
                               } else {
                                 // We're just adding to the old category
-                                const category = slugToObject[article.category];
+                                const category =
+                                  slugToObject[article.category.slug];
                                 data.categories[category.index].articles.push({
                                   path: [
                                     'issues',
@@ -1586,28 +1355,10 @@ export function updateIssueCategories(issueNumber, idArray) {
   });
 }
 
-export function addView(slug) {
-  return new Promise(resolve => {
-    database
-      .select('articles.id', 'views')
-      .from('articles')
-      .where('slug', '=', slug)
-      .then(rows => {
-        if (rows.length === 0) {
-          resolve(false);
-        } else {
-          const row = rows[0];
-          const views = row.views + 1;
-          const { id } = row;
-          database('articles')
-            .where('id', '=', id)
-            .update('views', views)
-            .then(() => {
-              resolve(views);
-            });
-        }
-      });
-  });
+export function addView(id) {
+  return database('articles')
+    .where('id', '=', id)
+    .increment('views', 1);
 }
 
 export function addTeam(teamObject) {
@@ -1714,100 +1465,4 @@ export function getSemesterTeams(semesterName, teamIndices) {
 export async function getNumArticles() {
   const rows = await database('articles').count('* as numArticles');
   return rows[0].numArticles;
-}
-
-/**
- * Updates which category an article belongs to
- * @param {Object} jsonGraphArg - An object of type { [slug]: articleUpdateObject }
- * @returns {Promise<string[]>} - Slugs of the articles that had their category changed
- */
-async function updateArticleCategories(jsonGraphArg) {
-  // Apart from restructuring, this operation filters out all
-  // the articles that don't have a category update requested
-  const articleCategoryPairs = _.map(jsonGraphArg, (articleUpdater, slug) => {
-    if (has.call(articleUpdater, 'category')) {
-      return {
-        articleSlug: slug,
-        categorySlug: articleUpdater.category,
-      };
-    }
-    return null;
-  }).filter(x => x !== null);
-  if (articleCategoryPairs.length === 0) {
-    return [];
-  }
-
-  const categorySlugs = _.uniq(articleCategoryPairs.map(x => x.categorySlug));
-  // Get the ids of each of the categories as that's what we'll have to update the foreign key with
-  const categoryRows = await database
-    .select('slug', 'id')
-    .from('categories')
-    .whereIn('slug', categorySlugs);
-
-  const categorySlugToID = {};
-
-  categoryRows.forEach(row => {
-    categorySlugToID[row.slug] = row.id;
-  });
-
-  const updatePromises = articleCategoryPairs.map(pair => {
-    const categoryID = categorySlugToID[pair.categorySlug];
-    const updateObject = { category_id: categoryID };
-    return database('articles')
-      .where('slug', '=', pair.articleSlug)
-      .update(updateObject);
-  });
-  await Promise.all(updatePromises);
-  return articleCategoryPairs.map(x => x.articleSlug);
-}
-
-/**
- * Updates articles directly tied to an article
- * @param {string} keyField - A String which indicates which db field is used as the primary key in jsonGraphArg
- * @param {Object} jsonGraphArg - An object of type { [keyFields]: articleUpdateObject[] }
- * @returns {Promise<boolean>} - Whether the update was a success
- */
-export async function updateArticles(keyField, jsonGraphArg) {
-  const updatePromises = _.map(jsonGraphArg, (articleUpdater, key) => {
-    const processedArticleUpdater = {
-      ...articleUpdater,
-    };
-    // We only store a foreign key to the categories table so we won't update it in this query
-    delete processedArticleUpdater.category;
-    return database('articles')
-      .where(`${keyField}`, '=', key)
-      .update(processedArticleUpdater);
-  });
-  updatePromises.push(updateArticleCategories(jsonGraphArg));
-  const returnValues = await Promise.all(updatePromises);
-  const articlesWithChangedCategory = returnValues[returnValues.length - 1];
-  // If categories changed make sure issue data is still consistent
-  if (articlesWithChangedCategory.length > 0) {
-    const issueRows = await database
-      .distinct('issue_id')
-      .select()
-      .from('issues_articles_order')
-      .innerJoin(
-        'articles',
-        'articles.id',
-        '=',
-        'issues_articles_order.article_id',
-      )
-      .whereIn(`articles.${keyField}`, articlesWithChangedCategory);
-
-    const issuesToUpdate = issueRows.map(row => row.issue_id);
-    // If the articles were actually published in any issues
-    if (issuesToUpdate.length > 0) {
-      const flag = await orderArticlesInIssues(issuesToUpdate);
-      if (!flag) {
-        const msg = `error while reordering articles in issues: ${JSON.stringify(
-          issuesToUpdate,
-        )}`;
-        throw new Error(msg);
-      }
-    }
-  }
-
-  // It hasn't thrown an error yet so it must have been a success
-  return true;
 }

@@ -46,6 +46,8 @@ jobs:
   install_dependencies:
     <<: *defaults
     steps:
+      - attach_workspace:
+          at: ~/.ssh
       - run:
           name: save SHA to a file
           command: echo $CIRCLE_SHA1 > .circle-sha
@@ -201,6 +203,7 @@ workflows:
       - install_dependencies:
           requires:
             - checkout_code
+            - prep_ssh
 
       - unit_test:
           requires:

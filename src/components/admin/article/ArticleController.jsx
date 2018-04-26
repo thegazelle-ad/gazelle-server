@@ -3,7 +3,7 @@ import { browserHistory } from 'react-router';
 import _ from 'lodash';
 
 // Lib
-import { debounce, slugifyStaff, slugifyTags } from 'lib/utilities';
+import { debounce } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 
 // Custom Components
@@ -54,7 +54,7 @@ class ArticleController extends FalcorController {
       authors: [],
       tags: [],
       teaser: '',
-      category: '',
+      category: null,
       imageUrl: '',
     });
 
@@ -113,16 +113,9 @@ class ArticleController extends FalcorController {
         'articles',
         'byId',
         params.id,
-        [
-          'title',
-          'slug',
-          'category',
-          'teaser',
-          'image_url',
-          'id',
-          'published_at',
-        ],
+        ['title', 'slug', 'teaser', 'image_url', 'id', 'published_at'],
       ],
+      ['articles', 'byId', params.id, 'category', 'id'],
       [
         'articles',
         'byId',
@@ -139,7 +132,7 @@ class ArticleController extends FalcorController {
         { length: 10 },
         ['id', 'name', 'slug'],
       ],
-      ['categories', 'byIndex', { length: 30 }, ['name', 'slug']],
+      ['categories', 'byIndex', { length: 30 }, ['name', 'id']],
     ];
   }
 
@@ -148,7 +141,7 @@ class ArticleController extends FalcorController {
     const title = article.title || '';
     const slug = article.slug || '';
     const teaser = article.teaser || '';
-    const category = article.category || '';
+    const category = _.get(article, 'category.id', null);
     const imageUrl = article.image_url || '';
     const authors = _.toArray(article.authors);
     const tags = _.toArray(article.tags);
@@ -210,6 +203,7 @@ class ArticleController extends FalcorController {
     const pathname = `/articles/page/${page}`;
 
     const location = { pathname, state: { refresh: this.state.refresh } };
+    this.safeSetState({ refresh: false });
     browserHistory.push(location);
   }
 
@@ -258,7 +252,10 @@ class ArticleController extends FalcorController {
     }
 
     // Check the special case of someone trying to reassign a category as none
-    if (this.state.category === 'none' && falcorData.category !== 'none') {
+    if (
+      this.state.category === null &&
+      _.get(falcorData, 'category.id', null) !== null
+    ) {
       this.props.displayAlert(
         'Save cancelled, you cannot reset a category to none.' +
           ' If you wish to have this feature added, speak to the developers',
@@ -391,7 +388,7 @@ class ArticleController extends FalcorController {
 
       // If it is a new article it won't have any meta data yet so we use the default
       const categories = _.toArray(this.state.data.categories.byIndex);
-      categories.push({ name: 'none', slug: 'none' });
+      categories.push({ name: 'none', id: null });
       const actionButtons = [
         <SaveButton
           onClick={this.handleSaveChanges}
@@ -460,7 +457,6 @@ class ArticleController extends FalcorController {
               onUpdate={this.updateAuthors}
               disabled={this.state.saving}
               mode="staff"
-              slugify={slugifyStaff}
             />
             <br />
             <Divider />
@@ -472,7 +468,6 @@ class ArticleController extends FalcorController {
               disabled={this.state.saving}
               mode="tags"
               enableAdd
-              slugify={slugifyTags}
             />
             <br />
             <Divider />

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import update from 'react-addons-update';
 import _ from 'lodash';
 
-import { capFirstLetter } from 'lib/utilities';
+import { capFirstLetter, slugify } from 'lib/utilities';
 import { getDisplayName } from 'lib/higher-order-helpers';
 
 // material-ui
@@ -64,7 +64,7 @@ export const withSelector = Finder => {
         this.props.elements.find(
           baseObject =>
             !('slug' in baseObject)
-              ? this.props.slugify(baseObject.name) === slug
+              ? slugify(baseObject.name) === slug
               : baseObject.slug === slug,
         ) !== undefined;
 
@@ -84,12 +84,12 @@ export const withSelector = Finder => {
       // disabled this if saving
       if (this.props.disabled) return;
 
-      const objectSlug = !slug ? this.props.slugify(title) : slug;
+      const objectSlug = !slug ? slugify(title) : slug;
 
       const index = this.props.elements.findIndex(
         baseObject =>
           !('slug' in baseObject)
-            ? this.props.slugify(baseObject.name) === objectSlug
+            ? slugify(baseObject.name) === objectSlug
             : baseObject.slug === objectSlug,
       );
       if (index === -1) {
@@ -151,18 +151,18 @@ export const withSelector = Finder => {
         name: PropTypes.string.isRequired,
       }),
     ).isRequired,
-    onChange: PropTypes.func.isRequired,
     onUpdate: PropTypes.func.isRequired,
     displayAlert: PropTypes.func.isRequired,
-    slugify: PropTypes.func.isRequired,
     // eslint-disable-next-line react/require-default-props
     mode: PropTypes.oneOf(['staff', 'articles', 'tags']).isRequired,
+    onChange: PropTypes.func,
     disabled: PropTypes.bool,
     ...Finder.propTypes,
   };
 
   Selector.defaultProps = {
     disabled: false,
+    onChange: () => undefined,
   };
 
   Selector.displayName = `withSelector(${getDisplayName(Finder)})`;
