@@ -20,10 +20,11 @@ const styles = {
 
 export class ArticleList extends BaseComponent {
   render() {
+    const ID = 'articles-list';
     if (this.props.elements) {
       const { elements } = this.props;
       return (
-        <Paper style={styles.paper} zDepth={1}>
+        <Paper style={styles.paper} zDepth={1} id={ID}>
           <List style={{ overflow: 'auto', maxHeight: '400px' }}>
             <Subheader>Recent Articles</Subheader>
             {_.map(elements, this.props.createElement)}

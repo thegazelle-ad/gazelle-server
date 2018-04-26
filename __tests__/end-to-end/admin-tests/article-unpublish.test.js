@@ -25,7 +25,7 @@ describe('can unpublish article', () => {
     getLoggedInState(nightmare, '/articles/page/1')
       .wait(articlesListSelector)
       // We click on the Material UI element where the onClick handler is actually set
-      .click(`${articlesListSelector} a:first-child`)
+      .click(`${articlesListSelector} a`)
       .wait(articleEditor)
       .path()
       .end()
@@ -36,9 +36,16 @@ describe('can unpublish article', () => {
   it('article is published', () =>
     getLoggedInState(nightmare, '/articles/page/1/id/150')
       .wait(articleEditor)
-      .evaluate(() => document.querySelector(unpublishTextSelector).innerText)
+      .evaluate(
+        sel => document.querySelector(sel).innerText,
+        unpublishTextSelector,
+      )
       .then(text => {
-        expect(text).to.include('This article was published on June 04, 2062.');
+        expect(text).toEqual(
+          expect.stringContaining(
+            'This article was published on June 04, 2062.',
+          ),
+        );
       }));
 
   it('unpublish article', () =>
@@ -55,10 +62,15 @@ describe('can unpublish article', () => {
   it('article is unpublished', () =>
     getLoggedInState(nightmare, '/articles/page/1/id/150')
       .wait(articleEditor)
-      .evaluate(() => document.querySelector(unpublishTextSelector).innerText)
+      .evaluate(
+        sel => document.querySelector(sel).innerText,
+        unpublishTextSelector,
+      )
       .then(text => {
-        expect(text).to.include(
-          'The article has yet to be published. It will be published automatically when you publish the issue that contains it.',
+        expect(text).toEqual(
+          expect.stringContaining(
+            'The article has yet to be published. It will be published automatically when you publish the issue that contains it.',
+          ),
         );
       }));
 });

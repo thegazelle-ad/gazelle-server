@@ -403,88 +403,89 @@ class ArticleController extends FalcorController {
 
       const articleEditorID = 'article-editor';
       return (
-        <Dialog
-          title="Article Editor"
-          actions={actionButtons}
-          open
-          id={articleEditorID}
-          modal={false}
-          autoScrollBodyContent
-          onRequestClose={this.handleDialogClose}
-        >
-          {this.state.saving ? <LoadingOverlay /> : null}
-          <ShortRequiredTextField
-            floatingLabelText="Title"
-            value={this.state.title}
-            onUpdate={this.updateTitle}
-            disabled={this.state.saving}
-          />
-          <ShortRequiredTextField
-            floatingLabelText={`Slug${
-              !article.published_at
-                ? ''
-                : ' - You cannot edit the slug of a published article. Unpublish this article to edit the slug'
-            }`}
-            value={this.state.slug}
-            onUpdate={this.updateSlug}
-            disabled={this.state.saving || Boolean(article.published_at)}
-            fullWidth
-          />
-          <ListSelector
-            label="Category"
-            chosenElement={this.state.category}
-            update={this.updateCategory}
-            elements={categories}
-            disabled={this.state.saving}
-            fullWidth
-          />
-          <br />
-          <HttpsUrlField
-            floatingLabelText="Image"
-            value={this.state.imageUrl}
-            onUpdate={this.updateImage}
-            disabled={this.state.saving}
-            fullWidth
-          />
-          <br />
-          <MaxLenTextField
-            name="teaser"
-            value={this.state.teaser}
-            maxLen={MAX_TEASER_LENGTH}
-            onUpdate={this.updateTeaser}
-          />
-          <br />
-          <SearchableAuthorsSelector
-            elements={this.state.authors}
-            onChange={this.debouncedHandleFormStateChanges}
-            onUpdate={this.updateAuthors}
-            disabled={this.state.saving}
-            mode="staff"
-            slugify={slugifyStaff}
-          />
-          <br />
-          <Divider />
-          <br />
-          <SearchableTagsSelector
-            elements={this.state.tags}
-            onChange={this.debouncedHandleFormStateChanges}
-            onUpdate={this.updateTags}
-            disabled={this.state.saving}
-            mode="tags"
-            enableAdd
-            slugify={slugifyTags}
-          />
-          <br />
-          <Divider />
-          <br />
-          <UnpublishButton
-            save={this.save}
-            id={this.props.params.id}
-            falcorUpdate={this.falcorUpdate}
-            style={styles.buttons}
-            published_at={article.published_at}
-          />
-        </Dialog>
+        <div id={articleEditorID}>
+          <Dialog
+            title="Article Editor"
+            actions={actionButtons}
+            open
+            modal={false}
+            autoScrollBodyContent
+            onRequestClose={this.handleDialogClose}
+          >
+            {this.state.saving ? <LoadingOverlay /> : null}
+            <ShortRequiredTextField
+              floatingLabelText="Title"
+              value={this.state.title}
+              onUpdate={this.updateTitle}
+              disabled={this.state.saving}
+            />
+            <ShortRequiredTextField
+              floatingLabelText={`Slug${
+                !article.published_at
+                  ? ''
+                  : ' - You cannot edit the slug of a published article. Unpublish this article to edit the slug'
+              }`}
+              value={this.state.slug}
+              onUpdate={this.updateSlug}
+              disabled={this.state.saving || Boolean(article.published_at)}
+              fullWidth
+            />
+            <ListSelector
+              label="Category"
+              chosenElement={this.state.category}
+              update={this.updateCategory}
+              elements={categories}
+              disabled={this.state.saving}
+              fullWidth
+            />
+            <br />
+            <HttpsUrlField
+              floatingLabelText="Image"
+              value={this.state.imageUrl}
+              onUpdate={this.updateImage}
+              disabled={this.state.saving}
+              fullWidth
+            />
+            <br />
+            <MaxLenTextField
+              name="teaser"
+              value={this.state.teaser}
+              maxLen={MAX_TEASER_LENGTH}
+              onUpdate={this.updateTeaser}
+            />
+            <br />
+            <SearchableAuthorsSelector
+              elements={this.state.authors}
+              onChange={this.debouncedHandleFormStateChanges}
+              onUpdate={this.updateAuthors}
+              disabled={this.state.saving}
+              mode="staff"
+              slugify={slugifyStaff}
+            />
+            <br />
+            <Divider />
+            <br />
+            <SearchableTagsSelector
+              elements={this.state.tags}
+              onChange={this.debouncedHandleFormStateChanges}
+              onUpdate={this.updateTags}
+              disabled={this.state.saving}
+              mode="tags"
+              enableAdd
+              slugify={slugifyTags}
+            />
+            <br />
+            <Divider />
+            <br />
+            <UnpublishButton
+              save={this.save}
+              id={this.props.params.id}
+              falcorUpdate={this.falcorUpdate}
+              style={styles.buttons}
+              published_at={article.published_at}
+            />
+          </Dialog>
+        </div>
       );
     }
     return (
