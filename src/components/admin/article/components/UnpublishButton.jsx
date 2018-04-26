@@ -29,8 +29,10 @@ export default class UnpublishButton extends React.Component {
   }
 
   render() {
+    const textID = 'unpublished-text';
+    const unpublishedButtonID = 'unpublished-button';
     return (
-      <div>
+      <div id={textID}>
         {this.props.published_at !== null
           ? `This article was published on ${moment(
               this.props.published_at,
@@ -39,6 +41,7 @@ export default class UnpublishButton extends React.Component {
             'when you publish the issue that contains it.'}
         <br />
         <RaisedButton
+          id={unpublishedButtonID}
           label="Unpublish Article"
           secondary
           style={this.props.style}

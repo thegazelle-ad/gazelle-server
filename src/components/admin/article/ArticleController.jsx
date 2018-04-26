@@ -401,11 +401,13 @@ class ArticleController extends FalcorController {
         />,
       ];
 
+      const articleEditorID = 'article-editor';
       return (
         <Dialog
           title="Article Editor"
           actions={actionButtons}
           open
+          id={articleEditorID}
           modal={false}
           autoScrollBodyContent
           onRequestClose={this.handleDialogClose}
