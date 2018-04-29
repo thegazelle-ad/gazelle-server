@@ -28,7 +28,6 @@ export async function getPaginatedArticle(database, pageLength, pageIndex) {
 }
 
 /**
- *
  * @param {any} database  - The knex instance to query on
  * @param {Object} articleData - The data for the article to be created
  * @param {string} articleData.slug
@@ -36,17 +35,22 @@ export async function getPaginatedArticle(database, pageLength, pageIndex) {
  * @param {string} [articleData.teaser]
  * @param {string} [articleData.imageUrl]
  * @param {number} [articleData.category] - The id of the category
+ * @param {Object[]} [articleData.authors]
+ * @param {number} [articleData.authors.id]
+ * @param {Object[]} [articleData.tags]
+ * @param {number} [articleData.tags.id]
  * @returns {Promise<boolean>} - Whether the creation was a success
  */
 export async function createNewArticle(database, articleData) {
   // We first build the article object used for creation
-  const articleRow = {};
-  if (articleData.slug) {
-    articleRow.slug = articleData.slug;
+  if (!articleData.slug || !articleData.title) {
+    logger.warn('Someone tried creating an article without slug or title');
+    throw new Error('Both slug and title must be provided for new articles');
   }
-  if (articleData.title) {
-    articleRow.title = articleData.title;
-  }
+  const articleRow = {
+    slug: articleData.slug,
+    title: articleData.title,
+  };
   if (articleData.teaser) {
     articleRow.teaser = articleData.teaser;
   }
@@ -58,9 +62,13 @@ export async function createNewArticle(database, articleData) {
   }
   // Remember to set created time
   articleRow.created_at = new Date();
+  let createdArticle;
   try {
     const [id] = await database('articles').insert(articleRow);
-    articleRow.id = id;
+    createdArticle = {
+      ...articleRow,
+      id,
+    };
   } catch (e) {
     logger.error(e);
     throw new Error(buildErrorMessage());
@@ -76,14 +84,14 @@ export async function createNewArticle(database, articleData) {
       }
       return {
         author_id: authorObject.id,
-        article_id: articleRow.id,
+        article_id: createdArticle.id,
       };
     });
     inserts.push(database('authors_articles').insert(authorArticleRows));
-    articleRow.authors = authorArticleRows;
+    createdArticle.authors = authorArticleRows;
   }
   if (_.get(articleData.tags, 'length', 0) > 0) {
-    const articleTagRows = articleData.authors.map(tagObject => {
+    const articleTagRows = articleData.tags.map(tagObject => {
       if (!tagObject.id) {
         logger.error(
           new Error('All tags in new article must have an id passed'),
@@ -92,11 +100,11 @@ export async function createNewArticle(database, articleData) {
       }
       return {
         tag_id: tagObject.id,
-        article_id: articleRow.id,
+        article_id: createdArticle.id,
       };
     });
     inserts.push(database('articles_tags').insert(articleTagRows));
-    articleRow.tags = articleTagRows;
+    createdArticle.tags = articleTagRows;
   }
   try {
     await Promise.all(inserts);
@@ -104,7 +112,7 @@ export async function createNewArticle(database, articleData) {
     logger.error(e);
     throw new Error(buildErrorMessage());
   }
-  return articleRow;
+  return createdArticle;
 }
 
 /**

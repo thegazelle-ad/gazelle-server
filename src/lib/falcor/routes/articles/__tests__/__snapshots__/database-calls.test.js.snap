@@ -1,5 +1,112 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`createNewArticle errors on invalid author passed 1`] = `
+Array [
+  Array [
+    [Error: All authors in new article must have an id passed],
+  ],
+]
+`;
+
+exports[`createNewArticle errors on invalid tag passed 1`] = `
+Array [
+  Array [
+    [Error: All tags in new article must have an id passed],
+  ],
+]
+`;
+
+exports[`createNewArticle has expected input and output 1`] = `
+Object {
+  "authors": Array [
+    Object {
+      "article_id": 1,
+      "author_id": 1,
+    },
+    Object {
+      "article_id": 1,
+      "author_id": 2,
+    },
+  ],
+  "category_id": 3,
+  "created_at": 2018-04-29T10:48:00.085Z,
+  "id": 1,
+  "image_url": "https://google.com/img.png",
+  "slug": "test-slug",
+  "tags": Array [
+    Object {
+      "article_id": 1,
+      "tag_id": 5,
+    },
+    Object {
+      "article_id": 1,
+      "tag_id": 6,
+    },
+  ],
+  "teaser": "test-teaser",
+  "title": "test-title",
+}
+`;
+
+exports[`createNewArticle has expected input and output 2`] = `
+Array [
+  Array [
+    Object {
+      "category_id": 3,
+      "created_at": 2018-04-29T10:48:00.085Z,
+      "image_url": "https://google.com/img.png",
+      "slug": "test-slug",
+      "teaser": "test-teaser",
+      "title": "test-title",
+    },
+  ],
+  Array [
+    Array [
+      Object {
+        "article_id": 1,
+        "author_id": 1,
+      },
+      Object {
+        "article_id": 1,
+        "author_id": 2,
+      },
+    ],
+  ],
+  Array [
+    Array [
+      Object {
+        "article_id": 1,
+        "tag_id": 5,
+      },
+      Object {
+        "article_id": 1,
+        "tag_id": 6,
+      },
+    ],
+  ],
+]
+`;
+
+exports[`createNewArticle throws without any slug 1`] = `"Both slug and title must be provided for new articles"`;
+
+exports[`createNewArticle throws without any slug 2`] = `
+Array [
+  Array [
+    "Someone tried creating an article without slug or title",
+  ],
+]
+`;
+
+exports[`createNewArticle throws without any title 1`] = `"Both slug and title must be provided for new articles"`;
+
+exports[`createNewArticle throws without any title 2`] = `
+Array [
+  Array [
+    "Someone tried creating an article without slug or title",
+  ],
+]
+`;
+
 exports[`getPaginatedArticle fetches expected rows from database 1`] = `
 Array [
   Object {

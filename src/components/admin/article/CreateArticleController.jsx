@@ -22,6 +22,7 @@ import {
   SearchableTagsSelector,
 } from 'components/admin/form-components/searchables';
 import { FullPageLoadingOverlay } from 'components/admin/FullPageLoadingOverlay';
+import LoadingOverlay from 'components/admin/LoadingOverlay';
 
 // Material UI
 import Dialog from 'material-ui/Dialog';
@@ -62,6 +63,7 @@ class CreateArticleController extends React.Component {
       teaser: '',
       category: null,
       imageUrl: '',
+      saving: false,
     };
   }
 
@@ -112,6 +114,7 @@ class CreateArticleController extends React.Component {
     ]);
 
     let newArticle;
+    this.setState({ saving: true });
     try {
       const jsonGraph = await this.props.falcor.call(
         ['articles', 'createNew'],
@@ -130,6 +133,9 @@ class CreateArticleController extends React.Component {
       logger.error(e);
       await this.props.displayAlert(buildErrorMessage());
       return;
+    } finally {
+      // Finally runs even if we return from the function in try and catch
+      setTimeout(() => this.setState({ saving: false }), 100 * 1000);
     }
     const pathname = getArticlePath(newArticle.id, this.props.params.page);
     browserHistory.push({ pathname, state: { refresh: true } });
@@ -152,16 +158,19 @@ class CreateArticleController extends React.Component {
         actions={actionButtons}
         onRequestClose={this.handleDialogClose}
       >
+        {this.state.saving && <LoadingOverlay />}
         <ShortRequiredTextField
           floatingLabelText="Title"
           value={this.state.title}
           onUpdate={this.updateTitle}
+          disabled={this.state.saving}
         />
         <br />
         <ShortRequiredTextField
           floatingLabelText="Slug"
           value={this.state.slug}
           onUpdate={this.updateSlug}
+          disabled={this.state.saving}
         />
         <br />
         <ListSelector
@@ -169,6 +178,7 @@ class CreateArticleController extends React.Component {
           chosenElement={this.state.category}
           update={this.updateCategory}
           elements={this.props.categories}
+          disabled={this.state.saving}
         />
         <br />
         <HttpsUrlField
@@ -176,6 +186,7 @@ class CreateArticleController extends React.Component {
           value={this.state.imageUrl}
           onUpdate={this.updateImage}
           fullWidth
+          disabled={this.state.saving}
         />
         <br />
         <MaxLenTextField
@@ -183,6 +194,7 @@ class CreateArticleController extends React.Component {
           value={this.state.teaser}
           maxLen={MAX_TEASER_LENGTH}
           onUpdate={this.updateTeaser}
+          disabled={this.state.saving}
         />
         <br />
         <SearchableAuthorsSelector
@@ -197,6 +209,7 @@ class CreateArticleController extends React.Component {
           onUpdate={this.updateTags}
           mode="tags"
           enableAdd
+          disabled={this.state.saving}
         />
       </Dialog>
     );

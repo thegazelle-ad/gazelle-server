@@ -78,5 +78,6 @@ module.exports = {
     // I find them overly restrictive, others simply because I don't want to fix them right now
     'import/first': 'off',
     'import/prefer-default-export': 'off',
+    'no-underscore-dangle': 'off',
   },
 };
