@@ -4,6 +4,7 @@ import { createNewArticle } from './database-calls';
 import { buildErrorMessage } from 'lib/error-helpers';
 import { has } from 'lib/utilities';
 import falcor from 'falcor';
+import _ from 'lodash';
 
 const $ref = falcor.Model.ref;
 
@@ -41,7 +42,7 @@ export const routes = [
       }
       const pathPrefix = ['articles', 'byId', createdArticle.id];
       let processedFields = 0;
-      const standardFields = ['slug', 'title', 'teaser'];
+      const standardFields = ['id', 'slug', 'title', 'teaser', 'image_url'];
       const results = standardFields
         .map(field => {
           if (has.call(createdArticle, field)) {
@@ -54,11 +55,11 @@ export const routes = [
           return null;
         })
         .filter(x => x !== null);
-      if (has.call(createdArticle, 'category')) {
+      if (has.call(createdArticle, 'category_id')) {
         processedFields += 1;
         results.push({
           path: pathPrefix.concat(['category']),
-          value: $ref(['categories', 'byId', createdArticle.id]),
+          value: $ref(['categories', 'byId', createdArticle.category_id]),
         });
       }
       if (has.call(createdArticle, 'authors')) {
@@ -80,9 +81,16 @@ export const routes = [
         );
       }
 
-      if (processedFields !== Object.keys(createdArticle).length) {
+      if (
+        processedFields !==
+        Object.keys(_.omit(createdArticle, ['created_at'])).length
+      ) {
         logger.warn(
-          new Error('Expected every key from the created article to be used'),
+          new Error(
+            `Expected every key from the created article to be used\nProcessed fields: ${JSON.stringify(
+              processedFields,
+            )}\nArticle Fields: ${JSON.stringify(Object.keys(createdArticle))}`,
+          ),
         );
       }
 
@@ -90,6 +98,7 @@ export const routes = [
         path: ['articles', 'byPage'],
         invalidated: true,
       });
+      return results;
     },
   },
 ];

@@ -54,7 +54,7 @@ export async function createNewArticle(database, articleData) {
     articleRow.image_url = articleData.imageUrl;
   }
   if (articleData.category > 0) {
-    articleRow.category = articleData.category;
+    articleRow.category_id = articleData.category;
   }
   // Remember to set created time
   articleRow.created_at = new Date();
