@@ -3,6 +3,7 @@ import { browserHistory } from 'react-router';
 import _ from 'lodash';
 import Plain from 'slate-plain-serializer';
 import showdown from 'showdown';
+import moment from 'moment';
 
 // Lib
 import { debounce } from 'lib/utilities';
@@ -399,32 +400,32 @@ class ArticleController extends FalcorController {
       grid: {
         display: 'grid',
         gridGap: '10px',
-        gridTemplateColumns: '20% 30% 50%',
+        gridTemplateColumns: '30% 70%',
         gridTemplateRows: '5% 85% 10%',
         gridTemplateAreas:
-          '"header header header" "sidebar content content" "sidebar negative positive"',
+          '"header header" "content content" "negative positive"',
         height: '80vh',
         marginTop: '5vh',
         padding: '2vmax',
       },
       header: { gridArea: 'header' },
-      content: { gridArea: 'content' },
       positive: { gridArea: 'positive' },
       negative: { gridArea: 'negative' },
-      sidebar: {
-        padding: '5px',
-        /*  TODO: Make SearchBar scroll options into view
-         * When a user searches a tag at the bottom, the options are effectively hidden this padding-bottom
-         * makes this slightly better, but this should be replaced with a scrollIntoView on SearchBar expansion 
-         */
-        paddingBottom: '50px',
-        marginBottom: '5%',
-        width: '100%',
-        gridArea: 'sidebar',
-        overflowX: 'hidden',
-        overflowY: 'scroll',
+      content: {
         background:
           'linear-gradient(to top, rgba(0, 0, 0, .2) 0%, rgba(0, 0, 0, 0) 2%)',
+        display: 'flex',
+        flexWrap: 'wrap',
+        gridArea: 'content',
+        justifyContent: 'space-between',
+        overflowX: 'hidden',
+        overflowY: 'scroll',
+      },
+      contentStyles: {
+        twoThirds: { width: '65%' },
+        oneThird: { width: '32%' },
+        half: { width: '48.5%' },
+        fullWidth: { width: '97%' },
       },
       helpText: {
         color: 'rgba(0, 0, 0, 0.4)',
@@ -463,6 +464,20 @@ class ArticleController extends FalcorController {
 
           <div style={styles.header}>
             <h2 style={{ display: 'inline' }}>Article Editor</h2>
+            <span
+              style={{
+                color: 'rgba(0, 0, 0, 0.5)',
+                fontSize: '0.8vw',
+                marginLeft: '1vw',
+              }}
+            >
+              {this.props.published_at !== null
+                ? `Published on ${moment(this.props.published_at).format(
+                    'MMMM DD, YYYY',
+                  )}.`
+                : 'This article is not published'}
+            </span>
+
             <FlatButton
               style={styles.exitButton}
               label="Return to List"
@@ -471,44 +486,49 @@ class ArticleController extends FalcorController {
               onClick={this.handleDialogClose}
             />
           </div>
-          <div style={styles.sidebar}>
+          <div style={styles.content}>
             <ShortRequiredTextField
               floatingLabelText="Title"
+              style={styles.contentStyles.oneThird}
               value={this.state.title}
               onUpdate={this.updateTitle}
               disabled={this.state.saving}
             />
-            <ShortRequiredTextField
-              floatingLabelText="Slug"
-              value={this.state.slug}
-              onUpdate={this.updateSlug}
-              disabled={this.state.saving || Boolean(article.published_at)}
-              fullWidth
-            />
-            <span style={styles.helpText}>
-              {!article.published_at
-                ? ''
-                : 'You cannot edit the slug of a published article.'}
-            </span>
+            <div style={styles.contentStyles.twoThirds}>
+              <ShortRequiredTextField
+                floatingLabelText="Slug"
+                value={this.state.slug}
+                onUpdate={this.updateSlug}
+                disabled={this.state.saving || Boolean(article.published_at)}
+                fullWidth
+              />
+              <br />
+              <span style={styles.helpText}>
+                {!article.published_at
+                  ? ''
+                  : 'You cannot edit the slug of a published article.'}
+              </span>
+            </div>
             <ListSelector
               label="Category"
+              style={styles.contentStyles.oneThird}
               chosenElement={this.state.category}
               update={this.updateCategory}
               elements={categories}
               disabled={this.state.saving}
               fullWidth
             />
-            <br />
             <HttpsUrlField
               floatingLabelText="Image"
+              style={styles.contentStyles.twoThirds}
               value={this.state.imageUrl}
               onUpdate={this.updateImage}
               disabled={this.state.saving}
               fullWidth
             />
-            <br />
             <MaxLenTextField
               name="teaser"
+              style={styles.contentStyles.fullWidth}
               value={this.state.teaser}
               maxLen={MAX_TEASER_LENGTH}
               onUpdate={this.updateTeaser}
@@ -520,6 +540,8 @@ class ArticleController extends FalcorController {
               onUpdate={this.updateAuthors}
               disabled={this.state.saving}
               mode="staff"
+              style={styles.contentStyles.half}
+              fullWidth
             />
             <SearchableTagsSelector
               elements={this.state.tags}
@@ -527,15 +549,29 @@ class ArticleController extends FalcorController {
               onUpdate={this.updateTags}
               disabled={this.state.saving}
               mode="tags"
+              style={styles.contentStyles.half}
+              fullWidth
               enableAdd
             />
-          </div>
-          <div style={styles.content}>
-            <MarkdownEditor
-              zIndex={2}
-              onUpdate={this.updateMarkdown}
-              value={this.state.markdown}
-            />
+            <div style={styles.contentStyles.fullWidth}>
+              <p
+                style={{
+                  color: 'rgba(0, 0, 0, 0.3)',
+                  lineHeight: '22px',
+                  fontSize: '12px',
+                  marginTop: 0,
+                  marginBottom: 10,
+                }}
+              >
+                Article Content
+              </p>
+              <MarkdownEditor
+                zIndex={2}
+                style={{ margin: '1%' }}
+                onUpdate={this.updateMarkdown}
+                value={this.state.markdown}
+              />
+            </div>
           </div>
           <div style={styles.negative}>
             <UnpublishButton

@@ -142,11 +142,12 @@ export const withSelector = Finder => {
       );
 
       return (
-        <div>
+        <div style={this.props.style}>
           <br />
           <p
             style={{
-              color: 'rgba(0, 0, 0, 0.5)',
+              color: 'rgba(0, 0, 0, 0.3)',
+              fontSize: '12px',
               lineHeight: '22px',
               marginTop: 0,
               marginBottom: 10,

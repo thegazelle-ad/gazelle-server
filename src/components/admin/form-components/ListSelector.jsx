@@ -19,8 +19,7 @@ export default class ListSelector extends React.Component {
         value={this.props.chosenElement || 'none'}
         onChange={this.onChange}
         disabled={this.props.disabled}
-        autoWidth={false}
-        style={{ width: 200 }}
+        style={this.props.style}
       >
         {this.props.elements.map(type => (
           <MenuItem value={type.id} key={type.id} primaryText={type.name} />
@@ -41,10 +40,12 @@ ListSelector.propTypes = {
   label: PropTypes.string,
   disabled: PropTypes.bool,
   chosenElement: PropTypes.number,
+  style: PropTypes.shape({}),
 };
 
 ListSelector.defaultProps = {
   label: '',
   disabled: false,
   chosenElement: undefined,
+  style: {},
 };

@@ -4,15 +4,6 @@ import { Editor } from 'slate-react';
 import Paper from 'material-ui/Paper';
 import { GazellePlugin } from './GazellePlugin';
 
-const styles = {
-  paper: {
-    width: '100%',
-    height: '100%',
-    overflowY: 'scroll',
-  },
-  editor: { padding: 10, overflowY: 'scroll' },
-};
-
 export class MarkdownEditor extends React.Component {
   constructor(props) {
     super(props);
@@ -25,6 +16,13 @@ export class MarkdownEditor extends React.Component {
   };
 
   render() {
+    const styles = {
+      paper: {
+        ...this.props.style,
+      },
+      editor: { padding: 10, overflowY: 'scroll' },
+    };
+
     return (
       <Paper style={styles.paper} zIndex={this.props.zIndex}>
         <Editor
@@ -43,9 +41,11 @@ export class MarkdownEditor extends React.Component {
 MarkdownEditor.propTypes = {
   value: PropTypes.shape({}).isRequired,
   onUpdate: PropTypes.func.isRequired,
+  style: PropTypes.shape({}),
   zIndex: PropTypes.number,
 };
 
 MarkdownEditor.defaultProps = {
   zIndex: 0,
+  style: {},
 };
