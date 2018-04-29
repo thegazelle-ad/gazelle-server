@@ -134,7 +134,6 @@ export class ArticleListController extends FalcorController {
       const data = this.state.data.articles.byPage[NUM_ARTICLES_IN_PAGE][page];
       const { length } = this.state.data.articles;
       const maxPage = Math.ceil(length / NUM_ARTICLES_IN_PAGE);
-
       return (
         <div>
           <h1>Articles</h1>

@@ -109,9 +109,9 @@ export default function runAdminServer(serverFalcorModel) {
 
   app.use(allowCrossDomain);
 
-  const RESTART_SERVERS_PATH_NAME = `${
-    process.env.ROOT_DIRECTORY
-  }/scripts/restart-servers.sh`;
+  const RESTART_SERVERS_PATH_NAME = JSON.stringify(
+    `${process.env.ROOT_DIRECTORY}/scripts/restart-servers.sh`,
+  );
 
   let isRestarted = false;
 
