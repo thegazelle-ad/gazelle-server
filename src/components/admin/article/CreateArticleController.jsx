@@ -208,7 +208,6 @@ class CreateArticleController extends React.Component {
           elements={this.state.tags}
           onUpdate={this.updateTags}
           mode="tags"
-          enableAdd
           disabled={this.state.saving}
         />
       </Dialog>
