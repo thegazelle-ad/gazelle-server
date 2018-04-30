@@ -1,15 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`can unpublish article is article published 1`] = `
-"This article was published on May 31, 2000.
-
-UNPUBLISH ARTICLE
+"
+UNPUBLISH
 "
 `;
 
 exports[`can unpublish article is article unpublished 1`] = `
-"The article has yet to be published. It will be published automatically when you publish the issue that contains it.
-
-UNPUBLISH ARTICLE
+"
+UNPUBLISH
 "
 `;
