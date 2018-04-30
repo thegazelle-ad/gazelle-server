@@ -4,6 +4,7 @@ import { slugify } from 'lib/utilities';
 import { browserHistory } from 'react-router';
 import { SearchableAuthors } from 'components/admin/form-components/searchables';
 import { updateFieldValue } from './lib/form-field-updaters';
+import { getStaffPath } from 'routes/admin-helpers';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -63,7 +64,7 @@ class StaffListController extends FalcorController {
   }
 
   handleClickStaff(staff) {
-    browserHistory.push(`/staff/${staff.slug}`);
+    browserHistory.push(getStaffPath(staff.slug));
   }
 
   handleCreateStaffChange() {
@@ -104,7 +105,7 @@ class StaffListController extends FalcorController {
         // similar framework to this for snackbars we could maybe use one of those for that.
         // The big dangerous alert also doesn't seem right here (with the warning sign and everything)
         // await this.props.displayAlert('Staff added successfully');
-        browserHistory.push(`/staff/${slug}`);
+        browserHistory.push(getStaffPath(slug));
       };
       this.falcorCall(
         ['staff', 'bySlug', 'createStaff'],

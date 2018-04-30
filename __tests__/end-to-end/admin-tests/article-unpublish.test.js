@@ -41,11 +41,7 @@ describe('can unpublish article', () => {
         unpublishTextSelector,
       )
       .then(text => {
-        expect(text).toEqual(
-          expect.stringContaining(
-            'This article was published on June 04, 2062.',
-          ),
-        );
+        expect(text).toMatchSnapshot();
       }));
 
   it('unpublishes article', () =>
@@ -69,10 +65,6 @@ describe('can unpublish article', () => {
         unpublishTextSelector,
       )
       .then(text => {
-        expect(text).toEqual(
-          expect.stringContaining(
-            'The article has yet to be published. It will be published automatically when you publish the issue that contains it.',
-          ),
-        );
+        expect(text).toMatchSnapshot();
       }));
 });

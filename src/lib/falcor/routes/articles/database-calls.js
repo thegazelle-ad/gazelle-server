@@ -1,10 +1,12 @@
 import _ from 'lodash';
 
+import { logger } from 'lib/logger';
 import { has } from 'lib/utilities';
+import { buildErrorMessage } from 'lib/error-helpers';
 
 /**
  * @typedef PaginationArticle
- * @param {string} slug - The slug of the article
+ * @property {string} slug - The slug of the article
  */
 
 /**
@@ -23,6 +25,94 @@ export async function getPaginatedArticle(database, pageLength, pageIndex) {
     .limit(pageLength)
     .offset(offset);
   return articles;
+}
+
+/**
+ * @param {any} database  - The knex instance to query on
+ * @param {Object} articleData - The data for the article to be created
+ * @param {string} articleData.slug
+ * @param {string} articleData.title
+ * @param {string} [articleData.teaser]
+ * @param {string} [articleData.imageUrl]
+ * @param {number} [articleData.category] - The id of the category
+ * @param {Object[]} [articleData.authors]
+ * @param {number} [articleData.authors.id]
+ * @param {Object[]} [articleData.tags]
+ * @param {number} [articleData.tags.id]
+ * @returns {Promise<boolean>} - Whether the creation was a success
+ */
+export async function createNewArticle(database, articleData) {
+  // We first build the article object used for creation
+  if (!articleData.slug || !articleData.title) {
+    logger.warn('Someone tried creating an article without slug or title');
+    throw new Error('Both slug and title must be provided for new articles');
+  }
+  const articleRow = {
+    slug: articleData.slug,
+    title: articleData.title,
+  };
+  if (articleData.teaser) {
+    articleRow.teaser = articleData.teaser;
+  }
+  if (articleData.imageUrl) {
+    articleRow.image_url = articleData.imageUrl;
+  }
+  if (articleData.category > 0) {
+    articleRow.category_id = articleData.category;
+  }
+  // Remember to set created time
+  articleRow.created_at = new Date();
+  let createdArticle;
+  try {
+    const [id] = await database('articles').insert(articleRow);
+    createdArticle = {
+      ...articleRow,
+      id,
+    };
+  } catch (e) {
+    logger.error(e);
+    throw new Error(buildErrorMessage());
+  }
+  const inserts = [];
+  if (_.get(articleData.authors, 'length', 0) > 0) {
+    const authorArticleRows = articleData.authors.map(authorObject => {
+      if (!authorObject.id) {
+        logger.error(
+          new Error('All authors in new article must have an id passed'),
+        );
+        throw new Error(buildErrorMessage());
+      }
+      return {
+        author_id: authorObject.id,
+        article_id: createdArticle.id,
+      };
+    });
+    inserts.push(database('authors_articles').insert(authorArticleRows));
+    createdArticle.authors = authorArticleRows;
+  }
+  if (_.get(articleData.tags, 'length', 0) > 0) {
+    const articleTagRows = articleData.tags.map(tagObject => {
+      if (!tagObject.id) {
+        logger.error(
+          new Error('All tags in new article must have an id passed'),
+        );
+        throw new Error(buildErrorMessage());
+      }
+      return {
+        tag_id: tagObject.id,
+        article_id: createdArticle.id,
+      };
+    });
+    inserts.push(database('articles_tags').insert(articleTagRows));
+    createdArticle.tags = articleTagRows;
+  }
+  try {
+    await Promise.all(inserts);
+  } catch (e) {
+    logger.error(e);
+    throw new Error(buildErrorMessage());
+  }
+  return createdArticle;
 }
 
 /**

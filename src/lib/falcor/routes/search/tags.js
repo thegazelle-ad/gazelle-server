@@ -21,13 +21,14 @@ export default [
         }
       });
       const data = await searchTagsQuery(pathSet.queries, minIndex, maxIndex);
-      return _.map(data, (tagsByQuery, query) =>
+      const results = _.map(data, (tagsByQuery, query) =>
         tagsByQuery.map((tagSlug, index) => ({
           // Map down indices to match the ones returned from the db call.
           path: ['search', 'tags', query, index - minIndex],
           value: $ref(['tags', 'bySlug', tagsByQuery[index - minIndex]]),
         })),
       ).flatten();
+      return results;
     },
   },
 ];

@@ -15,34 +15,6 @@ export const database = knex({
   },
 });
 
-export function staffQuery(slugs, columns) {
-  // parameters are both expected to be arrays
-  // the first one with staff member slugs to fetch
-  // and the other one the columns to retrieve from the staff
-  return new Promise(resolve => {
-    // So the Falcor Router knows which staff member we're talking about
-    let processedColumns = columns;
-    if (!processedColumns.some(col => col === 'slug')) {
-      // Use concat to make a copy, if you just push
-      // it will change pathSet in the falcorPath
-      // as objects are passed by reference
-      processedColumns = processedColumns.concat(['slug']);
-    }
-    database
-      .select(...processedColumns)
-      .from('staff')
-      .whereIn('slug', slugs)
-      .then(rows => {
-        // database.destroy();
-        resolve(rows);
-      })
-      .catch(e => {
-        // database.destroy();
-        throw new Error(e);
-      });
-  });
-}
-
 export function staffTeamQuery(slugs) {
   // Arguments: `slugs`: array of staff member slugs
   // Returns: an object with staff member slugs (keys), each mapped
