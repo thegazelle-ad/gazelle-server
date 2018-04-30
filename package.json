@@ -79,6 +79,7 @@
     "json5": "^1.0.1",
     "json5-loader": "^1.0.1",
     "lint-staged": "^5.0.0",
+    "mockdate": "^2.0.2",
     "nightmare": "^2.10.0",
     "node-sass": "^4.7.2",
     "postcss-cssnext": "^3.0.2",

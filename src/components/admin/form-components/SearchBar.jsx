@@ -76,6 +76,7 @@ export class SearchBar extends React.Component {
           fullWidth={this.props.fullWidth}
           value={this.state.value}
           onChange={this.handleChange}
+          disabled={this.props.disabled}
         />
         <div>
           <Menu

@@ -4,6 +4,7 @@ import FalcorController from 'lib/falcor/FalcorController';
 import { SearchableArticlesWithPubDate } from 'components/admin/form-components/searchables';
 import { ArticleList } from 'components/admin/ArticleList';
 import moment from 'moment';
+import { getArticlePath } from 'routes/admin-helpers';
 
 // material-ui
 import ListItem from 'material-ui/List/ListItem';
@@ -12,6 +13,8 @@ import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
 import { darkBlack } from 'material-ui/styles/colors';
 import RaisedButton from 'material-ui/RaisedButton';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 
 const styles = {
   paper: {
@@ -81,9 +84,7 @@ export class ArticleListController extends FalcorController {
   }
 
   clickSearchSuggestion(article) {
-    const { page } = this.props.params;
-    const path = `/articles/page/${page}/id/${article.id}`;
-    browserHistory.push(path);
+    browserHistory.push(getArticlePath(article.id, this.props.params.page));
   }
 
   createListElement(article) {
@@ -133,7 +134,6 @@ export class ArticleListController extends FalcorController {
       const data = this.state.data.articles.byPage[NUM_ARTICLES_IN_PAGE][page];
       const { length } = this.state.data.articles;
       const maxPage = Math.ceil(length / NUM_ARTICLES_IN_PAGE);
-
       return (
         <div>
           <h1>Articles</h1>
@@ -169,6 +169,18 @@ export class ArticleListController extends FalcorController {
             </div>
           </Paper>
           {this.props.children}
+          <Link to={`/articles/page/${this.props.params.page}/new`}>
+            <FloatingActionButton
+              style={{
+                position: 'fixed',
+                zIndex: 50,
+                bottom: '50px',
+                right: '100px',
+              }}
+            >
+              <ContentAdd />
+            </FloatingActionButton>
+          </Link>
         </div>
       );
     }

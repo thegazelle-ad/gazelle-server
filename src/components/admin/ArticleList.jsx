@@ -21,8 +21,9 @@ export const ArticleList = ({ elements, createElement }) => {
   if (!elements) {
     return <div>This page does not exist</div>;
   }
+  const ID = 'articles-list';
   return (
-    <Paper style={styles.paper} zDepth={1}>
+    <Paper style={styles.paper} zDepth={1} id={ID}>
       <List style={{ overflow: 'auto', maxHeight: '400px' }}>
         <Subheader>Recent Articles</Subheader>
         {_.map(elements, createElement)}

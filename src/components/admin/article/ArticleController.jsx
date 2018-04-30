@@ -92,7 +92,7 @@ class ArticleController extends FalcorController {
       );
     }
 
-    if (processedTags !== null) {
+    if (processedTags && processedTags !== null) {
       dbUpdates.push(
         this.falcorCall(
           ['articles', 'bySlug', this.state.slug, 'tags', 'updateTags'],
@@ -458,6 +458,7 @@ class ArticleController extends FalcorController {
       const categories = _.toArray(this.state.data.categories.byIndex);
       categories.push({ name: 'none', id: null });
 
+      const articleEditorID = 'article-editor';
       return (
         <Paper style={styles.grid}>
           {this.state.saving ? <LoadingOverlay /> : null}

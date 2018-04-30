@@ -15,7 +15,7 @@ expect(mainRoute).not.toBeUndefined();
 describe('articlesByPage falcor routes', () => {
   it('returns correct path values', async () => {
     const pageLength = 5;
-    const pageIndex = 2;
+    const pageIndex = 0;
     const pathValues = await mainRoute.get({
       pageLengths: [pageLength],
       pageIndices: [pageIndex],

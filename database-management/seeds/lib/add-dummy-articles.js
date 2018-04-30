@@ -17,10 +17,13 @@ module.exports.addDummyArticles = (knex, numArticles, numCategories) => {
       image_url: placeImg,
       teaser: loremIpsum.substr(0, 156), // The max length of teaser
       views: i,
-      created_at: START_DATE.add(i, 'days').toDate(),
-      published_at: START_DATE.add(i + 1, 'days').toDate(),
+      created_at: START_DATE.clone()
+        .add(i, 'days')
+        .toDate(),
+      published_at: START_DATE.clone()
+        .add(i + 1, 'days')
+        .toDate(),
       is_interactive: false,
-      // We set the category later
       category_id: getCategoryId(i, numCategories),
     });
   }

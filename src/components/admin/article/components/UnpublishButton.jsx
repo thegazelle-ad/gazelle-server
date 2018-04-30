@@ -28,15 +28,19 @@ export default class UnpublishButton extends React.Component {
   }
 
   render() {
+    const textID = 'unpublished-text';
+    const unpublishedButtonID = 'unpublished-button';
     return (
-      <RaisedButton
-        label="Unpublish"
-        secondary
-        style={this.props.style}
-        disabled={!this.props.published_at}
-        onClick={this.unpublish}
-        icon={<Warning />}
-      />
+      <div id={textID}>
+        <RaisedButton
+          label="Unpublish"
+          secondary
+          style={this.props.style}
+          disabled={!this.props.published_at}
+          onClick={this.unpublish}
+          icon={<Warning />}
+        />
+      </div>
     );
   }
 }
