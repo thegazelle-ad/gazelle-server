@@ -472,7 +472,7 @@ class ArticleController extends FalcorController {
                 marginLeft: '1vw',
               }}
             >
-              {this.props.published_at !== null
+              {article.published_at !== null
                 ? `Published on ${moment(this.props.published_at).format(
                     'MMMM DD, YYYY',
                   )}.`

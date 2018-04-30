@@ -29,7 +29,6 @@ export default (
       </Route>
       <Route path="page/:page/id/:id" component={ArticleController} />
     </Route>
-    <Route path="articles/page/:page/id/:id" component={ArticleController} />
     <Route path="staff" component={StaffListController}>
       <Route path=":slug" component={StaffController} />
     </Route>
