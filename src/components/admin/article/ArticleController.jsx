@@ -567,7 +567,6 @@ class ArticleController extends FalcorController {
                 Article Content
               </p>
               <MarkdownEditor
-                zIndex={2}
                 style={{ margin: '1%' }}
                 onUpdate={this.updateMarkdown}
                 value={this.state.markdown}

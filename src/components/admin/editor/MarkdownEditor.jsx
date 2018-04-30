@@ -24,7 +24,7 @@ export class MarkdownEditor extends React.Component {
     };
 
     return (
-      <Paper style={styles.paper} zIndex={this.props.zIndex}>
+      <Paper style={styles.paper}>
         <Editor
           style={styles.editor}
           placeholder="Begin writing for the Gazelle :)"
@@ -42,10 +42,8 @@ MarkdownEditor.propTypes = {
   value: PropTypes.shape({}).isRequired,
   onUpdate: PropTypes.func.isRequired,
   style: PropTypes.shape({}),
-  zIndex: PropTypes.number,
 };
 
 MarkdownEditor.defaultProps = {
-  zIndex: 0,
   style: {},
 };
