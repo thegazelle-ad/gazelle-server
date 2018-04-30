@@ -33,6 +33,7 @@ export default class UnpublishButton extends React.Component {
     return (
       <div id={textID}>
         <RaisedButton
+          id={unpublishedButtonID}
           label="Unpublish"
           secondary
           style={this.props.style}

@@ -460,7 +460,7 @@ class ArticleController extends FalcorController {
 
       const articleEditorID = 'article-editor';
       return (
-        <Paper style={styles.grid}>
+        <Paper id={articleEditorID} style={styles.grid}>
           {this.state.saving ? <LoadingOverlay /> : null}
 
           <div style={styles.header}>
