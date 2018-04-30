@@ -155,7 +155,7 @@ export async function articleTagQuery(database, ids) {
   // The function returns an object with article ids
   // as keys and values being arrays of author ids.
   const rows = await database
-    .select('articles.slug as articleSlug', 'tags.slug as tagSlug')
+    .select('articles.id as articleId', 'tags.slug as tagSlug')
     .from('tags')
     .innerJoin('articles_tags', 'tags.id', '=', 'tag_id')
     .innerJoin('articles', 'articles.id', '=', 'article_id')
@@ -166,10 +166,10 @@ export async function articleTagQuery(database, ids) {
   rows.forEach(row => {
     // This will input them in ascending order by id (which represents time they were
     // inserted as author of that article) as the query was structured so.
-    if (!has.call(data, row.articleSlug)) {
-      data[row.articleSlug] = [row.tagSlug];
+    if (!has.call(data, row.articleId)) {
+      data[row.articleId] = [row.tagSlug];
     } else {
-      data[row.articleSlug].push(row.tagSlug);
+      data[row.articleId].push(row.tagSlug);
     }
   });
   return data;
