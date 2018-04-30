@@ -75,10 +75,17 @@ export default [
       const data = await articleQuery(database, 'id', pathSet.ids, [
         'category_id',
       ]);
-      const results = data.map(article => ({
-        path: ['articles', 'byId', article.id, 'category'],
-        value: $ref(['categories', 'byId', article.category_id]),
-      }));
+      const results = data
+        .map(
+          article =>
+            article.category_id
+              ? {
+                  path: ['articles', 'byId', article.id, 'category'],
+                  value: $ref(['categories', 'byId', article.category_id]),
+                }
+              : null,
+        )
+        .filter(x => x !== null);
       return results;
     },
     set: async jsonGraphArg => {

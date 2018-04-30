@@ -12,28 +12,21 @@ export async function addTag(tagObject) {
 }
 
 /**
- * Queries the tags table in the database for all tags with the given slugs selecting for
- * the given columns.
- * @param  {string[]}    slugs   the tags to select
- * @param  {string[]}    columns the columns of tags to return
- * @returns{Object[]}    rows    the result.
+ * Fetches direct meta data of tags from the tags database table
+ * @param {string} queryField - Indicates which field to query by
+ * @param {string[]} queryParams - Array of parameters of type queryField of articles to fetch
+ * @param {string[]} columns - Which columns of the articles table to fetch
+ * @returns {Promise<Object[]>}
  */
-export async function tagQuery(slugs, columns) {
-  if (!_.isArray(slugs) || !_.isArray(columns)) {
-    throw new Error(
-      `tagQuery must be called with slugs and columns as arrays. Received slugs ${slugs} and columns ${columns}`,
-    );
+export function tagQuery(queryField, queryParams, columns) {
+  // In order to be able to identify the rows we get back we need to include the queryField
+  if (!columns.includes(queryField)) {
+    columns.push(queryField);
   }
-
-  const processedColumns = _.uniq(columns.concat(['slug']));
-  const rows = await database
-    .select(...processedColumns)
+  return database
+    .select(...columns)
     .from('tags')
-    .whereIn('slug', slugs)
-    .catch(e => {
-      throw new Error(e);
-    });
-  return rows;
+    .whereIn(queryField, queryParams);
 }
 
 /**

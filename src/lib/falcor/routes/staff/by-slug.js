@@ -2,6 +2,7 @@ import falcor from 'falcor';
 import _ from 'lodash';
 
 import * as db from 'lib/db';
+import { staffQuery } from './database-calls';
 import { has } from 'lib/utilities';
 
 const $ref = falcor.Model.ref;
@@ -14,19 +15,21 @@ export default [
     get: pathSet =>
       new Promise(resolve => {
         const requestedFields = pathSet[3];
-        db.staffQuery(pathSet.slugs, requestedFields).then(data => {
-          // always returns slug in the object no matter what.
-          const results = [];
-          data.forEach(staff => {
-            requestedFields.forEach(field => {
-              results.push({
-                path: ['staff', 'bySlug', staff.slug, field],
-                value: staff[field],
+        staffQuery(db.database, 'slug', pathSet.slugs, requestedFields).then(
+          data => {
+            // always returns slug in the object no matter what.
+            const results = [];
+            data.forEach(staff => {
+              requestedFields.forEach(field => {
+                results.push({
+                  path: ['staff', 'bySlug', staff.slug, field],
+                  value: staff[field],
+                });
               });
             });
-          });
-          resolve(results);
-        });
+            resolve(results);
+          },
+        );
       }),
     set: jsonGraphArg =>
       new Promise((resolve, reject) => {
