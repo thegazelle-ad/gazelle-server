@@ -473,7 +473,7 @@ class ArticleController extends FalcorController {
               }}
             >
               {article.published_at !== null
-                ? `Published on ${moment(this.props.published_at).format(
+                ? `Published on ${moment(article.published_at).format(
                     'MMMM DD, YYYY',
                   )}.`
                 : 'This article is not published'}
