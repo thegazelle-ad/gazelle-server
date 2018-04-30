@@ -27,14 +27,14 @@ describe('create new article falcor route', () => {
     expect(logger.error.mock.calls).toMatchSnapshot();
   });
 
-  it('throws if article has no slug', async () => {
+  it('throws if article has no title', async () => {
     await expect(
       createNewArticleRoute.call(createNewArticlePath, [{ slug: 'slug' }]),
     ).rejects.toThrowErrorMatchingSnapshot();
     expect(logger.error.mock.calls).toMatchSnapshot();
   });
 
-  it('throws if article has no title', async () => {
+  it('throws if article has no slug', async () => {
     await expect(
       createNewArticleRoute.call(createNewArticlePath, [{ title: 'title' }]),
     ).rejects.toThrowErrorMatchingSnapshot();

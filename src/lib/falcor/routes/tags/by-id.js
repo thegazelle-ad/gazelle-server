@@ -8,8 +8,6 @@ export const routes = [
     get: pathSet =>
       new Promise(resolve => {
         const requestedFields = pathSet[3];
-        // TODO change to article query once Will's changes
-        // are merged in.
         tagQuery('id', pathSet.ids, requestedFields).then(data => {
           const results = [];
           data.forEach(tag => {

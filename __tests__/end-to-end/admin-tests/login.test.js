@@ -5,7 +5,7 @@ import { HOST } from './e2e-admin-constants';
 
 function testLoginRedirect(nightmare, path) {
   const googleLoginSelector = 'div.abcRioButtonContentWrapper';
-  // The default is because the '/' path actually also redirects to '/articles/page/1'
+  // The default is because the '/' path actually also redirects to '/articles/page/0'
   const redirectedPath = !path || path === '/login' ? '/articles/page/0' : path;
 
   return (

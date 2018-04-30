@@ -135,7 +135,7 @@ class CreateArticleController extends React.Component {
       return;
     } finally {
       // Finally runs even if we return from the function in try and catch
-      setTimeout(() => this.setState({ saving: false }), 100 * 1000);
+      this.setState({ saving: false });
     }
     const pathname = getArticlePath(newArticle.id, this.props.params.page);
     browserHistory.push({ pathname, state: { refresh: true } });

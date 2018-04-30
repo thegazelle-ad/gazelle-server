@@ -171,7 +171,12 @@ export class ArticleListController extends FalcorController {
           {this.props.children}
           <Link to={`/articles/page/${this.props.params.page}/new`}>
             <FloatingActionButton
-              style={{ position: 'fixed', bottom: '50px', right: '100px' }}
+              style={{
+                position: 'fixed',
+                zIndex: 50,
+                bottom: '50px',
+                right: '100px',
+              }}
             >
               <ContentAdd />
             </FloatingActionButton>

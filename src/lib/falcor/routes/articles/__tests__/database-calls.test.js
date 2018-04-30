@@ -66,6 +66,9 @@ describe('createNewArticle', () => {
   const databaseMock = jest.fn().mockReturnValue({ insert: insertMock });
 
   beforeAll(() => {
+    // The number is irellevant as long as it is constant, this was the time the test
+    // was written. It makes new Date() always return the same value so we can make
+    // assertions about it (otherwise it would always return current time)
     MockDate.set(1524998880085);
   });
 
