@@ -471,6 +471,7 @@ class ArticleController extends FalcorController {
                 fontSize: '0.8vw',
                 marginLeft: '1vw',
               }}
+              id="unpublished-text"
             >
               {article.published_at !== null
                 ? `Published on ${moment(article.published_at).format(

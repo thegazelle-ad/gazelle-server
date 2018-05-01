@@ -1,13 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`can unpublish article is article published 1`] = `
-"
-UNPUBLISH
-"
-`;
+exports[`can unpublish article is article published 1`] = `"Published on July 20, 2000."`;
 
-exports[`can unpublish article is article unpublished 1`] = `
-"
-UNPUBLISH
-"
-`;
+exports[`can unpublish article is article unpublished 1`] = `"This article is not published"`;

@@ -15,7 +15,7 @@
     "build:staging": "webpack --config webpack/webpack.staging.config.js --bail",
     "build:emulate-ci": "CI=true CIRCLECI=true npm run build:production",
     "test:unit": "jest --config='__tests__/config/jest.unit.config.js' --testLocationInResults",
-    "test:e2e": "jest --config='__tests__/config/jest.e2e.config.js' --testLocationInResults --runInBand",
+    "test:e2e": "npm run db:seed && jest --config='__tests__/config/jest.e2e.config.js' --testLocationInResults --runInBand",
     "lint": "eslint --max-warnings 0 '{src,__tests__,webpack,database-management}/**/*.{js,jsx}'",
     "lint:fix": "npm run lint -- --fix",
     "db:migrate": "knex migrate:latest",
