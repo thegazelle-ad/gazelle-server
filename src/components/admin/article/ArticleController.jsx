@@ -1,10 +1,14 @@
 import React from 'react';
 import { browserHistory } from 'react-router';
 import _ from 'lodash';
+import Plain from 'slate-plain-serializer';
+import showdown from 'showdown';
+import moment from 'moment';
 
 // Lib
 import { debounce } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
+import { getArticleListPath } from 'routes/admin-helpers';
 
 // Custom Components
 import {
@@ -20,12 +24,14 @@ import {
 } from 'components/admin/form-components/validated-fields';
 import ListSelector from 'components/admin/form-components/ListSelector';
 import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
+import { MarkdownEditor } from 'components/admin/editor/MarkdownEditor';
 import { MAX_TEASER_LENGTH } from 'components/admin/lib/constants';
 
 // material-ui
-import Dialog from 'material-ui/Dialog';
+import Paper from 'material-ui/Paper';
 import CircularProgress from 'material-ui/CircularProgress';
-import Divider from 'material-ui/Divider';
+import FlatButton from 'material-ui/FlatButton';
+import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 
 // HOCs
 import { withModals } from 'components/admin/hocs/modals/withModals';
@@ -35,12 +41,14 @@ class ArticleController extends FalcorController {
     super(props);
     this.save = this.save.bind(this);
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
-    this.handleDialogClose = this.handleDialogClose.bind(this);
+    this.returnToApp = this.returnToApp.bind(this);
     this.isFormChanged = this.isFormChanged.bind(this);
     this.falcorToState = this.falcorToState.bind(this);
+    this.converter = new showdown.Converter();
     this.updateTitle = title => this.safeSetState({ title });
     this.updateSlug = slug => this.safeSetState({ slug });
     this.updateAuthors = authors => this.safeSetState({ authors });
+    this.updateMarkdown = markdown => this.safeSetState({ markdown });
     this.updateTags = tags => this.safeSetState({ tags });
     this.updateTeaser = teaser => this.safeSetState({ teaser });
     this.updateImage = imageUrl => this.safeSetState({ imageUrl });
@@ -56,6 +64,7 @@ class ArticleController extends FalcorController {
       teaser: '',
       category: null,
       imageUrl: '',
+      markdown: Plain.deserialize(''),
     });
 
     this.debouncedHandleFormStateChanges = debounce(() => {
@@ -113,7 +122,15 @@ class ArticleController extends FalcorController {
         'articles',
         'byId',
         params.id,
-        ['title', 'slug', 'teaser', 'image_url', 'id', 'published_at'],
+        [
+          'title',
+          'slug',
+          'markdown',
+          'teaser',
+          'image_url',
+          'id',
+          'published_at',
+        ],
       ],
       ['articles', 'byId', params.id, 'category', 'id'],
       [
@@ -139,6 +156,7 @@ class ArticleController extends FalcorController {
   falcorToState(data) {
     const article = data.articles.byId[this.props.params.id];
     const title = article.title || '';
+    const markdown = Plain.deserialize(article.markdown || '');
     const slug = article.slug || '';
     const teaser = article.teaser || '';
     const category = _.get(article, 'category.id', null);
@@ -149,6 +167,7 @@ class ArticleController extends FalcorController {
     this.safeSetState({
       tags,
       title,
+      markdown,
       slug,
       teaser,
       category,
@@ -177,6 +196,10 @@ class ArticleController extends FalcorController {
     return (
       this.isFormFieldChanged(prevState.tags, state.tags) ||
       this.isFormFieldChanged(prevState.title, state.title) ||
+      this.isFormFieldChanged(
+        Plain.serialize(prevState.markdown),
+        Plain.serialize(state.markdown),
+      ) ||
       this.isFormFieldChanged(prevState.slug, state.slug) ||
       this.isFormFieldChanged(prevState.authors, state.authors) ||
       this.isFormFieldChanged(prevState.teaser, state.teaser) ||
@@ -196,11 +219,10 @@ class ArticleController extends FalcorController {
     }
   }
 
-  handleDialogClose() {
+  returnToApp() {
     if (this.state.saving) return;
 
-    const { page } = this.props.params;
-    const pathname = `/articles/page/${page}`;
+    const pathname = getArticleListPath(0);
 
     const location = { pathname, state: { refresh: this.state.refresh } };
     this.safeSetState({ refresh: false });
@@ -285,6 +307,7 @@ class ArticleController extends FalcorController {
       processedAuthors = null;
     }
 
+    const plainMarkdown = Plain.serialize(this.state.markdown);
     if (
       processedTags.length === 0 &&
       (!falcorData.tags || Object.keys(falcorData.tags).length === 0)
@@ -295,8 +318,8 @@ class ArticleController extends FalcorController {
 
     const shouldUpdateCategory = this.state.category;
     const fields = shouldUpdateCategory
-      ? ['title', 'slug', 'teaser', 'image_url', 'category']
-      : ['title', 'slug', 'teaser', 'image_url'];
+      ? ['title', 'slug', 'teaser', 'image_url', 'markdown', 'html', 'category']
+      : ['title', 'slug', 'teaser', 'image_url', 'markdown', 'html'];
     // Build the jsonGraphEnvelope
     const jsonGraphEnvelope = {
       paths: [['articles', 'byId', articleId, fields]],
@@ -313,6 +336,12 @@ class ArticleController extends FalcorController {
       articleId
     ].title = this.state.title;
     jsonGraphEnvelope.jsonGraph.articles.byId[articleId].slug = this.state.slug;
+    jsonGraphEnvelope.jsonGraph.articles.byId[
+      articleId
+    ].markdown = plainMarkdown;
+    jsonGraphEnvelope.jsonGraph.articles.byId[
+      articleId
+    ].html = this.converter.makeHtml(plainMarkdown);
     jsonGraphEnvelope.jsonGraph.articles.byId[
       articleId
     ].teaser = this.state.teaser;
@@ -354,6 +383,10 @@ class ArticleController extends FalcorController {
     const changedFlag =
       this.isFormFieldChanged(this.state.title, falcorData.title) ||
       this.isFormFieldChanged(this.state.slug, falcorData.slug) ||
+      this.isFormFieldChanged(
+        Plain.serialize(this.state.markdown),
+        falcorData.markdown,
+      ) ||
       this.isFormFieldChanged(this.state.teaser, falcorData.teaser) ||
       this.isFormFieldChanged(this.state.category, falcorData.category) ||
       this.isFormFieldChanged(this.state.imageUrl, falcorData.image_url) ||
@@ -364,9 +397,45 @@ class ArticleController extends FalcorController {
 
   render() {
     const styles = {
+      grid: {
+        display: 'grid',
+        gridGap: '10px',
+        gridTemplateColumns: '30% 70%',
+        gridTemplateRows: '5% 85% 10%',
+        gridTemplateAreas:
+          '"header header" "content content" "negative positive"',
+        height: '80vh',
+        marginTop: '5vh',
+        padding: '2vmax',
+      },
+      header: { gridArea: 'header' },
+      positive: { gridArea: 'positive' },
+      negative: { gridArea: 'negative' },
+      content: {
+        background:
+          'linear-gradient(to top, rgba(0, 0, 0, .2) 0%, rgba(0, 0, 0, 0) 2%)',
+        display: 'flex',
+        flexWrap: 'wrap',
+        gridArea: 'content',
+        justifyContent: 'space-between',
+        overflowX: 'hidden',
+        overflowY: 'scroll',
+      },
+      contentStyles: {
+        twoThirds: { width: '65%' },
+        oneThird: { width: '32%' },
+        half: { width: '48.5%' },
+        fullWidth: { width: '97%' },
+      },
+      helpText: {
+        color: 'rgba(0, 0, 0, 0.4)',
+        fontSize: '1vw',
+      },
       buttons: {
-        marginTop: 24,
-        marginBottom: 12,
+        width: '100%',
+      },
+      exitButton: {
+        float: 'right',
       },
     };
 
@@ -385,67 +454,83 @@ class ArticleController extends FalcorController {
 
       const { id } = this.props.params;
       const article = this.state.data.articles.byId[id];
-
       // If it is a new article it won't have any meta data yet so we use the default
       const categories = _.toArray(this.state.data.categories.byIndex);
       categories.push({ name: 'none', id: null });
-      const actionButtons = [
-        <SaveButton
-          onClick={this.handleSaveChanges}
-          style={styles.buttons}
-          saving={this.state.saving}
-          changed={this.state.changed}
-        />,
-      ];
 
       const articleEditorID = 'article-editor';
       return (
-        <div id={articleEditorID}>
-          <Dialog
-            title="Article Editor"
-            actions={actionButtons}
-            open
-            modal={false}
-            autoScrollBodyContent
-            onRequestClose={this.handleDialogClose}
-          >
-            {this.state.saving ? <LoadingOverlay /> : null}
+        <Paper id={articleEditorID} style={styles.grid}>
+          {this.state.saving ? <LoadingOverlay /> : null}
+
+          <div style={styles.header}>
+            <h2 style={{ display: 'inline' }}>Article Editor</h2>
+            <span
+              style={{
+                color: 'rgba(0, 0, 0, 0.5)',
+                fontSize: '0.8vw',
+                marginLeft: '1vw',
+              }}
+              id="unpublished-text"
+            >
+              {article.published_at !== null
+                ? `Published on ${moment(article.published_at).format(
+                    'MMMM DD, YYYY',
+                  )}.`
+                : 'This article is not published'}
+            </span>
+
+            <FlatButton
+              style={styles.exitButton}
+              label="Return to List"
+              labelPosition="before"
+              icon={<ExitToApp />}
+              onClick={this.returnToApp}
+            />
+          </div>
+          <div style={styles.content}>
             <ShortRequiredTextField
               floatingLabelText="Title"
+              style={styles.contentStyles.oneThird}
               value={this.state.title}
               onUpdate={this.updateTitle}
               disabled={this.state.saving}
             />
-            <ShortRequiredTextField
-              floatingLabelText={`Slug${
-                !article.published_at
+            <div style={styles.contentStyles.twoThirds}>
+              <ShortRequiredTextField
+                floatingLabelText="Slug"
+                value={this.state.slug}
+                onUpdate={this.updateSlug}
+                disabled={this.state.saving || Boolean(article.published_at)}
+                fullWidth
+              />
+              <br />
+              <span style={styles.helpText}>
+                {!article.published_at
                   ? ''
-                  : ' - You cannot edit the slug of a published article. Unpublish this article to edit the slug'
-              }`}
-              value={this.state.slug}
-              onUpdate={this.updateSlug}
-              disabled={this.state.saving || Boolean(article.published_at)}
-              fullWidth
-            />
+                  : 'You cannot edit the slug of a published article.'}
+              </span>
+            </div>
             <ListSelector
               label="Category"
+              style={styles.contentStyles.oneThird}
               chosenElement={this.state.category}
               update={this.updateCategory}
               elements={categories}
               disabled={this.state.saving}
               fullWidth
             />
-            <br />
             <HttpsUrlField
               floatingLabelText="Image"
+              style={styles.contentStyles.twoThirds}
               value={this.state.imageUrl}
               onUpdate={this.updateImage}
               disabled={this.state.saving}
               fullWidth
             />
-            <br />
             <MaxLenTextField
               name="teaser"
+              style={styles.contentStyles.fullWidth}
               value={this.state.teaser}
               maxLen={MAX_TEASER_LENGTH}
               onUpdate={this.updateTeaser}
@@ -457,21 +542,39 @@ class ArticleController extends FalcorController {
               onUpdate={this.updateAuthors}
               disabled={this.state.saving}
               mode="staff"
+              style={styles.contentStyles.half}
+              fullWidth
             />
-            <br />
-            <Divider />
-            <br />
             <SearchableTagsSelector
               elements={this.state.tags}
               onChange={this.debouncedHandleFormStateChanges}
               onUpdate={this.updateTags}
               disabled={this.state.saving}
               mode="tags"
+              style={styles.contentStyles.half}
+              fullWidth
               enableAdd
             />
-            <br />
-            <Divider />
-            <br />
+            <div style={styles.contentStyles.fullWidth}>
+              <p
+                style={{
+                  color: 'rgba(0, 0, 0, 0.3)',
+                  lineHeight: '22px',
+                  fontSize: '12px',
+                  marginTop: 0,
+                  marginBottom: 10,
+                }}
+              >
+                Article Content
+              </p>
+              <MarkdownEditor
+                style={{ margin: '1%' }}
+                onUpdate={this.updateMarkdown}
+                value={this.state.markdown}
+              />
+            </div>
+          </div>
+          <div style={styles.negative}>
             <UnpublishButton
               save={this.save}
               id={this.props.params.id}
@@ -479,8 +582,16 @@ class ArticleController extends FalcorController {
               style={styles.buttons}
               published_at={article.published_at}
             />
-          </Dialog>
-        </div>
+          </div>
+          <div style={styles.positive}>
+            <SaveButton
+              onClick={this.handleSaveChanges}
+              style={styles.buttons}
+              saving={this.state.saving}
+              changed={this.state.changed}
+            />
+          </div>
+        </Paper>
       );
     }
     return (

@@ -118,9 +118,19 @@ export const withSelector = Finder => {
                 id={object.id}
                 title={object.name}
                 onDelete={this.handleDelete}
-                style={{ margin: 4 }}
+                style={{
+                  margin: 4,
+                  maxWidth: '90%',
+                }}
               >
-                {object.name}
+                <span
+                  style={{
+                    whiteSpace: 'normal',
+                    wordBreak: 'break-all',
+                  }}
+                >
+                  {object.name}
+                </span>
               </ObjectChip>
             ))
           : null;
@@ -132,9 +142,17 @@ export const withSelector = Finder => {
       );
 
       return (
-        <div>
+        <div style={this.props.style}>
           <br />
-          <p style={{ marginTop: 0, marginBottom: 10 }}>
+          <p
+            style={{
+              color: 'rgba(0, 0, 0, 0.3)',
+              fontSize: '12px',
+              lineHeight: '22px',
+              marginTop: 0,
+              marginBottom: 10,
+            }}
+          >
             {capFirstLetter(this.props.mode)}
           </p>
           <div style={styles.wrapper}>{objectChips || noObjectsMessage}</div>
