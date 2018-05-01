@@ -84,11 +84,10 @@ export class ArticleListController extends FalcorController {
   }
 
   clickSearchSuggestion(article) {
-    browserHistory.push(getArticlePath(article.id, this.props.params.page));
+    browserHistory.push(getArticlePath(article.id));
   }
 
   createListElement(article) {
-    const { page } = this.props.params;
     let publishedDate;
     if (article.published_at) {
       publishedDate = moment(article.published_at).format('MMM DD, YYYY');
@@ -96,7 +95,7 @@ export class ArticleListController extends FalcorController {
       publishedDate = 'Unpublished';
     }
     return (
-      <Link to={`/articles/page/${page}/id/${article.id}`} key={article.id}>
+      <Link to={getArticlePath(article.id)} key={article.id}>
         <ListItem
           primaryText={article.title}
           secondaryText={
@@ -123,8 +122,8 @@ export class ArticleListController extends FalcorController {
         return (
           <p>
             You have tried accessing a page that doesn{"'"}t exist. Please press
-            <Link to="/articles/page/1">this link</Link> to return to page 1. If
-            you believe this was unintended and there is an error with the
+            <Link to="/articles/page/0"> this link</Link> to return to page 1.
+            If you believe this was unintended and there is an error with the
             website please contact the web development team of The Gazelle.
           </p>
         );

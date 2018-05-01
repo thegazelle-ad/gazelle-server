@@ -8,6 +8,7 @@ import moment from 'moment';
 // Lib
 import { debounce } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
+import { getArticleListPath } from 'routes/admin-helpers';
 
 // Custom Components
 import {
@@ -40,7 +41,7 @@ class ArticleController extends FalcorController {
     super(props);
     this.save = this.save.bind(this);
     this.handleSaveChanges = this.handleSaveChanges.bind(this);
-    this.handleDialogClose = this.handleDialogClose.bind(this);
+    this.returnToApp = this.returnToApp.bind(this);
     this.isFormChanged = this.isFormChanged.bind(this);
     this.falcorToState = this.falcorToState.bind(this);
     this.converter = new showdown.Converter();
@@ -218,11 +219,10 @@ class ArticleController extends FalcorController {
     }
   }
 
-  handleDialogClose() {
+  returnToApp() {
     if (this.state.saving) return;
 
-    const { page } = this.props.params;
-    const pathname = `/articles/page/${page}`;
+    const pathname = getArticleListPath(0);
 
     const location = { pathname, state: { refresh: this.state.refresh } };
     this.safeSetState({ refresh: false });
@@ -484,7 +484,7 @@ class ArticleController extends FalcorController {
               label="Return to List"
               labelPosition="before"
               icon={<ExitToApp />}
-              onClick={this.handleDialogClose}
+              onClick={this.returnToApp}
             />
           </div>
           <div style={styles.content}>
