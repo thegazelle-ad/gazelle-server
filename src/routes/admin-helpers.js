@@ -1,6 +1,7 @@
-export const getArticleListPath = page => `/articles/page/${page}`;
+const articleRoot = '/articles';
 
-export const getArticlePath = (id, page) =>
-  `${getArticleListPath(page)}/id/${id}`;
+export const getArticleListPath = page => `${articleRoot}/page/${page}`;
+
+export const getArticlePath = id => `${articleRoot}/id/${id}`;
 
 export const getStaffPath = slug => `/staff/${slug}`;

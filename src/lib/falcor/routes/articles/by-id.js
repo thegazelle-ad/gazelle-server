@@ -318,9 +318,9 @@ export default [
     route: "articles['byId'][{keys:ids}]['tags'][{integers:indices}]",
     get: async pathSet => {
       const data = await articleTagQuery(database, pathSet.ids);
-      return _.map(data, (tagsByArticle, articleSlug) =>
+      return _.map(data, (tagsByArticle, articleId) =>
         tagsByArticle.map((tagSlug, index) => ({
-          path: ['articles', 'bySlug', articleSlug, 'tags', index],
+          path: ['articles', 'byId', articleId, 'tags', index],
           value: $ref(['tags', 'bySlug', tagSlug]),
         })),
       ).flatten();

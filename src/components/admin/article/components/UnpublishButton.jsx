@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 
 import RaisedButton from 'material-ui/RaisedButton';
 import Warning from 'material-ui/svg-icons/alert/warning';
@@ -33,16 +32,9 @@ export default class UnpublishButton extends React.Component {
     const unpublishedButtonID = 'unpublished-button';
     return (
       <div id={textID}>
-        {this.props.published_at !== null
-          ? `This article was published on ${moment(
-              this.props.published_at,
-            ).format('MMMM DD, YYYY')}.`
-          : 'The article has yet to be published. It will be published automatically ' +
-            'when you publish the issue that contains it.'}
-        <br />
         <RaisedButton
           id={unpublishedButtonID}
-          label="Unpublish Article"
+          label="Unpublish"
           secondary
           style={this.props.style}
           disabled={!this.props.published_at}

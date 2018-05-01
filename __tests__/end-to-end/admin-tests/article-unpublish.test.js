@@ -21,8 +21,10 @@ describe('can unpublish article', () => {
   const unpublishTextSelector = '#unpublished-text';
   const unpublishedButtonSelector = '#unpublished-button';
 
+  const expectedArticlePath = '/articles/id/200';
+
   it('finds first article', () =>
-    getLoggedInState(nightmare, '/articles/page/1')
+    getLoggedInState(nightmare, '/articles/page/0')
       .wait(articlesListSelector)
       // We click on the Material UI element where the onClick handler is actually set
       .click(`${articlesListSelector} a`)
@@ -30,11 +32,11 @@ describe('can unpublish article', () => {
       .path()
       .end()
       .then(path => {
-        expect(path).toBe('/articles/page/1/id/150');
+        expect(path).toBe(expectedArticlePath);
       }));
 
   it('is article published', () =>
-    getLoggedInState(nightmare, '/articles/page/1/id/150')
+    getLoggedInState(nightmare, expectedArticlePath)
       .wait(articleEditor)
       .evaluate(
         sel => document.querySelector(sel).innerText,
@@ -45,20 +47,20 @@ describe('can unpublish article', () => {
       }));
 
   it('unpublishes article', () =>
-    getLoggedInState(nightmare, '/articles/page/1/id/150')
+    getLoggedInState(nightmare, expectedArticlePath)
       .wait(articleEditor)
       .click(unpublishedButtonSelector)
       .wait(articleEditor)
       .path()
       .end()
       .then(path => {
-        expect(path).toBe(`/articles/page/1/id/150`);
+        expect(path).toBe(expectedArticlePath);
         nightmare = new Nightmare(NIGHTMARE_CONFIG);
         return restartServer(nightmare);
       }));
 
   it('is article unpublished', () =>
-    getLoggedInState(nightmare, '/articles/page/1/id/150')
+    getLoggedInState(nightmare, expectedArticlePath)
       .wait(articleEditor)
       .evaluate(
         sel => document.querySelector(sel).innerText,
