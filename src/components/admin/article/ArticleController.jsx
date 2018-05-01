@@ -9,6 +9,7 @@ import moment from 'moment';
 import { debounce } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 import { getArticleListPath } from 'routes/admin-helpers';
+import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
 
 // Custom Components
 import {
@@ -251,7 +252,11 @@ class ArticleController extends FalcorController {
       );
       return;
     }
-    if (processedAuthors.length === 0) {
+    if (
+      processedAuthors.length === 0 &&
+      (falcorData.authors &&
+        parseFalcorPseudoArray(falcorData.authors).length > 0)
+    ) {
       this.props.displayAlert(
         "Sorry, because of some non-trivial issues we currently don't have" +
           ' deleting every single author implemented.' +
