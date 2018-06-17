@@ -44,7 +44,7 @@ const falcorPaths = [['categories', 'byIndex', { length: 30 }, ['name', 'id']]];
 
 const propMerger = buildPropMerger((data, currentProps) => {
   const categories = parseFalcorPseudoArray(data.categories.byIndex).filter(
-    category => _.get(category, 'id') && _.get(category, 'name'),
+    category => category?.id && category?.name,
   );
   return {
     ...currentProps,

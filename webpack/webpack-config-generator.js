@@ -167,10 +167,12 @@ const generateWebpackConfig = config => {
               loader: 'babel-loader',
               options: {
                 presets: [
-                  'react',
+                  '@babel/preset-react',
                   [
                     '@babel/preset-env',
                     {
+                      modules: false,
+                      useBuiltIns: 'usage',
                       targets:
                         config.type === 'server'
                           ? // This is for the node server
@@ -189,6 +191,7 @@ const generateWebpackConfig = config => {
                 plugins: [
                   '@babel/plugin-proposal-object-rest-spread',
                   '@babel/plugin-proposal-class-properties',
+                  '@babel/plugin-proposal-optional-chaining',
                 ],
                 minified: config.NODE_ENV !== undefined,
               },

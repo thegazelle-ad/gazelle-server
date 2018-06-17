@@ -108,10 +108,8 @@ export default class ArticleController extends FalcorController {
   render() {
     if (this.state.ready) {
       if (
-        !_.get(
-          this.state,
-          `data.articles.bySlug.${this.props.params.articleSlug}.issueNumber`,
-        )
+        !this.state.data?.articles?.bySlug?.[this.props.params.articleSlug]
+          ?.issueNumber
       ) {
         return <NotFound />;
       }

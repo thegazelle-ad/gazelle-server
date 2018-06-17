@@ -17,14 +17,6 @@ module.exports = {
     },
   },
   parser: 'babel-eslint',
-  parserOptions: {
-    ecmaFeatures: {
-      jsx: true,
-      experimentalObjectRestSpread: true,
-    },
-    ecmaVersion: 9,
-    sourceType: 'module',
-  },
   extends: [
     'eslint:recommended',
     'plugin:import/errors',
