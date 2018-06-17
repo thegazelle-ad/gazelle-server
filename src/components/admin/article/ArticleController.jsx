@@ -9,7 +9,7 @@ import moment from 'moment';
 import { debounce } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 import { getArticleListPath } from 'routes/admin-helpers';
-import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
+import { validateChanges, buildJsonGraphEnvelope } from './articleLogic';
 
 // Custom Components
 import {
@@ -231,9 +231,6 @@ class ArticleController extends FalcorController {
   }
 
   handleSaveChanges = async () => {
-    const articleId = this.props.params.id;
-    const falcorData = this.state.data.articles.byId[articleId];
-
     if (!this.isFormChanged()) {
       throw new Error(
         'Tried to save changes but there were no changes. ' +
@@ -241,123 +238,28 @@ class ArticleController extends FalcorController {
       );
     }
 
-    let processedAuthors = this.state.authors.map(author => author.id);
-    // Check that all authors are unique
-    if (_.uniq(processedAuthors).length !== processedAuthors.length) {
-      this.props.displayAlert(
-        "You have duplicate authors, as this shouldn't be able" +
-          ' to happen, please contact developers. And if you know all the actions' +
-          ' you did previously to this and can reproduce them that would be of' +
-          ' great help. The save has been cancelled',
-      );
-      return;
-    }
-    if (
-      processedAuthors.length === 0 &&
-      (falcorData.authors &&
-        parseFalcorPseudoArray(falcorData.authors).length > 0)
-    ) {
-      this.props.displayAlert(
-        "Sorry, because of some non-trivial issues we currently don't have" +
-          ' deleting every single author implemented.' +
-          " You hopefully shouldn't need this function either." +
-          ' Please re-add an author to be able to save',
-      );
-      return;
-    }
+    const articleId = this.props.params.id;
 
-    // Copy the array of tags.
-    let processedTags = _.clone(this.state.tags);
-    if (_.uniqWith(processedTags, _.isEqual).length !== processedTags.length) {
-      this.props.displayAlert(
-        "You have duplicate tags, as this shouldn't be able" +
-          ' to happen, please contact developers. And if you know all the actions' +
-          ' you did previously to this and can reproduce them that would be of' +
-          ' great help. The save has been cancelled',
-      );
-      return;
-    }
+    const validationResult = await validateChanges(
+      articleId,
+      this.state,
+      this.props.displayConfirm,
+    );
 
-    // Check the special case of someone trying to reassign a category as none
-    if (
-      this.state.category === null &&
-      _.get(falcorData, 'category.id', null) !== null
-    ) {
-      this.props.displayAlert(
-        'Save cancelled, you cannot reset a category to none.' +
-          ' If you wish to have this feature added, speak to the developers',
-      );
-      return;
-    }
-
-    if (
-      this.state.imageUrl.length > 4 &&
-      this.state.imageUrl.substr(0, 5) !== 'https'
-    ) {
-      const shouldContinue = await this.props.displayConfirm(
-        'You are saving an image without using https. ' +
-          'This can be correct in a few cases but is mostly not. Are you sure ' +
-          'that you wish to continue saving?',
-      );
-      if (!shouldContinue) {
-        return;
+    if (validationResult.invalid) {
+      if (validationResult.msg) {
+        await this.props.displayAlert(validationResult.msg);
       }
+      return;
     }
 
-    if (
-      processedAuthors.length === 0 &&
-      (!falcorData.authors || Object.keys(falcorData.authors).length === 0)
-    ) {
-      // Indicate that we won't update authors as there were none before and none were added
-      processedAuthors = null;
-    }
+    const { plainMarkdown, processedAuthors, processedTags } = validationResult;
 
-    const plainMarkdown = Plain.serialize(this.state.markdown);
-    if (
-      processedTags.length === 0 &&
-      (!falcorData.tags || Object.keys(falcorData.tags).length === 0)
-    ) {
-      // Indicate that we won't update tags as there were none before and none were added
-      processedTags = null;
-    }
-
-    const shouldUpdateCategory = this.state.category;
-    const fields = shouldUpdateCategory
-      ? ['title', 'slug', 'teaser', 'image_url', 'markdown', 'html', 'category']
-      : ['title', 'slug', 'teaser', 'image_url', 'markdown', 'html'];
-    // Build the jsonGraphEnvelope
-    const jsonGraphEnvelope = {
-      paths: [['articles', 'byId', articleId, fields]],
-      jsonGraph: {
-        articles: {
-          byId: {
-            [articleId]: {},
-          },
-        },
-      },
-    };
-    // Fill in the data
-    jsonGraphEnvelope.jsonGraph.articles.byId[
-      articleId
-    ].title = this.state.title;
-    jsonGraphEnvelope.jsonGraph.articles.byId[articleId].slug = this.state.slug;
-    jsonGraphEnvelope.jsonGraph.articles.byId[
-      articleId
-    ].markdown = plainMarkdown;
-    jsonGraphEnvelope.jsonGraph.articles.byId[
-      articleId
-    ].html = this.converter.makeHtml(plainMarkdown);
-    jsonGraphEnvelope.jsonGraph.articles.byId[
-      articleId
-    ].teaser = this.state.teaser;
-    jsonGraphEnvelope.jsonGraph.articles.byId[
-      articleId
-    ].image_url = this.state.imageUrl;
-    if (shouldUpdateCategory) {
-      jsonGraphEnvelope.jsonGraph.articles.byId[
-        articleId
-      ].category = this.state.category;
-    }
+    const jsonGraphEnvelope = buildJsonGraphEnvelope(
+      this.state,
+      articleId,
+      plainMarkdown,
+    );
 
     this.save(jsonGraphEnvelope, processedAuthors, processedTags, articleId);
   };
