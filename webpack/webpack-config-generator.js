@@ -169,39 +169,26 @@ const generateWebpackConfig = config => {
                 presets: [
                   'react',
                   [
-                    'env',
+                    '@babel/preset-env',
                     {
                       targets:
                         config.type === 'server'
                           ? // This is for the node server
                             {
                               node: 'current',
-                              /**
-                               * We want this behaviour but it's only in beta right now,
-                               * we can uncomment this when we upgrade to v7 of babel
-                               *
-                               * // Disable the default behaviour of finding
-                               * // browserslist key in package.json
-                               * browsers: '',
-                               */
-                              browsers: '> 1%, last 2 versions, Firefox ESR',
+                              // Disable the default behaviour of finding
+                              // browserslist key in package.json
+                              browsers: '',
                             }
-                          : /**
-                             * We want this behaviour but it's only in beta right now,
-                             * we can uncomment this when we upgrade to v7 of babel
-                             *
-                             * // If not node, then it is 'web' and therefore our client scripts
-                             * // Here we simply let preset-env find the browserlist key
-                             * : undefined
-                             */
-                            { browsers: '> 1%, last 2 versions, Firefox ESR' },
+                          : // If not node, then it is 'web' and therefore our client scripts
+                            // Here we simply let preset-env find the browserlist key
+                            undefined,
                     },
                   ],
                 ],
                 plugins: [
-                  'transform-object-rest-spread',
-                  'array-includes',
-                  'transform-class-properties',
+                  '@babel/plugin-proposal-object-rest-spread',
+                  '@babel/plugin-proposal-class-properties',
                 ],
                 minified: config.NODE_ENV !== undefined,
               },
