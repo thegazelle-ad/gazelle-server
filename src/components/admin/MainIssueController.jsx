@@ -402,7 +402,7 @@ class MainIssueController extends FalcorController {
     );
   }
 
-  handleSaveChanges(event) {
+  async handleSaveChanges(event) {
     event.preventDefault();
 
     const { issueNumber } = this.props.params;
@@ -417,14 +417,13 @@ class MainIssueController extends FalcorController {
     }
 
     if (this.isFormFieldChanged(parsedIssueNumber, falcorData.issueNumber)) {
-      if (
-        !window.confirm(
-          'You are about to change the issue number, ' +
-            'which will change the URL to all articles in this issue, ' +
-            'among other things. It is strongly recommended not to change the ' +
-            'issue number unless it is very crucial. Are you sure you wish to proceed?',
-        )
-      ) {
+      const shouldContinue = await this.props.displayConfirm(
+        'You are about to change the issue number, ' +
+          'which will change the URL to all articles in this issue, ' +
+          'among other things. It is strongly recommended not to change the ' +
+          'issue number unless it is very crucial. Are you sure you wish to proceed?',
+      );
+      if (!shouldContinue) {
         return;
       }
     }
