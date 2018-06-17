@@ -45,7 +45,9 @@ Your database should now be set up!
 
 For development purposes all you need for Amazon S3 is a dummy config file as while in dev mode the server doesn't actually try connecting to Amazon's servers
 
-`cp config/s3.config.example.js config/s3.config.js`
+```bash
+cp config/s3.config.example.js config/s3.config.js
+```
 
 # Run build tool
 
@@ -118,4 +120,5 @@ This is served isomorphically. That means the initial render is on the server, t
 * If you're unable to get the database running and receive the error `Can't connect to local MySQL server through socket '/tmp/mysql.sock' (2)`, this means that the database server didn't automatically run on startup, run the command `mysqld &` to start the database server. This seems to happen often on MacOS
 
 * MySQL error 1045 (you don't know what password was set)<br />
-For Ubuntu - Download and Install synaptic package manager. Using synaptic, remove all instances of mariadb. Then, follow this guide and completely remove MySQL. https://askubuntu.com/questions/640899/how-do-i-uninstall-mysql-completely. Reinstall mariadb and make sure to set a different password this time when prompted. Hopefully the error does not repeat.
+Hopefully the 2 approaches described here should be sufficient https://linuxconfig.org/how-to-reset-root-mysql-password-on-ubuntu-18-04-bionic-beaver-linux at least for Ubuntu.<br />
+For very dire circumstances on Ubuntu this may help: Download and Install synaptic package manager. Using synaptic, remove all instances of mariadb. Then, follow this guide and completely remove MySQL. https://askubuntu.com/questions/640899/how-do-i-uninstall-mysql-completely. Reinstall mariadb and make sure to set a different password this time when prompted. Hopefully the error does not repeat.
