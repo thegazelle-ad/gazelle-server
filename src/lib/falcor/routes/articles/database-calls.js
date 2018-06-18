@@ -74,7 +74,7 @@ export async function createNewArticle(database, articleData) {
     throw new Error(buildErrorMessage());
   }
   const inserts = [];
-  if (articleData.authors?.length && articleData.authors.length > 0) {
+  if (_.get(articleData.authors, 'length', 0) > 0) {
     const authorArticleRows = articleData.authors.map(authorObject => {
       if (!authorObject.id) {
         logger.error(
@@ -90,7 +90,7 @@ export async function createNewArticle(database, articleData) {
     inserts.push(database('authors_articles').insert(authorArticleRows));
     createdArticle.authors = authorArticleRows;
   }
-  if (articleData.tags?.length && articleData.tags.length > 0) {
+  if (_.get(articleData.tags, 'length', 0) > 0) {
     const articleTagRows = articleData.tags.map(tagObject => {
       if (!tagObject.id) {
         logger.error(

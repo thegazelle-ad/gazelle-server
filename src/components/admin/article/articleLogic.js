@@ -54,7 +54,7 @@ export async function validateChanges(
   // Check the special case of someone trying to reassign a category as none
   if (
     componentState.category === null &&
-    falcorData.category?.id !== undefined
+    _.get(falcorData, 'category.id', null) !== null
   ) {
     return {
       invalid: true,

@@ -160,8 +160,7 @@ class ArticleController extends FalcorController {
     const markdown = Plain.deserialize(article.markdown || '');
     const slug = article.slug || '';
     const teaser = article.teaser || '';
-    const category =
-      article.category?.id === undefined ? null : article.category?.id;
+    const category = _.get(article, 'category.id', null);
     const imageUrl = article.image_url || '';
     const authors = _.toArray(article.authors);
     const tags = _.toArray(article.tags);

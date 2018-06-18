@@ -265,7 +265,7 @@ class MainIssueController extends FalcorController {
           }
           const articlesValid = allArticles.every(article => {
             const fieldsValid = fields.every(field => {
-              if (!article?.[field]) {
+              if (!_.get(article, field)) {
                 this.props.displayAlert(
                   `${article.title} has no ${field}. Please correct this`,
                 );

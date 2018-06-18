@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import { capFirstLetter, slugify } from 'lib/utilities';
 
@@ -54,7 +55,7 @@ export class SearchBar extends React.Component {
 
   handleChange(event) {
     this.props.getSuggestions(event.target.value).then(result => {
-      this.setState({ suggestions: result?.suggestions || [] });
+      this.setState({ suggestions: _.get(result, 'suggestions', []) });
     });
     this.setState({ value: event.target.value });
   }
