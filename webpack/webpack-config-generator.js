@@ -173,15 +173,12 @@ const generateWebpackConfig = config => {
                     {
                       modules: false,
                       useBuiltIns: 'usage',
+                      // If on the server we don't want to compile for browsers
+                      ignoreBrowserslistConfig: config.type === 'server',
                       targets:
                         config.type === 'server'
                           ? // This is for the node server
-                            {
-                              node: 'current',
-                              // Disable the default behaviour of finding
-                              // browserslist key in package.json
-                              browsers: '',
-                            }
+                            { node: 'current' }
                           : // If not node, then it is 'web' and therefore our client scripts
                             // Here we simply let preset-env find the browserlist key
                             undefined,
