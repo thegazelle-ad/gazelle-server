@@ -20,7 +20,7 @@
     "lint:js:fix": "npm run lint:js -- --fix",
     "lint:ts": "tsc -p . --checkJs false && tslint -p . '{src,__tests__}/**/*.{ts,tsx}'",
     "lint:ts:fix": "npm run lint:ts -- --fix",
-    "lint:prettier": "prettier --list-different '{src,__tests__,webpack,database-management}/**/*.{js,jsx,ts,tsx}'",
+    "lint:prettier": "prettier --list-different '{src,__tests__,webpack,database-management}/**/*.{js,jsx,ts,tsx,css,scss}'",
     "lint:prettier:fix": "npm run lint:prettier -- --write",
     "lint:all": "npm run lint:js && npm run lint:ts && npm run lint:prettier",
     "lint:all:fix": "npm run lint:js:fix && npm run lint:ts:fix && npm run lint:prettier:fix",
@@ -41,7 +41,7 @@
       "tslint -p tsconfig.json"
     ],
     "*": "npm run test:unit -- --bail --findRelatedTests",
-    "*.{js,jsx,ts,tsx,json}": "prettier"
+    "*.{js,jsx,ts,tsx,json,css,scss}": "prettier"
   },
   "browserslist": [
     "> 1%",
