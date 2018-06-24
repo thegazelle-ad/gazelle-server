@@ -101,7 +101,14 @@ jobs:
           keys:
             - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
-      - run: npm run lint
+      - run:
+          name: Run ESLint
+          command: npm run lint:js
+
+      - run:
+          name: Run Typescript to check types
+          # We dont enforce this at the moment as there are so many errors, remove the || when all our TS errors are fixed
+          command: npm run lint:ts || echo "Typescript failed but we expect that at this time"
 
   build:
     <<: *defaults
