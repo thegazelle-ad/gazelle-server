@@ -6,11 +6,11 @@
       "*": [ // This just means that any import will follow these resolution rules
         "*", // Imports will be resolved from the root directory
         "src/*", // Imports will be resolved from the src directory
-        "node_modules/*" // Imports will be found in node modules as well
       ]
     },
     "allowJs": true,
     "alwaysStrict": true,
+    "moduleResolution": "node",
     "checkJs": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,

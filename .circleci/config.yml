@@ -107,8 +107,7 @@ jobs:
 
       - run:
           name: Run Typescript to check types
-          # We dont enforce this at the moment as there are so many errors, remove the || when all our TS errors are fixed
-          command: npm run lint:ts || echo "Typescript failed but we expect that at this time"
+          command: npm run lint:ts"
 
   build:
     <<: *defaults

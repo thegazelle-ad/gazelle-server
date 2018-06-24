@@ -18,7 +18,7 @@
     "test:e2e": "npm run db:seed && jest --config='__tests__/config/jest.e2e.config.js' --testLocationInResults --runInBand",
     "lint:js": "eslint --max-warnings 0 '{src,__tests__,webpack,database-management}/**/*.{js,jsx,ts,tsx}'",
     "lint:js:fix": "npm run lint -- --fix",
-    "lint:ts": "tsc -p .",
+    "lint:ts": "tsc -p . --checkJs false",
     "db:migrate": "knex migrate:latest",
     "db:rollback": "knex migrate:rollback",
     "db:seed": "knex seed:run",
@@ -31,7 +31,10 @@
     "postmerge": "npm i && npm run db:migrate"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": ["eslint --max-warnings 0", "tsc --noEmit --jsx preserve --strict --noImplicitReturns --pretty --forceConsistentCasingInFileNames --allowSyntheticDefaultImports --allowJs --checkJs --noFallthroughCasesInSwitch"],
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --max-warnings 0",
+      "tsc --noEmit --jsx preserve --strict --noImplicitReturns --pretty --forceConsistentCasingInFileNames --allowSyntheticDefaultImports --allowJs --checkJs --noFallthroughCasesInSwitch"
+    ],
     "*": "npm run test:unit -- --bail --findRelatedTests"
   },
   "browserslist": [
