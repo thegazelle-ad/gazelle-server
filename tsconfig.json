@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "baseUrl": ".",
+    "paths": {
+      "*": [ // This just means that any import will follow these resolution rules
+        "*", // Imports will be resolved from the root directory
+        "src/*", // Imports will be resolved from the src directory
+        "node_modules/*" // Imports will be found in node modules as well
+      ]
+    },
+    "allowJs": true,
+    "alwaysStrict": true,
+    "checkJs": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "strict": true,
+    "noEmit": true, // We use babel for compilation, we only use TS for type checking
+    "pretty": true,
+    "jsx": "preserve",
+  },
+  "include": ["src/**/*", "__tests__/**/*"]
+}
