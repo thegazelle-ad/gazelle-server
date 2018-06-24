@@ -22,6 +22,8 @@
     "lint:ts:fix": "npm run lint:ts -- --fix",
     "lint:prettier": "prettier --list-different '{src,__tests__,webpack,database-management}/**/*.{js,jsx,ts,tsx}'",
     "lint:prettier:fix": "npm run lint:prettier -- --write",
+    "lint:all": "npm run lint:js && npm run lint:ts && npm run lint:prettier",
+    "lint:all:fix": "npm run lint:js:fix && npm run lint:ts:fix && npm run lint:prettier:fix",
     "db:migrate": "knex migrate:latest",
     "db:rollback": "knex migrate:rollback",
     "db:seed": "knex seed:run",
@@ -36,7 +38,6 @@
   "lint-staged": {
     "*.{js,jsx}": "eslint --max-warnings 0",
     "*.{ts,tsx}": [
-      "tsc --noEmit --jsx preserve --strict --noImplicitReturns --pretty --forceConsistentCasingInFileNames --allowSyntheticDefaultImports --allowJs --checkJs --noFallthroughCasesInSwitch",
       "tslint -p tsconfig.json"
     ],
     "*": "npm run test:unit -- --bail --findRelatedTests"

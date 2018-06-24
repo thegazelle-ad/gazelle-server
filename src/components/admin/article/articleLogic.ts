@@ -4,8 +4,8 @@ import { JSONGraphEnvelope } from 'falcor';
 import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
 import { Converter } from 'showdown';
 // @ts-ignore
-import slatePlainSerializer from 'slate-plain-serializer';
-import lodash from 'lodash';
+import Plain from 'slate-plain-serializer';
+import _ from 'lodash';
 
 // When we type the files these originate from these types should just be imported
 // We should also write out a full type for our Falcor tree actually. Wouldn't be too much work
@@ -195,8 +195,9 @@ export function buildJsonGraphEnvelope(
   jsonGraphEnvelope.jsonGraph.articles.byId[articleId].slug =
     componentState.slug;
   jsonGraphEnvelope.jsonGraph.articles.byId[articleId].markdown = markdown;
-  jsonGraphEnvelope.jsonGraph.articles.byId[articleId
-].html = new Converter().makeHtml(markdown);
+  jsonGraphEnvelope.jsonGraph.articles.byId[
+    articleId
+  ].html = new Converter().makeHtml(markdown);
   jsonGraphEnvelope.jsonGraph.articles.byId[articleId].teaser =
     componentState.teaser;
   jsonGraphEnvelope.jsonGraph.articles.byId[articleId].image_url =

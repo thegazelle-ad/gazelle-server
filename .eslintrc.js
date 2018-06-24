@@ -70,6 +70,8 @@ module.exports = {
     // I find them overly restrictive, others simply because I don't want to fix them right now
     'import/first': 'off',
     'import/prefer-default-export': 'off',
+    'import/no-unresolved': [2, { ignore: ['/articleLogic$'] }], // Basically all the typescript files
+    'import/extensions': [2, 'never'],
     'no-underscore-dangle': 'off',
   },
 };
