@@ -67,6 +67,6 @@ To debug the unit tests you can use this config:
 
 And you should now be able to set all those lovely breakpoints and enjoy the luxury of the VS code debugger!
 
-# Client (browser) code
+## Client (browser) code
 
 Chrome DevTools all the way! For client side debugging the Chrome Developer Tools are pretty good. You can see [this official guide](https://developers.google.com/web/tools/chrome-devtools/) for some instructions. It is also possible to debug client side code in VSCode using the [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome) extension though. No one from the team has tried it yet, but it should work just fine, and if you try it and find it good feel free to add something to this guide to make it easier for others to set it up.
