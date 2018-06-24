@@ -30,7 +30,8 @@ jobs:
 
       # Complete setup
       - run: |
-          sed 's/"password",$/"circleci_test_gazelle",/' config/database.config.example.json5 > config/database.config.json5
+          # The crazy blocks of quotes is to be able to use single quotes inside single quotes
+          sed 's/'"'"'password'"'"',$/"circleci_test_gazelle",/' config/database.config.example.json5 > config/database.config.json5
           cp config/s3.config.example.js config/s3.config.js
 
       # Cache it
