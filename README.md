@@ -1,20 +1,10 @@
 # The Gazelle
 
-This code is written for [The Gazelle's](https://www.thegazelle.org) website. The Gazelle is New York University Abu Dhabi's independent online student news publication. The Gazelle's website is developed and maintained entirely by current undergraduate NYUAD students. The publication is managed by a dedicated team of writers, editors, artists, developers and photographers and released to NYUAD, the NYU global network and the greater Abu Dhabi community every Sunday morning.
+This code is written for [The Gazelle's website](https://www.thegazelle.org). The Gazelle is New York University Abu Dhabi's independent online student news publication. The Gazelle's website is developed and maintained entirely by current undergraduate NYUAD students. The publication is managed by a dedicated team of writers, editors, artists, developers and photographers and released to NYUAD, the NYU global network and the greater Abu Dhabi community every Sunday morning.
 
-## Resources
+## Documentation
 
-- [React](https://facebook.github.io/react/) for UI Rendering
-- [React Router](https://github.com/reactjs/react-router) for App Routing
-- [Falcor](https://github.com/Netflix/falcor) for Data Fetching
-- [Express](https://expressjs.com/) for Server Side Rendering
-- [Webpack](https://webpack.github.io/) for Building ES6 with Babel 6
-- [Ghost](https://api.ghost.org/) for a RESTful JSON API and CMS
-- [Airbnb Style Guide](https://github.com/airbnb/javascript/tree/master/react) for style consistency and linting
-
-## Development
-
-For technical documentation and instructions on getting the site up and running locally, see our [wiki](https://github.com/thegazelle-ad/gazelle-server/wiki) page.
+For technical documentation and instructions on getting the site up and running locally, see our documentation in the [docs folder](./docs).
 
 ## Join the Herd
 
