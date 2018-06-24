@@ -113,7 +113,7 @@ const generateWebpackConfig = config => {
         getAbsolute('src'),
         getAbsolute('.'),
       ],
-      extensions: ['.js', '.jsx', '.json5', 'ts', 'tsx'],
+      extensions: ['.js', '.jsx', '.json5', '.ts', '.tsx'],
     },
 
     // This makes webpack not bundle in node_modules but leave the require statements
