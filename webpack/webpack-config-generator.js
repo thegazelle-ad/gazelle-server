@@ -194,14 +194,27 @@ const generateWebpackConfig = config => {
                 minified: config.NODE_ENV !== undefined,
               },
             },
-            // Lint all that is compiled, notice the order so eslint runs before TS + Babel
-            {
-              loader: 'eslint-loader',
-              options: {
-                emitWarning: true, // Emit linting errors as warnings
-              },
-            },
           ],
+        },
+        // Lint all that is compiled, notice enforce: 'pre' that ensures they run first
+        {
+          test: /\.jsx?$/,
+          loader: 'eslint-loader',
+          exclude: [getAbsolute('node_modules'), getAbsolute('config')],
+          enforce: 'pre',
+          options: {
+            emitWarning: true, // Emit linting errors as warnings
+          },
+        },
+        {
+          test: /\.tsx?$/,
+          loader: 'tslint-loader',
+          exclude: [getAbsolute('node_modules'), getAbsolute('config')],
+          enforce: 'pre',
+          // Tslint errors are warnings by default so no option needed
+          options: {
+            tsConfigFile: 'tsconfig.json',
+          },
         },
         {
           test: /\.json5$/,

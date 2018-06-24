@@ -8,7 +8,7 @@ import moment from 'moment';
 import { debounce } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 import { getArticleListPath } from 'routes/admin-helpers';
-import { validateChanges, buildJsonGraphEnvelope } from './articleLogic';
+import { validateChanges, buildJsonGraphEnvelope } from './articleLogic.ts';
 
 // Custom Components
 import {

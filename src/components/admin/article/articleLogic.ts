@@ -1,11 +1,11 @@
 // We should probably contribute a type file for this very small library at some point?
 // For now I'm just ignoring it
-// @ts-ignore
-import Plain from 'slate-plain-serializer';
-import _ from 'lodash';
-import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
 import { JSONGraphEnvelope } from 'falcor';
+import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
 import { Converter } from 'showdown';
+// @ts-ignore
+import slatePlainSerializer from 'slate-plain-serializer';
+import lodash from 'lodash';
 
 // When we type the files these originate from these types should just be imported
 // We should also write out a full type for our Falcor tree actually. Wouldn't be too much work
@@ -16,46 +16,49 @@ type ArticleControllerState = {
     articles: {
       byId: {
         [key: number]: {
-          title: string,
-          slug: string,
-          markdown: string,
-          html: string,
-          teaser: string,
-          image_url: string,
+          title: string;
+          slug: string;
+          markdown: string;
+          html: string;
+          teaser: string;
+          image_url: string;
           // NOTE: pretty sure this is wrong, it should be an object with id, but it seems to be how we use it? Test it later while debugging stuff
-          category: number,
-          authors: {},
-          tags: {},
-        },
-      },
-    },
-  },
+          category: number;
+          authors: {};
+          tags: {};
+        };
+      };
+    };
+  };
   authors: {
-    id: number,
-  }[],
-  tags: {}[],
-  category: number,
-  imageUrl: string,
-  markdown: string,
-  title: string,
-  slug: string,
-  html: string,
-  teaser: string,
+    id: number;
+  }[];
+  tags: {}[];
+  category: number;
+  imageUrl: string;
+  markdown: string;
+  title: string;
+  slug: string;
+  html: string;
+  teaser: string;
 };
 
 export async function validateChanges(
   articleId: number,
   componentState: ArticleControllerState,
   displayConfirm: DisplayConfirm,
-): Promise<{
-  invalid: true,
-  msg?: string
-} | {
-  invalid: false,
-  plainMarkdown: any, // This is actually Slate.Value but have some typing config problems we should fix
-  processedAuthors: number[] | null,
-  processedTags: {}[] | null,
-}> {
+): Promise<
+  | {
+      invalid: true;
+      msg?: string;
+    }
+  | {
+      invalid: false;
+      plainMarkdown: any; // This is actually Slate.Value but have some typing config problems we should fix
+      processedAuthors: number[] | null;
+      processedTags: {}[] | null;
+    }
+> {
   const falcorData = componentState.data.articles.byId[articleId];
 
   let processedAuthors: number[] | null = componentState.authors.map(
@@ -147,10 +150,10 @@ export async function validateChanges(
   }
 
   return {
-    invalid: false,
     plainMarkdown,
     processedAuthors,
     processedTags,
+    invalid: false,
   };
 }
 
@@ -158,10 +161,12 @@ export interface ArticleControllerJSONGraphEnvelope extends JSONGraphEnvelope {
   jsonGraph: {
     [T in keyof ArticleControllerState['data']]: {
       [T in keyof ArticleControllerState['data']['articles']]: {
-        [T in keyof ArticleControllerState['data']['articles']['byId']]: Partial<ArticleControllerState['data']['articles']['byId'][number]>
+        [T in keyof ArticleControllerState['data']['articles']['byId']]: Partial<
+          ArticleControllerState['data']['articles']['byId'][number]
+        >
       }
     }
-  }
+  };
 }
 
 export function buildJsonGraphEnvelope(
@@ -190,9 +195,8 @@ export function buildJsonGraphEnvelope(
   jsonGraphEnvelope.jsonGraph.articles.byId[articleId].slug =
     componentState.slug;
   jsonGraphEnvelope.jsonGraph.articles.byId[articleId].markdown = markdown;
-  jsonGraphEnvelope.jsonGraph.articles.byId[
-    articleId
-  ].html = new Converter().makeHtml(markdown);
+  jsonGraphEnvelope.jsonGraph.articles.byId[articleId
+].html = new Converter().makeHtml(markdown);
   jsonGraphEnvelope.jsonGraph.articles.byId[articleId].teaser =
     componentState.teaser;
   jsonGraphEnvelope.jsonGraph.articles.byId[articleId].image_url =
