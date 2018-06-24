@@ -1,4 +1,6 @@
-If you encounter unexpected errors during setup, or later during usage, see the `Frequently Encountered Errors` section at the bottom of this page.
+If you encounter unexpected errors during setup, or later during usage, see the [`Frequently Encountered issues`](#frequently-encountered-issues) section at the bottom of this page.
+
+You should read this guide very carefully, if you are encountering issues it is most likely because you missed a step in the guide because of skimming or not following a URL you had to follow. All the URLs linked to are important, and it's in most cases assumed that you go to the URLs linked and follow instructions there before coming back and continuing the guide. In case you do find that something was missing or unclear in this guide though, and you either figure out the issue yourself or reach out for help from the lead developers, please submit a pull request editing this guide so that future new developers won't encounter the same issue.
 
 Also, if not obvious, all instructions in this setup guide assume that you have already cloned [this repo](https://github.com/thegazelle-ad/gazelle-server) which the repo is located in, and that your current working directory is this repo.
 
@@ -6,7 +8,7 @@ Also, if not obvious, all instructions in this setup guide assume that you have 
 
 Make sure you have NodeJS and npm installed
 
-You can [install nodejs and npm via nvm](https://github.com/creationix/nvm), feel free to install it any other way, but nvm is a nice way to manage your node versions if you work on different projects that use different versions.
+You can [install nodejs and npm via nvm](https://github.com/creationix/nvm), feel free to install it any other way, but nvm is a nice way to manage your node versions if you work on different projects that use different versions. We also have a `.nvmrc` file so when you `cd` into the directory of the repo, you can just run `nvm use` to change to our version, or `nvm install` both without any arguments as it finds it in `.nvmrc` and it'll install the correct version.
 
 > **IMPORTANT**: For this repo we use **node v9.11.1** and **npm 5.6.0**. Use any other versions at your own peril.
 
@@ -17,7 +19,7 @@ npm install
 ```
 
 # Setup Database
-You should first install MariaDB, which for Linux can be done here: https://downloads.mariadb.org/mariadb/repositories, and a guide for MacOS is here: https://mariadb.com/kb/en/library/installing-mariadb-on-macos-using-homebrew/. We recommend using either a Linux distribution or MacOS as your operating system when developing for The Gazelle. We use version 10.1 in production / CircleCI so that's the recommended version. If you are only setting up for development and not for deployment you can also use MySQL which is 100% compatible.
+You should first install MariaDB, which for Linux can be done here: https://downloads.mariadb.org/mariadb/repositories, and a guide for MacOS is here: https://mariadb.com/kb/en/library/installing-mariadb-on-macos-using-homebrew/. We recommend using either a Linux distribution or MacOS as your operating system when developing for The Gazelle. We use version 10.1 of MariaDB in production / CircleCI so that's the recommended version. If you are only setting up for development and not for deployment you can also use MySQL which is 100% compatible.
 
 After having installed MariaDB (or MySQL) setting up a development database should be as easy as running these three commands:
 
@@ -29,9 +31,11 @@ npm run db:seed
 
 When running the first command it will ask you for your password for the database client which should have been set during installation of MariaDB/MySQL. It may also just be empty, in which case you can try running the first command without the `-p` flag.
 
+> NOTE: This is one of the places some people encounter errors where they somehow didn't get prompted to set a password when installing MariaDB and then the password ends up being unknown, the [`Frequently Encountered issues`](#frequently-encountered-issues) section has some tips on solving this issue.
+
 When this is done copy database.config.example.json5 (it is in the config folder) to its non-example counterpart, you would do this as follows in bash:
 
-```
+```bash
 cp config/database.config.example.json5 config/database.config.json5
 ```
 
@@ -57,7 +61,7 @@ For single build
 npm run build
 ```
 
-Or in watch mode (for active development), which will continously rebuild in a few seconds every time you change any code.
+Or in watch mode, which will continously rebuild in a few seconds every time you change any code (this is the recommended way to build while developing).
 
 ```
 npm run build:watch
@@ -75,6 +79,8 @@ You need to re-run the server every time the code is rebuilt to serve the latest
 npm start
 ```
 
+You should now be able to go to `localhost:3000` and `localhost:4000` in your browser to see your local copy of The Gazelle and our admin interface! Just because you have it running now don't stop reading though, the below is also important information!
+
 # Note on linters and tests
 
 Linting is included in webpack, so when building your code while developing check the linting errors to make sure you're following the recommended coding style.
@@ -90,16 +96,23 @@ npm run test:unit
 and for linting
 
 ```
-npm run lint
+npm run lint:all
 ```
 
 There's also a nice trick if you have a lot of linting errors you don't want to fix where you can simply run
 
 ```
-npm run lint:fix
+npm run lint:all:fix
 ```
 
 and it'll automatically fix all the errors that auto fix is implemented for (which is most of the formatting related ones)
+
+> NOTE: We actually have 3 types of linting, ESLint for javascript TSLint for Typescript and Prettier for code formatting, and each of them can be run as follows (and all of them can be postfixed with `:fix` like above):
+```bash
+npm run lint:js
+npm run lint:ts
+npm run lint:prettier
+```
 
 # Git hooks
 
