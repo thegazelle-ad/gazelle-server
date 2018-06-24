@@ -40,7 +40,8 @@
     "*.{ts,tsx}": [
       "tslint -p tsconfig.json"
     ],
-    "*": "npm run test:unit -- --bail --findRelatedTests"
+    "*": "npm run test:unit -- --bail --findRelatedTests",
+    "*.{js,jsx,ts,tsx,json}": "prettier"
   },
   "browserslist": [
     "> 1%",

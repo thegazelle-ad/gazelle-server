@@ -34,8 +34,7 @@ export default [
     set: jsonGraphArg =>
       new Promise((resolve, reject) => {
         const staffBySlug = jsonGraphArg.staff.bySlug;
-        db
-          .updateMainStaffData(staffBySlug)
+        db.updateMainStaffData(staffBySlug)
           .then(flag => {
             if (!flag) {
               throw new Error(

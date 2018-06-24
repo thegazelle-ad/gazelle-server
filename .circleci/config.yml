@@ -107,7 +107,7 @@ jobs:
 
       - run:
           name: Run Typescript to check types
-          command: npm run lint:ts"
+          command: npm run lint:ts
 
       - run:
           name: Run our opinionated code formatter prettier

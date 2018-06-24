@@ -7,7 +7,7 @@ module.exports.addArticleAuthorRelationship = (
   for (let i = 0; i < numArticles; i++) {
     const id = i + 1;
     const articleId = i + 1;
-    const authorId = articleId % numAuthors + 1;
+    const authorId = (articleId % numAuthors) + 1;
     rows.push({
       id,
       article_id: articleId,
