@@ -22,7 +22,7 @@ module.exports = {
     'plugin:import/errors',
     'plugin:import/warnings',
     'airbnb',
-    'plugin:prettier/recommended',
+    'prettier', // Disable the rules prettier handles for us
   ],
   env: {
     es6: true,

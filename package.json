@@ -16,9 +16,12 @@
     "build:emulate-ci": "CI=true CIRCLECI=true npm run build:production",
     "test:unit": "jest --config='__tests__/config/jest.unit.config.js' --testLocationInResults",
     "test:e2e": "npm run db:seed && jest --config='__tests__/config/jest.e2e.config.js' --testLocationInResults --runInBand",
-    "lint:js": "eslint --max-warnings 0 '{src,__tests__,webpack,database-management}/**/*.{js,jsx,ts,tsx}'",
-    "lint:js:fix": "npm run lint -- --fix",
-    "lint:ts": "tsc -p . --checkJs false",
+    "lint:js": "eslint --max-warnings 0 '{src,__tests__,webpack,database-management}/**/*.{js,jsx}'",
+    "lint:js:fix": "npm run lint:js -- --fix",
+    "lint:ts": "tsc -p . --checkJs false && tslint",
+    "lint:ts:fix": "npm run lint:ts -- --fix",
+    "lint:prettier": "prettier --list-different '{src,__tests__,webpack,database-management}/**/*.{js,jsx,ts,tsx}'",
+    "lint:prettier:fix": "npm run lint:prettier -- --write",
     "db:migrate": "knex migrate:latest",
     "db:rollback": "knex migrate:rollback",
     "db:seed": "knex seed:run",
@@ -31,9 +34,10 @@
     "postmerge": "npm i && npm run db:migrate"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --max-warnings 0",
-      "tsc --noEmit --jsx preserve --strict --noImplicitReturns --pretty --forceConsistentCasingInFileNames --allowSyntheticDefaultImports --allowJs --checkJs --noFallthroughCasesInSwitch"
+    "*.{js,jsx}": "eslint --max-warnings 0",
+    "*.{ts,tsx}": [
+      "tsc --noEmit --jsx preserve --strict --noImplicitReturns --pretty --forceConsistentCasingInFileNames --allowSyntheticDefaultImports --allowJs --checkJs --noFallthroughCasesInSwitch",
+      "tslint -p tsconfig.json"
     ],
     "*": "npm run test:unit -- --bail --findRelatedTests"
   },
@@ -98,7 +102,6 @@
     "eslint-loader": "^2.0.0",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^7.7.0",
     "extract-text-webpack-plugin": "^3.0.2",
     "husky": "^0.14.3",
@@ -113,6 +116,9 @@
     "postcss-loader": "^2.0.9",
     "prettier": "^1.11.1",
     "sass-loader": "^6.0.6",
+    "tslint": "^5.10.0",
+    "tslint-config-airbnb": "^5.9.2",
+    "tslint-config-prettier": "^1.13.0",
     "typescript": "^2.9.2",
     "uglifyjs-webpack-plugin": "^1.1.4",
     "webpack": "^3.10.0",
