@@ -6,6 +6,8 @@ This code is written for [The Gazelle's website](https://www.thegazelle.org). Th
 
 For documentation on how to setup the development environment, our coding style guide, dev ops guides, and tips for a nicer development experience, see our [documentation folder](./docs).
 
+> NOTE: If you are a new developer looking through this, the first place you want to go is probably the [Setting Up Your Development Environment Guide](./docs/dev-environment/setting-up-dev-environment.md)
+
 ## Join the Herd
 
 The Gazelle's website is managed by a team of dedicated student web developers. If you'd like to be part of the development team or any other aspect of The Gazelle, shoot an email to [nerds@thegazelle.org](mailto:nerds@thegazelle.org).
