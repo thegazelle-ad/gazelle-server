@@ -18,7 +18,7 @@ import Dialog from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
 import Snackbar from 'material-ui/Snackbar';
 
-export default class ImageUploader extends BaseComponent {
+export class ImageController extends BaseComponent {
   constructor() {
     super();
     this.safeSetState({
