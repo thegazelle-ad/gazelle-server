@@ -22,23 +22,42 @@ export const getDatabaseConnection = databaseName =>
     },
   });
 
-const createTestDatabase = databaseName =>
+const endConnection = connection =>
   new Promise((resolve, reject) => {
-    const connection = mysql.createConnection(
-      _.omit(databaseConnectionConfig, 'database'),
-    );
-    connection.query(`CREATE DATABASE ${databaseName};`, err => {
+    connection.end(err => {
       if (err) {
         reject(err);
       } else {
         resolve();
       }
     });
-    connection.end();
+  });
+
+const runSqlQuery = query =>
+  new Promise((resolve, reject) => {
+    const connection = mysql.createConnection(
+      _.omit(databaseConnectionConfig, 'database'),
+    );
+    connection.connect(connectionErr => {
+      if (connectionErr) {
+        reject(connectionErr);
+        endConnection(connection);
+        return;
+      }
+
+      connection.query(query, err => {
+        if (err) {
+          reject(err);
+          endConnection(connection);
+          return;
+        }
+        resolve(endConnection(connection));
+      });
+    });
   });
 
 export const initializeTestDatabase = async (database, databaseName) => {
-  await createTestDatabase(databaseName);
+  await runSqlQuery(`CREATE DATABASE ${databaseName}`);
   await database.migrate.latest({
     directory: path.join(__dirname, '../../database-management/migrations'),
   });
@@ -47,17 +66,5 @@ export const initializeTestDatabase = async (database, databaseName) => {
   });
 };
 
-export const cleanupTestDatabase = databaseName =>
-  new Promise((resolve, reject) => {
-    const connection = mysql.createConnection(
-      _.omit(databaseConnectionConfig, 'database'),
-    );
-    connection.query(`DROP DATABASE ${databaseName};`, err => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-    connection.end();
-  });
+export const cleanupTestDatabase = async databaseName =>
+  runSqlQuery(`DROP DATABASE ${databaseName};`);
