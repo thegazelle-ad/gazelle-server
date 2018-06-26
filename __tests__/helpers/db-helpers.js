@@ -1,3 +1,4 @@
+// Be careful not to mock any of these in your test!
 import path from 'path';
 import fs from 'fs';
 import JSON5 from 'json5';
