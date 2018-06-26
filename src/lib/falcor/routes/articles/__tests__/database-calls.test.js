@@ -25,7 +25,7 @@ const maxSlugNum = 200;
 // End the knex connection after all tests are done
 afterAll(async () => database.destroy());
 
-describe.skip('getPaginatedArticle', () => {
+describe('getPaginatedArticle', () => {
   // We can use All instead of Each as these are only select queries
   beforeAll(async () => initializeTestDatabase(database, databaseName));
   afterAll(async () => cleanupTestDatabase(databaseName));
