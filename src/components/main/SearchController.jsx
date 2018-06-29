@@ -55,7 +55,7 @@ export default class SearchController extends FalcorController {
       }
       const query = this.props.location.query.q;
       const results = _.filter(
-        this.state.data.search.posts[query],
+        this.state.data.search.articles[query],
         article => article.published_at,
       );
       return <ArticleList className="search" articles={results} />;
