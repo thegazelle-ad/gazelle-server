@@ -1,4 +1,4 @@
 export default {
-  accessKeyId: "key",
-  secretAccessKey: "secret",
+  accessKeyId: 'key',
+  secretAccessKey: 'secret',
 };

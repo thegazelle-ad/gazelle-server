@@ -5,7 +5,7 @@
   padding: 0 0.75rem 1.25rem 0.75rem;
 
   @media (max-width: $medium) {
-    max-width: $column-2
+    max-width: $column-2;
   }
 
   @media (max-width: $small) {
@@ -29,7 +29,7 @@
       color: $dark-grey;
       &:hover,
       &:active {
-        color: #A6061F;
+        color: #a6061f;
       }
     }
     &__title {
@@ -73,10 +73,9 @@
         padding-top: 0.2rem;
       }
     }
-    &:last-child{
+    &:last-child {
       border-bottom: none;
     }
-
 
     &__content {
       &__title {
@@ -89,7 +88,7 @@
         font-size: $staff-small;
         margin: 0 0 0.1rem 0;
         @include uppercase();
-        padding-top: 0.2rem ;
+        padding-top: 0.2rem;
       }
 
       &__teaser {

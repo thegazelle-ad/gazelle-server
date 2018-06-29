@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable import/no-extraneous-dependencies */
 const webpack = require('webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
@@ -112,7 +113,7 @@ const generateWebpackConfig = config => {
         getAbsolute('src'),
         getAbsolute('.'),
       ],
-      extensions: ['.js', '.jsx', '.json5'],
+      extensions: ['.js', '.jsx', '.json5', '.ts', '.tsx'],
     },
 
     // This makes webpack not bundle in node_modules but leave the require statements
@@ -158,16 +159,17 @@ const generateWebpackConfig = config => {
     module: {
       rules: [
         {
-          test: /\.jsx?$/,
+          test: /\.(j|t)sx?$/,
           exclude: [getAbsolute('node_modules'), getAbsolute('config')],
 
           use: [
-            // Babel for transpiling ESNext and React
+            // Notice we are using babel loader after the typescript loader
             {
               loader: 'babel-loader',
               options: {
                 presets: [
                   '@babel/preset-react',
+                  '@babel/preset-typescript',
                   [
                     '@babel/preset-env',
                     {
@@ -192,14 +194,27 @@ const generateWebpackConfig = config => {
                 minified: config.NODE_ENV !== undefined,
               },
             },
-            // Lint all that is compiled, notice the order so eslint runs before babel
-            {
-              loader: 'eslint-loader',
-              options: {
-                emitWarning: true,
-              },
-            },
           ],
+        },
+        // Lint all that is compiled, notice enforce: 'pre' that ensures they run first
+        {
+          test: /\.jsx?$/,
+          loader: 'eslint-loader',
+          exclude: [getAbsolute('node_modules'), getAbsolute('config')],
+          enforce: 'pre',
+          options: {
+            emitWarning: true, // Emit linting errors as warnings
+          },
+        },
+        {
+          test: /\.tsx?$/,
+          loader: 'tslint-loader',
+          exclude: [getAbsolute('node_modules'), getAbsolute('config')],
+          enforce: 'pre',
+          // Tslint errors are warnings by default so no option needed
+          options: {
+            tsConfigFile: 'tsconfig.json',
+          },
         },
         {
           test: /\.json5$/,

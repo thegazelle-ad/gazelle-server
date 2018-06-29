@@ -11,7 +11,6 @@
       // margin: 0;
       max-width: 700px;
       height: 350px;
-
     }
 
     &__content {
@@ -37,7 +36,7 @@
 }
 
 @media (max-width: $medium) {
-  .featured-article{
+  .featured-article {
     min-width: 0;
     .article-preview {
       flex-direction: column;
@@ -56,7 +55,7 @@
 }
 
 @media (max-width: $small) {
-  .featured-article{
+  .featured-article {
     .article-preview {
       justify-content: flex-start;
       align-items: flex-start;
@@ -67,7 +66,7 @@
       }
 
       &__content {
-      // order: 1;
+        // order: 1;
         // padding-top: 0.5rem;
         max-width: $column-1;
         &__category-header {

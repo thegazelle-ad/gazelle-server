@@ -17,6 +17,7 @@ npm install
 ```
 
 # Setup Database
+
 You should first install MariaDB, which for Linux can be done here: https://downloads.mariadb.org/mariadb/repositories, and a guide for MacOS is here: https://mariadb.com/kb/en/library/installing-mariadb-on-macos-using-homebrew/. We recommend using either a Linux distribution or MacOS as your operating system when developing for The Gazelle. We use version 10.1 in production / CircleCI so that's the recommended version. If you are only setting up for development and not for deployment you can also use MySQL which is 100% compatible.
 
 After having installed MariaDB (or MySQL) setting up a development database should be as easy as running these three commands:
@@ -117,8 +118,8 @@ This is served isomorphically. That means the initial render is on the server, t
 
 # Frequently Encountered Issues
 
-* If you're unable to get the database running and receive the error `Can't connect to local MySQL server through socket '/tmp/mysql.sock' (2)`, this means that the database server didn't automatically run on startup, run the command `mysqld &` to start the database server. This seems to happen often on MacOS
+- If you're unable to get the database running and receive the error `Can't connect to local MySQL server through socket '/tmp/mysql.sock' (2)`, this means that the database server didn't automatically run on startup, run the command `mysqld &` to start the database server. This seems to happen often on MacOS
 
-* MySQL error 1045 (you don't know what password was set)<br />
-Hopefully the 2 approaches described here should be sufficient https://linuxconfig.org/how-to-reset-root-mysql-password-on-ubuntu-18-04-bionic-beaver-linux at least for Ubuntu.<br />
-For very dire circumstances on Ubuntu this may help: Download and Install synaptic package manager. Using synaptic, remove all instances of mariadb. Then, follow this guide and completely remove MySQL. https://askubuntu.com/questions/640899/how-do-i-uninstall-mysql-completely. Reinstall mariadb and make sure to set a different password this time when prompted. Hopefully the error does not repeat.
+- MySQL error 1045 (you don't know what password was set)<br />
+  Hopefully the 2 approaches described here should be sufficient https://linuxconfig.org/how-to-reset-root-mysql-password-on-ubuntu-18-04-bionic-beaver-linux at least for Ubuntu.<br />
+  For very dire circumstances on Ubuntu this may help: Download and Install synaptic package manager. Using synaptic, remove all instances of mariadb. Then, follow this guide and completely remove MySQL. https://askubuntu.com/questions/640899/how-do-i-uninstall-mysql-completely. Reinstall mariadb and make sure to set a different password this time when prompted. Hopefully the error does not repeat.
