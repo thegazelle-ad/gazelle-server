@@ -58,9 +58,8 @@ export default [
     get: pathSet =>
       new Promise(resolve => {
         const requestedFields = pathSet[5];
-        db
-          .issueCategoryQuery(pathSet.issueNumbers, requestedFields)
-          .then(data => {
+        db.issueCategoryQuery(pathSet.issueNumbers, requestedFields).then(
+          data => {
             // data is an object with keys of issue numbers and values
             // arrays of category objects in correct order as given in editor tools
             const results = [];
@@ -84,7 +83,8 @@ export default [
               });
             });
             resolve(results);
-          });
+          },
+        );
       }),
   },
   {
@@ -203,60 +203,58 @@ export default [
         const featuredArticles = args[1];
         const picks = args[2];
         const mainArticles = args[3];
-        db
-          .updateIssueArticles(
-            issueNumber,
-            featuredArticles,
-            picks,
-            mainArticles,
-          )
-          .then(data => {
-            let results = [];
-            const toAdd = data.data;
-            const toInvalidate = data.invalidated;
-            // Build the return array from the structure we know it returns
-            // from db.js
-            if (toInvalidate) {
-              results = results.concat(toInvalidate);
-            }
-            if (has.call(toAdd, 'featured')) {
-              results.push(toAdd.featured);
-            }
-            if (has.call(toAdd, 'picks')) {
-              results = results.concat(toAdd.picks);
-            }
-            if (has.call(toAdd, 'categories')) {
-              _.forEach(toAdd.categories, (category, key) => {
-                results.push({
-                  path: [
-                    'issues',
-                    'byNumber',
-                    issueNumber,
-                    'categories',
-                    key,
-                    'name',
-                  ],
-                  value: category.name,
-                });
-                results.push({
-                  path: [
-                    'issues',
-                    'byNumber',
-                    issueNumber,
-                    'categories',
-                    key,
-                    'slug',
-                  ],
-                  value: category.slug,
-                });
-                results = results.concat(category.articles);
+        db.updateIssueArticles(
+          issueNumber,
+          featuredArticles,
+          picks,
+          mainArticles,
+        ).then(data => {
+          let results = [];
+          const toAdd = data.data;
+          const toInvalidate = data.invalidated;
+          // Build the return array from the structure we know it returns
+          // from db.js
+          if (toInvalidate) {
+            results = results.concat(toInvalidate);
+          }
+          if (has.call(toAdd, 'featured')) {
+            results.push(toAdd.featured);
+          }
+          if (has.call(toAdd, 'picks')) {
+            results = results.concat(toAdd.picks);
+          }
+          if (has.call(toAdd, 'categories')) {
+            _.forEach(toAdd.categories, (category, key) => {
+              results.push({
+                path: [
+                  'issues',
+                  'byNumber',
+                  issueNumber,
+                  'categories',
+                  key,
+                  'name',
+                ],
+                value: category.name,
               });
-            }
-            if (has.call(toAdd, 'published')) {
-              results = results.concat(toAdd.published);
-            }
-            resolve(results);
-          });
+              results.push({
+                path: [
+                  'issues',
+                  'byNumber',
+                  issueNumber,
+                  'categories',
+                  key,
+                  'slug',
+                ],
+                value: category.slug,
+              });
+              results = results.concat(category.articles);
+            });
+          }
+          if (has.call(toAdd, 'published')) {
+            results = results.concat(toAdd.published);
+          }
+          resolve(results);
+        });
       }),
   },
   {

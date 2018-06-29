@@ -8,58 +8,57 @@
 /*
  * Typograpy
  */
- @mixin roboto-light {
-   font-family: "Roboto", sans-serif;
-   font-weight: 300;
- }
+@mixin roboto-light {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+}
 
- @mixin roboto-normal {
-   font-family: "Roboto", sans-serif;
-   font-weight: 400;
- }
+@mixin roboto-normal {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+}
 
- @mixin roboto-bold {
-   font-family: "Roboto", sans-serif;
-   font-weight: 500;
- }
+@mixin roboto-bold {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+}
 
 /*
  * Home page special box size
  */
-  @mixin bigger-box {
-    display: flex;
-    flex-direction: row;
-    max-width: 100%;
-    //align-self: stretch;
-    flex-shrink: 1;
-    align-items: flex-start;
-    justify-content: flex-start;
-    .article-preview {
-      &__featured-image {
-        flex: 1 1 auto;
-        height: 250px;
-        width: 350px;
-        margin-right: 1rem;
-        padding-bottom: 0;
+@mixin bigger-box {
+  display: flex;
+  flex-direction: row;
+  max-width: 100%;
+  //align-self: stretch;
+  flex-shrink: 1;
+  align-items: flex-start;
+  justify-content: flex-start;
+  .article-preview {
+    &__featured-image {
+      flex: 1 1 auto;
+      height: 250px;
+      width: 350px;
+      margin-right: 1rem;
+      padding-bottom: 0;
+    }
+    &__content {
+      margin-top: 0.5rem;
+      //align-self: center;
+      &__title {
+        font-size: 1.5rem;
+        line-height: 2rem;
       }
-      &__content {
-        margin-top: 0.5rem;
-        //align-self: center;
-        &__title {
-          font-size: 1.5rem;
-          line-height: 2rem;
-        }
-        flex-grow: 1;
-        max-width: 50%;
-      }
+      flex-grow: 1;
+      max-width: 50%;
     }
   }
-
+}
 
 /*
  * Vertical article preview layout
  */
- @mixin vertical-article-list {
+@mixin vertical-article-list {
   display: block;
   margin: 0 auto;
   .article-preview {
@@ -68,7 +67,7 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 1.5rem;
-    border-bottom: 1px solid #E8E8E8;
+    border-bottom: 1px solid #e8e8e8;
     flex-grow: 1;
     max-width: 100%; // Keeps articles with short titles/teasers centered
     &:last-child {
@@ -88,19 +87,19 @@
       min-width: 250px;
       padding-left: 1.3rem;
       &__title {
-       font-size: 1.2rem;
-       line-height: 1.5rem;
-       font-weight: 700;
+        font-size: 1.2rem;
+        line-height: 1.5rem;
+        font-weight: 700;
       }
 
       &__authors {
-       font-size: 0.8rem;
-       @include uppercase;
-       font-weight: 500;
+        font-size: 0.8rem;
+        @include uppercase;
+        font-weight: 500;
       }
 
       &__teaser {
-       font-size: 0.8rem;
+        font-size: 0.8rem;
       }
     }
   }
@@ -108,8 +107,8 @@
     min-width: 0;
     max-width: 100%;
     .article-preview {
-     flex-direction: column;
-     align-items: stretch;
+      flex-direction: column;
+      align-items: stretch;
 
       &__featured-image {
         width: 100%;
@@ -164,7 +163,7 @@
   &:after {
     z-index: -1;
     background-color: $border-grey;
-    content: "";
+    content: '';
     display: inline-block;
     height: 1px;
     position: relative;

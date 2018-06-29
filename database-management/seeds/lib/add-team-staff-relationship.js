@@ -18,7 +18,7 @@ module.exports.addTeamStaffRelationship = (
       numStaffInTeam.push(0);
     }
     for (let staffId = 1; staffId <= numStaff; staffId++) {
-      const staffInTeam = (staffId - 1) % numTeams + 1 === teamId;
+      const staffInTeam = ((staffId - 1) % numTeams) + 1 === teamId;
       if (staffInTeam) {
         id += 1;
         const teamOrder = teamId - 1;

@@ -4,7 +4,7 @@
 }
 
 h1 {
- font-family: Roboto, sans-serif;
+  font-family: Roboto, sans-serif;
 }
 
 .toggle-button {
@@ -15,7 +15,7 @@ h1 {
 }
 
 a:visited:not(.active-link) {
-  color: #0000EE;
+  color: #0000ee;
 }
 
 .imgPreviewList {

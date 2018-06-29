@@ -9,49 +9,41 @@
 .interactive-article-load__title:empty {
   height: 30px;
   margin: auto;
-  background-image:
-    linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%),
+  background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0) 100%
+    ),
     linear-gradient($transition-grey 30px, transparent 0);
-  background-size:
-    40% 100%,
-    50% 100%;
-  background-position:
-    -90% 0%,
-    50% 0%;
+  background-size: 40% 100%, 50% 100%;
+  background-position: -90% 0%, 50% 0%;
   background-repeat: repeat-y;
   animation: title-transition 1.5s infinite linear;
 }
 
 @keyframes title-transition {
   to {
-    background-position:
-      140% 0%,
-      50% 0%;
+    background-position: 140% 0%, 50% 0%;
   }
 }
 
 .interactive-article-load__html:empty {
   height: 540px;
-  background-image:
-    linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%),
+  background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0) 100%
+    ),
     linear-gradient($transition-grey 15px, transparent 0),
     linear-gradient($transition-grey 15px, transparent 0),
     linear-gradient($transition-grey 15px, transparent 0),
     linear-gradient($transition-grey 15px, transparent 0),
     linear-gradient($transition-grey 15px, transparent 0);
-  background-size:
-    40% 33.3%,
-    60% 33.3%,
-    80% 33.3%,
-    90% 33.3%,
-    70% 33.3%,
+  background-size: 40% 33.3%, 60% 33.3%, 80% 33.3%, 90% 33.3%, 70% 33.3%,
     40% 33.3%;
-  background-position:
-    -90% 0%,
-    20px 30px,
-    20px 55px,
-    20px 80px,
-    20px 105px,
+  background-position: -90% 0%, 20px 30px, 20px 55px, 20px 80px, 20px 105px,
     20px 130px;
   background-repeat: repeat-y;
   animation: text-transition 1.5s infinite linear;
@@ -59,12 +51,7 @@
 
 @keyframes text-transition {
   to {
-    background-position:
-      140% 0%,
-      20px 30px,
-      20px 55px,
-      20px 80px,
-      20px 105px,
+    background-position: 140% 0%, 20px 30px, 20px 55px, 20px 80px, 20px 105px,
       20px 130px;
   }
 }
