@@ -21,7 +21,7 @@ export default [
             maxIndex = index;
           }
         });
-        db.searchPostsQuery(pathSet.queries, minIndex, maxIndex).then(data => {
+        db.searchScoredQuery(pathSet.queries, minIndex, maxIndex).then(data => {
           // Map all the indices down to fit the indices returned by the db call
           const processedPathSet = {
             ...pathSet,
