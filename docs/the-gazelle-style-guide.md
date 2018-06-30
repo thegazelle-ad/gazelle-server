@@ -57,7 +57,28 @@ We generally name files and directories (folders) in all lower case with separat
 
 ## Testing
 
+The more tests the better! For a quick explanation some of the many benefits of writing lots of good tests are:
+
+- Even more documentation! Unit tests describe very well how your functions are supposed to behave
+- They of course give confidence in that the code you wrote works correctly
+- If the code is ever refactored or changed as part of another feature we can have confidence that it didn't break the intended behavior
+
+The first two could be handled differently with good documentation + manual testing when you develop your feature (tests do still do a very good job of this though, so it's still reasons to write them), but the last one is especially crucial, as accidentally breaking features during refactors or small edits in places you didn't necessarily expect to affect a far away place in a big codebase that it did happens often, and strong test coverage can reduce most of these problems, and the errors in unit tests specifically are also very specific and tell you exactly what thing is broken so it becomes super easy to fix.
+
+Please do write as many unit tests as possible, the more the better. We also write [end to end (E2E) tests](./guides/developing-end-to-end-tests) to give us more confidence when deploying, and these tests we aim to cover most of the possible user interactions that can occur in our CMS (content management system, the admin interface). You usually will not have to write new E2E tests unless developing a new feature.
+
+If you are unfamiliar with unit testing here is a good short Quora answer on what unit testing is and why it's important: https://www.quora.com/What-is-software-unit-testing-and-why-is-it-important. Also feel free to follow the link at the bottom of the most upvoted answer which goes a bit more in depth.
+
 ## Modularization
+
+We try to keep our code as modularized and reuseable as possible, trying to keep our code [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) (to throw in a buzz word). Try to keep files from getting too big and you should generally start thinking about possibly breaking a file up into several files each with their own responsibilities if it crosses 200-300 lines. For React components we generally try and split up our components into presentational and container components (which we have usually called controllers in our code). Good resources for understanding these paradigms can be found here:
+
+- [Dan Abramov (a huge name in the React community) explains how he uses presentational and container components](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0)
+- [A nice little example of using container components that Abramov also references in the above article](https://medium.com/@learnreact/container-components-c0e67432e005)
+
+For our functions (or methods in a React component) we also try and separate out as much logic as possible into [pure functions](https://en.wikipedia.org/wiki/Pure_function), which are easy to understand and much much easier to unit test. Therefore we usually try to make all impure functions (meaning they have side effects, i.e. they are affected by other things that function parameters or affect non-function parameters) mostly just call other functions and not have too much logic themselves as testing impure functions is hard. Here is a great article about unit testing and simultaneously making your code much cleaner and easier to test: https://www.toptal.com/qa/how-to-write-testable-code-and-why-it-matters. It is written in an Object Oriented Programming (OOP) context but the way of thinking about it should still be helpful to anyone starting to think about writing clean and testable code.
+
+Modularizing well is something professional developers also find hard to get right and discuss a lot, so if you're feeling a piece of code you're writing is getting a bit out of hand, feel free to consult the rest of the team and crowd source opinions about how to best structure a big complex piece of code.
 
 ## Design Patterns
 
