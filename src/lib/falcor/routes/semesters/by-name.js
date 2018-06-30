@@ -16,12 +16,11 @@ export default [
             "Didn't expect more than one semester in semesters byName",
           );
         }
-        db
-          .getSemesterMembers(
-            pathSet.semesterNames[0],
-            pathSet.teamIndices,
-            pathSet.memberIndices,
-          )
+        db.getSemesterMembers(
+          pathSet.semesterNames[0],
+          pathSet.teamIndices,
+          pathSet.memberIndices,
+        )
           .then(data => {
             const results = [];
             _.forEach(data, (teamObj, teamIndex) => {
@@ -54,8 +53,7 @@ export default [
             "Didn't expect more than one semester in semesters byName",
           );
         }
-        db
-          .getSemesterTeams(pathSet.semesterNames[0], pathSet.teamIndices)
+        db.getSemesterTeams(pathSet.semesterNames[0], pathSet.teamIndices)
           .then(data => {
             const results = [];
             data.forEach(row => {

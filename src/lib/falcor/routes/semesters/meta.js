@@ -9,8 +9,7 @@ export default [
     route: "semesters['latest']",
     get: () =>
       new Promise((resolve, reject) => {
-        db
-          .getLatestSemester()
+        db.getLatestSemester()
           .then(semesterName => {
             resolve([
               {

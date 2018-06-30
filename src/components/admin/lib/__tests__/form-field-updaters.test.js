@@ -5,7 +5,7 @@ import { updateFieldValue, trimField } from '../form-field-updaters';
 describe.skip('updateFieldValue', () => {
   beforeEach(() => {
     // Simple implementation of our setState
-    const safeSetState = function (updater) {
+    const safeSetState = function(updater) {
       if (typeof updater !== 'function') {
         const newState = Object.assign({}, updater);
         updater = () => newState;

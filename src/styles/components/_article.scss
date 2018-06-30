@@ -1,4 +1,4 @@
-.article{
+.article {
   &__header {
     max-width: 750px;
     margin: auto;
@@ -67,14 +67,17 @@
       display: block;
       margin: 2rem 0;
     }
-    img, iframe, video {
+    img,
+    iframe,
+    video {
       height: auto;
       padding-bottom: auto;
     }
     img {
       @include full-width;
     }
-    iframe, video {
+    iframe,
+    video {
       min-height: 500px;
     }
     &__end-mark {
@@ -93,7 +96,7 @@
     display: flex;
     flex-grow: 1;
     align-items: stretch;
-    justify-content:center;
+    justify-content: center;
     @media (max-width: $medium) {
       &__trending {
         display: none;
@@ -134,7 +137,8 @@
 
   @media (min-width: $medium) {
     &__body {
-      iframe, video {
+      iframe,
+      video {
         @include full-width;
       }
     }
@@ -142,7 +146,8 @@
 
   @media (max-width: $medium) {
     &__body {
-      iframe, video {
+      iframe,
+      video {
         width: 100%;
         left: 0;
         right: 0;
@@ -176,7 +181,8 @@
     &__body {
       font-size: 1.05rem;
       line-height: 1.4rem;
-      iframe, video {
+      iframe,
+      video {
         min-height: 220px;
       }
     }

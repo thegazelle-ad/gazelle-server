@@ -28,8 +28,7 @@ export default [
     set: jsonGraphArg =>
       new Promise((resolve, reject) => {
         const teamsBySlug = jsonGraphArg.teams.bySlug;
-        db
-          .updateTeams(teamsBySlug)
+        db.updateTeams(teamsBySlug)
           .then(flag => {
             if (!flag) {
               throw new Error(

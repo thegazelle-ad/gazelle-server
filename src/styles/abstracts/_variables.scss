@@ -6,11 +6,11 @@
  * Colors
  */
 $dark-grey: #595959;
-$lighter-grey: #ECECEC;
-$light-grey: #ACACAC;
-$border-grey: #C6C6C6;
+$lighter-grey: #ececec;
+$light-grey: #acacac;
+$border-grey: #c6c6c6;
 $link-blue: #1b7ab0;
-$transition-grey: #D3D3D3;
+$transition-grey: #d3d3d3;
 
 /*
  * Media Queries
@@ -23,17 +23,16 @@ $small: 540px;
  * Grid
  */
 // 3 column grid
-  // Single column
-  $column-3-1: 30%;
-  // Spanning two columns
-  $column-3-2: 60%;
+// Single column
+$column-3-1: 30%;
+// Spanning two columns
+$column-3-2: 60%;
 
 // 2 column grid
-  $column-2: 45%;
+$column-2: 45%;
 
 // 1 column grid
-  $column-1: 100%;
-
+$column-1: 100%;
 
 /*
  * Font Sizes

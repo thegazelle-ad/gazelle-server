@@ -5,7 +5,7 @@ module.exports.addArticleTagRelationship = (knex, numArticles, numTags) => {
       const id = i * 2 + j + 1;
       const articleId = i + 1;
       // Just adding a slight bit of randomness
-      const tagId = ((j + 1) * i) % numTags + 1;
+      const tagId = (((j + 1) * i) % numTags) + 1;
       rows.push({
         id,
         article_id: articleId,

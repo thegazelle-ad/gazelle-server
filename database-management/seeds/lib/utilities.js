@@ -1,8 +1,8 @@
 module.exports.getCategoryId = (articleId, numCategories) =>
-  (articleId - 1) % numCategories + 1;
+  ((articleId - 1) % numCategories) + 1;
 
 module.exports.getIssueId = (articleId, numIssues) =>
-  (articleId - 1) % numIssues + 1;
+  ((articleId - 1) % numIssues) + 1;
 
 const getArticlesInIssue = (issueId, numArticles, numIssues) => {
   const articles = [];

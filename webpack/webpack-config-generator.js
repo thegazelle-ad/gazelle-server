@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable import/no-extraneous-dependencies */
 const webpack = require('webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
@@ -112,7 +113,7 @@ const generateWebpackConfig = config => {
         getAbsolute('src'),
         getAbsolute('.'),
       ],
-      extensions: ['.js', '.jsx', '.json5'],
+      extensions: ['.js', '.jsx', '.json5', '.ts', '.tsx'],
     },
 
     // This makes webpack not bundle in node_modules but leave the require statements
@@ -158,62 +159,62 @@ const generateWebpackConfig = config => {
     module: {
       rules: [
         {
-          test: /\.jsx?$/,
+          test: /\.(j|t)sx?$/,
           exclude: [getAbsolute('node_modules'), getAbsolute('config')],
 
           use: [
-            // Babel for transpiling ESNext and React
+            // Notice we are using babel loader after the typescript loader
             {
               loader: 'babel-loader',
               options: {
                 presets: [
-                  'react',
+                  '@babel/preset-react',
+                  '@babel/preset-typescript',
                   [
-                    'env',
+                    '@babel/preset-env',
                     {
+                      modules: false,
+                      useBuiltIns: 'usage',
+                      // If on the server we don't want to compile for browsers
+                      ignoreBrowserslistConfig: config.type === 'server',
                       targets:
                         config.type === 'server'
                           ? // This is for the node server
-                            {
-                              node: 'current',
-                              /**
-                               * We want this behaviour but it's only in beta right now,
-                               * we can uncomment this when we upgrade to v7 of babel
-                               *
-                               * // Disable the default behaviour of finding
-                               * // browserslist key in package.json
-                               * browsers: '',
-                               */
-                              browsers: '> 1%, last 2 versions, Firefox ESR',
-                            }
-                          : /**
-                             * We want this behaviour but it's only in beta right now,
-                             * we can uncomment this when we upgrade to v7 of babel
-                             *
-                             * // If not node, then it is 'web' and therefore our client scripts
-                             * // Here we simply let preset-env find the browserlist key
-                             * : undefined
-                             */
-                            { browsers: '> 1%, last 2 versions, Firefox ESR' },
+                            { node: 'current' }
+                          : // If not node, then it is 'web' and therefore our client scripts
+                            // Here we simply let preset-env find the browserlist key
+                            undefined,
                     },
                   ],
                 ],
                 plugins: [
-                  'transform-object-rest-spread',
-                  'array-includes',
-                  'transform-class-properties',
+                  '@babel/plugin-proposal-object-rest-spread',
+                  '@babel/plugin-proposal-class-properties',
                 ],
                 minified: config.NODE_ENV !== undefined,
               },
             },
-            // Lint all that is compiled, notice the order so eslint runs before babel
-            {
-              loader: 'eslint-loader',
-              options: {
-                emitWarning: true,
-              },
-            },
           ],
+        },
+        // Lint all that is compiled, notice enforce: 'pre' that ensures they run first
+        {
+          test: /\.jsx?$/,
+          loader: 'eslint-loader',
+          exclude: [getAbsolute('node_modules'), getAbsolute('config')],
+          enforce: 'pre',
+          options: {
+            emitWarning: true, // Emit linting errors as warnings
+          },
+        },
+        {
+          test: /\.tsx?$/,
+          loader: 'tslint-loader',
+          exclude: [getAbsolute('node_modules'), getAbsolute('config')],
+          enforce: 'pre',
+          // Tslint errors are warnings by default so no option needed
+          options: {
+            tsConfigFile: 'tsconfig.json',
+          },
         },
         {
           test: /\.json5$/,

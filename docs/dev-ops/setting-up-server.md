@@ -1,12 +1,14 @@
 Firstly, just to reiterate, this is the guide to setup The Gazelle's server for production, you only need this if you are handling the main DevOps for The Gazelle, this is not related to normal development.
 
 # Creating the server
+
 At the time of writing we are using Digital Ocean. To setup a new Droplet you can follow [this guide](https://www.digitalocean.com/community/tutorials/how-to-create-your-first-digitalocean-droplet). We are currently using one of the Ubuntu 16.04 "Flexible Droplets" with 2GB RAM and 2 vCPUs located in London.
 
 # Initial Server Setup
+
 Here is [a really good guide](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-16-04) for setting up an Ubuntu 16.04 server initially (which is what we use), this is the recommended guide to follow regardless of whether the current provider is Digital Ocean or not. Remember to also follow the link about "common UFW operations" at the bottom to allow http(s) connections and possibly database connections from the staging server.
 
-It is also handy to run 
+It is also handy to run
 
 ```
 sudo apt update
@@ -15,6 +17,7 @@ sudo apt update
 for the future installations we'll do.
 
 # Setting up git and connecting to Github
+
 We use a Github "Machine User" as [described here](https://developer.github.com/v3/guides/managing-deploy-keys/#machine-users) with the username `gazelle-deployment-bot`. The login credentials can be found on the `nerds@thegazelle.org` LastPass account (which the lead engineers have access to). The `gazelle-deployment-bot` is an outside collaborator to the `thegazelle-ad` organization with read-only access to the repos it needs to use. Remember to add it as an outside collaborator to any new repos which may be needed, but only read-only as code should never be edited from the server (see [this guide](https://help.github.com/articles/adding-outside-collaborators-to-repositories-in-your-organization/), but as long as all the repos are public adding it as an outside collaborator shouldn't even be necessary).
 
 Now install git
@@ -35,6 +38,7 @@ git config --global core.editor vim
 Then setup SSH on the server by first adding an ssh key as [described here](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/), and then [add the key](https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/) to the Github account of `gazelle-deployment-bot`.
 
 # Install necessary programs
+
 First [install nvm](https://github.com/creationix/nvm) and install the needed versions of node and npm (order is important as we want forever and npm v5.6.0 paired with node v9.3.0)
 
 ```
@@ -57,6 +61,7 @@ sudo -H python3 -m pip install --upgrade pip
 ```
 
 # Reconfigure timezone
+
 We run the server on UAE time, the easiest way to reconfigure the timezone is running
 
 ```
@@ -68,6 +73,7 @@ Which will take you through an interactive guide so you can set the timezone to 
 # Install the server
 
 ## Setting up simple dev environment
+
 You just follow [the wiki page for setting up the server](https://github.com/thegazelle-ad/gazelle-server/wiki/Setting-Up-Dev-Environment) up until but not including the build step. Remember to install the `stable` branch for production and `master` for staging. We normally name the main server directory `server` and the ghost + database one `ghost`.
 
 > NOTE: Remember to set the config of the Ghost blog so that the port is 8003 (or to match the Caddy config whatever that is at the moment), and to do this both in `server/config/ghost.config.js` and in `ghost/config.js`
@@ -79,6 +85,7 @@ You just follow [the wiki page for setting up the server](https://github.com/the
 In the dev setup you copied the dummy S3 config file `config/s3.config.js`, when setting up for production we also need actual credentials in that file. If you're simply migrating the server you can just copy the `s3.config.js` file from that server. If you're starting from scratch you'll need to generate a new pair of access keys which you do by going to your Amazon AWS account > My Security Credentials > Access Keys (Access Key ID and Secret Access Key) > Generate new key. And then you simply fill out the config file as is clearly outlined by the object.
 
 ### Generating static http error code pages
+
 In order to not check in a lot of duplicate html pages we have written a short python generator that takes a template and creates specific error pages for each of the 5xx error codes. Generate these pages by simply running `python3 http-error-static-pages/5xx-static-html-generator.py` at the root of the `server` directory.
 
 ### Build the source
@@ -91,7 +98,7 @@ Now depending on whether you are setting up the staging or production server sim
 npm run build:staging
 ```
 
-or 
+or
 
 ```
 npm run build:production
@@ -155,6 +162,7 @@ Then open another window in the same screen session (`CTRL + f, c`) and start ca
 And then you can detach from the screen session (`CTRL + f, d`), to ever reattach to it (if you named it main) simply execute `screen -r main`.
 
 # Connect to the CI
+
 In order to let CircleCI know the IP/user etc. of your servers we need to set some environment variables. These are described as follows:
 
 - `GAZELLE_SERVER_STAGING_USER`: The user we created for the staging Ubuntu server
@@ -165,4 +173,5 @@ In order to let CircleCI know the IP/user etc. of your servers we need to set so
 Also remember to add the CI ssh public key to the `.ssh/authorized_keys` file on the server to allow CircleCI to access it
 
 # Done!
+
 Congratulations! The server should now be setup and running on the relevant domain names, and all dev support such as CI and Slack integration should be working as well! Hope you don't have any stupid bugs to hunt down, and if you do please update this document to help future server admins.

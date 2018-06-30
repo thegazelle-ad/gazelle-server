@@ -3,14 +3,17 @@
  * Our main source code has all the babel config specified in the webpack config
  */
 {
-  presets: [
+  "presets": [
+    "@babel/preset-react",
     [
-      'env',
+      "@babel/preset-env",
       {
-        targets: { node: 'current' },
-      },
-    ],
-    'react',
+        "targets": { "node": "current" }
+      }
+    ]
   ],
-  plugins: ['transform-class-properties'],
+  "plugins": [
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-proposal-object-rest-spread"
+  ]
 }

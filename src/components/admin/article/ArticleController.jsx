@@ -2,7 +2,6 @@ import React from 'react';
 import { browserHistory } from 'react-router';
 import _ from 'lodash';
 import Plain from 'slate-plain-serializer';
-import showdown from 'showdown';
 import moment from 'moment';
 
 // Lib
@@ -45,7 +44,6 @@ class ArticleController extends FalcorController {
     this.returnToApp = this.returnToApp.bind(this);
     this.isFormChanged = this.isFormChanged.bind(this);
     this.falcorToState = this.falcorToState.bind(this);
-    this.converter = new showdown.Converter();
     this.updateTitle = title => this.safeSetState({ title });
     this.updateSlug = slug => this.safeSetState({ slug });
     this.updateAuthors = authors => this.safeSetState({ authors });

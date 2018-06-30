@@ -99,7 +99,7 @@ class CreateArticleController extends React.Component {
   };
 
   handleCreateArticle = async () => {
-    if (!await this.validateArticle()) {
+    if (!(await this.validateArticle())) {
       return;
     }
 
