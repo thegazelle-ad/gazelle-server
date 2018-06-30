@@ -54,3 +54,11 @@ So when coding we expect you to in by far most cases type all your code, and if 
 ## File naming
 
 We generally name files and directories (folders) in all lower case with separate words separated by hyphens (`like-this`). The exception is React components which we name in [`CamelCase`](https://en.wikipedia.org/wiki/Camel_case) (`LikeThis`).
+
+## Testing
+
+## Modularization
+
+## Design Patterns
+
+## Git workflow
