@@ -45,3 +45,12 @@ Our responses to these points are:
 
 1.  We feel the project has become big enough now that types will greatly help manage the many files we operate in
 2.  The types make it harder for even very experienced developers to make errors, and we believe it will be a huge help for new developers as it'll warn them and stop them from making many mistakes they may otherwise have made.
+3.  We are very aware of this one and it feels like the strongest counterargument in our case. Given that you already know Javascript (otherwise you will need to learn it for the project anyway), the simple features of Typescript aren't too big of a learning curve, and we want to restrict ourselves to these. Given that we restrict ourselves to the simplest features of Typescript we really do feel that the pros outweigh the cons.
+
+Here is also an interesting article on the different benefits of Typescript and when you should choose it vs Javascript for a project: https://medium.freecodecamp.org/when-should-i-use-typescript-311cb5fe801b
+
+So when coding we expect you to in by far most cases type all your code, and if you are modifying code that has not been migrated to Typescript yet please feel free to migrate it. On top of that try only using basic types, and if you happen to be very proficient in Typescript, don't go all out in advanced types as we don't think we need those, and we don't believe the learning curve for new developers is worth the advanced features.
+
+## File naming
+
+We generally name files and directories (folders) in all lower case with separate words separated by hyphens (`like-this`). The exception is React components which we name in [`CamelCase`](https://en.wikipedia.org/wiki/Camel_case) (`LikeThis`).
