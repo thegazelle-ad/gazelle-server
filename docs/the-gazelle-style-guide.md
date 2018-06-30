@@ -80,6 +80,19 @@ For our functions (or methods in a React component) we also try and separate out
 
 Modularizing well is something professional developers also find hard to get right and discuss a lot, so if you're feeling a piece of code you're writing is getting a bit out of hand, feel free to consult the rest of the team and crowd source opinions about how to best structure a big complex piece of code.
 
-## Design Patterns
-
 ## Git workflow
+
+We work with a [feature branch workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow) where we prefer merging over rebasing. To understand the differences between merging and rebasing you can check out these two posts:
+
+- [A more detailed (and educational) explanation of the two git features of rebasing and merging](https://www.atlassian.com/git/tutorials/merging-vs-rebasing)
+- [A more relevant discussion of rebasing vs merging for incorporating features into the master branch](https://www.atlassian.com/git/articles/git-team-workflows-merge-or-rebase)
+
+We used to use the rebase workflow but have changed to a merge based workflow mostly for the following reasons:
+
+- Rebasing is hard and error prone with dangers of overwriting history as mentioned above. We don't feel it is worth forcing new developers to learn these tools just for merging in code
+- Rebasing introduces many more merge conflicts that are tedious and error prone to fix
+- We don't really use the history that much, and with Github's merge commits that include a pointer to the pull request associated with the merge, tracking the changes is actually still very easy through Github's GUI.
+- It allows several developers to easily work together on the same feature and not worry about history changing
+- Merging without squashing gives you more [green squares](https://blog.github.com/2013-01-07-introducing-contributions/#contributions-calendar) on Github! ;), this is half a joke, but the serious part is that it looks good to employers if you have an active Github profile and by not squashing each PR to just a single commit we help our developers with exposure, which is also a small further incentive for developers to join us. Of course don't abuse this by making dummy commits, but any reasonable amount of understandable commits will be excepted and merged.
+
+## Design Patterns
