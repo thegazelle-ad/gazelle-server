@@ -14,7 +14,9 @@ Writing good variable names is important, it is also very hard actually, but whe
 
 ### Comments
 
-Similarly being good at writing comments is very important to the readability of your code, and it's not just writing lots of comments, it can actually be very detrimental writing too many comments if they aren't high quality and/or necessary. Here is a good post about good practices of commenting code that we recommend reading: https://blog.codinghorror.com/code-tells-you-how-comments-tell-you-why/
+Similarly being good at writing comments is very important to the readability of your code, and it's not just writing lots of comments, it can actually be very detrimental writing too many comments if they aren't high quality and/or necessary. Here is a good post about good practices of commenting code that we recommend reading: https://blog.codinghorror.com/code-tells-you-how-comments-tell-you-why/.
+
+For documenting functions (in both Javascript and Typescript, but more needed in Javascript) we use the [JSDoc format](http://usejsdoc.org/) which we have linting rules to enforce. Some editors including VSCode also automatically parse this and can show this documentation when you hover over the use of your function.
 
 ### Documentation
 
@@ -22,4 +24,24 @@ Hopefully it is clear that good documentation is important as you're in the proc
 
 ### Indentation, semicolons, trailing commas and more
 
-The thing that can maybe seem the most pedantic to new software engineers in pull request reviews is when things like white space, whether there's a trailing comma, or where you put your opening and closes brackets and parenthesis are commented on. The reasoning behind this is that having a consistent style in these matters across the whole codebase makes it a lot easier to read for developers. Luckily you won't have to have many of these comments as we have checking of these things automated by linters! If you skipped that section before here's a bit of an explanation of how we use linters: [linting explanation](./dev-environment/setting-up-dev-environment.md#note-on-linters-and-tests)
+The thing that can maybe seem the most pedantic to new software engineers in pull request reviews is when things like white space, whether there's a trailing comma, or where you put your opening and closes brackets and parenthesis are commented on. The reasoning behind this is that having a consistent style in these matters across the whole codebase makes it a lot easier to read for developers. Luckily you won't have to have many of these comments as we have checking of these things automated by linters! If you skipped that section before here's a bit of an explanation of how we use linters: [linting explanation](./dev-environment/setting-up-dev-environment.md#note-on-linters-and-tests).
+
+## Types
+
+We use Typescript to add static typing at compile time to Javascript. Typescript is not right for every project, and at the time of writing we very recently added it. Our main reasons for adding it were:
+
+- Reducing stupid bugs regarding typos in accessing objects such as `data.artcles.byId...` which if typed properly would error, but in normal Javascript you would simply have to very carefully check all your spelling (and we're human so we make mistakes)
+- Reducing stupid bugs regarding variable types, such as trying to call a string method on a number because you hadn't cast it yet
+- Typescript provides great developer tooling such as automatic refactoring, especially when used with VSCode
+- It provides good automatic documentation of functions, making input and output types very clear
+
+There are also many other reasons to use Typescript, and also quite a few not to use it. The main reasons mentioned not to use it are often:
+
+1.  it is unnecessary for small projects
+2.  there is an added overhead for the time needed to program a feature as more code is needed to be written by the programmer
+3.  it adds an extra learning curve if your developers aren't familiar with Typescript already
+
+Our responses to these points are:
+
+1.  We feel the project has become big enough now that types will greatly help manage the many files we operate in
+2.  The types make it harder for even very experienced developers to make errors, and we believe it will be a huge help for new developers as it'll warn them and stop them from making many mistakes they may otherwise have made.
