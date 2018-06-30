@@ -82,7 +82,9 @@ Modularizing well is something professional developers also find hard to get rig
 
 ## Git workflow
 
-We work with a [feature branch workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow) where we prefer merging over rebasing. To understand the differences between merging and rebasing you can check out these two posts:
+We work with a [feature branch workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow) with required code review and passing of our automated tests run on [CircleCI](https://circleci.com/) before being able to merge your code into master. As a fun fact, an old study shows that every hour spent on code review saves 33 hours of maintenance. See this interesting article on the tangible benefits of code review and test driven development (TDD) here: https://medium.com/javascript-scene/the-outrageous-cost-of-skipping-tdd-code-reviews-57887064c412.
+
+When merging pull requests we prefer merging over rebasing. To understand the differences between merging and rebasing you can check out these two posts:
 
 - [A more detailed (and educational) explanation of the two git features of rebasing and merging](https://www.atlassian.com/git/tutorials/merging-vs-rebasing)
 - [A more relevant discussion of rebasing vs merging for incorporating features into the master branch](https://www.atlassian.com/git/articles/git-team-workflows-merge-or-rebase)
