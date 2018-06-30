@@ -6,7 +6,12 @@ To first give you a bit of context, what drives many of the decisions made in th
 
 ## The simple things that are actually so important
 
-There are many things that developers new to Software Engineering can be surprised at that we take pretty seriously, and we can seem a bit pedantic, but software engineering is in big part about making code readable and maintainable so that someone else (or yourself after being away from your code for a few weeks or months) could come in and easily take over what you were working on.
+There are many things that developers new to Software Engineering can be surprised at that we take pretty seriously, and we can seem a bit pedantic, but software engineering is in big part about making code readable and maintainable so that someone else (or yourself after being away from your code for a few weeks or months) could come in and modify or extend what you were working on.
 
 ### Variable Names
+
 Writing good variable names is important, it is also very hard actually, but when done right it can make code delightfully easy to read. Here are some short articles that talk about variable naming we would recommend you to read at least some of. Don't necessarily take everything they say as facts, it is completely okay to agree with some of their preferences, but try to take away the idea of using variable names to document your code well, and to avoid making bad mistakes like naming your variables `var1`, or `i`, `j`, `k`, `a`, `b`, `c`. The resources are as follows: [A good guide to variable naming](https://a-nickels-worth.blogspot.com/2016/04/a-guide-to-naming-variables.html), [an interesting WIKI with discussions on variable naming](http://wiki.c2.com/?GoodVariableNames), and [an interesting small case study on variable naming](https://m.signalvnoise.com/hunting-for-great-names-in-programming-16f624c8fc03). The part current members of The Gazelle's dev management (at the time of writing) probably disagree the most with from the first article is when it's okay to use 1-2 letter variable names (we want less of them), but as mentioned above this is not an easy issue to come to a clean solution to, and people have many differing opinions!
+
+### Comments
+
+
