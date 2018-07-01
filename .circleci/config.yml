@@ -83,11 +83,21 @@ jobs:
           keys:
             - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
+      run:
+          name: setup dependencies for code coverage
+          command: npm i -g coveralls
+
       - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
-      - run: npm run test:unit
+      - run:
+          name: unit test
+          command: npm run test:unit
+
+      - run:
+          name: gather test coverage data
+          command: npm run test:unit -- --coverage --coverageReporters=text-lcov | coveralls
 
   lint:
     <<: *defaults
