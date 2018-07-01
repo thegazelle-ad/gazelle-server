@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "engines": {
     "node": "~9.11.1",
-    "npm": "~5.6.0"
+    "npm": "~6.1.0"
   },
   "description": "Minimal starter kit for React, Falcor, and Universal rendering with ES6",
   "main": "server.js",
