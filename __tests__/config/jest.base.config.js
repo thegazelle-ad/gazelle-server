@@ -10,5 +10,5 @@ module.exports = {
     [String.raw`^.*\.jsx?$`]: 'babel-jest',
   },
   collectCoverageFrom: ['<rootDir>/src/**/*.{js,jsx,ts,tsx}'],
-  coverageReporters: ['text', 'lcov'],
+  coverageReporters: ['text-lcov'],
 };
