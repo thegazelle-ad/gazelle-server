@@ -52,6 +52,9 @@ If you're new to git there's a nice official cheat sheet here: https://services.
 
 You probably won't need to understand this unless adding a new build tool / compiler etc. But if you do the Webpack documentation is also nice: https://webpack.js.org/
 
+Here is also a nice article written to introduce beginners to Webpack:
+https://medium.freecodecamp.org/a-beginners-introduction-to-webpack-2620415e46b3
+
 ## Babel
 
 We don't expect you to need this either but it can be found here: https://babeljs.io/docs/en/next
