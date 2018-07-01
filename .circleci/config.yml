@@ -85,7 +85,7 @@ jobs:
 
       - run:
           name: setup dependencies for code coverage
-          command: npm i -g coveralls
+          command: npm i coveralls
 
       - run:
           name: Wait for db
@@ -97,7 +97,7 @@ jobs:
 
       - run:
           name: gather test coverage data
-          command: npm run test:unit -- --coverage --coverageReporters=text-lcov | coveralls
+          command: npm run test:unit -- --coverage --coverageReporters=text-lcov | npx coveralls
 
   lint:
     <<: *defaults
