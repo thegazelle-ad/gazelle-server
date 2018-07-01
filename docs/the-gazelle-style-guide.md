@@ -85,7 +85,7 @@ The first two could be handled differently with good documentation + manual test
 
 Please do write as many unit tests as possible, the more the better, and we also expect every bug fix to have a regression test to make sure the encountered bug won't resurface later unnoticed.
 
-We also write [end to end (E2E) tests](./guides/developing-end-to-end-tests) to give us more confidence when deploying, and with these tests we aim to cover most of the possible user interactions that can occur in our CMS (content management system, the admin interface). We of course also want confidence in thegazelle.org but that site isn't as complex as the CMS, and it therefore doesn't need as much E2E testing. You usually will not have to write new E2E tests unless developing a new feature.
+We also write [end to end (E2E) tests](./guides/developing-end-to-end-tests.md) to give us more confidence when deploying, and with these tests we aim to cover most of the possible user interactions that can occur in our CMS (content management system, the admin interface). We of course also want confidence in thegazelle.org but that site isn't as complex as the CMS, and it therefore doesn't need as much E2E testing. You usually will not have to write new E2E tests unless developing a new feature.
 
 If you are unfamiliar with unit testing here is a good short Quora answer on what unit testing is and why it's important: https://www.quora.com/What-is-software-unit-testing-and-why-is-it-important. Also feel free to follow the link at the bottom of the most upvoted answer which goes a bit more in-depth.
 
