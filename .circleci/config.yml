@@ -83,7 +83,7 @@ jobs:
           keys:
             - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
-      run:
+      - run:
           name: setup dependencies for code coverage
           command: npm i -g coveralls
 
