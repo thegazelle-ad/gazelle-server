@@ -9,11 +9,11 @@
 ## Current Behavior
 
 <!--- If describing a bug, tell us what happens instead of the expected behavior -->
-<!--- If suggesting a change/improvement, explain the difference from current behavior -->
+<!--- If suggesting a change/improvement, you can disregard this unless you find it helpful to explain the difference from current behavior -->
 
 ## Possible Solution
 
-<!--- Not obligatory, but suggest a fix/reason for the bug, -->
+<!--- Not obligatory, but it is helpful if you can suggest a fix/reason for the bug, -->
 <!--- or ideas how to implement the addition or change -->
 
 ## Steps to Reproduce (for bugs)
