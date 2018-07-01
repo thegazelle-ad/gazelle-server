@@ -63,7 +63,7 @@ jobs:
 
       - run:
           name: Install dependencies and check that the repo didn't change during the install
-          command: npm install && [[ "$(git diff)" == "" ]]
+          command: npm install && git --no-pager diff && [[ "$(git --no-pager diff)" == "" ]]
 
       - save_cache:
           paths:
