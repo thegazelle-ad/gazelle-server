@@ -25,7 +25,7 @@ export DISPLAY=:9.0
 
 echo "Starting test"
 
-npm run test:e2e
+npm run test:e2e:ci
 EXIT_CODE=$(echo $?)
 
 # Cleanup
