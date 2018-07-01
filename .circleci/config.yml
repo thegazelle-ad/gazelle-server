@@ -73,8 +73,6 @@ jobs:
   unit_test:
     <<: *defaults_with_database
     steps:
-      - attach_workspace:
-          at: ~/.ssh
       - run:
           name: save SHA to a file
           command: echo $CIRCLE_SHA1 > .circle-sha
@@ -87,7 +85,7 @@ jobs:
 
       - run:
           name: setup dependencies for code coverage
-          command: npm i coveralls
+          command: sudo npm i -g coveralls
 
       - run:
           name: Wait for db
@@ -99,7 +97,7 @@ jobs:
 
       - run:
           name: gather test coverage data
-          command: npm run test:unit -- --coverage --coverageReporters=text-lcov | npx coveralls
+          command: npm run test:unit -- --coverage --coverageReporters=text-lcov | coveralls
 
   lint:
     <<: *defaults
