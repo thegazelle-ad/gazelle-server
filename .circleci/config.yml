@@ -97,7 +97,7 @@ jobs:
 
       - run:
           name: gather test coverage data
-          command: npm run test:unit -- --coverage --coverageReporters=text-lcov | coveralls
+          command: npm run test:unit -- --coverage | coveralls
 
   lint:
     <<: *defaults
