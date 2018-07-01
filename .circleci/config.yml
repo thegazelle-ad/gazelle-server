@@ -62,8 +62,8 @@ jobs:
             - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
       - run:
-          name: Install dependencies and check that the repo didn't change during the install
-          command: npm install && git --no-pager diff && [[ "$(git --no-pager diff)" == "" ]]
+          name: Install dependencies in ci mode that is faster and ensures the lockfile is correct
+          command: npm ci
 
       - save_cache:
           paths:
