@@ -4,9 +4,9 @@ This code is written for [The Gazelle's website](https://www.thegazelle.org). Th
 
 ## Documentation
 
-For documentation on how to setup the development environment, our coding style guide, dev ops guides, and tips for a nicer development experience, see our [documentation folder](./docs).
+For documentation on how to setup the development environment, our coding style guide, dev ops guides, and tips for a nicer development experience, see our [documentation folder](./docs), please do explore the resources we have in there.
 
-> NOTE: If you are a new developer looking through this, the first place you want to go is probably the [Setting Up Your Development Environment Guide](./docs/dev-environment/setting-up-dev-environment.md)
+> NOTE: If you are a new developer looking through this, the first place you want to go is probably the [Setting Up Your Development Environment Guide](./docs/dev-environment/setting-up-dev-environment.md). And the [Coding Style Guide](./docs/the-gazelle-style-guide.md) is also a must read.
 
 ## Join the Herd
 
