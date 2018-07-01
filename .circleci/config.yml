@@ -73,6 +73,8 @@ jobs:
   unit_test:
     <<: *defaults_with_database
     steps:
+      - attach_workspace:
+          at: ~/.ssh
       - run:
           name: save SHA to a file
           command: echo $CIRCLE_SHA1 > .circle-sha
