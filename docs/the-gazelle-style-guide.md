@@ -98,3 +98,11 @@ We used to use the rebase workflow but have changed to a merge based workflow mo
 - Merging without squashing gives you more [green squares](https://blog.github.com/2013-01-07-introducing-contributions/#contributions-calendar) on Github! ;), this is half a joke, but the serious part is that it looks good to employers if you have an active Github profile and by not squashing each PR to just a single commit we help our developers with exposure, which is also a small further incentive for developers to join us. Of course don't abuse this by making dummy commits, but any reasonable amount of understandable commits will be excepted and merged.
 
 ## Design Patterns
+
+We have a few high level design patterns we use in our codebase that are good to be familiar with:
+
+- We [prefer composition over inheritance](https://reactjs.org/docs/composition-vs-inheritance.html)
+- We adhere to a [top down data flow](https://reactjs.org/docs/state-and-lifecycle.html#the-data-flows-down) and therefore [lift up state to the nearest common container component](https://reactjs.org/docs/lifting-state-up.html)
+- If you have never read the [Thinking in React guide](https://reactjs.org/docs/thinking-in-react.html) then no matter your experience with React you should check it, it is very educational
+- We use [Higher Order Components (HOCs)](https://reactjs.org/docs/higher-order-components.html) to further go down the road of composition, and we also often use HOC factories which are functions that return a HOC function and will be invoked like `HOCFactory(HOCparameters)(componentToWrap)`. You can find [a more complete example here](https://medium.com/@franleplant/react-higher-order-components-in-depth-cf9032ee6c3e).
+- We use the [context API](https://github.com/facebook/react/blob/v15.4.2/docs/docs/context.md) once in a while for global variables. We only use it when we have to, and use HOCs to make the variables available instead of directly accessing the API in normal components. The reason the URL above is not to React's main site is because we haven't upgraded to React 16 yet where they have cemented context (no longer calling it scary and experimental, see [the latest context docs](https://reactjs.org/docs/context.html) if you're curious), and slightly updated the API which won't be helpful to read before we upgrade.
