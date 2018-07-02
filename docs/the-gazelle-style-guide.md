@@ -140,6 +140,8 @@ Also note that `__tests__` folders in subdirectories are where unit tests for th
 - [build](../build) [This is where all the built code goes, you shouldn't need to ever look in here]
 - [config](../config) [where all the config that we use directly in the code lies]
 - [database-management](../database-management) [where we have all the code we use for database management such as migrations and database seeds]
+  - [migrations](../database-management/migrations) [where we keep all our database migrations as discussed in the [Database Development](#database-development) section]
+  - [seeds](../database-management/seeds) [where we keep all our database seeds as discussed in the [Database Development](#database-development) section]
 - [docs](../docs) [where you are right now! The indices explain the structure very well, but this is where all our documentation is]
 - [http-error-static-pages](../http-error-static-pages) [A generator of error html pages for our main web server Caddy to send if our node server experiences problems]
 - [scripts](../scripts) [these are bash scripts needed by the server]
@@ -147,7 +149,7 @@ Also note that `__tests__` folders in subdirectories are where unit tests for th
   - [client-scripts](../src/client-scripts) [here are the entry points for the javascript that runs in the browser]
   - [components](../src/components) [This is where all our React components lie which is where all the html the manipulation of DOM code lies]
     - [admin](../src/components/admin) [Where all the React components used exclusively on the Admin site lie. We are still experimenting with the directory structure within here, but need something better and strict. Update this when we settle into something]
-    - [hocs](../src/components/hocs) [Where we have all our HOCs (see the [Design Patterns](./the-gazelle-style-guide.md#design-patterns) section for an explanation)]
+    - [hocs](../src/components/hocs) [Where we have all our HOCs (see the [Design Patterns](#design-patterns) section for an explanation)]
     - [main](../src/components/main) [Where we keep the React components for the main site]
   - [lib](../src/lib) [Where we keep all our raw logic and database related code, this has helpers, utility functions, some base React components that we're trying to refactor away, and SQL]
     - [falcor](../src/lib/falcor]) [Here lies all the code related to Falcor and therefore the database]
@@ -156,6 +158,9 @@ Also note that `__tests__` folders in subdirectories are where unit tests for th
   - [server-code](../src/server-code) [Where all the server code lies for the two websites]
   - [styles](../src/styles) [where all the CSS for the main site lies (we use Material UI for the CMS so basically have no CSS), the directory structure isn't super tight, but pretty neat, feel free to formalize it here if you want]
   - [transitions](../src/transitions) [Where the transitions animations lie for the main site, this should probably be in components or at least be structured in a better way]
+- [static](../static) [Where our static assets lie that the server serves, the `admin.css` files is all the global CSS the admin site uses and can be directly edited here. Try and keep as little as possible in that one though as it's more confusing to understand, only truly global CSS should be here]
+  - [build](../src/static/build) [Built static files, so essentially the built client files that have entry points in [src/client-scripts](../src/client-scripts) as mentioned earlier]
+- [webpack](../src/webpack) [where all our webpack config lies for the different types of builds we have, the main file to look at is `webpack-config-generator.js`]
 
 ## Git workflow
 
