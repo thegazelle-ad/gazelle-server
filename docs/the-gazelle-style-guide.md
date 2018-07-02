@@ -130,7 +130,7 @@ Also note that `__tests__` folders in subdirectories are where unit tests for th
   - [config](../__tests__/config) [This is where we keep all the Jest config]
   - [end-to-end](../__tests__/end-to-end) [The location of all our E2E tests, it also has the [jest-setup](../__tests__/end-to-end/jest-setup.js) file which is set to run before all our E2E tests to setup some config, and it has some E2E utilities and constants files for reuse across all the tests]
     - [admin-tests](../__tests__/end-to-end/admin-tests) [The location of all the E2E tests for the admin site]
-    - [gazelle-tests](../__tests__/end-to-end/gazelle-tests) [The location of all the E2E tests for the main site]
+    - [main-tests](../__tests__/end-to-end/main-tests) [The location of all the E2E tests for the main site]
     - [env-tests](../__tests__/env-tests) [Since a single test file can only be in one `NODE_ENV` at a time we have tests here that run the env-tests defined in other unit test directories, if this confuses you feel free to ask a lead developer for further explanation]
     - [helpers](../__tests__/helpers) [Here lie the helpers for our different tests, at the time of writing there are only helpers for database tests]
   - [.circleci](../.circleci) [Where config and CI related files lie]
@@ -143,8 +143,12 @@ Also note that `__tests__` folders in subdirectories are where unit tests for th
   - [docs](../docs) [where you are right now! The indices explain the structure very well, but this is where all our documentation is]
   - [http-error-static-pages](../http-error-static-pages) [A generator of error html pages for our main web server Caddy to send if our node server experiences problems]
   - [scripts](../scripts) [these are bash scripts needed by the server]
-  - [src](../src) [where all the actual source code of The Gazelle and the admin site lies]
-    - []
+  - [src](../src) [where all the actual source code of The Gazelle and the admin site lies. The `index.js` file in this directory is the entry point to the server of both the websites]
+    - [client-scripts](../src/client-scripts) [here are the entry points for the javascript that runs in the browser]
+    - [components](../src/components) [This is where all our React components lie which is where all the html the manipulation of DOM code lies]
+      - [admin](../src/components/admin) [Where all the React components used exclusively on the Admin site lie. We are still experimenting with the directory structure within here, but need something better and strict. Update this when we settle into something]
+      - [hocs](../src/components/hocs) [Where we have all our HOCs (see the [Design Patterns](./the-gazelle-style-guide.md#design-patterns) section for an explanation)]
+      - [main](../src/components/main) [Where we keep the React components for the main site]
 
 ## Git workflow
 
