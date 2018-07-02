@@ -89,6 +89,16 @@ We also write [end to end (E2E) tests](./guides/developing-end-to-end-tests.md) 
 
 If you are unfamiliar with unit testing here is a good short Quora answer on what unit testing is and why it's important: https://www.quora.com/What-is-software-unit-testing-and-why-is-it-important. Also feel free to follow the link at the bottom of the most upvoted answer which goes a bit more in-depth.
 
+## Database development
+
+If you ever need to change the database schema we require you to write a migration in the [migrations folder](../database-management/migrations). You create a new migration (this just creates a properly named template, you still have to write the migration) by running
+
+```
+npx knex migrate:make migration_name
+```
+
+and please name it something meaningful. If you change the database schema we also expect you to change the [database seed](../database-management/seeds/replace-database-with-dummy-data.js) so that our dummy/test data is up to date.
+
 ## Modularization
 
 We try to keep our code as modularized and reusable as possible, including trying to keep our code [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) (to throw in a buzzword). Try to keep files from getting too big. As a rule of thumb, you should start thinking about possibly breaking a file up into several files each with their own responsibilities if it crosses 200-300 lines, it is not a hard limit though. For React components we generally try and split up our components into presentational and container components (which we have usually called controllers in our code). Good resources for understanding these paradigms can be found here:
