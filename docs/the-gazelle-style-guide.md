@@ -118,6 +118,21 @@ It is written in an Object Oriented Programming (OOP) context but the way of thi
 
 Modularizing well is something professional developers also find hard to get right and discuss a lot, so if you're feeling a piece of code you're writing is getting a bit out of hand, feel free to consult the rest of the team and crowdsource opinions about how to best structure a big complex piece of code.
 
+## Directory Structure
+
+Both as a resource for you as new to our codebase, and as a guide for how to keep things this is currently the structure of our sourcecode. Please stick to it or update this guide if you change anything in this structure.
+
+- [\_\_tests\_\_](__tests__) [The directory with all our global tests and test config]
+  - [config](../__tests__/config) [This is where we keep all the Jest config]
+  - [end-to-end](../__tests__/end-to-end) [The location of all our E2E tests, it also has the [jest-setup](../__tests__/end-to-end/jest-setup.js) file which is set to run before all our E2E tests to setup some config, and it has some E2E utilities and constants files for reuse across all the tests]
+    - [admin-tests](../__tests__/end-to-end/admin-tests) [The location of all the E2E tests for the admin site]
+    - [gazelle-tests](../__tests__/end-to-end/gazelle-tests) [The location of all the E2E tests for the main site]
+    - [env-tests](../__tests__/env-tests) [Since a single test file can only be in one `NODE_ENV` at a time we have tests here that run the env-tests defined in other unit test directories, if this confuses you feel free to ask a lead developer for further explanation]
+    - [helpers](../__tests__/helpers) [Here lie the helpers for our different tests, at the time of writing there are only helpers for database tests]
+  - [.circleci](../.circleci) [Where config and CI related files lie]
+    - [images](../.circleci/images) [The place where we have the docker images used for our CircleCI runs]
+    - [scripts](../.circleci/scripts) [The place where we have the scripts used by CircleCI]
+
 ## Git workflow
 
 If you are unfamiliar with git you might want to check out our [resources guide](./guides/dependency-learning-resources.md) now or later to read up on it a bit.
