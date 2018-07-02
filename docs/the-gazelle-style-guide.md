@@ -122,6 +122,10 @@ Modularizing well is something professional developers also find hard to get rig
 
 Both as a resource for you as new to our codebase, and as a guide for how to keep things this is currently the structure of our sourcecode. Please stick to it or update this guide if you change anything in this structure.
 
+Firstly note that the root of the directory has a lot of hidden (starting with `.`) config files such as: `.nvmrc`, `.eslintrc.js`, `.babelrc`, `.gitignore`, `.prettierrc.js`. Our dependencies interact with these.
+
+Also note that `__tests__` folders in subdirectories are where unit tests for the files in that directory lie and will not be mentioned every time. `__snapshots__` are where the snapshots for those tests lie, and the `__mocks__` folder is where test mocks for files in that directory lie.
+
 - [\_\_tests\_\_](__tests__) [The directory with all our global tests and test config]
   - [config](../__tests__/config) [This is where we keep all the Jest config]
   - [end-to-end](../__tests__/end-to-end) [The location of all our E2E tests, it also has the [jest-setup](../__tests__/end-to-end/jest-setup.js) file which is set to run before all our E2E tests to setup some config, and it has some E2E utilities and constants files for reuse across all the tests]
@@ -132,6 +136,15 @@ Both as a resource for you as new to our codebase, and as a guide for how to kee
   - [.circleci](../.circleci) [Where config and CI related files lie]
     - [images](../.circleci/images) [The place where we have the docker images used for our CircleCI runs]
     - [scripts](../.circleci/scripts) [The place where we have the scripts used by CircleCI]
+  - [.github](../.github) [Files used by github such as the CODEOWNER file, and the templates for pull requests and issues]
+  - [build](../build) [This is where all the built code goes, you shouldn't need to ever look in here]
+  - [config](../config) [where all the config that we use directly in the code lies]
+  - [database-management](../database-management) [where we have all the code we use for database management such as migrations and database seeds]
+  - [docs](../docs) [where you are right now! The indices explain the structure very well, but this is where all our documentation is]
+  - [http-error-static-pages](../http-error-static-pages) [A generator of error html pages for our main web server Caddy to send if our node server experiences problems]
+  - [scripts](../scripts) [these are bash scripts needed by the server]
+  - [src](../src) [where all the actual source code of The Gazelle and the admin site lies]
+    - []
 
 ## Git workflow
 
