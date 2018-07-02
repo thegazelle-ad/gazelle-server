@@ -4,7 +4,7 @@ Before reading anything else in this guide you should read this article: https:/
 
 The main point is that reading tutorials and documentation isn't worth it if you don't also get to use it. This article is therefore meant not as a study guide you should go through step by step and complete all the resources listed here, but rather you should use it to maybe skim the most important parts, and when you are working on an issue that requires more knowledge than you currently have about a technology used for that issue, you can consult this article and find good resources to learn more about this.
 
-With that said, here are some resources listed by technology, feel free to add more resources to this article if you find any useful ones as you look around the internet. Also remember that we don't always use the latest version of each of these libraries, so you may find features we don't have if you don't look back into the versioning of the documentation and find the relevant one.
+With that said, here are some resources listed by technology, feel free to add more resources to this article if you find any useful ones as you look around the internet. Also remember that we don't always use the latest version of each of these libraries, so you may find features we don't have if you don't look back into the versioning of the documentation and find the relevant one. Also remember that if you're ever stuck with how to do something with a library, often Google and StackOverflow have the answer! There's a great community of programmers out there!
 
 ## Javascript
 
@@ -64,6 +64,10 @@ This is the library we use for the styling of our CMS (the admin interface) so w
 ## Slate
 
 Slate is the library we use for building our editor in the CMS. Check out their website here: https://www.slatejs.org/#/rich-text
+
+## SQL
+
+We use SQL, through Knex as describe below, to query and update our database. There are many good resources online to get a primer on SQL, one that is quick but gives you a good idea of the basic syntax is the [codecademy course](https://www.codecademy.com/learn/learn-sql), but feel free to use other resources if you find them better. If there's ever any syntax you might need or something you don't know how to do, remember that Google and StackOverflow are your best friends! They basically always know the answer.
 
 ## Knex
 
