@@ -6,6 +6,33 @@ The main point is that reading tutorials and documentation isn't worth it if you
 
 With that said, here are some resources listed by technology, feel free to add more resources to this article if you find any useful ones as you look around the internet. Also remember that we don't always use the latest version of each of these libraries, so you may find features we don't have if you don't look back into the versioning of the documentation and find the relevant one.
 
+## Javascript
+
+We use a lot of new Javascript, and Javascript is also very different from other languages since it is very asynchronous in nature. We really recommend watching this talk: https://www.youtube.com/watch?v=8aGhZQkoFbQ&t=8s to understand how the event loop works. Here are some more resources on promises and asynchronous functions which we use heavily:
+
+- [an extensive tutorial on Promises](https://developers.google.com/web/fundamentals/primers/promises)
+- [a nice article on asynchronous functions from the perspective of Promises](https://medium.com/@bluepnume/learn-about-promises-before-you-start-using-async-await-eb148164a9c8)
+- [an async/await tutorial](https://codeburst.io/javascript-es-2017-learn-async-await-by-example-48acc58bad65)
+- [a good article on bad habits in async/await](https://medium.freecodecamp.org/avoiding-the-async-await-hell-c77a0fb71c4c)
+- [an async await tutorial](https://hackernoon.com/6-reasons-why-javascripts-async-await-blows-promises-away-tutorial-c7ec10518dd9)
+
+> NOTE TO REVIEWER FROM EMIL: I barely read any of the above yet, as I quickly put this together this morning as I remembered I should, will try to read them later and actually check for quality and relevance, they have lots of upvotes on Medium though and look quite good. If you want to read them and help me out feel free ;).
+
+We also use a lot of the newer ES6 and above syntax, a good guide for the most common ones that we basically use all of see this one:
+
+- https://webapplog.com/es6/
+
+And you might also want to check out two other features he doesn't cover:
+
+- [spread syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax)
+- [destructuring assignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment)
+
+If you want to dive deeper here's a compilation of resources for ES6 that may be helpful, though the internet is full of things like this:
+
+- https://github.com/ericdouglas/ES6-Learning
+
+Just to reiterate though, please don't sit down and study every feature of ES6 heavily, maybe read the above guides of the most important ones, and then look up others as you come across syntax in the codebase that you don't understand and you'll learn them in a context which will help you remember them.
+
 ## React
 
 React has a lot of resources and articles on the internet as it is so popular, but the best is probably simply their own documentation and guides, it is really well written:
