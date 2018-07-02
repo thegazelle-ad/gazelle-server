@@ -73,6 +73,10 @@ We generally name files and directories (folders) in all lower case with separat
 
 Also, all tests are postfixed with the `.test.js` or `.test.ts` extension.
 
+## Promises
+
+When writing asynchronous code, we prefer using the new [async/await syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) over promises as we find it much more readable. It is important to understand how Promises and asynchronous programming works to be able to understand the async await functions though. Check out our [resources guide's Javascript section](./guides/dependency-learning-resources.md#javascript) for more information.
+
 ## Testing
 
 The more tests the better! For a quick explanation some of the many benefits of writing lots of good tests are:
