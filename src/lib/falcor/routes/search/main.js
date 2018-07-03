@@ -1,7 +1,8 @@
 import falcor from 'falcor';
 import _ from 'lodash';
 
-import * as db from 'lib/db';
+// import * as db from 'lib/db';
+import { searchScoredQuery } from './database-calls';
 
 const $ref = falcor.Model.ref;
 
@@ -21,7 +22,7 @@ export default [
             maxIndex = index;
           }
         });
-        db.searchScoredQuery(pathSet.queries, minIndex, maxIndex).then(data => {
+        searchScoredQuery(pathSet.queries, minIndex, maxIndex).then(data => {
           // Map all the indices down to fit the indices returned by the db call
           const processedPathSet = {
             ...pathSet,
