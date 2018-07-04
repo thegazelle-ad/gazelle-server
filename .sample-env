@@ -14,7 +14,7 @@
 DATABASE_HOST=127.0.0.1
 DATABASE_USER=root
 DATABASE_NAME=the_gazelle
-## If you didn't set a password this will work, otherwise change it to your password
+## For this next one, just leave it blank if you didn't set a password for you database
 DATABASE_PASSWORD=
 
 #######################################################################
