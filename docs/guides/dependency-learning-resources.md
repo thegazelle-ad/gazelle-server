@@ -10,15 +10,11 @@ With that said, here are some resources listed by technology, feel free to add m
 
 We use a lot of new Javascript, and Javascript is also very different from other languages since it is very asynchronous in nature. We really recommend watching this talk: https://www.youtube.com/watch?v=8aGhZQkoFbQ&t=8s to understand how the event loop works. Here are some more resources on promises and asynchronous functions which we use heavily:
 
-- [an extensive tutorial on Promises](https://developers.google.com/web/fundamentals/primers/promises)
+- [An extensive beginners guide to asynchronous code](https://scotch.io/tutorials/javascript-promises-for-dummies)
 - [a nice article on asynchronous functions from the perspective of Promises](https://medium.com/@bluepnume/learn-about-promises-before-you-start-using-async-await-eb148164a9c8)
-- [an async/await tutorial](https://codeburst.io/javascript-es-2017-learn-async-await-by-example-48acc58bad65)
 - [a good article on bad habits in async/await](https://medium.freecodecamp.org/avoiding-the-async-await-hell-c77a0fb71c4c)
-- [an async await tutorial](https://hackernoon.com/6-reasons-why-javascripts-async-await-blows-promises-away-tutorial-c7ec10518dd9)
 
-> NOTE TO REVIEWER FROM EMIL: I barely read any of the above yet, as I quickly put this together this morning as I remembered I should, will try to read them later and actually check for quality and relevance, they have lots of upvotes on Medium though and look quite good. If you want to read them and help me out feel free ;).
-
-We also use a lot of the newer ES6 and above syntax, a good guide for the most common ones that we basically use all of see this one:
+We also use a lot of the newer ES6 and above syntax, for a good guide that explains the most common ones that we basically use all of, see this one:
 
 - https://webapplog.com/es6/
 
