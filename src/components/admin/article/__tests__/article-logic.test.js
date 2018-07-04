@@ -1,7 +1,7 @@
 /**
  * This test is incomplete, more should without a doubt be added to complete all cases
  */
-import { validateChanges } from '../articleLogic';
+import { validateChanges } from '../article-logic';
 
 describe('validateChanges', () => {
   it('catches deleting all authors', async () => {
