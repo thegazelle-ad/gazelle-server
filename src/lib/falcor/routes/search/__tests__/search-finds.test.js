@@ -1,5 +1,3 @@
-// import falcor from 'falcor';
-
 import { searchScoredQuery } from '../database-calls';
 
 import {
