@@ -1,0 +1,39 @@
+#######################################################################
+# This is the template for the file we use for all our configuration. #
+# Everything that already has a value set is a probably default, but  #
+# of course feel free to change anything if it doesn't suit your      #
+# needs. Happy configuring!                                           #
+#######################################################################
+
+#######################################################################
+########                      DEVELOPMENT                      ########
+#######################################################################
+
+# Database related configuration
+## You probably don't have to change the following three unless you are doing something custom
+DATABASE_HOST=127.0.0.1
+DATABASE_USER=root
+DATABASE_NAME=the_gazelle
+## If you didn't set a password this will work, otherwise change it to your password
+DATABASE_PASSWORD=
+
+#######################################################################
+########                      DEPLOYMENT                       ########
+#######################################################################
+
+# AWS S3 Config
+## Needed for uploading images to S3. You most likely have these stored on another server
+## where you can just copy it from that .env file. In case you have to get them from scratch
+## you do this by by going to the Amazon AWS account > My Security Credentials >
+## Access Keys (Access Key ID and Secret Access Key) > Generate new key.
+AWS_S3_ACCESS_KEY_ID=
+AWS_S3_SECRET_ACCESS_KEY=
+
+# Config for sending notifications to Slack
+## If you don't already have a bot created you can do this here:
+## https://api.slack.com/bot-users. You can then find the token in the bot account
+SLACK_API_TOKEN=
+
+# Environment related
+## Which environment is this? This value should be either staging or production
+GAZELLE_ENV=development
