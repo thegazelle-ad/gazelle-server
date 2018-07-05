@@ -13,14 +13,15 @@ const sampleEnv = fs.readFileSync('.sample-env', { encoding: 'utf8' });
 const NEUTRAL = 0;
 const MAIN_DESCRIPTION = 1;
 const SECTION_HEADER = 2;
-const TITLE = 3;
-const COMMENT = 4;
+const COMMENT = 3;
 
 // Tests for each type
 const isSectionComment = line => /^#.*#$/.test(line);
 const extractSectionCommentText = line => /^#+([\w\s.,'!:]*)#+$/.exec(line)[1];
 const isAssignment = line => line.includes('=');
 const parseAssignment = line => /^(\w+?)=(.*)/.exec(line).slice(1, 3);
+const isTitle = line => /^#[^#]/.test(line);
+const extractTitle = line => /^#(.+)/.exec(line)[1].trim();
 
 // Helper
 function throwError(err) {
@@ -60,9 +61,13 @@ async function main() {
       } else {
         throwError('Found a non closed section comment');
       }
+    } else if (state === COMMENT) {
+      console.log('hi');
     } else if (state === NEUTRAL) {
       if (isSectionComment(line)) {
         currentText = line;
+        // We assume that the first section is the main description
+        // which we don't want to print as it's only for reading directly
         if (!mainDescriptionSeen) {
           mainDescriptionSeen = true;
           state = MAIN_DESCRIPTION;
@@ -79,7 +84,15 @@ async function main() {
           default: defaultValue,
           message: `What value would you like to set ${variable} to?`,
         });
-        console.log(assignedValue);
+        // newline
+        console.log();
+      } else if (isTitle(line)) {
+        // We assume titles are never more than one line
+        const title = extractTitle(line);
+        console.log(title);
+        console.log('-'.repeat(title.length));
+        // newline
+        console.log();
       } else {
         state = NEUTRAL;
       }
