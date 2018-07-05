@@ -4,6 +4,7 @@ config/database.config.json5
 config/s3.config.js
 scripts/backup-database.sh
 **/tmp/*
+.env
 
 ## Below this is automatically generated
 
