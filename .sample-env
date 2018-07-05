@@ -10,11 +10,11 @@
 #######################################################################
 
 # Database related configuration
-## You probably don't have to change the following three unless you are doing something custom
+## You can probably just use the defaults for the following three unless you are doing something custom
 DATABASE_HOST=127.0.0.1
 DATABASE_USER=root
 DATABASE_NAME=the_gazelle
-## For this next one, just leave it blank if you didn't set a password for you database
+## Just leave this one blank if you didn't set a password for you database
 DATABASE_PASSWORD=
 
 #######################################################################
