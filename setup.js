@@ -15,10 +15,13 @@ const NEUTRAL = 0;
 const MAIN_DESCRIPTION = 1;
 const SECTION_HEADER = 2;
 const COMMENT = 3;
+// We use this state if the user doesn't want to do deployment config
+const WRITE_REST = 4;
 
 // Tests for each type
 const isSectionComment = line => /^#.*#$/.test(line);
-const extractSectionCommentText = line => /^#+([\w\s.,'!:]*)#+$/.exec(line)[1];
+const extractSectionCommentText = line =>
+  /^#+([\w\s.,'!:]*)#+$/.exec(line)[1].trim();
 const isAssignment = line => line.includes('=');
 const parseAssignment = line => /^(\w+?)=(.*)/.exec(line).slice(1, 3);
 const isTitle = line => /^#[^#]/.test(line);
@@ -55,13 +58,20 @@ async function main() {
     if (state === MAIN_DESCRIPTION || state === SECTION_HEADER) {
       if (isSectionComment(line)) {
         const text = extractSectionCommentText(line);
-        currentText += '\n';
-        currentText += line;
-        if (!text) {
-          if (state === SECTION_HEADER) {
-            console.log(`${currentText}\n`);
+        if (
+          text === 'DEPLOYMENT' &&
+          !(await checkIfShouldDoDeploymentConfig())
+        ) {
+          state = WRITE_REST;
+        } else {
+          currentText += '\n';
+          currentText += line;
+          if (!text) {
+            if (state === SECTION_HEADER) {
+              console.log(`${currentText}\n`);
+            }
+            state = NEUTRAL;
           }
-          state = NEUTRAL;
         }
       } else {
         throwError('Found a non closed section comment');
@@ -115,8 +125,24 @@ async function main() {
       } else {
         state = NEUTRAL;
       }
+    } else if (state === WRITE_REST) {
+      // Don't do anything, the user chose not to continue, we'll set defaults for the rest
+      // and not print anything
     } else {
       throwError('Parser is in an unknown state');
     }
   }
+}
+
+async function checkIfShouldDoDeploymentConfig() {
+  const answer = await inquirer.prompt({
+    type: 'confirm',
+    name: 'shouldContinue',
+    default: false,
+    message:
+      "You are done with all the necessary config for development now, would you also like to set up deployment related config? This is meant only for setting up the actual server and if you're in doubt, the answer is probably no",
+  });
+  // newline
+  console.log();
+  return answer.shouldContinue;
 }
