@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
+/* eslint-disable no-continue */
 // We use 'for of' because 1. it actually doesn't require regenerator
 // runtime as this is native node, and 2. we don't want to enter callbacks
 // where consecutive awaits are hard/impossible to do
@@ -22,6 +23,8 @@ const isAssignment = line => line.includes('=');
 const parseAssignment = line => /^(\w+?)=(.*)/.exec(line).slice(1, 3);
 const isTitle = line => /^#[^#]/.test(line);
 const extractTitle = line => /^#(.+)/.exec(line)[1].trim();
+const isComment = line => /^##[^#]/.test(line);
+const extractComment = line => /^##(.+)/.exec(line)[1].trim();
 
 // Helper
 function throwError(err) {
@@ -45,7 +48,9 @@ async function main() {
   let state = NEUTRAL;
   let mainDescriptionSeen = false;
   let currentText = '';
-  for (const line of sampleEnv.split('\n').map(x => x.trim())) {
+  const trimmedLines = sampleEnv.split('\n').map(x => x.trim());
+  for (let i = 0; i < trimmedLines.length; i++) {
+    const line = trimmedLines[i];
     let lineToWrite = line;
     if (state === MAIN_DESCRIPTION || state === SECTION_HEADER) {
       if (isSectionComment(line)) {
@@ -62,8 +67,19 @@ async function main() {
         throwError('Found a non closed section comment');
       }
     } else if (state === COMMENT) {
-      console.log('hi');
+      if (isComment(line)) {
+        currentText = `${currentText} ${extractComment(line)}`;
+      } else {
+        // Comment is done, so we print it and change the state to neutral + reset the loop
+        // so the current line can be properly parsed
+        console.log(currentText);
+        state = NEUTRAL;
+        i -= 1;
+        continue;
+      }
     } else if (state === NEUTRAL) {
+      // Note that the order and the else if's are important here as otherwise
+      // our regexes would have to be more specific
       if (isSectionComment(line)) {
         currentText = line;
         // We assume that the first section is the main description
@@ -74,6 +90,16 @@ async function main() {
         } else {
           state = SECTION_HEADER;
         }
+      } else if (isTitle(line)) {
+        // We assume titles are never more than one line
+        const title = extractTitle(line);
+        console.log(title);
+        console.log('-'.repeat(title.length));
+        // newline
+        console.log();
+      } else if (isComment(line)) {
+        state = COMMENT;
+        currentText = `NOTE: ${extractComment(line)}`;
       } else if (isAssignment(line)) {
         const [variable, defaultValue] = parseAssignment(line);
         const isPassword = variable.toLowerCase().includes('password');
@@ -84,13 +110,6 @@ async function main() {
           default: defaultValue,
           message: `What value would you like to set ${variable} to?`,
         });
-        // newline
-        console.log();
-      } else if (isTitle(line)) {
-        // We assume titles are never more than one line
-        const title = extractTitle(line);
-        console.log(title);
-        console.log('-'.repeat(title.length));
         // newline
         console.log();
       } else {
