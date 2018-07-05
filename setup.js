@@ -127,13 +127,18 @@ async function main() {
       } else if (isAssignment(line)) {
         const [variable, defaultValue] = parseAssignment(line);
         const isPassword = variable.toLowerCase().includes('password');
-        const assignedValue = await inquirer.prompt({
+        const answer = await inquirer.prompt({
           type: isPassword ? 'password' : 'input',
           mask: isPassword ? '*' : undefined,
           name: variable,
           default: defaultValue,
           message: `What value would you like to set ${variable} to?`,
         });
+        const assignedValue = answer[variable];
+        // We aren't handling all the escaping values or setting quotes or not
+        // but in most if not all cases this should work. If in the future problems
+        // are encountered with this then it would have to be handled with some logic though
+        lineToWrite = `${variable}=${assignedValue}`;
         // newline
         console.log();
       } else {
