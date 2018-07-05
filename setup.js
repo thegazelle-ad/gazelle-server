@@ -2,13 +2,25 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-continue */
+/* eslint-disable no-multi-str */
 // We use 'for of' because 1. it actually doesn't require regenerator
 // runtime as this is native node, and 2. we don't want to enter callbacks
 // where consecutive awaits are hard/impossible to do
 const inquirer = require('inquirer');
 const fs = require('fs');
 
-const sampleEnv = fs.readFileSync('.sample-env', { encoding: 'utf8' });
+let sampleEnv;
+try {
+  sampleEnv = fs.readFileSync('.sample-env', { encoding: 'utf8' });
+} catch (e) {
+  console.error('\n\n');
+  console.error(
+    'ERROR: There was an error opening the .sample-env file, are you sure you\
+ are running this command through npm run setup or from the root directory?',
+  );
+  console.error('\n\n');
+  throw e;
+}
 
 // The different states our parser can be in
 const NEUTRAL = 0;
@@ -48,6 +60,8 @@ console.log(`${WELCOME_MESSAGE}\n`);
 main();
 
 async function main() {
+  // The file descriptor for the env file
+  const fd = fs.openSync('.env', 'w');
   let state = NEUTRAL;
   let mainDescriptionSeen = false;
   let currentText = '';
@@ -131,7 +145,15 @@ async function main() {
     } else {
       throwError('Parser is in an unknown state');
     }
+    fs.writeSync(fd, Buffer.from(`${lineToWrite}\n`, 'utf-8'));
   }
+  fs.closeSync(fd);
+  const GOODBYE_MESSAGE = `\
+You should now have your environment totally setup! Try out running \
+npm run build && npm start and see if you have The Gazelle running \
+successfully by checking out localhost:3000 and localhost:4000 in \
+your browser!`;
+  console.log(GOODBYE_MESSAGE);
 }
 
 async function checkIfShouldDoDeploymentConfig() {
