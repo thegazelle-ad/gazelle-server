@@ -1,5 +1,6 @@
-import React from 'react';
 import crypto from 'crypto';
+
+import { parseMarkdown } from 'lib/react-utilities';
 
 // TODO: Add Jest Testing
 export function debounce(func, timeout, addInstantFlag = false) {
@@ -8,29 +9,35 @@ export function debounce(func, timeout, addInstantFlag = false) {
   than intended, and this might cause unexpected results */
   let scheduled = false;
   let lastCalled = null;
-  const debouncedFunction = function (...args) { // eslint-disable-line func-names
+  const debouncedFunction = function(...args) {
+    // eslint-disable-line func-names
     const now = new Date();
-    if (lastCalled === null || (!scheduled && now - lastCalled >= timeout)) {
-      lastCalled = now;
-      if (addInstantFlag) {
-        // add a flag that says this function was called instantly,
-        // and didn't wait for the debounce, in case you want a different
-        // reaction to an instant call (for example not using state as that
-        // is asynchronous and won't get the newest values)
-        args.push(true);
+    return new Promise(resolve => {
+      if (lastCalled === null || (!scheduled && now - lastCalled >= timeout)) {
+        lastCalled = now;
+        if (addInstantFlag) {
+          // add a flag that says this function was called instantly,
+          // and didn't wait for the debounce, in case you want a different
+          // reaction to an instant call (for example not using state as that
+          // is asynchronous and won't get the newest values)
+          args.push(true);
+        }
+        resolve(func.apply(this, args));
+      } else if (!scheduled) {
+        scheduled = true;
+        setTimeout(() => {
+          scheduled = false;
+          resolve(func.apply(this, args));
+        }, timeout - (now - lastCalled));
       }
-      func.apply(this, args);
-    } else if (!scheduled) {
-      scheduled = true;
-      setTimeout(() => {
-        func.apply(this, args);
-        scheduled = false;
-      }, timeout - (now - lastCalled));
-    }
+    });
   };
   return debouncedFunction;
 }
 
+export function capFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 let isClientFlag = false;
 
@@ -69,51 +76,19 @@ export function mapLegacyIssueSlugsToIssueNumber(slug) {
   }
 }
 
-// Modified slightly from ghost/core/server/models/base.js
-export function slugifyPost(postSlug) {
-  // Remove URL reserved chars: `:/?#[]@!$&'()*+,;=` as well as `\%<>|^~£"`
-  let slug = postSlug.replace(/[:\/\?#\[\]@!$&'()*+,;=\\%<>\|\^~£"]/g, '')
-              .replace(/(\s|\.)/g, '-')
-              .replace(/-+/g, '-')
-              .toLowerCase();
-
-  while (slug.charAt(slug.length - 1) === '-') {
-    slug = slug.substr(0, slug.length - 1);
-  }
-  slug = /^(ghost|ghost\-admin|admin|wp\-admin|wp\-login|dashboard|logout|login|signin|signup|signout|register|archive|archives|category|categories|tag|tags|page|pages|post|posts|user|users|rss)$/g // eslint-disable-line max-len
-         .test(slug) ? `${slug}-post` : slug;
-  return slug;
-}
-
 // Modified from ghost/core/server/models/base.js
-export function slugifyAuthor(authorSlug) {
+export function slugify(name) {
   // Remove URL reserved chars: `:/?#[]@!$&'()*+,;=` as well as `\%<>|^~£"`
-  let slug = authorSlug.replace(/[:\/\?#\[\]@!$&'()*+,;=\\%<>\|\^~£"]/g, '')
-              .replace(/(\s|\.)/g, '-')
-              .replace(/-+/g, '-')
-              .toLowerCase();
+  let slug = name
+    .replace(/[:/?#[\]@!$&'()*+,;=\\%<>|^~£"]/g, '')
+    .replace(/(\s|\.)/g, '-')
+    .replace(/-+/g, '-')
+    .toLowerCase();
 
   while (slug.charAt(slug.length - 1) === '-') {
     slug = slug.substr(0, slug.length - 1);
   }
   return slug;
-}
-
-// this currently only supports parsing links
-export function parseMarkdown(str) {
-  if (!str) return str;
-  // parse links
-  const exp = /\[(.*?)\]\((.*?)\)/g;
-  let result;
-  const output = [];
-  let end = 0;
-  while (result = exp.exec(str)) { // eslint-disable-line no-cond-assign
-    output.push(str.substring(end, result.index));
-    output.push(<a href={result[2]} key={`${result[1]}-${result[2]}`}>{result[1]}</a>);
-    end = exp.lastIndex;
-  }
-  output.push(str.substring(end));
-  return output;
 }
 
 // this currently only supports parsing links
@@ -121,8 +96,8 @@ export function markdownLength(str) {
   if (!str) return 0;
   const array = parseMarkdown(str);
   let length = 0;
-  array.forEach((element) => {
-    if ((typeof element) === 'string') {
+  array.forEach(element => {
+    if (typeof element === 'string') {
       length += element.length;
     } else {
       // assume it is a link
@@ -159,7 +134,7 @@ export function followPath(path, object) {
     processedPath = path.split('.');
   }
   return processedPath.reduce((currentObject, nextChild) => {
-    if (currentObject !== undefined && currentObject.hasOwnProperty(nextChild)) {
+    if (currentObject !== undefined && has.call(currentObject, nextChild)) {
       return currentObject[nextChild];
     }
 
@@ -177,6 +152,8 @@ export function isPlainObject(element) {
 
 /**
  * Taken from https://stackoverflow.com/questions/767486/how-do-you-check-if-a-variable-is-an-array-in-javascript
+ * @param {any} candidate
+ * @returns {boolean}
  */
 export function isArray(candidate) {
   return candidate.constructor === Array;
@@ -184,6 +161,8 @@ export function isArray(candidate) {
 
 /**
  * Taken from https://stackoverflow.com/questions/5999998/how-can-i-check-if-a-javascript-variable-is-function-type
+ * @param {any} candidate
+ * @returns {boolean}
  */
 export function isFunction(candidate) {
   return typeof candidate === 'function';
@@ -196,10 +175,13 @@ export function stringToInt(str) {
   return NaN;
 }
 
+export const has = Object.prototype.hasOwnProperty;
+
 // Environment functions and constants
 export const isProduction = process.env.NODE_ENV === 'production';
 export const isStaging = process.env.NODE_ENV === 'staging';
-export const isCI = process.env.CI === 'true' && process.env.CIRCLECI === 'true';
+export const isCI =
+  process.env.CI === 'true' && process.env.CIRCLECI === 'true';
 export const isDevelopment = !isProduction && !isStaging;
 
 export function filterByEnvironment(development, beta, production) {
@@ -210,7 +192,9 @@ export function filterByEnvironment(development, beta, production) {
      */
     if (development === undefined || beta === undefined) {
       // Less than 2 arguments were given which is not supported
-      throw new Error('Less than 2 arguments were passed to filterByEnvironment');
+      throw new Error(
+        'Less than 2 arguments were passed to filterByEnvironment',
+      );
     }
 
     if (isProduction) {
@@ -230,6 +214,13 @@ export function filterByEnvironment(development, beta, production) {
 
 export const nothingAllowedRobotsTxt = 'User-agent: *\nDisallow: /\n';
 
-export const googleClientID = '235485701704-vqb1qkp8lk1hbdhcmjm5jmtocaur3mq7.apps.googleusercontent.com'; // eslint-disable-line max-len
-export const googleWhitelist = ['tjk343@nyu.edu', 'ks3583@nyu.edu', 'kw1553@nyu.edu', 'hct245@nyu.edu', 'zmm228@nyu.edu', 'ego225@nyu.edu']; // eslint-disable-line max-len
-
+export const googleClientID =
+  '235485701704-vqb1qkp8lk1hbdhcmjm5jmtocaur3mq7.apps.googleusercontent.com'; // eslint-disable-line max-len
+export const googleWhitelist = [
+  'tjk343@nyu.edu',
+  'ks3583@nyu.edu',
+  'kw1553@nyu.edu',
+  'hct245@nyu.edu',
+  'zmm228@nyu.edu',
+  'ego225@nyu.edu',
+]; // eslint-disable-line max-len

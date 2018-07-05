@@ -1,5 +1,4 @@
 .login-container {
-
   p {
     display: block;
     width: 80%;
@@ -37,13 +36,13 @@
       justify-content: center;
       align-content: center;
     }
-    
+
     // Fonts
     @import url(http://weloveiconfonts.com/api/?family=fontawesome);
 
     // Vendor
 
-    [class*="fontawesome-"]:before {
+    [class*='fontawesome-']:before {
       font-family: 'FontAwesome', sans-serif;
     }
 
@@ -51,15 +50,15 @@
 
     $base__font-family-fallback: sans-serif;
     $base__font-family: 'Roboto';
-    $base__font-size: .875rem;
+    $base__font-size: 0.875rem;
     $base__font-weight: 400;
     $base__line-height: 1.5;
 
-    $form--login__border-radus: .25rem;
+    $form--login__border-radus: 0.25rem;
     $form--login__color: #606468;
     $form--login__label__bgcolor: #363b41;
     $form--login__input__bgcolor: #3b4148;
-    $form--login__input__bgcolor--hover: #434A52;
+    $form--login__input__bgcolor--hover: #434a52;
     $form--login__submit__bgcolor: #ea4c88;
     $form--login__submit__bgcolor--hover: #d44179;
     $form--login__submit__color: #eee;
@@ -71,32 +70,29 @@
       margin: 0;
       outline: 0;
       padding: 0;
-      transition: background-color .3s;
+      transition: background-color 0.3s;
     }
 
     // Forms
 
     .form {
-
       input {
-
-        &[type="password"],
-        &[type="text"]{
+        &[type='password'],
+        &[type='text'] {
           max-width: 200px;
         }
-        &[type="submit"] {
+        &[type='submit'] {
           max-width: 270px;
         }
-
       }
 
       &--login {
         color: $form--login__color;
 
         label,
-        input[type="text"],
-        input[type="password"],
-        input[type="submit"] {
+        input[type='text'],
+        input[type='password'],
+        input[type='submit'] {
           border-radius: $form--login__border-radus;
           padding: 1rem;
         }
@@ -110,7 +106,7 @@
         }
 
         input {
-          &[type="password"] {
+          &[type='password'] {
             background-color: $light-grey;
             border-bottom-left-radius: 0;
             border-top-left-radius: 0;
@@ -119,10 +115,9 @@
             &:hover {
               background-color: $lighter-grey;
             }
-
           }
 
-          &[type="submit"] {
+          &[type='submit'] {
             width: calc(253px);
             background-color: $dark-grey;
             color: $form--login__submit__color;
@@ -134,11 +129,8 @@
             &:hover {
               background-color: $dark-grey;
             }
-
           }
-
         }
-
       }
 
       &__field {
@@ -146,7 +138,6 @@
         margin-bottom: 1rem;
         justify-content: center;
       }
-
     }
   }
 
@@ -162,11 +153,8 @@
   }
 
   .text {
-
     &--center {
       text-align: center;
     }
-
   }
-
 }

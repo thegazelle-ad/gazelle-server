@@ -1,6 +1,7 @@
 import React from 'react';
 import Helmet from 'react-helmet'; // Add <head> data
 import { viewArticle, isArticleViewed } from 'lib/utilities';
+import _ from 'lodash';
 
 // Components
 import Article from 'components/main/Article';
@@ -18,21 +19,49 @@ export default class ArticleController extends FalcorController {
         'articles',
         'bySlug',
         params.articleSlug,
-        ['title', 'teaser', 'html', 'published_at', 'issueNumber', 'category', 'slug', 'image'],
+        [
+          'title',
+          'teaser',
+          'html',
+          'published_at',
+          'issueNumber',
+          'slug',
+          'image_url',
+        ],
       ],
-      ['articles', 'bySlug', params.articleSlug, 'authors', { length: 10 }, ['name', 'slug']],
+      ['articles', 'bySlug', params.articleSlug, 'category', 'slug'],
+      [
+        'articles',
+        'bySlug',
+        params.articleSlug,
+        'authors',
+        { length: 10 },
+        ['name', 'slug'],
+      ],
 
       // Fetch two related articles
       // TODO: convert fetching by category to fetching by tag
       [
-        'articles', 'bySlug',
+        'articles',
+        'bySlug',
         params.articleSlug,
         'related',
         { length: 2 },
-        ['title', 'teaser', 'image', 'issueNumber', 'category', 'slug'],
+        ['title', 'teaser', 'image_url', 'issueNumber', 'category', 'slug'],
       ],
       [
-        'articles', 'bySlug', params.articleSlug,
+        'articles',
+        'bySlug',
+        params.articleSlug,
+        'related',
+        { length: 2 },
+        'category',
+        'slug',
+      ],
+      [
+        'articles',
+        'bySlug',
+        params.articleSlug,
         'related',
         { length: 2 },
         'authors',
@@ -41,9 +70,13 @@ export default class ArticleController extends FalcorController {
       ],
 
       // Fetch first five Trending articles
-      ['trending', { length: 6 }, ['title', 'issueNumber', 'category', 'slug', 'image']],
+      [
+        'trending',
+        { length: 6 },
+        ['title', 'issueNumber', 'slug', 'image_url'],
+      ],
+      ['trending', { length: 6 }, 'category', 'slug'],
       ['trending', { length: 6 }, 'authors', { length: 10 }, ['name', 'slug']],
-
     ];
   }
 
@@ -55,7 +88,9 @@ export default class ArticleController extends FalcorController {
     // later to make this consistent for a user in general?)
     if (process.env.NODE_ENV !== 'beta' && !isArticleViewed(slug)) {
       viewArticle(slug);
-      this.props.model.call(['articles', 'bySlug', slug, 'addView'], [], [], []).then(() => {});
+      this.props.model
+        .call(['articles', 'bySlug', slug, 'addView'], [], [], [])
+        .then(() => {});
     }
   }
 
@@ -64,31 +99,32 @@ export default class ArticleController extends FalcorController {
     const slug = this.props.params.articleSlug;
     if (process.env.NODE_ENV !== 'beta' && !isArticleViewed(slug)) {
       viewArticle(slug);
-      this.props.model.call(['articles', 'bySlug', slug, 'addView'], [], [], []).then(() => {});
+      this.props.model
+        .call(['articles', 'bySlug', slug, 'addView'], [], [], [])
+        .then(() => {});
     }
   }
 
   render() {
     if (this.state.ready) {
       if (
-        !this.state.data ||
-        !this.state.data.articles.bySlug ||
-        !this.state.data.articles.bySlug[this.props.params.articleSlug] ||
-        !this.state.data.articles.bySlug[this.props.params.articleSlug].title ||
-        !this.state.data.articles.bySlug[this.props.params.articleSlug].issueNumber
+        !_.get(
+          this.state,
+          `data.articles.bySlug.${this.props.params.articleSlug}.issueNumber`,
+        )
       ) {
-        return (
-          <NotFound />
-        );
+        return <NotFound />;
       }
 
-      const articleSlug = this.props.params.articleSlug;
+      const { articleSlug } = this.props.params;
       // Access data fetched via Falcor
       const articleData = this.state.data.articles.bySlug[articleSlug];
       const trendingData = this.state.data.trending;
       const relatedArticlesData = articleData.related;
       // make sure article meta image has default
-      const articleMetaImage = articleData.image || 'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
+      const articleMetaImage =
+        articleData.image_url ||
+        'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
       const meta = [
         // Search results
         { name: 'description', content: this.props.teaser },
@@ -100,7 +136,7 @@ export default class ArticleController extends FalcorController {
           property: 'og:url',
           content:
             `www.thegazelle.org/issue/${articleData.issueNumber}/` +
-            `${articleData.category}/${articleData.slug}`,
+            `${articleData.category.slug}/${articleData.slug}`,
         },
         { property: 'og:image', content: articleMetaImage },
         { property: 'og:image:width', content: '540' }, // 1.8:1 ratio
@@ -110,32 +146,25 @@ export default class ArticleController extends FalcorController {
       ];
       return (
         <div>
-          <Helmet
-            meta={meta}
-            title={`${articleData.title} | The Gazelle`}
-          />
+          <Helmet meta={meta} title={`${articleData.title} | The Gazelle`} />
           <Article
             title={articleData.title}
             teaser={articleData.teaser}
             published_at={articleData.published_at}
             html={articleData.html}
-            authors={articleData.authors}
-            featuredImage={articleData.image}
+            authors={_.toArray(articleData.authors)}
+            featuredImage={articleData.image_url}
             url={
               `thegazelle.org/issue/${articleData.issueNumber}/` +
-              `${articleData.category}/${articleData.slug}`
+              `${articleData.category.slug}/${articleData.slug}`
             }
-            trending={trendingData}
-            relatedArticles={relatedArticlesData}
+            trending={_.toArray(trendingData)}
+            relatedArticles={_.toArray(relatedArticlesData)}
           />
         </div>
       );
     }
 
-    return (
-      <div>
-        Loading
-      </div>
-    );
+    return <div>Loading</div>;
   }
 }

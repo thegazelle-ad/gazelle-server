@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 import { Route, IndexRoute } from 'react-router';
 import React from 'react';
 
@@ -5,7 +6,7 @@ import InteractiveArticle from 'components/main/InteractiveArticle';
 import AppController from 'components/main/AppController';
 import ArticleController from 'components/main/ArticleController';
 import ArchivesController from 'components/main/ArchivesController';
-import AuthorController from 'components/main/AuthorController';
+import StaffMemberController from 'components/main/StaffMemberController';
 import IssueController from 'components/main/IssueController';
 import CategoryController from 'components/main/CategoryController';
 import TextPageController from 'components/main/TextPageController';
@@ -16,8 +17,14 @@ import SearchController from 'components/main/SearchController';
 export default [
   <Route path="/interactive/:articleSlug" component={InteractiveArticle} />,
   <Route path="/" component={AppController}>
-    <Route path="issue/:issueNumber/:articleCategory/:articleSlug" component={ArticleController} />
-    <Route path="author/:authorSlug" component={AuthorController} />
+    {/** LEGACY ROUTES BEGIN */}
+    <Route path="author/:staffSlug" component={StaffMemberController} />
+    {/** LEGACY ROUTES END */}
+    <Route
+      path="issue/:issueNumber/:articleCategory/:articleSlug"
+      component={ArticleController}
+    />
+    <Route path="staff-member/:staffSlug" component={StaffMemberController} />
     <Route path="issue/:issueNumber" component={IssueController} />
     <Route path="category/:category" component={CategoryController} />
     <Route path="archives" component={ArchivesController} />

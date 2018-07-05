@@ -1,3 +1,5 @@
+// @ts-nocheck
+/* eslint-disable import/no-extraneous-dependencies */
 const webpack = require('webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const path = require('path');
@@ -14,8 +16,10 @@ const getAbsolute = relativePath => path.resolve(ROOT_DIRECTORY, relativePath);
  *   type: one of 'server', 'admin-client', 'main-client',
  *   compileScss: boolean
  * }
+ * @param {Object} config
+ * @returns {Object[]}
  */
-const generateWebpackConfig = (config) => {
+const generateWebpackConfig = config => {
   // Initialized shared config variables based on environment and
   // what type of compilation we're doing. This also simultaneously validates the arguments
   let entry;
@@ -35,7 +39,7 @@ const generateWebpackConfig = (config) => {
       if (config.NODE_ENV !== undefined) {
         throw new Error(
           "webpack config option NODE_ENV is to either be 'production', " +
-          "'beta' or undefined"
+            "'beta' or undefined",
         );
       }
 
@@ -73,7 +77,7 @@ const generateWebpackConfig = (config) => {
     default:
       throw new Error(
         "Webpack config option 'type' is supposed to be either 'server', " +
-        "'main-client', or 'admin-client'"
+          "'main-client', or 'admin-client'",
       );
   }
 
@@ -82,9 +86,11 @@ const generateWebpackConfig = (config) => {
   }
 
   const extractScss = new ExtractTextPlugin({
-    filename: path.relative(getAbsolute(output.path), getAbsolute('static/build/main.css')),
+    filename: path.relative(
+      getAbsolute(output.path),
+      getAbsolute('static/build/main.css'),
+    ),
   });
-
 
   return {
     entry,
@@ -107,16 +113,15 @@ const generateWebpackConfig = (config) => {
         getAbsolute('src'),
         getAbsolute('.'),
       ],
-      extensions: ['.js', '.jsx'],
+      extensions: ['.js', '.jsx', '.json5', '.ts', '.tsx'],
     },
 
     // This makes webpack not bundle in node_modules but leave the require statements
     // since this is unnecessary on the serverside
-    externals: (
+    externals:
       config.type === 'server'
         ? [nodeExternals({ modulesDir: getAbsolute('node_modules') })]
-        : undefined
-    ),
+        : undefined,
 
     plugins: [
       new webpack.DefinePlugin({
@@ -132,14 +137,19 @@ const generateWebpackConfig = (config) => {
           CIRCLECI: JSON.stringify(process.env.CIRCLECI),
         },
       }),
-    // Only add the plugin if we include the scss entry point
-    ].concat(config.compileScss ? [extractScss] : [])
-    // Minimize code in production environments
-    .concat(config.NODE_ENV !== undefined ? [
-      new UglifyJSPlugin({
-        sourceMap: true,
-      }),
-    ] : []),
+      // Only add the plugin if we include the scss entry point
+    ]
+      .concat(config.compileScss ? [extractScss] : [])
+      // Minimize code in production environments
+      .concat(
+        config.NODE_ENV !== undefined
+          ? [
+              new UglifyJSPlugin({
+                sourceMap: true,
+              }),
+            ]
+          : [],
+      ),
 
     // There are faster sourcemaps to use during development, but it seems it's simpler to
     // get css source maps with this (mostly used for production) setting, and our build
@@ -149,95 +159,108 @@ const generateWebpackConfig = (config) => {
     module: {
       rules: [
         {
-          test: /\.jsx?$/,
-          exclude: [
-            getAbsolute('node_modules'),
-            getAbsolute('config'),
-          ],
+          test: /\.(j|t)sx?$/,
+          exclude: [getAbsolute('node_modules'), getAbsolute('config')],
 
           use: [
-            // Babel for transpiling ESNext and React
+            // Notice we are using babel loader after the typescript loader
             {
               loader: 'babel-loader',
               options: {
                 presets: [
-                  'react',
+                  '@babel/preset-react',
+                  '@babel/preset-typescript',
                   [
-                    'env',
+                    '@babel/preset-env',
                     {
-                      targets: (
+                      modules: false,
+                      useBuiltIns: 'usage',
+                      // If on the server we don't want to compile for browsers
+                      ignoreBrowserslistConfig: config.type === 'server',
+                      targets:
                         config.type === 'server'
-                          // This is for the node server
-                          ? {
-                            node: 'current',
-                            /**
-                             * We want this behaviour but it's only in beta right now,
-                             * we can uncomment this when we upgrade to v7 of babel
-                             *
-                             * // Disable the default behaviour of finding
-                             * // browserslist key in package.json
-                             * browsers: '',
-                             */
-                            browsers: '> 1%, last 2 versions, Firefox ESR',
-                          }
-                          /**
-                           * We want this behaviour but it's only in beta right now,
-                           * we can uncomment this when we upgrade to v7 of babel
-                           *
-                           * // If not node, then it is 'web' and therefore our client scripts
-                           * // Here we simply let preset-env find the browserlist key
-                           * : undefined
-                           */
-                         : { browsers: '> 1%, last 2 versions, Firefox ESR' }
-                      ),
+                          ? // This is for the node server
+                            { node: 'current' }
+                          : // If not node, then it is 'web' and therefore our client scripts
+                            // Here we simply let preset-env find the browserlist key
+                            undefined,
                     },
                   ],
                 ],
-                plugins: ['transform-object-rest-spread'],
+                plugins: [
+                  '@babel/plugin-proposal-object-rest-spread',
+                  '@babel/plugin-proposal-class-properties',
+                ],
                 minified: config.NODE_ENV !== undefined,
               },
             },
-            // Lint all that is compiled, notice the order so eslint runs before babel
-            'eslint-loader',
           ],
         },
-      // Only add the scss loaders if we're actually compiling it
-      ].concat(config.compileScss ? (
-        /**
-         * Transpile and compile SCSS to one minified, autoprefixed, vanilla css file
-         */
-      {
-        test: /\.scss$/,
-        exclude: getAbsolute('node_modules'),
+        // Lint all that is compiled, notice enforce: 'pre' that ensures they run first
+        {
+          test: /\.jsx?$/,
+          loader: 'eslint-loader',
+          exclude: [getAbsolute('node_modules'), getAbsolute('config')],
+          enforce: 'pre',
+          options: {
+            emitWarning: true, // Emit linting errors as warnings
+          },
+        },
+        {
+          test: /\.tsx?$/,
+          loader: 'tslint-loader',
+          exclude: [getAbsolute('node_modules'), getAbsolute('config')],
+          enforce: 'pre',
+          // Tslint errors are warnings by default so no option needed
+          options: {
+            tsConfigFile: 'tsconfig.json',
+          },
+        },
+        {
+          test: /\.json5$/,
+          exclude: [getAbsolute('node_modules')],
+          loader: 'json5-loader',
+        },
+        // Only add the scss loaders if we're actually compiling it
+      ].concat(
+        config.compileScss
+          ? /**
+             * Transpile and compile SCSS to one minified, autoprefixed, vanilla css file
+             */
+            {
+              test: /\.scss$/,
+              exclude: getAbsolute('node_modules'),
 
-        loader: extractScss.extract([
-          // Convert css to JS module which Webpack can handle and we can extract to a file
-          {
-            loader: 'css-loader',
-            options: {
-              minimize: config.NODE_ENV !== undefined,
-              sourceMap: true,
-            },
-          },
-          // Transpile CSSNext features and autoprefix
-          {
-            loader: 'postcss-loader',
-            options: {
-              config: {
-                path: getAbsolute('webpack/postcss.config.js'),
-              },
-              sourceMap: true,
-            },
-          },
-          // Converts scss to css
-          {
-            loader: 'sass-loader',
-            options: {
-              sourceMap: true,
-            },
-          },
-        ]),
-      }) : []),
+              loader: extractScss.extract([
+                // Convert css to JS module which Webpack can handle and we can extract to a file
+                {
+                  loader: 'css-loader',
+                  options: {
+                    minimize: config.NODE_ENV !== undefined,
+                    sourceMap: true,
+                  },
+                },
+                // Transpile CSSNext features and autoprefix
+                {
+                  loader: 'postcss-loader',
+                  options: {
+                    config: {
+                      path: getAbsolute('webpack/postcss.config.js'),
+                    },
+                    sourceMap: true,
+                  },
+                },
+                // Converts scss to css
+                {
+                  loader: 'sass-loader',
+                  options: {
+                    sourceMap: true,
+                  },
+                },
+              ]),
+            }
+          : [],
+      ),
     },
   };
 };

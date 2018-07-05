@@ -5,6 +5,7 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import Helmet from 'react-helmet'; // Add meta tags for pre-Ghost release
+import _ from 'lodash';
 
 // Import components
 import TeamPage from 'components/main/TeamPage';
@@ -15,40 +16,45 @@ export default class TeamPageController extends FalcorController {
     return [
       ['semesters', 'latest', { length: 10 }, 'teamInfo', 'name'],
       [
-        'semesters', 'latest',
+        'semesters',
+        'latest',
         { length: 10 },
         'members',
         { length: 50 },
-        ['name', 'slug', 'job_title', 'image'],
+        ['name', 'slug', 'job_title', 'image_url'],
       ],
     ];
   }
 
   render() {
     if (this.state.ready) {
-      if (!this.state.data) {
-        return (
-          <NotFound />
-        );
+      if (!this.state.data || Object.keys(this.state.data).length === 0) {
+        return <NotFound />;
       }
-      const teamData = this.state.data.semesters.latest;
+      const teamData = _.map(this.state.data.semesters.latest, team => ({
+        ...team,
+        members: _.toArray(team.members),
+      }));
       const meta = [
         // Search results
-        { name: 'description', content: "The Gazelle's dedicated student team." },
+        {
+          name: 'description',
+          content: "The Gazelle's dedicated student team.",
+        },
 
         // Social media
         { property: 'og:title', content: 'Our Team | The Gazelle' },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'www.thegazelle.org/team' },
-        { property: 'og:description', content: "The Gazelle's dedicated student team." },
+        {
+          property: 'og:description',
+          content: "The Gazelle's dedicated student team.",
+        },
       ];
       // Top level elements can't have classes or it will break transitions
       return (
         <div>
-          <Helmet
-            meta={meta}
-            title={"Our Team | The Gazelle"}
-          />
+          <Helmet meta={meta} title="Our Team | The Gazelle" />
           <TeamPage teamData={teamData} />
         </div>
       );

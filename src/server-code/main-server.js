@@ -3,8 +3,6 @@ import FalcorServer from 'falcor-express';
 import falcor from 'falcor';
 
 /* React */
-import React from 'react';
-import { renderToString } from 'react-dom/server';
 // used to update the html <head>
 import Helmet from 'react-helmet';
 // components
@@ -12,7 +10,7 @@ import FalcorController from 'lib/falcor/FalcorController';
 
 /* React Router */
 // Serverside rendering functions
-import { match, RouterContext } from 'react-router';
+import { match } from 'react-router';
 // Our custom routes for thegazelle.org
 import routes from 'routes/main-routes';
 
@@ -22,24 +20,43 @@ import express from 'express';
 /* Helper libraries */
 import _ from 'lodash';
 import compression from 'compression';
+import path from 'path';
+
 // Used for parsing post requests
 import bodyParser from 'body-parser';
 
 /* Our helper functions */
-import { isStaging, isCI, nothingAllowedRobotsTxt } from 'lib/utilities';
+import {
+  isStaging,
+  isCI,
+  isDevelopment,
+  nothingAllowedRobotsTxt,
+} from 'lib/utilities';
 import { md5Hash } from 'lib/server-utilities';
-import { injectModelCreateElement } from 'lib/falcor/falcor-utilities';
 
 export default function runMainServer(serverFalcorModel) {
   // Create MD5 hash of static files for better cache performance
-  const clientScriptHash = md5Hash('./static/build/main-client.js');
-  const cssHash = md5Hash('./static/build/main.css');
+  let clientScriptHash = md5Hash(
+    path.join(__dirname, '../../static/build/main-client.js'),
+  );
+  let cssHash = md5Hash(path.join(__dirname, '../../static/build/main.css'));
 
   const buildHtmlString = (body, cache) => {
+    if (isDevelopment) {
+      // If it's development we know that the scripts may change while the server is running
+      // and we can afford the computational cost of recomputing hashes. This allows us to just
+      // refresh the browser instead of having to restart the server in production on the
+      // other hand we assume the script won't change and don't want to compute the hash on
+      // every server side render
+      clientScriptHash = md5Hash(
+        path.join(__dirname, '../../static/build/main-client.js'),
+      );
+      cssHash = md5Hash(path.join(__dirname, '../../static/build/main.css'));
+    }
+
     const head = Helmet.rewind();
 
-    return (
-      `<!DOCTYPE html>
+    return `<!DOCTYPE html>
         <html>
           <head>
             ${head.title}
@@ -62,27 +79,28 @@ export default function runMainServer(serverFalcorModel) {
             </script>
             <script src="/static/build/main-client.js?h=${clientScriptHash}"></script>
           </body>
-        </html>`
-    );
+        </html>`;
   };
 
   // Asynchronously render the application
   // Returns a promise
-  const renderApp = (renderProps) => {
-    let falcorPaths = _.compact(renderProps.routes.map((route) => {
-      const component = route.component;
-      if (component.prototype instanceof FalcorController) {
-        const pathSets = component.getFalcorPathSets(
-          renderProps.params,
-          renderProps.location.query
-        );
-        if (!(pathSets instanceof Array) || pathSets.length === 0) {
-          return null;
+  const renderApp = renderProps => {
+    let falcorPaths = _.compact(
+      renderProps.routes.map(route => {
+        const { component } = route;
+        if (component.prototype instanceof FalcorController) {
+          const pathSets = component.getFalcorPathSets(
+            renderProps.params,
+            renderProps.location.query,
+          );
+          if (!(pathSets instanceof Array) || pathSets.length === 0) {
+            return null;
+          }
+          return pathSets;
         }
-        return pathSets;
-      }
-      return null;
-    }));
+        return null;
+      }),
+    );
 
     // Merging pathsets
     falcorPaths = falcorPaths.reduce((currentPathSets, nextPathSet) => {
@@ -99,41 +117,24 @@ export default function runMainServer(serverFalcorModel) {
     // event of heavy concurrent and unique traffic
     // And also it creates the minimum set of data we can send down
     // to the client and reload on the falcor there
-    const localModel = new falcor.Model({ source: serverFalcorModel.asDataSource() });
+    const localModel = new falcor.Model({
+      source: serverFalcorModel.asDataSource(),
+    });
 
     // If the component doesn't want any data
     if (
       !falcorPaths ||
       falcorPaths.length === 0 ||
-      falcorPaths[0].length === 0 &&
-      falcorPaths.length === 1
+      (falcorPaths[0].length === 0 && falcorPaths.length === 1)
     ) {
-      return new Promise((resolve) => {
-        resolve(
-          buildHtmlString(
-            renderToString(
-              <RouterContext
-                createElement={injectModelCreateElement(localModel)}
-                {...renderProps}
-              />
-            ),
-            localModel.getCache()
-          )
-        );
+      return new Promise(resolve => {
+        resolve(buildHtmlString('', localModel.getCache()));
       });
     }
 
-    return localModel.preload(...falcorPaths).then(() => (
-      buildHtmlString(
-        renderToString(
-          <RouterContext
-            createElement={injectModelCreateElement(localModel)}
-            {...renderProps}
-          />
-        ),
-        localModel.getCache()
-      )
-    ));
+    return localModel
+      .preload(...falcorPaths)
+      .then(() => buildHtmlString('', localModel.getCache()));
   };
 
   // The Gazelle website server
@@ -142,9 +143,10 @@ export default function runMainServer(serverFalcorModel) {
   // For post requests to go through correctly
   app.use(bodyParser.urlencoded({ extended: true }));
 
-  app.use('/model.json', FalcorServer.dataSourceRoute(() => (
-    serverFalcorModel.asDataSource()
-  )));
+  app.use(
+    '/model.json',
+    FalcorServer.dataSourceRoute(() => serverFalcorModel.asDataSource()),
+  );
 
   app.use('/static', express.static('static'));
 
@@ -152,44 +154,59 @@ export default function runMainServer(serverFalcorModel) {
 
   // This endpoint is purely used so outsiders like CircleCI can know whether the server is running
   app.get('/alive', (req, res) => {
-    res.status(200).send(
-      'This route is purely for internal testing, if you\'re seeing this in your browser' +
-      ' you should instead navigate to <a href="/">The Front Page</a> to access' +
-      ' the contents of our lovely newspaper.'
-    );
+    res
+      .status(200)
+      .send(
+        "This route is purely for internal testing, if you're seeing this in your browser" +
+          ' you should instead navigate to <a href="/">The Front Page</a> to access' +
+          ' the contents of our lovely newspaper.',
+      );
   });
 
   if (isStaging) {
     app.get('/robots.txt', (req, res) => {
-      res.status(200).type('txt').send(nothingAllowedRobotsTxt);
+      res
+        .status(200)
+        .type('txt')
+        .send(nothingAllowedRobotsTxt);
     });
   }
 
   app.get('*', (req, res) => {
-    match({ routes, location: req.url },
+    match(
+      { routes, location: req.url },
       (error, redirectLocation, renderProps) => {
         if (error) {
           res.status(500).send(error.message);
         } else if (redirectLocation) {
-          res.redirect(302, redirectLocation.pathname + redirectLocation.search);
+          res.redirect(
+            302,
+            redirectLocation.pathname + redirectLocation.search,
+          );
         } else if (renderProps) {
-          renderApp(renderProps, true).then((html) => {
-            res.status(200).send(html);
-          }).catch((err) => {
-            console.error('Failed to render: ', req.url); // eslint-disable-line no-console
-            console.error(err.stack || err); // eslint-disable-line no-console
-            if (process.env.NODE_ENV !== 'production') {
-              res.status(500).send(err.stack || err);
-            } else {
-              res.status(500).send('There was an error while serving you this webpage.' +
-                ' Please contact The Gazelle team and tell them this link is broken. We hope' +
-                ' to fix it soon. Thank you.');
-            }
-          });
+          renderApp(renderProps, true)
+            .then(html => {
+              res.status(200).send(html);
+            })
+            .catch(err => {
+              console.error('Failed to render: ', req.url); // eslint-disable-line no-console
+              console.error(err.stack || err); // eslint-disable-line no-console
+              if (process.env.NODE_ENV !== 'production') {
+                res.status(500).send(err.stack || err);
+              } else {
+                res
+                  .status(500)
+                  .send(
+                    'There was an error while serving you this webpage.' +
+                      ' Please contact The Gazelle team and tell them this link is broken. We hope' +
+                      ' to fix it soon. Thank you.',
+                  );
+              }
+            });
         } else {
           res.status(404).send('Not Found');
         }
-      }
+      },
     );
   });
 
@@ -204,8 +221,7 @@ export default function runMainServer(serverFalcorModel) {
       console.error(err); // eslint-disable-line no-console
       return;
     }
-    console.log( // eslint-disable-line no-console
-      `The Gazelle Website started on port ${port}`
-    );
+    // eslint-disable-next-line no-console
+    console.log(`The Gazelle Website started on port ${port}`);
   });
 }

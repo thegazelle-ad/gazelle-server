@@ -1,12 +1,18 @@
 import React from 'react';
 
+import { has } from 'lib/utilities';
+
 const shallowEquals = (objA, objB) => {
   if (objA === objB) {
     return true;
   }
 
-  if (typeof objA !== 'object' || objA === null ||
-      typeof objB !== 'object' || objB === null) {
+  if (
+    typeof objA !== 'object' ||
+    objA === null ||
+    typeof objB !== 'object' ||
+    objB === null
+  ) {
     return false;
   }
 
@@ -18,7 +24,7 @@ const shallowEquals = (objA, objB) => {
   }
 
   // Test for A's keys different from B.
-  return keysA.every((key) => objB.hasOwnProperty(key) && objA[key] === objB[key]);
+  return keysA.every(key => has.call(objB, key) && objA[key] === objB[key]);
 };
 
 // Abstract class with utility functions
@@ -38,8 +44,10 @@ export default class BaseComponent extends React.Component {
 
   // Pure render by default
   shouldComponentUpdate(nextProps, nextState) {
-    return (!shallowEquals(nextProps, this.props)
-      || !shallowEquals(nextState, this.state));
+    return (
+      !shallowEquals(nextProps, this.props) ||
+      !shallowEquals(nextState, this.state)
+    );
   }
 
   componentWillUnmount() {
@@ -52,13 +60,15 @@ export default class BaseComponent extends React.Component {
    * it won't throw errors.
    * See [the React docs]{@link https://facebook.github.io/react/docs/react-component.html#setstate}
    * for more details about this.setState
-   * @arg {(Object|Function)} updater
-   * @arg {Function} cb - We don't support this callback due to working with Falcor
+   * @param {(Object|Function)} updater
+   * @param {Function} cb - We don't support this callback due to working with Falcor
    */
   safeSetState(updater, cb) {
     if (cb) {
-      throw new Error('We do not support the callback to setState ' +
-        'in this codebase, you can probably use componentDidUpdate instead');
+      throw new Error(
+        'We do not support the callback to setState ' +
+          'in this codebase, you can probably use componentDidUpdate instead',
+      );
     }
     if (this.mounted) {
       this.setState(updater);

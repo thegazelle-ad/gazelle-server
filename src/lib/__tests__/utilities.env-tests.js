@@ -4,7 +4,12 @@
  * in the same file when our function doesn't ascertain the environment when it runs
  * but rather when it is imported
  */
-import { filterByEnvironment, isDevelopment, isStaging, isProduction } from 'lib/utilities';
+import {
+  filterByEnvironment,
+  isDevelopment,
+  isStaging,
+  isProduction,
+} from 'lib/utilities';
 
 export const development = () => {
   describe('filterByEnvironment', () => {

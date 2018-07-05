@@ -1,7 +1,12 @@
 import fs from 'fs';
 import crypto from 'crypto';
 
-import { md5Hash, compressJPEG, deleteFile, copyFile } from 'lib/server-utilities';
+import {
+  md5Hash,
+  compressJPEG,
+  deleteFile,
+  copyFile,
+} from 'lib/server-utilities';
 
 describe('md5Hash', () => {
   const indexHash = md5Hash('./src/index.js');
@@ -38,7 +43,10 @@ describe('compressJPEG', () => {
     if (!fs.existsSync('./tmp')) fs.mkdirSync('./tmp');
 
     // Copy compressible JPEG to `./tmp` directory to simulate JPEG upload
-    return copyFile('./src/lib/__tests__/assets/compression-test.jpg', filePath);
+    return copyFile(
+      './src/lib/__tests__/assets/compression-test.jpg',
+      filePath,
+    );
   });
 
   /*
@@ -117,8 +125,9 @@ describe('copyFile', () => {
     const nonexistentSource = './not-a-real-path/nonexistent-file.test';
     const nonexistentTarget = './doesnt-exist/nonexistent-file.test';
 
-    return expect(copyFile(nonexistentSource, nonexistentTarget))
-      .rejects.toEqual(Error('Source file does not exist.'));
+    return expect(
+      copyFile(nonexistentSource, nonexistentTarget),
+    ).rejects.toEqual(Error('Source file does not exist.'));
   });
 
   // Cleanup

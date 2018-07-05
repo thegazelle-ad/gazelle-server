@@ -1,10 +1,8 @@
+/* eslint-disable react/jsx-filename-extension */
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
 import _ from 'lodash';
-import update from 'react-addons-update';
 import falcor from 'falcor';
-
-import { followPath } from 'lib/utilities';
 
 // create a curried createElement that injects a
 // falcor model instance into each of the falcon controllers
@@ -12,24 +10,17 @@ import { followPath } from 'lib/utilities';
 // if its a server element or not
 export function injectModelCreateElement(model) {
   return (Component, props) => {
-    if (Component.prototype instanceof FalcorController) {
+    if (
+      Component.prototype instanceof FalcorController ||
+      // If it is a HOC we don't know whether there's a FalcorController beneath
+      // so we inject just in case. We want to get completely rid of all our inheritance
+      // at some point though, but this is just for the transition stage
+      (Component.displayName && /\w+?\(\w+?\)/.test(Component.displayName))
+    ) {
       return <Component model={model} {...props} />;
     }
     return <Component {...props} />;
   };
-}
-
-// Turns to true on the client after the first render is entirely
-// completed. Should be set only by the toplevel appController
-// after it has mounted
-let appReady = false;
-
-export function isAppReady() {
-  return appReady;
-}
-
-export function setAppReady() {
-  appReady = true;
 }
 
 export function validateFalcorPathSets(falcorPathSets) {
@@ -41,7 +32,11 @@ export function validateFalcorPathSets(falcorPathSets) {
   */
 
   // If the component doesn't want any data
-  if (!falcorPathSets || !(falcorPathSets instanceof Array) || falcorPathSets.length === 0) {
+  if (
+    !falcorPathSets ||
+    !(falcorPathSets instanceof Array) ||
+    falcorPathSets.length === 0
+  ) {
     return undefined;
   }
   // If we're only passing a single pathSet we compensate for the spread operator
@@ -51,352 +46,71 @@ export function validateFalcorPathSets(falcorPathSets) {
 
   // Remove any empty arrays (would also remove falsey values, but they shouldn't
   // be present in a falcorPathSet anyway)
-  return _.compact(falcorPathSets.map((pathSet) => {
-    if (!(pathSet instanceof Array) || pathSet.length === 0) {
-      return null;
-    }
-    return pathSet;
-  }));
-}
-
-export function pathSetsInCache(cache, falcorPathSets) {
-  /*
-  Checks if falcorPathSets in given cache
-  */
-
-  /* eslint-disable no-use-before-define */
-  function handleCheckingSingleKey(curObject, nextRemainingKeySets, key) {
-    /*
-    This function modularizes the checking of a single key.
-    It takes as arguments the current object level we are at,
-    the key we are checking and the remainingKeySets argument
-    for the next call of checkSinglePathSetsInCache.
-    It returns whether this key and all branches from the pathSet that follow
-    this key are in the cache as it continues recursively.
-    */
-    if (!curObject.hasOwnProperty(key) || curObject[key] === null) {
-      return false;
-    }
-    const val = curObject[key];
-    if (val.$type) {
-      switch (val.$type) {
-        case 'error':
-        case 'atom':
-          return nextRemainingKeySets.length === 0;
-        case 'ref':
-          return checkSinglePathSetInCache(followPath(val.value, cache), nextRemainingKeySets);
-        default:
-          throw new Error(
-            `pathSetsInCache encountered unexpected type. Type found was: ${val.$type}`
-          );
+  return _.compact(
+    falcorPathSets.map(pathSet => {
+      if (!(pathSet instanceof Array) || pathSet.length === 0) {
+        return null;
       }
-    } else {
-      return checkSinglePathSetInCache(val, nextRemainingKeySets);
-    }
-  }
-  /* eslint-enable */
-
-  function checkSinglePathSetInCache(curObject, remainingKeySets) {
-    /*
-    Checks if a single pathSet is in the cache recursively.
-    Since it is recursive it not only takes the initial values of
-    the cache and a falcor pathSet, but also the current level of
-    the object one has reached, and the remaining keySets in the
-    current falcor pathSet.
-    */
-
-    // Base case, means we are done as there are no
-    // remaining keySets.
-    if (remainingKeySets.length === 0) {
-      return true;
-    }
-    const nextRemainingKeySets = remainingKeySets.slice(1);
-    let nextKeySet = remainingKeySets[0];
-
-    // This is to avoid code duplication for when
-    // it is just a single key instead of an
-    // array of keys. We don't want to handle that
-    // case seperately so just make an array with one value
-    if (!(nextKeySet instanceof Array)) {
-      nextKeySet = [nextKeySet];
-    }
-    return nextKeySet.every((keyOrRange) => {
-      if (keyOrRange !== null && typeof keyOrRange === 'object') {
-        // keyOrRange is a range
-
-        // Every time we call a range, there should also be a length property.
-        // This is so we know when overfetching whether data is missing
-        // in the cache or it's simply because there is no data to fetch.
-        // It is also needed in the software development to know how many
-        // items you will actually receive when overfetching.
-        if (!curObject.hasOwnProperty('length')) {
-          if (process.env.NODE_ENV !== 'production') {
-            console.warn('No length property on object in cache. This might be a developer mistake.'); // eslint-disable-line no-console, max-len
-            console.log('Current object in pathSetsInCache:'); // eslint-disable-line no-console
-            console.log(curObject); // eslint-disable-line no-console
-            console.log('remainingKeySets in pathSetsInCache'); // eslint-disable-line no-console
-            console.log(remainingKeySets); // eslint-disable-line no-console
-          }
-          // If it's not a developer mistake the length property could simply be missing
-          // because this data is not in cache.
-          return false;
-        }
-        const lengthOfFalcorArray = curObject.length;
-        let start = 0;
-        if (keyOrRange.hasOwnProperty('from')) {
-          start = keyOrRange.from;
-        }
-        let end;
-        if (keyOrRange.hasOwnProperty('to')) {
-          if (keyOrRange.hasOwnProperty('length')) {
-            throw new Error(
-              "Falcor Range cannot have both 'to' and 'length' properties at falcor KeySet: " +
-              `${JSON.stringify(keyOrRange)}`
-            );
-          }
-          end = keyOrRange.to;
-        } else if (keyOrRange.hasOwnProperty('length')) {
-          end = start + keyOrRange.length - 1;
-        } else {
-          throw new Error(
-            "Falcor Range must have either 'to' or 'length' properties at falcor KeySet: " +
-            `${JSON.stringify(keyOrRange)}`
-          );
-        }
-        // Don't check any keys beyond the end of the theoretical falcor array.
-        end = Math.min(lengthOfFalcorArray - 1, end);
-        for (let i = start; i <= end; i++) {
-          if (!handleCheckingSingleKey(curObject, nextRemainingKeySets, i)) {
-            return false;
-          }
-        }
-        return true;
-      }
-      // keyOrRange is a simple key
-      return handleCheckingSingleKey(curObject, nextRemainingKeySets, keyOrRange);
-    });
-  }
-
-  // Here function starts
-  const processedFalcorPaths = validateFalcorPathSets(falcorPathSets);
-  if (processedFalcorPaths === undefined) {
-    // If no data is being requested return true
-    return true;
-  }
-  // Return if every pathSet in the array of pathSets
-  // is located in the cache.
-  return processedFalcorPaths.every((pathSet) =>
-    checkSinglePathSetInCache(cache, pathSet)
+      return pathSet;
+    }),
   );
 }
 
-export function expandCache(cache) {
-  function assignByPath(path, value) {
-    // If using dot notation obj.key.key.key
-    let processedPath = path;
-    if (typeof path === 'string') {
-      processedPath = path.split('.');
-    }
-    // Parent also works for array length 1, aka initial keys
-    // Parent and Key variables are used for assigning new values later
-    const parent = followPath(processedPath.slice(0, processedPath.length - 1), cache);
-    const key = processedPath[processedPath.length - 1];
-    // The following key exists as it was pushed on to stack as a valid key
-    parent[key] = value;
+function isEmptyObject(obj) {
+  if ('isEmptyObjectSeen' in obj) {
+    // We have already been here so it must be empty as we didn't
+    // find any values yet (as in that case it would have stopped recursing)
+    return true;
   }
-
-  function isObject(val) {
-    // We don't count arrays as objects here. This is to protect ourselves against an expanded atom
-    // This does still leave us vulnerable to an expanded object though, but in by far most cases
-    // it would be very bad form to put an object in an atom, so this is not supported at this time.
-    if (val === null || (val instanceof Array)) return false;
-    return (typeof val) === 'object';
-  }
-
-  function handleRef(pathToRef, refPath) {
-    const refPathsSet = new Set();
-    // pathToRef is an array path
-    if (!(pathToRef instanceof Array)) {
-      throw new Error(
-        'pathToRef was passed as a non-array. The value passed was: ' +
-        `${JSON.stringify(pathToRef)}`
-      );
+  // We check whether there are any keys that actually recursively
+  // store a value, if there is one we return false, otherwise true
+  obj.isEmptyObjectSeen = true; // eslint-disable-line no-param-reassign
+  const recursivelyHasValue = falcor.keys(obj).some(key => {
+    // This is the extra key we added so don't care about that one
+    if (key === 'isEmptyObjectSeen') return false;
+    const value = obj[key];
+    if (value !== null && typeof value === 'object') {
+      // It is an object so we recurse
+      const isEmpty = isEmptyObject(value);
+      return !isEmpty;
     }
-    // So is refPath
-    if (!(pathToRef instanceof Array)) {
-      throw new Error(
-        `refPath was passed as a non-array. The value passed was: ${JSON.stringify(refPath)}`
-      );
-    }
-    refPathsSet.add(pathToRef.join('.'));
-    let val = followPath(refPath, cache);
-    let path = refPath.join('.');
-    if (val === undefined) {
-      throw new Error(`Missing part of JSON graph in expandCache function at path: ${path}`);
-    }
-    while (isObject(val) && val.$type) {
-      switch (val.$type) {
-        case 'atom':
-          assignByPath(path, val.value);
-          val = followPath(path, cache);
-          break;
-        case 'error':
-          assignByPath(path, new Error(val.value));
-          val = followPath(path, cache);
-          break;
-        case 'ref':
-          if (refPathsSet.has(path)) {
-            let paths = '[';
-            refPathsSet.forEach((pathFromSet) => {
-              paths += `${pathFromSet},`;
-            });
-            paths = `${paths.substring(0, paths.length - 2)}]`;
-            throw new Error(
-              'Neverending loop from ref to ref with no real values present in expandCache. ' +
-              `It is made up of the following paths: ${paths}`
-            );
-          } else {
-            refPathsSet.add(path);
-            path = val.value.join('.');
-            val = followPath(val.value, cache);
-          }
-          break;
-        default:
-          throw new Error(
-            `expandCache encountered a new type of name: ${val.$type}. ` +
-            `And cannot read it at following path: ${path}`
-          );
-      }
-    }
-    refPathsSet.forEach((pathFromSet) => {
-      assignByPath(pathFromSet, val);
-    });
-  }
-
-  // If empty return itself
-  if (!cache) return cache;
-  // Expanding
-  const stack = [];
-  Object.keys(cache).forEach((key) => {
-    stack.push([key]);
+    return value !== undefined;
   });
-  while (stack.length > 0) {
-    // pathArray is the path to the current location being checked
-    // and is an array with the keys in order of how they should be accessed
-    // it is always an array as we only push arrays onto the stack
-    const pathArray = stack.pop();
-    if (!(pathArray instanceof Array)) {
-      throw new Error(
-        'non-array popped off stack in expandCache. ' +
-        `Item popped off was: ${JSON.stringify(pathArray)}`
-      );
-    }
-    const val = followPath(pathArray, cache);
-    if (val === undefined) {
-      throw new Error(
-        `Missing part of JSON graph in expandCache function at path: ${pathArray.join('.')}`
-      );
-    }
-    if (!isObject(val)) {
-      continue;
-    } else if (val.$type) {
-      switch (val.$type) {
-        case 'atom':
-          assignByPath(pathArray, val.value);
-          break;
-        case 'error':
-          assignByPath(pathArray, new Error(val.value));
-          break;
-        case 'ref':
-          handleRef(pathArray, val.value);
-          break;
-        default:
-          throw new Error(
-            `expandCache encountered a new type of name: ${val.$type}. ` +
-            `And cannot read it at following path: ${pathArray.join('.')}`
-          );
-      }
-    } else {
-      Object.keys(val).forEach((key) => {
-        const next = pathArray.concat(key);
-        stack.push(next);
-      });
-    }
-  }
-  return cache;
+  delete obj.isEmptyObjectSeen; // eslint-disable-line no-param-reassign
+  return !recursivelyHasValue;
 }
 
-export function mergeUpdatedData(oldData, dataUpdates, maxDepth) {
-  /* This function takes the updates returned by falcorUpdate
-  and merges them with as few copies as possible to a new object
-  with the updates integrated. We do this with react-addons-update
-  to help handle the immutability and not need to do a deep copy */
-
-  function isObject(val) {
-    if (val === null) return false;
-    return (typeof val) === 'object';
-  }
-
-  function recursivelyConvertObject(curObject, correspondingOldObject, depth) {
-    /*
-    This function recursively goes through an object and converts all
-    non-object values to a $set command for react-addons-update in place.
-    It has the depth argument so we can make sure that if it receives
-    a circular JSON structure it will terminate correctly
-    */
-
-    if (depth >= maxDepth) return;
-
-    /* eslint-disable no-param-reassign */
-    _.forEach(curObject, (value, key) => {
-      if (value instanceof Error) {
-        throw value;
-      }
-      if (correspondingOldObject.hasOwnProperty(key)) {
-        if (isObject(value)) {
-          recursivelyConvertObject(value, correspondingOldObject[key], depth + 1);
-        } else {
-          curObject[key] = { $set: value };
-        }
-      } else {
-        curObject[key] = { $set: value };
-      }
-    });
-    return;
-    /* eslint-enable no-param-reassign */
-  }
-
-  // Function starts here
-
-  if (!oldData) {
-    // There was no this.state.data before
-    return dataUpdates;
-  }
-
-  recursivelyConvertObject(dataUpdates, oldData, 0);
-
-  // This command returns a copy of oldData with the new updates applied
-  return update(oldData, dataUpdates);
-}
-
-export const mapGhostNames = (falcorName) => {
-  switch (falcorName) {
-    case 'teaser':
-      return 'meta_description';
-    case 'issueNumber':
-      return 'issue_order';
-    default:
-      return falcorName;
-  }
-};
-
+/**
+ * We want to phase this function out as it's only here for compatibility
+ * with our legacy code, so please don't use it again, try using the falcor HOCs
+ * and just working with the value that Falcor gives you
+ * @param {Object} obj - "dirty" falcor return value
+ * @returns {Object} cleaned up version of falcor return value
+ */
 export function cleanupFalcorKeys(obj) {
-  if (obj === null || (typeof obj) !== 'object' || obj.cleanupFalcorKeysMetaSeen) return obj;
+  if (
+    obj === null ||
+    typeof obj !== 'object' ||
+    obj.cleanupFalcorKeysMetaSeen
+  ) {
+    return obj;
+  }
   const ret = {};
   // In order to handle circular objects, the key name is convoluted to make sure it's unique
   obj.cleanupFalcorKeysMetaSeen = true; // eslint-disable-line no-param-reassign
   falcor.keys(obj).forEach(key => {
     if (key === 'cleanupFalcorKeysMetaSeen') return;
+    const value = obj[key];
+    if (value !== null && typeof value === 'object') {
+      // Check if it's an empty object and if then don't add it
+      if (falcor.keys(value).length === 0) {
+        return;
+      }
+      // Check recursively if all the keys in the object are undefined, then don't add it
+      if (isEmptyObject(value)) {
+        return;
+      }
+    }
     ret[key] = cleanupFalcorKeys(obj[key]);
   });
   // Cleanup to not have mutated the object
@@ -404,15 +118,14 @@ export function cleanupFalcorKeys(obj) {
   return ret;
 }
 
-export function cleanupJsonGraphArg(jsonGraphArg) {
-  if (jsonGraphArg.hasOwnProperty('$type')) {
-    // Then this is the final part we can substitute
-    return jsonGraphArg.value;
-  }
-  // Else we recurse
-  const ret = {};
-  Object.keys(jsonGraphArg).forEach(key => {
-    ret[key] = cleanupJsonGraphArg(jsonGraphArg[key]);
-  });
-  return ret;
-}
+/**
+ * Takes a Falcor psuedo array and outputs an array containing the values of the
+ * keys are filtering out the Falcor meta data. Note that even if you have an object
+ * with number keys such as from 60 - 90, an array with indices 0 - 30 will still
+ * be created
+ * @param {Object} obj - The psuedo array from Falcor, should work with object
+ * that has any key values, whether strings or numbers
+ * @returns {any[]}
+ */
+export const parseFalcorPseudoArray = obj =>
+  _.toArray(_.pick(obj, falcor.keys(obj)));

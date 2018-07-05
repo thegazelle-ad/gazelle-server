@@ -3,11 +3,11 @@ working_directory: &working_directory
 
 docker_no_database: &docker_no_database
   docker:
-    - image: thegazelle/gazelle-main-circleci-primary:0.0.4
+    - image: thegazelle/gazelle-main-circleci-primary:0.0.5
 
 docker_with_database: &docker_with_database
   docker:
-    - image: thegazelle/gazelle-main-circleci-primary:0.0.4
+    - image: thegazelle/gazelle-main-circleci-primary:0.0.5
     - image: mariadb:10.1
       environment:
         MYSQL_ROOT_PASSWORD: circleci_test_gazelle
@@ -30,9 +30,9 @@ jobs:
 
       # Complete setup
       - run: |
-          sed 's/"password",$/"circleci_test_gazelle",/' config/database.config.example.js > config/database.config.js
+          # The crazy blocks of quotes is to be able to use single quotes inside single quotes
+          sed 's/'"'"'password'"'"',$/"circleci_test_gazelle",/' config/database.config.example.json5 > config/database.config.json5
           cp config/s3.config.example.js config/s3.config.js
-          cp config/ghost.config.example.js config/ghost.config.js
 
       # Cache it
       - run:
@@ -47,6 +47,8 @@ jobs:
   install_dependencies:
     <<: *defaults
     steps:
+      - attach_workspace:
+          at: ~/.ssh
       - run:
           name: save SHA to a file
           command: echo $CIRCLE_SHA1 > .circle-sha
@@ -59,7 +61,9 @@ jobs:
           keys:
             - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
-      - run: npm install
+      - run:
+          name: Install dependencies and check that the repo didn't change during the install
+          command: npm install && [[ "$(git diff)" == "" ]]
 
       - save_cache:
           paths:
@@ -67,7 +71,7 @@ jobs:
           key: v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
   unit_test:
-    <<: *defaults
+    <<: *defaults_with_database
     steps:
       - run:
           name: save SHA to a file
@@ -78,6 +82,10 @@ jobs:
       - restore_cache:
           keys:
             - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
+
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
       - run: npm run test:unit
 
@@ -94,9 +102,19 @@ jobs:
           keys:
             - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
-      - run: npm run lint
+      - run:
+          name: Run ESLint
+          command: npm run lint:js
 
-  fetch_test_database:
+      - run:
+          name: Run Typescript to check types
+          command: npm run lint:ts
+
+      - run:
+          name: Run our opinionated code formatter prettier
+          command: npm run lint:prettier
+
+  build:
     <<: *defaults
     steps:
       - run:
@@ -108,47 +126,6 @@ jobs:
       - restore_cache:
           keys:
             - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          keys:
-            - v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}
-
-      - run:
-          name: Get needed dependencies for fetch database
-          command: '[[ -f scripts/circleci/helpers/test.dump ]] && npm i googleapis@12.4.0 google-auth-library@0.*'
-
-      - run:
-          name: Fetch test database
-          command: '[[ -f scripts/circleci/helpers/test.dump ]] && ./scripts/circleci/fetch-test-database.sh'
-
-      - save_cache:
-          paths:
-            - scripts/circleci/helpers/test.dump
-          key: v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}
-
-  build:
-    <<: *defaults_with_database
-    steps:
-      - run:
-          name: save SHA to a file
-          command: echo $CIRCLE_SHA1 > .circle-sha
-      - restore_cache:
-          keys:
-            - v1-repo-{{ checksum ".circle-sha" }}
-      - restore_cache:
-          keys:
-            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          keys:
-            - v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}
-
-      - run:
-          name: Wait for db
-          command: dockerize -wait tcp://localhost:3306 -timeout 1m
-
-      - run: ./scripts/circleci/load-test-database.sh
-
-      # Complete config
-      - run: ./scripts/get-ghost-config.sh
 
       - restore_cache:
           keys:
@@ -178,43 +155,16 @@ jobs:
             - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
       - restore_cache:
           keys:
-            - v1-database_dump-{{ checksum "scripts/circleci/fetch-test-database.sh" }}-{{ checksum "scripts/circleci/helpers/get-test-database-dump.js" }}
-      - restore_cache:
-          keys:
             - v1-build-{{ arch }}-{{ .Revision }}
 
       - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
-      - run: ./scripts/circleci/load-test-database.sh
-
-      - run:
-          name: Clone Ghost repo
-          command: |
-            cd ~
-            git clone git@github.com:thegazelle-ad/database-and-ghost-blog-server.git
-
-      - restore_cache:
-          keys:
-            - v1-ghost-dependencies-and-config-{{ arch }}-{{ checksum "~/database-and-ghost-blog-server/package.json" }}
-
-      - run:
-          name: Setup Ghost
-          command: |
-            cd ~/database-and-ghost-blog-server
-            sed "s/'password'/'circleci_test_gazelle'/" config.example.js > config.js
-            . ~/.nvm/nvm.sh
-            npm install --production
-
-      - save_cache:
-          paths:
-            - ~/database-and-ghost-blog-server/node_modules
-            - ~/database-and-ghost-blog-server/config.js
-          key: v1-ghost-dependencies-and-config-{{ arch }}-{{ checksum "~/database-and-ghost-blog-server/package.json" }}
+      - run: ./.circleci/scripts/load-test-database.sh
 
       # Actually run the tests
-      - run: ./scripts/circleci/run-end-to-end-tests.sh
+      - run: ./.circleci/scripts/run-end-to-end-tests.sh
 
   prep_ssh:
     <<: *defaults
@@ -264,6 +214,7 @@ workflows:
       - install_dependencies:
           requires:
             - checkout_code
+            - prep_ssh
 
       - unit_test:
           requires:
@@ -271,13 +222,11 @@ workflows:
       - lint:
           requires:
             - install_dependencies
-      - fetch_test_database:
-          requires:
-            - install_dependencies
 
       - build:
           requires:
-            - fetch_test_database
+            - install_dependencies
+
       - end_to_end_tests:
           requires:
             - build

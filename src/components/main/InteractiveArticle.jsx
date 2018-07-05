@@ -5,7 +5,6 @@ import NotFound from 'components/main/NotFound';
 import InteractiveArticleLoad from 'transitions/InteractiveArticleLoad';
 
 export default class InteractiveArticle extends FalcorController {
-
   constructor(props) {
     super(props);
     this.safeSetState({
@@ -17,17 +16,28 @@ export default class InteractiveArticle extends FalcorController {
   static getFalcorPathSets(params) {
     return [
       // Fetch article metadata
-      ['articles', 'bySlug', params.articleSlug,
-        ['title', 'teaser', 'slug', 'image', 'published_at']],
+      [
+        'articles',
+        'bySlug',
+        params.articleSlug,
+        ['title', 'teaser', 'slug', 'image_url', 'published_at'],
+      ],
       // Fetch interactive article html/js/css
       // For now we only use the html part, the js and css parts are for further improvements
-      ['articles', 'bySlug', params.articleSlug, 'interactiveData',
-        ['html', 'js', 'css']],
+      [
+        'articles',
+        'bySlug',
+        params.articleSlug,
+        'interactiveData',
+        ['html', 'js', 'css'],
+      ],
     ];
   }
 
   evaluateJavascript() {
-    const articleData = this.state.data.articles.bySlug[this.props.params.articleSlug];
+    const articleData = this.state.data.articles.bySlug[
+      this.props.params.articleSlug
+    ];
     // eslint-disable-next-line no-new-func
     new Function(articleData.interactiveData.js || '')();
     this.safeSetState({ didEval: true });
@@ -35,7 +45,11 @@ export default class InteractiveArticle extends FalcorController {
 
   componentDidMount() {
     super.componentDidMount();
-    if (this.state.ready && this.state.data && document.getElementById('interactive-root')) {
+    if (
+      this.state.ready &&
+      this.state.data &&
+      document.getElementById('interactive-root')
+    ) {
       this.evaluateJavascript();
     }
   }
@@ -57,8 +71,9 @@ export default class InteractiveArticle extends FalcorController {
         return <NotFound />;
       }
 
-      const articleSlug = this.props.params.articleSlug;
-      const publishDate = this.state.data.articles.bySlug[articleSlug].published_at;
+      const { articleSlug } = this.props.params;
+      const publishDate = this.state.data.articles.bySlug[articleSlug]
+        .published_at;
       if (!publishDate) {
         return <NotFound />;
       }
@@ -66,7 +81,9 @@ export default class InteractiveArticle extends FalcorController {
       const articleData = this.state.data.articles.bySlug[articleSlug];
       const interactiveCode = articleData.interactiveData;
       // make sure article meta image has default
-      const articleMetaImage = articleData.image || 'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
+      const articleMetaImage =
+        articleData.image_url ||
+        'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
       const meta = [
         // Search results
         { name: 'description', content: articleData.teaser },
@@ -89,10 +106,8 @@ export default class InteractiveArticle extends FalcorController {
       };
       return (
         <div>
-          <Helmet
-            meta={meta}
-            title={`${articleData.title} | The Gazelle`}
-          />
+          <Helmet meta={meta} title={`${articleData.title} | The Gazelle`} />
+          {/* eslint-disable-next-line react/no-danger */}
           <div dangerouslySetInnerHTML={reactHtml} />
         </div>
       );

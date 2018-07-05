@@ -1,30 +1,31 @@
 import React from 'react';
-import _ from 'lodash';
 import { Link } from 'react-router';
 import BaseComponent from 'lib/BaseComponent';
 
 export default class AuthorList extends BaseComponent {
   render() {
     // Render all authors
-    let renderAuthors = (
+    const renderAuthors =
       // Render nothing if props.authors is empty
-      _.map((this.props.authors || []), author => (
+      this.props.authors.map(author => (
         <li key={author.slug} className="author-list__author">
-          <Link to={`/author/${author.slug}`}>
-            {author.name}
-          </Link>
+          <Link to={`/staff-member/${author.slug}`}>{author.name}</Link>
         </li>
-      ))
-    );
+      ));
 
-    return (
-      <div className="author-list">
-        {renderAuthors}
-      </div>
-    );
+    return <div className="author-list">{renderAuthors}</div>;
   }
 }
 
 AuthorList.propTypes = {
-  authors: React.PropTypes.object,
+  authors: React.PropTypes.arrayOf(
+    React.PropTypes.shape({
+      slug: React.PropTypes.string.isRequired,
+      name: React.PropTypes.string.isRequired,
+    }),
+  ).isRequired,
+};
+
+AuthorList.defaultProps = {
+  authors: [],
 };

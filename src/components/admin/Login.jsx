@@ -4,14 +4,16 @@ import { browserHistory } from 'react-router';
 import { googleClientID, isCI } from 'lib/utilities';
 import _ from 'lodash';
 
+// HOCs
+import { withModals } from 'components/admin/hocs/modals/withModals';
+
 const styles = {
   button: {
     marginTop: 36,
   },
 };
 
-
-export default class Login extends BaseComponent {
+class Login extends BaseComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -26,7 +28,8 @@ export default class Login extends BaseComponent {
     super.componentDidMount();
     const interval = setInterval(() => {
       // GoogleAPILoaded is a global var, set to true when Google platform.js script loaded
-      if (window.THE_GAZELLE.googleAPILoaded) { // eslint-disable-line no-undef
+      if (window.THE_GAZELLE.googleAPILoaded) {
+        // eslint-disable-line no-undef
         this.renderButton();
         window.gapi.load('auth2', () => {
           this.safeSetState({
@@ -38,7 +41,8 @@ export default class Login extends BaseComponent {
             window.gapi.auth2.init({
               client_id: googleClientID,
             });
-          } else { // detects user has signed in
+          } else {
+            // detects user has signed in
             this.onSignInSuccess(auth.currentUser.get());
           }
         });
@@ -46,6 +50,12 @@ export default class Login extends BaseComponent {
       }
     }, 100);
   }
+
+  onSignInFailure = async response => {
+    if (response.error !== 'popup_closed_by_user') {
+      await this.props.displayAlert(`Google Login Failed.\n${response.error}`);
+    }
+  };
 
   handleRedirect() {
     // Add additional query params to new url
@@ -74,21 +84,17 @@ export default class Login extends BaseComponent {
     xhr.open('POST', '/googlelogin');
     xhr.setRequestHeader('Content-Type', 'application/json');
 
-    xhr.onreadystatechange = () => {
+    xhr.onreadystatechange = async () => {
       if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
         this.handleRedirect();
       } else if (xhr.readyState === XMLHttpRequest.DONE) {
-        alert(`Google Login Failed.\n${xhr.status}: ${xhr.statusText}`);
+        await this.props.displayAlert(
+          `Google Login Failed.\n${xhr.status}: ${xhr.statusText}`,
+        );
       }
     };
 
     xhr.send(JSON.stringify(token));
-  }
-
-  onSignInFailure(response) {
-    if (response.error !== 'popup_closed_by_user') {
-      alert(`Google Login Failed.\n${response.error}`);
-    }
   }
 
   renderButton() {
@@ -104,6 +110,8 @@ export default class Login extends BaseComponent {
     const fade = this.state.GoogleAPIReady ? 1 : 0.5;
     return (
       <div id="login-page">
+        {/* eslint-disable */
+        /* FIXME */}
         <div
           id="my-signin2"
           style={{
@@ -111,9 +119,12 @@ export default class Login extends BaseComponent {
             opacity: fade,
           }}
           onClick={this.handleLoginCI}
-        >
-        </div>
+        />
+        {/* eslint-enable */}
       </div>
     );
   }
 }
+
+const EnhancedLogin = withModals(Login);
+export { EnhancedLogin as Login };

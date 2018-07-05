@@ -1,5 +1,5 @@
 .header {
-  font-family: "Roboto", Helvetica, Arial, sans-serif;
+  font-family: 'Roboto', Helvetica, Arial, sans-serif;
   @include grey-bottom-border;
   padding: 0 1rem;
   height: 39px;
@@ -16,7 +16,7 @@
 
     &:active,
     &:hover {
-  		.header__search__main{
+      .header__search__main {
         width: 200px;
         height: 35px;
       }
@@ -39,7 +39,7 @@
       cursor: text;
     }
 
-    &__tail{
+    &__tail {
       display: inline-block;
       width: 3px;
       height: 10px;
@@ -52,11 +52,11 @@
       transition: all 200ms ease;
     }
 
-    &__text{
+    &__text {
       display: inline-block;
       float: left;
       margin-left: -10px;
-      font-size: $authors-small;
+      font-size: $staff-small;
       font-weight: 400;
       color: $dark-grey;
       padding: 0;
@@ -94,7 +94,8 @@
       margin-right: 0.5rem;
       stroke: $light-grey;
       fill: $lighter-grey;
-      &:hover, &:active {
+      &:hover,
+      &:active {
         stroke: #3b5998;
         fill: #3b5998;
       }
@@ -105,7 +106,8 @@
       margin-right: 0.5rem;
       stroke: $light-grey;
       fill: $lighter-grey;
-      &:hover, &:active {
+      &:hover,
+      &:active {
         stroke: #55acee;
         fill: #55acee;
       }
@@ -116,11 +118,12 @@
       stroke: none;
       fill: $light-grey;
       &--bg {
-        fill: #F3F3F3; // Lighter to counteract human color perception
+        fill: #f3f3f3; // Lighter to counteract human color perception
       }
-      &:hover, &:active {
+      &:hover,
+      &:active {
         .header__social--instagram--bg {
-          fill: #F3F3F3;
+          fill: #f3f3f3;
         }
         stroke: #125688;
         fill: #125688;
@@ -129,8 +132,8 @@
   }
 
   @media (min-width: $medium) {
-    &__search{
-      input[type="text"]:focus {
+    &__search {
+      input[type='text']:focus {
         width: 200px;
         height: 35px;
       }
@@ -149,11 +152,10 @@
         width: 2px;
       }
     }
-
   }
 
   @media only screen and (max-width: $small) {
-    background-color: #FFF;
+    background-color: #fff;
     align-items: center;
     position: fixed;
     z-index: 5;
@@ -163,7 +165,7 @@
     top: 0 !important;
     right: 0;
     padding: 0 0.5rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
     // Add space after fixed header
     & > * {
       padding-bottom: 0rem;
@@ -182,10 +184,10 @@
     }
     &__search {
       margin: 0.25rem;
-      padding-top: 0.20rem;
+      padding-top: 0.2rem;
       &:active,
       &:hover {
-    		input[type="text"]{
+        input[type='text'] {
           padding-top: -0.2rem;
           width: 75vw;
           height: 30px;
@@ -195,12 +197,14 @@
         }
       }
       &:active ~ .header__search__text--mobile,
-      &:hover ~ .header__search__text--mobile {  // Show input box
+      &:hover ~ .header__search__text--mobile {
+        // Show input box
         display: block;
       }
 
       &:active ~ .header__title,
-      &:hover ~ .header__title { // Make Gazelle logo disappear
+      &:hover ~ .header__title {
+        // Make Gazelle logo disappear
         display: none;
       }
     }

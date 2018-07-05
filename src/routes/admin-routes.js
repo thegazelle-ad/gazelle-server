@@ -1,17 +1,19 @@
+/* eslint-disable react/jsx-filename-extension */
 import { Route, IndexRedirect } from 'react-router';
 import React from 'react';
-import AppController from 'components/admin/AppController';
-import ArticleListController from 'components/admin/ArticleListController';
-import ArticleController from 'components/admin/ArticleController';
-import AuthorListController from 'components/admin/AuthorListController';
-import AuthorController from 'components/admin/AuthorController';
-import IssueListController from 'components/admin/IssueListController';
-import MainIssueController from 'components/admin/MainIssueController';
-import IssueArticleController from 'components/admin/IssueArticleController';
-import IssueCategoryController from 'components/admin/IssueCategoryController';
+import { AppController } from 'components/admin/AppController';
+import { ArticleListController } from 'components/admin/ArticleListController';
+import { CreateArticleController } from 'components/admin/article/CreateArticleController';
+import { ArticleController } from 'components/admin/article/ArticleController';
+import { StaffListController } from 'components/admin/StaffListController';
+import { StaffController } from 'components/admin/StaffController';
+import { IssueListController } from 'components/admin/IssueListController';
+import { MainIssueController } from 'components/admin/MainIssueController';
+import { IssueArticleController } from 'components/admin/IssueArticleController';
+import { IssueCategoryController } from 'components/admin/IssueCategoryController';
 import NotFound from 'components/admin/NotFound';
-import Login from 'components/admin/Login';
-import ImageController from 'components/admin/ImageController';
+import { Login } from 'components/admin/Login';
+import { ImageController } from 'components/admin/ImageController';
 import ImagePreviewList from 'components/admin/ImagePreviewList';
 import ImageArchive from 'components/admin/ImageArchive';
 import Readme from 'components/admin/Readme';
@@ -19,15 +21,16 @@ import Readme from 'components/admin/Readme';
 export default (
   <Route path="/" component={AppController}>
     <Route path="login" component={Login} />
-    <IndexRedirect to="articles/page/1" />
+    <IndexRedirect to="articles/page/0" />
     <Route path="articles">
-      <IndexRedirect to="page/1" />
+      <IndexRedirect to="page/0" />
       <Route path="page/:page" component={ArticleListController}>
-        <Route path="slug/:slug" component={ArticleController} />
+        <Route path="new" component={CreateArticleController} />
       </Route>
+      <Route path="id/:id" component={ArticleController} />
     </Route>
-    <Route path="authors" component={AuthorListController}>
-      <Route path=":slug" component={AuthorController} />
+    <Route path="staff" component={StaffListController}>
+      <Route path=":slug" component={StaffController} />
     </Route>
     <Route path="issues" component={IssueListController}>
       <Route path=":issueNumber">

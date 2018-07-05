@@ -15,20 +15,19 @@ import TextPageLoad from 'transitions/TextPageLoad';
 
 export default class TextPageController extends FalcorController {
   static getFalcorPathSets(params) {
-    return [
-      ['infoPages', params.slug, ['title', 'html', 'slug']],
-    ];
+    return [['infoPages', params.slug, ['title', 'html', 'slug']]];
   }
 
   render() {
     if (this.state.ready) {
-      if (this.state.data === null) {
-        return (
-          <NotFound />
-        );
+      if (
+        this.state.data === null ||
+        Object.keys(this.state.data).length === 0
+      ) {
+        return <NotFound />;
       }
       const data = this.state.data.infoPages[this.props.params.slug];
-      const uppercase = (str) => {
+      const uppercase = str => {
         const array = str.split(' ');
         const newArray = [];
 
@@ -47,10 +46,17 @@ export default class TextPageController extends FalcorController {
         },
 
         // Social media
-        { property: 'og:title', content: `${uppercase(data.title)} | The Gazelle` },
+        {
+          property: 'og:title',
+          content: `${uppercase(data.title)} | The Gazelle`,
+        },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: `www.thegazelle.org/${data.slug}` },
-        { property: 'og:image', content: 'https://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png' },
+        {
+          property: 'og:image',
+          content:
+            'https://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png',
+        },
         {
           property: 'og:description',
           content:

@@ -5,7 +5,7 @@
   padding: 0 0.75rem 1.25rem 0.75rem;
 
   @media (max-width: $medium) {
-    max-width: $column-2
+    max-width: $column-2;
   }
 
   @media (max-width: $small) {
@@ -24,12 +24,12 @@
       display: none;
       margin: 0 0 0.3rem 0;
       @include uppercase;
-      font-size: $authors-large;
+      font-size: $staff-large;
       font-weight: 700;
       color: $dark-grey;
       &:hover,
       &:active {
-        color: #A6061F;
+        color: #a6061f;
       }
     }
     &__title {
@@ -41,7 +41,7 @@
     }
 
     &__authors {
-      font-size: $authors-large;
+      font-size: $staff-large;
       font-weight: 400;
       margin: 0 0 0.3rem 0;
       color: $dark-grey;
@@ -73,10 +73,9 @@
         padding-top: 0.2rem;
       }
     }
-    &:last-child{
+    &:last-child {
       border-bottom: none;
     }
-
 
     &__content {
       &__title {
@@ -86,10 +85,10 @@
       }
 
       &__authors {
-        font-size: $authors-small;
+        font-size: $staff-small;
         margin: 0 0 0.1rem 0;
         @include uppercase();
-        padding-top: 0.2rem ;
+        padding-top: 0.2rem;
       }
 
       &__teaser {

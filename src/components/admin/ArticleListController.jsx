@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link, browserHistory } from 'react-router';
 import FalcorController from 'lib/falcor/FalcorController';
-import SearchBar from 'components/admin/SearchBar';
-import List from 'components/admin/List';
+import { SearchableArticlesWithPubDate } from 'components/admin/form-components/searchables';
+import { ArticleList } from 'components/admin/ArticleList';
 import moment from 'moment';
+import { getArticlePath } from 'routes/admin-helpers';
 
 // material-ui
 import ListItem from 'material-ui/List/ListItem';
@@ -12,6 +13,8 @@ import Paper from 'material-ui/Paper';
 import Divider from 'material-ui/Divider';
 import { darkBlack } from 'material-ui/styles/colors';
 import RaisedButton from 'material-ui/RaisedButton';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 
 const styles = {
   paper: {
@@ -35,7 +38,7 @@ const styles = {
 
 const NUM_ARTICLES_IN_PAGE = 50;
 
-export default class ArticleListController extends FalcorController {
+export class ArticleListController extends FalcorController {
   constructor(props) {
     super(props);
     this.getNewPagePath = this.getNewPagePath.bind(this);
@@ -43,14 +46,31 @@ export default class ArticleListController extends FalcorController {
     this.createListElement = this.createListElement.bind(this);
   }
 
+  /* When we route back to ArticleListController after making changes
+   * the FalcorData in ArticleListController is now out of date.
+   * This makes ArticleListController update it's state to reflect
+   * the data in the DB after making edits to an Article.
+   * TODO - Pub-Sub model with React-Falcor||Falcor-React
+   */
+  componentWillReceiveProps(nextProps, nextContext) {
+    super.componentWillReceiveProps(nextProps, nextContext);
+    const newPathSets = this.constructor.getFalcorPathSets(
+      nextProps.params,
+      nextProps.location.query,
+    );
+    if (nextProps.location.state && nextProps.location.state.refresh) {
+      this.falcorFetch(newPathSets);
+    }
+  }
   static getFalcorPathSets(params) {
     return [
       [
-        'articles', 'byPage',
+        'articles',
+        'byPage',
         NUM_ARTICLES_IN_PAGE,
         parseInt(params.page, 10),
         { length: NUM_ARTICLES_IN_PAGE },
-        ['title', 'slug', 'teaser', 'published_at'],
+        ['title', 'id', 'teaser', 'published_at'],
       ],
       ['articles', 'length'],
     ];
@@ -64,13 +84,10 @@ export default class ArticleListController extends FalcorController {
   }
 
   clickSearchSuggestion(article) {
-    const page = this.props.params.page;
-    const path = `/articles/page/${page}/slug/${article.slug}`;
-    browserHistory.push(path);
+    browserHistory.push(getArticlePath(article.id));
   }
 
   createListElement(article) {
-    const page = this.props.params.page;
     let publishedDate;
     if (article.published_at) {
       publishedDate = moment(article.published_at).format('MMM DD, YYYY');
@@ -78,14 +95,13 @@ export default class ArticleListController extends FalcorController {
       publishedDate = 'Unpublished';
     }
     return (
-      <Link to={`/articles/page/${page}/slug/${article.slug}`} key={article.slug}>
+      <Link to={getArticlePath(article.id)} key={article.id}>
         <ListItem
           primaryText={article.title}
           secondaryText={
             <p>
-              <span style={{ color: darkBlack }}>
-                {publishedDate}
-              </span> {article.teaser ? ' -- ' : null}
+              <span style={{ color: darkBlack }}>{publishedDate}</span>{' '}
+              {article.teaser ? ' -- ' : null}
               {article.teaser}
             </p>
           }
@@ -98,22 +114,25 @@ export default class ArticleListController extends FalcorController {
   render() {
     if (this.state.ready) {
       // If trying to access inacessible page, redirect to page 1
-      if (!this.state.data.articles.byPage) {
+      if (
+        !this.state.data ||
+        !this.state.data.articles ||
+        !this.state.data.articles.byPage
+      ) {
         return (
           <p>
-            You have tried accessing a page that doesn't exist. Please press
-            <Link to="/articles/page/1">this link</Link> to return to page 1.
+            You have tried accessing a page that doesn{"'"}t exist. Please press
+            <Link to="/articles/page/0"> this link</Link> to return to page 1.
             If you believe this was unintended and there is an error with the
             website please contact the web development team of The Gazelle.
           </p>
         );
       }
 
-      const page = this.props.params.page;
+      const { page } = this.props.params;
       const data = this.state.data.articles.byPage[NUM_ARTICLES_IN_PAGE][page];
-      const length = this.state.data.articles.length;
+      const { length } = this.state.data.articles;
       const maxPage = Math.ceil(length / NUM_ARTICLES_IN_PAGE);
-
       return (
         <div>
           <h1>Articles</h1>
@@ -123,15 +142,12 @@ export default class ArticleListController extends FalcorController {
               <h2>Select an Article</h2>
               <Divider />
               <br />
-              <SearchBar
-                model={this.props.model}
-                mode="articles"
+              <SearchableArticlesWithPubDate
                 handleClick={this.clickSearchSuggestion}
                 length={3}
-                fields={[]}
-                showPubDate
+                fullWidth
               />
-              <List
+              <ArticleList
                 elements={data}
                 createElement={this.createListElement}
               />
@@ -152,6 +168,18 @@ export default class ArticleListController extends FalcorController {
             </div>
           </Paper>
           {this.props.children}
+          <Link to={`/articles/page/${this.props.params.page}/new`}>
+            <FloatingActionButton
+              style={{
+                position: 'fixed',
+                zIndex: 50,
+                bottom: '50px',
+                right: '100px',
+              }}
+            >
+              <ContentAdd />
+            </FloatingActionButton>
+          </Link>
         </div>
       );
     }

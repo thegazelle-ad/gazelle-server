@@ -5,9 +5,10 @@ import {
   categories,
   infoPages,
   search,
-  authors,
+  staff,
   issues,
   placeholder,
+  tags,
   teams,
   trending,
   semesters,
@@ -19,13 +20,14 @@ export default class FalcorRouter extends BaseRouter.createClass(
     categories,
     infoPages,
     search,
-    authors,
+    staff,
     issues,
     placeholder,
+    tags,
     teams,
     trending,
-    semesters
-  )
+    semesters,
+  ),
 ) {
   /* eslint-disable no-useless-constructor */
   constructor(...args) {

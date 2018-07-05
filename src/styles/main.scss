@@ -15,55 +15,30 @@
  * visit http://getbem.com/naming/.
  */
 
-
 @charset 'UTF-8';
 
 // 1. Configuration and helpers
-@import
-  'abstracts/variables',
-  'abstracts/mixins';
+@import 'abstracts/variables', 'abstracts/mixins';
 
 // 2. Vendors
-@import
-  'vendor/normalize';
+@import 'vendor/normalize';
 
 // 3. Base
-@import
-  'base/base',
-  'base/fonts',
-  'base/typography',
-  'base/helpers',
+@import 'base/base', 'base/fonts', 'base/typography', 'base/helpers',
   'base/layout';
 
 // 5. Components
-@import
-  'components/archives',
-  'components/article-list',
-  'components/article-preview',
-  'components/article',
-  'components/author-list',
-  'components/author',
-  'components/editors-picks',
-  'components/featured-article',
-  'components/footer',
-  'components/header',
-  'components/navigation',
-  'components/not-found',
-  'components/loader',
-  'components/login',
-  'components/mailing-list-button',
-  'components/search',
-  'components/sharing-buttons',
-  'components/team-page',
-  'components/text-page',
+@import 'components/archives', 'components/article-list',
+  'components/article-preview', 'components/article', 'components/author-list',
+  'components/staff', 'components/editors-picks', 'components/featured-article',
+  'components/footer', 'components/header', 'components/navigation',
+  'components/not-found', 'components/loader', 'components/login',
+  'components/mailing-list-button', 'components/search',
+  'components/sharing-buttons', 'components/team-page', 'components/text-page',
   'components/trending';
 
 // 6. Page-specific styles
-@import
-  'pages/issue',
-  'pages/category';
+@import 'pages/issue', 'pages/category';
 
 // 7. Skeleton Code Transitions
-@import
-  'transitions/text-page-load',
-  'transitions/interactive-article-load';
+@import 'transitions/text-page-load', 'transitions/interactive-article-load';

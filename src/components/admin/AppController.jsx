@@ -3,7 +3,6 @@ import BaseComponent from 'lib/BaseComponent';
 import { browserHistory } from 'react-router';
 
 // material-ui
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
@@ -22,7 +21,10 @@ import Navigation from 'components/admin/Navigation';
 import { updateFieldValue } from './lib/form-field-updaters';
 import { isCI } from 'lib/utilities';
 
-export default class AppController extends BaseComponent {
+// HOCs
+import { withModals } from 'components/admin/hocs/modals/withModals';
+
+class AppController extends BaseComponent {
   constructor(props) {
     super(props);
     this.restartServer = this.restartServer.bind(this);
@@ -30,13 +32,21 @@ export default class AppController extends BaseComponent {
     this.handleDisableLink = this.handleDisableLink.bind(this);
     this.resetGhostInfo = this.resetGhostInfo.bind(this);
     this.isLoggedIn = this.isLoggedIn.bind(this);
-    this.toggleRestartPasswordModal = this.toggleRestartPasswordModal.bind(this);
-    this.handleRestartPasswordEnter = this.handleRestartPasswordEnter.bind(this);
+    this.toggleRestartPasswordModal = this.toggleRestartPasswordModal.bind(
+      this,
+    );
+    this.handleRestartPasswordEnter = this.handleRestartPasswordEnter.bind(
+      this,
+    );
     this.assignPasswordRef = ref => {
       this.refs = { passwordInput: ref };
     };
     this.fieldUpdaters = {
-      restartPassword: updateFieldValue.bind(this, 'restartPasswordValue', undefined),
+      restartPassword: updateFieldValue.bind(
+        this,
+        'restartPasswordValue',
+        undefined,
+      ),
     };
     this.safeSetState({
       restartPasswordModalOpen: false,
@@ -66,14 +76,14 @@ export default class AppController extends BaseComponent {
     // across several calls
     const isRestarted = () => {
       const xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = () => {
+      xhr.onreadystatechange = async () => {
         let failed = false;
         try {
           if (xhr.readyState === XMLHttpRequest.DONE) {
             // Request is done
             const signal = xhr.responseText;
             if (signal === 'false' && xhr.status === 200) {
-              window.alert('Server restarted successfully');
+              await this.props.displayAlert('Server restarted successfully');
               this.safeSetState({
                 restartPasswordModalOpen: false,
                 currentlyRestarting: false,
@@ -93,8 +103,8 @@ export default class AppController extends BaseComponent {
           if (counter <= 5) {
             setTimeout(isRestarted, 500);
           } else {
-            window.alert(
-              "Timeout: Server still hasn't restarted, please contact dev team for assistance"
+            await this.props.displayAlert(
+              "Timeout: Server still hasn't restarted, please contact dev team for assistance",
             );
             this.safeSetState({ currentlyRestarting: false });
           }
@@ -113,16 +123,16 @@ export default class AppController extends BaseComponent {
       currentlyRestarting: true,
     });
     const xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = () => {
+    xhr.onreadystatechange = async () => {
       let failed = false;
       try {
         if (xhr.readyState === XMLHttpRequest.DONE) {
           // Request is done
           if (xhr.status === 200) {
-            window.alert('Server is being restarted now');
+            await this.props.displayAlert('Server is being restarted now');
             this.pingServer();
           } else if (xhr.status === 401) {
-            window.alert('Invalid password');
+            await this.props.displayAlert('Invalid password');
             this.safeSetState({ currentlyRestarting: false });
             // Put focus back on password element for good UX
             this.refs.passwordInput.focus();
@@ -136,7 +146,9 @@ export default class AppController extends BaseComponent {
         failed = true;
       }
       if (failed) {
-        window.alert('Unexpected error while trying to restart server, please contact dev team');
+        await this.props.displayAlert(
+          'Unexpected error while trying to restart server, please contact dev team',
+        );
         this.safeSetState({
           currentlyRestarting: false,
         });
@@ -159,7 +171,9 @@ export default class AppController extends BaseComponent {
     }
     if (window.THE_GAZELLE.googleAPILoaded) {
       if (!window.gapi.auth2) {
-        alert('(Dev Mode) Cannot sign out before sign in. Visit /login first.');
+        this.props.displayAlert(
+          '(Dev Mode) Cannot sign out before sign in. Visit /login first.',
+        );
       } else {
         const auth = window.gapi.auth2.getAuthInstance();
         auth.signOut().then(() => {
@@ -184,15 +198,21 @@ export default class AppController extends BaseComponent {
   }
 
   render() {
-    const bodyStyle = { transition: 'margin-left 450ms cubic-bezier(0.23, 1, 0.32, 1)' };
+    const bodyStyle = {
+      transition: 'margin-left 450ms cubic-bezier(0.23, 1, 0.32, 1)',
+    };
     const APP_ID = 'app';
     const HEADER_ID = `${APP_ID}-header`;
-    if (this.isLoggedIn()) { bodyStyle.marginLeft = 256; }
+    if (this.isLoggedIn()) {
+      bodyStyle.marginLeft = 256;
+    }
 
     const LoggedIn = () => (
       <IconMenu
         iconButtonElement={
-          <IconButton id={`${HEADER_ID}-menu-button`}><MoreVertIcon /></IconButton>
+          <IconButton id={`${HEADER_ID}-menu-button`}>
+            <MoreVertIcon />
+          </IconButton>
         }
         targetOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
@@ -219,57 +239,54 @@ export default class AppController extends BaseComponent {
     );
 
     return (
-      <MuiThemeProvider>
-        <div id={APP_ID} className="mainContainer">
-          <AppBar
-            id={HEADER_ID}
-            title={"Admin Interface"}
-            iconElementRight={this.isLoggedIn() ?
-              <LoggedIn /> :
-              null}
-            showMenuIconButton={false}
-          />
+      <div id={APP_ID} className="mainContainer">
+        <AppBar
+          id={HEADER_ID}
+          title="Admin Interface"
+          iconElementRight={this.isLoggedIn() ? <LoggedIn /> : null}
+          showMenuIconButton={false}
+        />
 
-          {/* Only show nav if logged in */}
-          <Navigation isNavOpen={this.isLoggedIn()} />
-          <div style={bodyStyle} className="editor-body">
-            <div className="editor-items">
-              {this.props.children}
-            </div>
-          </div>
-          {/* Dialog for restart server password */}
-          <Dialog
-            title="Restart Server"
-            modal
-            open={this.state.restartPasswordModalOpen}
-            actions={[
-              <FlatButton
-                id="restart-server-password-cancel"
-                label="Cancel"
-                onClick={this.toggleRestartPasswordModal}
-              />,
-              <FlatButton
-                label="Submit"
-                id="restart-server-password-submit"
-                onClick={this.restartServer}
-                disabled={this.state.currentlyRestarting}
-              />,
-            ]}
-          >
-            <TextField
-              ref={this.assignPasswordRef}
-              value={this.state.restartPasswordValue}
-              floatingLabelText="Input Password"
-              id="restart-server-password-input"
-              type="password"
-              onChange={this.fieldUpdaters.restartPassword}
-              onKeyUp={this.handleRestartPasswordEnter}
-              disabled={this.state.currentlyRestarting}
-              autoFocus
-            />
-          </Dialog>
+        {/* Only show nav if logged in */}
+        <Navigation isNavOpen={this.isLoggedIn()} />
+        <div style={bodyStyle} className="editor-body">
+          <div className="editor-items">{this.props.children}</div>
         </div>
-      </MuiThemeProvider>
+        {/* Dialog for restart server password */}
+        <Dialog
+          title="Restart Server"
+          modal
+          open={this.state.restartPasswordModalOpen}
+          actions={[
+            <FlatButton
+              id="restart-server-password-cancel"
+              label="Cancel"
+              onClick={this.toggleRestartPasswordModal}
+            />,
+            <FlatButton
+              label="Submit"
+              id="restart-server-password-submit"
+              onClick={this.restartServer}
+              disabled={this.state.currentlyRestarting}
+            />,
+          ]}
+        >
+          <TextField
+            ref={this.assignPasswordRef}
+            value={this.state.restartPasswordValue}
+            floatingLabelText="Input Password"
+            id="restart-server-password-input"
+            type="password"
+            onChange={this.fieldUpdaters.restartPassword}
+            onKeyUp={this.handleRestartPasswordEnter}
+            disabled={this.state.currentlyRestarting}
+            autoFocus
+          />
+        </Dialog>
+      </div>
     );
   }
 }
+
+const EnhancedAppController = withModals(AppController);
+export { EnhancedAppController as AppController };

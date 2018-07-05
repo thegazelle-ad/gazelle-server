@@ -27,10 +27,10 @@
   &__issueNumber {
     @include uppercase;
     float: right;
-    font-size: $authors-small;
+    font-size: $staff-small;
     text-align: right;
     display: flex;
-    padding-bottom: 0.5rem ;
+    padding-bottom: 0.5rem;
     align-items: center;
     color: $dark-grey;
   }
@@ -76,8 +76,8 @@
 
   // Remove scrollbar on small screens with overflow-x: scroll
   ::-webkit-scrollbar {
-      display: none;
-      background-color: transparent;
+    display: none;
+    background-color: transparent;
   }
   ::-webkit-scrollbar-thumb {
     display: none;

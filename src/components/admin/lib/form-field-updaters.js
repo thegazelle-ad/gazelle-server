@@ -13,20 +13,20 @@ export function trimField(length, fieldValue) {
  * argument 'key', will be bound to the key in this.state, for which the form
  * field it will be used as the onChange handler for, that keeps its value.
  *
- * @arg {string} keyPath - The keyPath in this.state where value is stored, a
+ * @param {string} keyPath - The keyPath in this.state where value is stored, a
  * dot path such as 'key1.key2.key' or simply 'key'
  * if not stored in nested object
  *
- * @arg {Object} options - options to be passed describing
+ * @param {Object} options - options to be passed describing
  * how this function will be used
  *
- * @arg {boolean} options.isMaterialSelect - Whether connected field is a
+ * @param {boolean} options.isMaterialSelect - Whether connected field is a
  * MaterialUI Select component or not
  *
- * @arg {number} options.trim - If you wish to trim the field, input the
+ * @param {number} options.trim - If you wish to trim the field, input the
  * value of the max length here when you wish the value to be trimmed.
  *
- * @arg {Object} e - this is the syntheticEvent React will pass to the function
+ * @param {Object} e - this is the syntheticEvent React will pass to the function
  * when something changes in the form field we bind this function to
  */
 export function updateFieldValue(keyPath, options = {}, e, ...restArgs) {
@@ -43,7 +43,7 @@ export function updateFieldValue(keyPath, options = {}, e, ...restArgs) {
            * We currently don't support the multiple argument, as we don't use it.
            * If we start using it though, it should be implemented here as an option.
            */
-          value = restArgs[1];
+          [, value] = restArgs;
         }
         break;
 
@@ -62,7 +62,7 @@ export function updateFieldValue(keyPath, options = {}, e, ...restArgs) {
      * and it also makes sure we get the value before event dissappears and avoids
      * us needing to use event.persist
      */
-    value = e.target.value;
+    ({ value } = e.target);
   }
 
   if (trimLength !== false) {

@@ -1,0 +1,166 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`create new article falcor route returns expected path sets 1`] = `
+Array [
+  Object {
+    "path": Array [
+      "articles",
+      "byId",
+      1,
+      "id",
+    ],
+    "value": 1,
+  },
+  Object {
+    "path": Array [
+      "articles",
+      "byId",
+      1,
+      "slug",
+    ],
+    "value": "test-slug",
+  },
+  Object {
+    "path": Array [
+      "articles",
+      "byId",
+      1,
+      "title",
+    ],
+    "value": "test-title",
+  },
+  Object {
+    "path": Array [
+      "articles",
+      "byId",
+      1,
+      "teaser",
+    ],
+    "value": "test-teaser",
+  },
+  Object {
+    "path": Array [
+      "articles",
+      "byId",
+      1,
+      "image_url",
+    ],
+    "value": "https://google.com/img.png",
+  },
+  Object {
+    "path": Array [
+      "articles",
+      "byId",
+      1,
+      "category",
+    ],
+    "value": Object {
+      "$type": "ref",
+      "value": Array [
+        "categories",
+        "byId",
+        3,
+      ],
+    },
+  },
+  Object {
+    "path": Array [
+      "articles",
+      "byId",
+      1,
+      "authors",
+      0,
+    ],
+    "value": Object {
+      "$type": "ref",
+      "value": Array [
+        "staff",
+        "byId",
+        1,
+      ],
+    },
+  },
+  Object {
+    "path": Array [
+      "articles",
+      "byId",
+      1,
+      "authors",
+      1,
+    ],
+    "value": Object {
+      "$type": "ref",
+      "value": Array [
+        "staff",
+        "byId",
+        2,
+      ],
+    },
+  },
+  Object {
+    "path": Array [
+      "articles",
+      "byId",
+      1,
+      "tags",
+      0,
+    ],
+    "value": Object {
+      "$type": "ref",
+      "value": Array [
+        "tags",
+        "byId",
+        5,
+      ],
+    },
+  },
+  Object {
+    "path": Array [
+      "articles",
+      "byId",
+      1,
+      "tags",
+      1,
+    ],
+    "value": Object {
+      "$type": "ref",
+      "value": Array [
+        "tags",
+        "byId",
+        6,
+      ],
+    },
+  },
+  Object {
+    "invalidated": true,
+    "path": Array [
+      "articles",
+      "byPage",
+    ],
+  },
+]
+`;
+
+exports[`create new article falcor route throws if article has no slug 1`] = `"An error occured, the developers of The Gazelle have been notified"`;
+
+exports[`create new article falcor route throws if article has no slug 2`] = `
+Array [
+  Array [
+    [Error: articles['createNew'] must be provided both a slug and a title],
+  ],
+]
+`;
+
+exports[`create new article falcor route throws if article has no title 1`] = `"An error occured, the developers of The Gazelle have been notified"`;
+
+exports[`create new article falcor route throws if article has no title 2`] = `
+Array [
+  Array [
+    [Error: articles['createNew'] must be provided both a slug and a title],
+  ],
+]
+`;
+
+exports[`create new article falcor route throws if there isn't an argument 1`] = `"Cannot read property '0' of undefined"`;
+
+exports[`create new article falcor route throws if there isn't an argument 2`] = `Array []`;

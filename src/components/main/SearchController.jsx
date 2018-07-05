@@ -6,6 +6,12 @@ import _ from 'lodash';
 // Components
 import ArticleList from 'components/main/ArticleList';
 
+// Allows user to navigate to populated search page on pressing 'Enter'
+function handleSubmit(e) {
+  e.preventDefault();
+  browserHistory.push(`/search?q=${e.target.search.value}`);
+}
+
 export default class SearchController extends FalcorController {
   static getFalcorPathSets(params, queryParams) {
     // If you just went straight to the search page
@@ -18,24 +24,19 @@ export default class SearchController extends FalcorController {
         'posts',
         queryParams.q,
         { length: 20 },
-        ['title', 'teaser', 'issueNumber', 'category', 'slug', 'image', 'published_at'],
+        ['title', 'teaser', 'issueNumber', 'slug', 'image_url', 'published_at'],
       ],
+      ['search', 'posts', queryParams.q, { length: 20 }, 'category', 'slug'],
       [
         'search',
         'posts',
         queryParams.q,
         { length: 20 },
-        'authors',
+        'staff',
         { length: 10 },
         ['name', 'slug'],
       ],
     ];
-  }
-
-  // Allows user to navigate to populated search page on pressing 'Enter'
-  handleSubmit(e) {
-    e.preventDefault();
-    browserHistory.push(`/search?q=${e.target.search.value}`);
   }
 
   render() {
@@ -44,7 +45,7 @@ export default class SearchController extends FalcorController {
       if (!this.props.location.query.q) {
         return null;
       }
-      if (!this.state.data) {
+      if (!this.state.data || Object.keys(this.state.data).length === 0) {
         return (
           <div className="search__no-data">
             Oops! No Results found. <br />
@@ -55,7 +56,7 @@ export default class SearchController extends FalcorController {
       const query = this.props.location.query.q;
       const results = _.filter(
         this.state.data.search.posts[query],
-        article => article.published_at
+        article => article.published_at,
       );
       return <ArticleList className="search" articles={results} />;
     };
@@ -64,8 +65,8 @@ export default class SearchController extends FalcorController {
       return (
         <div className="search">
           <div className="search__search-header">
-            <h2 className="search__search-header__text" >Search: </h2>
-            <form onSubmit={this.handleSubmit}>
+            <h2 className="search__search-header__text">Search: </h2>
+            <form onSubmit={handleSubmit}>
               <input
                 className="search__search-header__search-box"
                 type="text"
