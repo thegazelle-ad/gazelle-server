@@ -8,7 +8,6 @@
   "description": "Minimal starter kit for React, Falcor, and Universal rendering with ES6",
   "main": "server.js",
   "scripts": {
-    "setup": "node -e \"require('inquirer').prompt({ type: 'confirm', name: 'x', message: 'Before the setup runs, you are expected to have already installed MariaDB 10.1 or a compatible version, know the user and password, and have created a database in MariaDB to use with The Gazelle, have you done all this?' }).then(x => x.x || process.exit(1))\" && (npm i && node setup-env.js && npm run db:migrate || echo 'Something went wrong during the setup, either try running the commands manually or contact a lead developer to help debug this') || MUTE=$(echo 'only doing this to avoid the npm error')",
     "start": "node ./build/server.js",
     "build": "webpack --config webpack/webpack.dev.config.js",
     "build:watch": "npm run build -- -w",
