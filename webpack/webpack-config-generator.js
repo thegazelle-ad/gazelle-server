@@ -15,13 +15,10 @@ const ROOT_DIRECTORY = path.resolve(__dirname, '..');
 const getAbsolute = relativePath => path.resolve(ROOT_DIRECTORY, relativePath);
 
 /**
- * The config option is an object of the form
- * {
- *   NODE_ENV: 'production' | 'staging' | 'development',
- *   type: 'server' | 'admin-client' | 'main-client',
- *   compileScss: boolean
- * }
  * @param {Object} config
+ * @param {'production' | 'staging' | 'development'} config.NODE_ENV
+ * @param {'server' | 'admin-client' | 'main-client'} config.type
+ * @param {boolean} config.compileScss
  * @returns {Object[]}
  */
 const generateWebpackConfig = config => {
@@ -44,7 +41,7 @@ const generateWebpackConfig = config => {
       if (config.NODE_ENV !== 'development') {
         throw new Error(
           "webpack config option NODE_ENV is to either be 'production', " +
-            "'beta' or undefined",
+            "'staging' or 'development'",
         );
       }
 
@@ -152,7 +149,7 @@ const generateWebpackConfig = config => {
       .concat(config.compileScss ? [extractScss] : [])
       // Minimize code in production environments
       .concat(
-        config.NODE_ENV !== undefined
+        config.NODE_ENV !== 'development'
           ? [
               new UglifyJSPlugin({
                 sourceMap: true,
@@ -201,7 +198,7 @@ const generateWebpackConfig = config => {
                   '@babel/plugin-proposal-object-rest-spread',
                   '@babel/plugin-proposal-class-properties',
                 ],
-                minified: config.NODE_ENV !== undefined,
+                minified: config.NODE_ENV !== 'development',
               },
             },
           ],
@@ -241,7 +238,7 @@ const generateWebpackConfig = config => {
                 {
                   loader: 'css-loader',
                   options: {
-                    minimize: config.NODE_ENV !== undefined,
+                    minimize: config.NODE_ENV !== 'development',
                     sourceMap: true,
                   },
                 },

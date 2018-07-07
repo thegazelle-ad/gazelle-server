@@ -9,10 +9,10 @@
   "main": "server.js",
   "scripts": {
     "start": "node ./build/server.js",
-    "build": "webpack --config webpack/webpack.dev.config.js",
+    "build": "webpack --config webpack/webpack.dev.config.js --progress",
     "build:watch": "npm run build -- -w",
-    "build:production": "webpack --config webpack/webpack.production.config.js --bail",
-    "build:staging": "webpack --config webpack/webpack.staging.config.js --bail",
+    "build:production": "webpack --config webpack/webpack.production.config.js --bail --progress",
+    "build:staging": "webpack --config webpack/webpack.staging.config.js --bail --progress",
     "build:emulate-ci": "CI=true CIRCLECI=true npm run build:production",
     "test:unit": "jest --config='__tests__/config/jest.unit.config.js' --testLocationInResults",
     "test:e2e": "npm run db:seed && jest --config='__tests__/config/jest.e2e.config.js' --testLocationInResults --runInBand",

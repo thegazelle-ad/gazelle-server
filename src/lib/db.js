@@ -2,7 +2,7 @@
 // We disable camelcase here due to SQL naming conventions
 import knex from 'knex';
 import stable from 'stable';
-import { getConfig } from 'config';
+import { getConfig } from '../config';
 import _ from 'lodash';
 import moment from 'moment';
 import { has } from 'lib/utilities';
