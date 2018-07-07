@@ -131,14 +131,12 @@ Also note that `__tests__` folders in subdirectories are where unit tests for th
   - [end-to-end](../__tests__/end-to-end) [The location of all our E2E tests, it also has the [jest-setup](../__tests__/end-to-end/jest-setup.js) file which is set to run before all our E2E tests to setup some config, and it has some E2E utilities and constants files for reuse across all the tests]
     - [admin-tests](../__tests__/end-to-end/admin-tests) [The location of all the E2E tests for the admin site]
     - [main-tests](../__tests__/end-to-end/main-tests) [The location of all the E2E tests for the main site]
-  - [env-tests](../__tests__/env-tests) [Since a single test file can only be in one `NODE_ENV` at a time we have tests here that run the env-tests defined in other unit test directories, if this confuses you feel free to ask a lead developer for further explanation]
   - [helpers](../__tests__/helpers) [Here lie the helpers for our different tests, at the time of writing there are only helpers for database tests]
 - [.circleci](../.circleci) [Where config and CI related files lie]
   - [images](../.circleci/images) [The place where we have the docker images used for our CircleCI runs]
   - [scripts](../.circleci/scripts) [The place where we have the scripts used by CircleCI]
 - [.github](../.github) [Files used by github such as the CODEOWNER file, and the templates for pull requests and issues]
 - [build](../build) [This is where all the built code goes, you shouldn't need to ever look in here]
-- [config](../config) [where all the config that we use directly in the code lies]
 - [database-management](../database-management) [where we have all the code we use for database management such as migrations and database seeds]
   - [migrations](../database-management/migrations) [where we keep all our database migrations as discussed in the [Database Development](#database-development) section]
   - [seeds](../database-management/seeds) [where we keep all our database seeds as discussed in the [Database Development](#database-development) section]
@@ -161,6 +159,8 @@ Also note that `__tests__` folders in subdirectories are where unit tests for th
 - [static](../static) [Where our static assets lie that the server serves, the `admin.css` files is all the global CSS the admin site uses and can be directly edited here. Try and keep as little as possible in that one though as it's more confusing to understand, only truly global CSS should be here]
   - [build](../src/static/build) [Built static files, so essentially the built client files that have entry points in [src/client-scripts](../src/client-scripts) as mentioned earlier]
 - [webpack](../src/webpack) [where all our webpack config lies for the different types of builds we have, the main file to look at is `webpack-config-generator.js`]
+- [.sample-env](../.sample-env) [This is the template for all environment specific config that shouldn't be hardcoded into the code. It is also written in a format so [`setup-env.js`](../setup-env.js) can parse it, this is all described in the file]
+- [setup-env.js](../setup-env.js) [This is a script that parses the [`.sample-env`](../.sample-env) file and guides the user through generating the `.env` file which is the actual config file our code uses. It also has a `--check-outdated` option which will make it simply check whether the current `.env` file is outdated or not]
 
 ## Git workflow
 
