@@ -25,6 +25,9 @@ import path from 'path';
 // Used for parsing post requests
 import bodyParser from 'body-parser';
 
+// Our custom config
+import * as config from '../config';
+
 /* Our helper functions */
 import {
   isStaging,
@@ -191,7 +194,7 @@ export default function runMainServer(serverFalcorModel) {
             .catch(err => {
               console.error('Failed to render: ', req.url); // eslint-disable-line no-console
               console.error(err.stack || err); // eslint-disable-line no-console
-              if (process.env.NODE_ENV !== 'production') {
+              if (config.NODE_ENV !== 'production') {
                 res.status(500).send(err.stack || err);
               } else {
                 res
@@ -210,7 +213,7 @@ export default function runMainServer(serverFalcorModel) {
     );
   });
 
-  const port = isCI || !process.env.MAIN_PORT ? 3000 : process.env.MAIN_PORT;
+  const port = isCI ? 3000 : config.MAIN_PORT;
   app.listen(port, err => {
     if (err) {
       console.error(err); // eslint-disable-line no-console
