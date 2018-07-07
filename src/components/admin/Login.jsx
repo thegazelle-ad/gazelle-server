@@ -72,7 +72,7 @@ class Login extends BaseComponent {
 
   handleLoginCI() {
     // if CI, just let it login without interacting with Google Login popup window
-    if (isCI) {
+    if (isCI()) {
       this.handleRedirect();
     }
   }

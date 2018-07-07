@@ -2,7 +2,7 @@
 // We disable camelcase here due to SQL naming conventions
 import knex from 'knex';
 import stable from 'stable';
-import * as config from '../config';
+import { getConfig } from 'config';
 import _ from 'lodash';
 import moment from 'moment';
 import { has } from 'lib/utilities';
@@ -10,10 +10,10 @@ import { has } from 'lib/utilities';
 export const database = knex({
   client: 'mysql',
   connection: {
-    host: config.DATABASE_HOST,
-    user: config.DATABASE_USER,
-    password: config.DATABASE_PASSWORD,
-    database: config.DATABASE_NAME,
+    host: getConfig().DATABASE_HOST,
+    user: getConfig().DATABASE_USER,
+    password: getConfig().DATABASE_PASSWORD,
+    database: getConfig().DATABASE_NAME,
     charset: 'utf8',
   },
   pool: {

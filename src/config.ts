@@ -1,41 +1,65 @@
-export const DATABASE_HOST = validateString(
-  process.env.DATABASE_HOST,
-  'DATABASE_HOST',
-);
-export const DATABASE_USER = validateString(
-  process.env.DATABASE_USER,
-  'DATABASE_USER',
-);
-export const DATABASE_NAME = validateString(
-  process.env.DATABASE_NAME,
-  'DATABASE_NAME',
-);
-export const DATABASE_PASSWORD = validateString(
-  process.env.DATABASE_PASSWORD,
-  'DATABASE_PASSWORD',
-);
-export const AWS_S3_ACCESS_KEY_ID = validateString(
-  process.env.AWS_S3_ACCESS_KEY_ID,
-  'AWS_S3_ACCESS_KEY_ID',
-);
-export const AWS_S3_SECRET_ACCESS_KEY = validateString(
-  process.env.AWS_S3_SECRET_ACCESS_KEY,
-  'AWS_S3_SECRET_ACCESS_KEY',
-);
-export const SLACK_API_TOKEN = validateString(
-  process.env.SLACK_API_TOKEN,
-  'SLACK_API_TOKEN',
-);
-export const ROOT_DIRECTORY = validateString(
-  process.env.ROOT_DIRECTORY,
-  'ROOT_DIRECTORY',
-);
-export const NODE_ENV = validateNodeEnv(process.env.NODE_ENV, 'NODE_ENV');
-export const CI = validateString(process.env.CI, 'CI', true);
-export const CIRCLECI = validateString(process.env.CIRCLECI, 'CIRCLECI', true);
+/*
+ * The reason we use a getter for the config is that we don't want
+ * to run the validations just because you import this file, but
+ * only when you use it. Running it straight away makes testing harder,
+ * and in theory (though not really applicable here) can lead to
+ * dangerous circular imports. Also mocking constants can be a pain
+ */
 
-export const MAIN_PORT = validateNumber(process.env.MAIN_PORT, 'MAIN_PORT');
-export const ADMIN_PORT = validateNumber(process.env.ADMIN_PORT, 'ADMIN_PORT');
+export type NodeEnv = 'development' | 'staging' | 'production';
+
+let config: {
+  DATABASE_HOST: string;
+  DATABASE_USER: string;
+  DATABASE_NAME: string;
+  DATABASE_PASSWORD: string;
+  AWS_S3_ACCESS_KEY_ID: string;
+  AWS_S3_SECRET_ACCESS_KEY: string;
+  SLACK_API_TOKEN: string;
+  ROOT_DIRECTORY: string;
+  NODE_ENV: NodeEnv;
+  CI: string | undefined;
+  CIRCLECI: string | undefined;
+  MAIN_PORT: number;
+  ADMIN_PORT: number;
+};
+
+export function getConfig() {
+  if (!config) {
+    config = {
+      DATABASE_HOST: validateString(process.env.DATABASE_HOST, 'DATABASE_HOST'),
+      DATABASE_USER: validateString(process.env.DATABASE_USER, 'DATABASE_USER'),
+      DATABASE_NAME: validateString(process.env.DATABASE_NAME, 'DATABASE_NAME'),
+      DATABASE_PASSWORD: validateString(
+        process.env.DATABASE_PASSWORD,
+        'DATABASE_PASSWORD',
+      ),
+      AWS_S3_ACCESS_KEY_ID: validateString(
+        process.env.AWS_S3_ACCESS_KEY_ID,
+        'AWS_S3_ACCESS_KEY_ID',
+      ),
+      AWS_S3_SECRET_ACCESS_KEY: validateString(
+        process.env.AWS_S3_SECRET_ACCESS_KEY,
+        'AWS_S3_SECRET_ACCESS_KEY',
+      ),
+      SLACK_API_TOKEN: validateString(
+        process.env.SLACK_API_TOKEN,
+        'SLACK_API_TOKEN',
+      ),
+      ROOT_DIRECTORY: validateString(
+        process.env.ROOT_DIRECTORY,
+        'ROOT_DIRECTORY',
+      ),
+      NODE_ENV: validateNodeEnv(process.env.NODE_ENV, 'NODE_ENV'),
+      CI: validateString(process.env.CI, 'CI', true),
+      CIRCLECI: validateString(process.env.CIRCLECI, 'CIRCLECI', true),
+
+      MAIN_PORT: validateNumber(process.env.MAIN_PORT, 'MAIN_PORT'),
+      ADMIN_PORT: validateNumber(process.env.ADMIN_PORT, 'ADMIN_PORT'),
+    };
+  }
+  return config;
+}
 
 // This is the syntax for function overloads in Typescript
 function validateString(
@@ -73,8 +97,6 @@ function validateNumber(
 ): number {
   return parseInt(validateString(variable, name), 10);
 }
-
-export type NodeEnv = 'development' | 'staging' | 'production';
 
 function validateNodeEnv(
   variable: typeof process.env[string],

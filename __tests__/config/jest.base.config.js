@@ -6,7 +6,6 @@ module.exports = {
   moduleDirectories: ['node_modules', '<rootDir>/src', '<rootDir>'],
   testRegex: String.raw`.*/__tests__/.*\.test\.(j|t)s$`,
   transform: {
-    [String.raw`^.*\.tsx?$`]: 'ts-jest',
-    [String.raw`^.*\.jsx?$`]: 'babel-jest',
+    [String.raw`^.*\.(t|j)sx?$`]: 'babel-jest',
   },
 };

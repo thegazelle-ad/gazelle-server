@@ -9,8 +9,9 @@ import AWS from 'aws-sdk';
 import s3 from 's3';
 // Needed for receiving the multi-part file upload
 import multer from 'multer';
+
 // Our own custom config
-import * as config from '../config';
+import { getConfig } from '../config';
 
 /* Helper libraries */
 import fs from 'fs';
@@ -41,7 +42,7 @@ export default function runAdminServer(serverFalcorModel) {
   let cssHash = md5Hash(path.join(__dirname, '../../static/admin.css'));
 
   const buildHtmlString = () => {
-    if (isDevelopment) {
+    if (isDevelopment()) {
       // As described in the main server file we only recompute hashes in development
       clientScriptHash = md5Hash(
         path.join(__dirname, '../../static/build/admin-client.js'),
@@ -110,7 +111,7 @@ export default function runAdminServer(serverFalcorModel) {
   app.use(allowCrossDomain);
 
   const RESTART_SERVERS_PATH_NAME = JSON.stringify(
-    `${config.ROOT_DIRECTORY}/scripts/restart-servers.sh`,
+    `${getConfig().ROOT_DIRECTORY}/scripts/restart-servers.sh`,
   );
 
   let isRestarted = false;
@@ -128,7 +129,7 @@ export default function runAdminServer(serverFalcorModel) {
       res.sendStatus(200);
       exec(RESTART_SERVERS_PATH_NAME, err => {
         if (err) {
-          if (config.NODE_ENV !== 'production') {
+          if (getConfig().NODE_ENV !== 'production') {
             console.error(err); // eslint-disable-line no-console
           }
           // In the case of an error isRestarted will stay true and so the ping will fail correctly
@@ -144,7 +145,7 @@ export default function runAdminServer(serverFalcorModel) {
   });
 
   /* Image Uploader */
-  const uploadDir = `${config.ROOT_DIRECTORY}/tmp`;
+  const uploadDir = `${getConfig().ROOT_DIRECTORY}/tmp`;
 
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
@@ -162,8 +163,8 @@ export default function runAdminServer(serverFalcorModel) {
   const upload = multer({ storage });
 
   const s3Config = {
-    accessKeyId: config.AWS_S3_ACCESS_KEY_ID,
-    secretAccessKey: config.AWS_S3_SECRET_ACCESS_KEY,
+    accessKeyId: getConfig().AWS_S3_ACCESS_KEY_ID,
+    secretAccessKey: getConfig().AWS_S3_SECRET_ACCESS_KEY,
     apiVersion: '2006-03-01',
   };
 
@@ -176,7 +177,7 @@ export default function runAdminServer(serverFalcorModel) {
   app.post('/upload', upload.single('image'), (req, res) => {
     const filePath = req.file.path;
 
-    if (isDevelopment) {
+    if (isDevelopment()) {
       /**
        * As we are in dev-mode, we don't actually want to upload to s3.
        * You can either compile with production mode or remove this
@@ -241,7 +242,7 @@ export default function runAdminServer(serverFalcorModel) {
       .send(nothingAllowedRobotsTxt);
   });
 
-  if (!isDevelopment) {
+  if (!isDevelopment()) {
     // If we are in staging or production we redirect to a forced login
     app.get('/login', (req, res) => {
       res.status(200).send(buildHtmlString());
@@ -279,7 +280,7 @@ export default function runAdminServer(serverFalcorModel) {
       if (aud.trim() === googleClientID) {
         // in dev mode, allow any valid email address
         // in production, require email to be in whitelist (defined in utilities.js)
-        if (isDevelopment) {
+        if (isDevelopment()) {
           res.sendStatus(200);
         } else if (googleWhitelist.indexOf(email) !== -1) {
           res.sendStatus(200);
@@ -292,7 +293,7 @@ export default function runAdminServer(serverFalcorModel) {
     });
   });
 
-  const port = isCI ? 4000 : config.ADMIN_PORT;
+  const port = isCI() ? 4000 : getConfig().ADMIN_PORT;
   app.listen(port, err => {
     if (err) {
       console.error(err); // eslint-disable-line no-console

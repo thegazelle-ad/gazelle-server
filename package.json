@@ -32,7 +32,7 @@
       "for when we are merging that it will just run lint-staged as otherwise the git stash messes with gits internal",
       "system of keeping track of merges"
     ],
-    "precommit": "if ! [ -s .git/MERGE_HEAD ]; then TEMP_STASH_OUTPUT=$(git stash --keep-index); if [ \"$TEMP_STASH_OUTPUT\" != 'No local changes to save' ]; then lint-staged; PRECOMMIT_PASSED=$(echo $?); MUTE=$(git stash pop); exit $PRECOMMIT_PASSED; fi; exit 0; fi; lint-staged",
+    "precommit": "if ! [ -s .git/MERGE_HEAD ]; then TEMP_STASH_OUTPUT=$(git stash --keep-index --include-untracked) && MUTE=$(git clean -fd); if [ \"$TEMP_STASH_OUTPUT\" != 'No local changes to save' ]; then lint-staged; PRECOMMIT_PASSED=$(echo $?); MUTE=$(git stash pop); exit $PRECOMMIT_PASSED; fi; exit 0; fi; lint-staged",
     "postmerge": "npm i && npm run db:migrate"
   },
   "lint-staged": {
@@ -91,6 +91,7 @@
     "@types/react-dom": "^16.0.6",
     "@types/request": "^2.47.1",
     "@types/showdown": "^1.7.4",
+    "@types/sinon": "^5.0.1",
     "@types/slate": "^0.33.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^8.2.3",
@@ -111,7 +112,6 @@
     "husky": "^0.14.3",
     "inquirer": "^6.0.0",
     "jest": "^22.4.3",
-    "json5": "^1.0.1",
     "lint-staged": "^5.0.0",
     "mockdate": "^2.0.2",
     "nightmare": "^2.10.0",
@@ -120,7 +120,7 @@
     "postcss-loader": "^2.0.9",
     "prettier": "^1.13.5",
     "sass-loader": "^6.0.6",
-    "ts-jest": "^22.4.6",
+    "sinon": "^6.1.3",
     "tslint": "^5.10.0",
     "tslint-config-airbnb": "^5.9.2",
     "tslint-config-prettier": "^1.13.0",
