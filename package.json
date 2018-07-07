@@ -35,8 +35,6 @@
       "for when we are merging that it will just run lint-staged as otherwise the git stash messes with gits internal",
       "system of keeping track of merges"
     ],
-    "precommit": "if ! [ -s .git/MERGE_HEAD ]; then TEMP_STASH_OUTPUT=$(git stash --keep-index); if [ \"$TEMP_STASH_OUTPUT\" != 'No local changes to save' ]; then lint-staged; PRECOMMIT_PASSED=$(echo $?); MUTE=$(git stash pop); exit $PRECOMMIT_PASSED; fi; exit 0; fi; lint-staged",
-    "postmerge": "npm i && npm run db:migrate",
     "precommit": "if ! [ -s .git/MERGE_HEAD ]; then TEMP_STASH_OUTPUT=$(git stash --keep-index --include-untracked) && MUTE=$(git clean -fd); if [ \"$TEMP_STASH_OUTPUT\" != 'No local changes to save' ]; then lint-staged; PRECOMMIT_PASSED=$(echo $?); MUTE=$(git stash pop); exit $PRECOMMIT_PASSED; fi; exit 0; fi; lint-staged",
     "postmerge": "npm i && npm run db:migrate && (node setup-env.js --check-outdated || (echo && echo 'Your .env file has become out of date, running setup script so you can update it' && echo && node setup-env.js))",
     "prepush": "scripts/prepush.sh"
