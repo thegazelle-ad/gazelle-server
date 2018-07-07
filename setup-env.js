@@ -125,24 +125,15 @@ async function main() {
       welcomeGoodbyeStyle('We discovered that you already have a .env \
 file\n'),
     );
-    if (!sampleAndCurrentHaveSameVariables()) {
-      console.log(
-        welcomeGoodbyeStyle(
-          "It seems that the sample env file has changed \
-the required environment variables though, so we'll still use that as our source\n",
-        ),
-      );
-      shouldUseCurrentEnv = false;
-    } else {
-      const answer = await inquirer.prompt({
-        type: 'confirm',
-        name: 'shouldUseCurrentEnv',
-        default: true,
-        message:
-          'Would you like us to use the currently set values as the defaults?',
-      });
-      ({ shouldUseCurrentEnv } = answer);
-    }
+
+    const answer = await inquirer.prompt({
+      type: 'confirm',
+      name: 'shouldUseCurrentEnv',
+      default: true,
+      message:
+        'Would you like us to use the currently set values as the defaults when possible?',
+    });
+    ({ shouldUseCurrentEnv } = answer);
   }
 
   let state = NEUTRAL;
@@ -293,11 +284,19 @@ function sampleAndCurrentHaveSameVariables() {
 }
 
 function getDefaultValue(variable) {
-  const trimmedLines = shouldUseCurrentEnv
-    ? trimmedEnvFileLines
-    : trimmedSampleEnvLines;
-  const relevantAssignment = trimmedLines.find(
+  const sampleRelevantAssignment = trimmedSampleEnvLines.find(
     x => isAssignment(x) && parseAssignment(x)[0] === variable,
   );
+  let currentRelevantAssignment =
+    trimmedEnvFileLines &&
+    trimmedEnvFileLines.find(
+      x => isAssignment(x) && parseAssignment(x)[0] === variable,
+    );
+
+  // Only use current value if user chose it and it exists, may be that sample env changed and current one
+  // doesn't have that value
+  const relevantAssignment =
+    (shouldUseCurrentEnv && currentRelevantAssignment) ||
+    sampleRelevantAssignment;
   return parseAssignment(relevantAssignment)[1];
 }
