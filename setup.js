@@ -86,30 +86,20 @@ your browser!`;
 main();
 
 async function main() {
-  // The file descriptor for the env file
-  const fd = fs.openSync('.env', 'w');
-  let state = NEUTRAL;
-  let mainDescriptionSeen = false;
-  let currentText = '';
-  const trimmedLines = sampleEnv.split('\n').map(x => x.trim());
-
   // Say hi
   console.log(welcomeGoodbyeStyle(`${WELCOME_MESSAGE}\n`));
 
   // Give them some space to read the message
-  if (
-    !(await inquirer.prompt({
-      type: 'confirm',
-      name: 'x',
-      message: 'Continue?',
-    })).x
-  ) {
-    fs.closeSync(fd);
-    process.exit(0);
-  }
+  await shouldContinue();
   // newline
   console.log();
 
+  let state = NEUTRAL;
+  let mainDescriptionSeen = false;
+  let currentText = '';
+  // The file descriptor for the env file
+  const fd = fs.openSync('.env', 'w');
+  const trimmedLines = sampleEnv.split('\n').map(x => x.trim());
   for (let i = 0; i < trimmedLines.length; i++) {
     const line = trimmedLines[i];
     let lineToWrite = line;
@@ -210,11 +200,9 @@ async function main() {
     fs.writeSync(fd, Buffer.from(`${lineToWrite}\n`, 'utf-8'));
   }
   fs.closeSync(fd);
-  console.log(welcomeGoodbyeStyle(GOODBYE_MESSAGE));
-  // Give them a few seconds to digest the goodbye message
-  await new Promise(resolve => setTimeout(resolve, 3000));
-  // newline
-  console.log();
+  console.log(welcomeGoodbyeStyle(`${GOODBYE_MESSAGE}\n`));
+  // Give them some space to read goodbye message
+  await shouldContinue('Press enter to exit', 'input');
 }
 
 async function checkIfShouldDoDeploymentConfig() {
@@ -228,4 +216,15 @@ async function checkIfShouldDoDeploymentConfig() {
   // newline
   console.log();
   return answer.shouldContinue;
+}
+
+async function shouldContinue(message, type) {
+  const answer = await inquirer.prompt({
+    type: type || 'confirm',
+    name: 'shouldContinue',
+    message: message || 'Continue?',
+  });
+  if (!answer.shouldContinue) {
+    process.exit(0);
+  }
 }
