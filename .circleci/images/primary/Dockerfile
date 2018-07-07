@@ -2,6 +2,8 @@ FROM circleci/node:9.11.1
 
 RUN sudo apt-get install mysql-client
 
+RUN sudo npm i -g npm@6.1.0
+
 RUN sudo npm i -g forever
 
 # Install electron dependencies
