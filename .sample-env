@@ -22,7 +22,10 @@
 DATABASE_HOST=127.0.0.1
 DATABASE_USER=root
 DATABASE_NAME=the_gazelle
-## Just leave this one blank if you didn't set a password for you database
+## Just leave this one blank if you didn't set a password for you database.
+## Also note that if you enabled defaults from your current file, even though
+## the default says '[hidden]' if you just press enter your password will
+## not change from the one you set previously
 DATABASE_PASSWORD=
 
 # Ports to run our servers on
