@@ -64,6 +64,11 @@ our code needs in order to for example connect to the database. If you ever \
 need to edit this file you can either run this script again \
 (${boldCyan('node setup.js')}) or edit ${boldCyan('.env')} directly.
 
+When filling out the variables, the default value if you don't input anything \
+will be shown in parenthesis at the end of the prompt. If a default is \
+provided it's often because it's the value you'll be using in most cases \
+and unless there's something different about your setup you shouldn't \
+need to change these.
 
 If you find that there's anything that could be better about this guide, \
 please do improve ${boldCyan('setup.js')} or ${boldCyan('.sample-env')} \
@@ -193,6 +198,10 @@ async function main() {
   }
   fs.closeSync(fd);
   console.log(welcomeGoodbyeStyle(GOODBYE_MESSAGE));
+  // Give them a few seconds to digest the goodbye message
+  await new Promise(resolve => setTimeout(resolve, 3000));
+  // newline
+  console.log();
 }
 
 async function checkIfShouldDoDeploymentConfig() {
