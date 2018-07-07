@@ -47,14 +47,31 @@ function throwError(err) {
   process.exit(1);
 }
 
+// The styles for our messages
+const welcomeGoodbyeStyle = chalk.underline;
+const boldCyan = chalk.bold.cyanBright;
+const titleStyle = chalk.whiteBright.bold;
+
 // Say hi!
 const WELCOME_MESSAGE = `\n\
 Hi! Welcome to the setup script for The Gazelle's Engineering Team! \
-We'll take you through a short interactive guide for setting up the \
-configuration needed to run our code, if you find that there's anything \
-that could be helpful in this guide please do edit the code in setup.js to make it more helpful!\
+The source code for this script is located in the root directory of this \
+project with file name ${boldCyan('setup.js')}, and it uses ${boldCyan(
+  '.sample-env',
+)}, also in the root directory, as the source for all the section headers, \
+comments, and environment variables to setup. At the end of this guide the \
+script will output a ${boldCyan('.env')} file to the root directory which \
+our code needs in order to for example connect to the database. If you ever \
+need to edit this file you can either run this script again \
+(${boldCyan('node setup.js')}) or edit ${boldCyan('.env')} directly.
+
+
+If you find that there's anything that could be better about this guide, \
+please do improve ${boldCyan('setup.js')} or ${boldCyan('.sample-env')} \
+and submit a pull request so the next generation of developers can have \
+an easier time!\
 `;
-console.log(chalk.underline(`${WELCOME_MESSAGE}\n`));
+console.log(welcomeGoodbyeStyle(`${WELCOME_MESSAGE}\n`));
 
 // I want to use async/await, but only works in an async function
 main();
@@ -82,7 +99,7 @@ async function main() {
           currentText += line;
           if (!text) {
             if (state === SECTION_HEADER) {
-              console.log(chalk.cyan.bold(`${currentText}\n`));
+              console.log(boldCyan(`${currentText}\n`));
             }
             state = NEUTRAL;
           }
@@ -96,7 +113,7 @@ async function main() {
       } else {
         // Comment is done, so we print it and change the state to neutral + reset the loop
         // so the current line can be properly parsed
-        console.log(chalk.cyanBright.bold(currentText));
+        console.log(boldCyan(currentText));
         state = NEUTRAL;
         i -= 1;
         continue;
@@ -117,8 +134,8 @@ async function main() {
       } else if (isTitle(line)) {
         // We assume titles are never more than one line
         const title = extractTitle(line);
-        console.log(chalk.whiteBright.bold(title));
-        console.log(chalk.whiteBright.bold('-'.repeat(title.length)));
+        console.log(titleStyle(title));
+        console.log(titleStyle('-'.repeat(title.length)));
         // newline
         console.log();
       } else if (isComment(line)) {
