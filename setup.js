@@ -33,7 +33,7 @@ const WRITE_REST = 4;
 // Tests for each type
 const isSectionComment = line => /^#.*#$/.test(line);
 const extractSectionCommentText = line =>
-  /^#+([\w\s.,'!:]*)#+$/.exec(line)[1].trim();
+  /^#+([\w\s.,'!:`#()-]*?)#+$/.exec(line)[1].trim();
 const isAssignment = line => line.includes('=');
 const parseAssignment = line => /^(\w+?)=(.*)/.exec(line).slice(1, 3);
 const isTitle = line => /^#[^#]/.test(line);

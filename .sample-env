@@ -1,8 +1,16 @@
 #######################################################################
-# This is the template for the file we use for all our configuration. #
-# Everything that already has a value set is a probably default, but  #
-# of course feel free to change anything if it doesn't suit your      #
-# needs. Happy configuring!                                           #
+# This is both the template for the file we use for all our           #
+# configuration, and at the same time the 'source code' that our      #
+# script `setup.js` uses to provide headers, titles, comments and     #
+# variable assignments. You're welcome to manually copy this file to  #
+# `.env` and fill it out but the file is formatted to be compatible   #
+# with `setup.js`.                                                    #
+# The 'syntax' is:                                                    #
+# - This first box is ignored (denoted by # at start and end of line) #
+# - The rest of boxes like this are section headers and are printed   #
+#   as is                                                             #
+# - Comments (no # at end of line) are denoted by two #s in a row     #
+# - Subtitles (again no # at end of line) are denoted by one #        #
 #######################################################################
 
 #######################################################################
@@ -36,4 +44,4 @@ SLACK_API_TOKEN=
 
 # Environment related
 ## Which environment is this? This value should be either staging or production
-GAZELLE_ENV=development
+GAZELLE_ENV=
