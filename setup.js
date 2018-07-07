@@ -52,7 +52,6 @@ const welcomeGoodbyeStyle = chalk.underline;
 const boldCyan = chalk.bold.cyanBright;
 const titleStyle = chalk.whiteBright.bold;
 
-// Say hi!
 const WELCOME_MESSAGE = `\n\
 Hi! Welcome to the setup script for The Gazelle's Engineering Team! \
 The source code for this script is located in the root directory of this \
@@ -71,7 +70,12 @@ please do improve ${boldCyan('setup.js')} or ${boldCyan('.sample-env')} \
 and submit a pull request so the next generation of developers can have \
 an easier time!\
 `;
-console.log(welcomeGoodbyeStyle(`${WELCOME_MESSAGE}\n`));
+
+const GOODBYE_MESSAGE = `\
+You should now have your environment totally setup! Try out running \
+npm run build && npm start and see if you have The Gazelle running \
+successfully by checking out localhost:3000 and localhost:4000 in \
+your browser!`;
 
 // I want to use async/await, but only works in an async function
 main();
@@ -83,6 +87,24 @@ async function main() {
   let mainDescriptionSeen = false;
   let currentText = '';
   const trimmedLines = sampleEnv.split('\n').map(x => x.trim());
+
+  // Say hi
+  console.log(welcomeGoodbyeStyle(`${WELCOME_MESSAGE}\n`));
+
+  // Give them some space to read the message
+  if (
+    !(await inquirer.prompt({
+      type: 'confirm',
+      name: 'x',
+      message: 'Continue?',
+    })).x
+  ) {
+    fs.closeSync(fd);
+    process.exit(0);
+  }
+  // newline
+  console.log();
+
   for (let i = 0; i < trimmedLines.length; i++) {
     const line = trimmedLines[i];
     let lineToWrite = line;
@@ -170,12 +192,7 @@ async function main() {
     fs.writeSync(fd, Buffer.from(`${lineToWrite}\n`, 'utf-8'));
   }
   fs.closeSync(fd);
-  const GOODBYE_MESSAGE = `\
-You should now have your environment totally setup! Try out running \
-npm run build && npm start and see if you have The Gazelle running \
-successfully by checking out localhost:3000 and localhost:4000 in \
-your browser!`;
-  console.log(GOODBYE_MESSAGE);
+  console.log(welcomeGoodbyeStyle(GOODBYE_MESSAGE));
 }
 
 async function checkIfShouldDoDeploymentConfig() {
