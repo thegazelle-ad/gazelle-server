@@ -2,14 +2,20 @@
 // We disable camelcase here due to SQL naming conventions
 import knex from 'knex';
 import stable from 'stable';
-import databaseConnectionConfig from 'config/database.config.json5';
+import { getConfig } from '../config';
 import _ from 'lodash';
 import moment from 'moment';
 import { has } from 'lib/utilities';
 
 export const database = knex({
   client: 'mysql',
-  connection: databaseConnectionConfig,
+  connection: {
+    host: getConfig().DATABASE_HOST,
+    user: getConfig().DATABASE_USER,
+    password: getConfig().DATABASE_PASSWORD,
+    database: getConfig().DATABASE_NAME,
+    charset: getConfig().DATABASE_ENCODING,
+  },
   pool: {
     min: 10,
     max: 50,

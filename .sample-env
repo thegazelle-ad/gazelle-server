@@ -1,0 +1,63 @@
+#######################################################################
+# This is both the template for the file we use for all our           #
+# configuration, and at the same time the 'source code' that our      #
+# script `setup-env.js` uses to provide headers, titles, comments and #
+# variable assignments. You're welcome to manually copy this file to  #
+# `.env` and fill it out but the file is formatted to be compatible   #
+# with `setup-env.js`.                                                #
+# The 'syntax' is:                                                    #
+# - This first box is ignored (denoted by # at start and end of line) #
+# - The rest of boxes like this are section headers and are printed   #
+#   as is                                                             #
+# - Comments (no # at end of line) are denoted by two #s in a row     #
+# - Subtitles (again no # at end of line) are denoted by one #        #
+#######################################################################
+
+#######################################################################
+########                      DEVELOPMENT                      ########
+#######################################################################
+
+# Database related configuration
+## You can probably just use the defaults for the following four unless you are doing something custom
+DATABASE_HOST=127.0.0.1
+DATABASE_USER=root
+DATABASE_NAME=the_gazelle
+DATABASE_ENCODING=utf8
+## Just leave this one blank if you didn't set a password for you database.
+## Also note that if you enabled defaults from your current file, even though
+## the default says '[hidden]' if you just press enter your password will
+## not change from the one you set previously
+DATABASE_PASSWORD=
+
+# Ports to run our servers on
+## You can change these if you for some reason have other things running on these
+## ports, but you most likely do not need to change these
+DEVELOPMENT_MAIN_PORT=3000
+DEVELOPMENT_ADMIN_PORT=4000
+
+#######################################################################
+########                      DEPLOYMENT                       ########
+#######################################################################
+
+# AWS S3 Config
+## Needed for uploading images to S3. You most likely have these stored on another server
+## where you can just copy it from that .env file. In case you have to get them from scratch
+## you do this by by going to the Amazon AWS account > My Security Credentials >
+## Access Keys (Access Key ID and Secret Access Key) > Generate new key.
+AWS_S3_ACCESS_KEY_ID=
+AWS_S3_SECRET_ACCESS_KEY=
+
+# Config for sending notifications to Slack
+## If you don't already have a bot created you can do this here:
+## https://api.slack.com/bot-users. You can then find the token in the bot account
+SLACK_API_TOKEN=
+
+# Environment related
+## Needed to make some important distinctions that are different on staging and
+## production servers. This value should be either staging or production when deploying
+GAZELLE_ENV=development
+
+# Ports to run our servers on
+## The ports below are the ones we usually use, but feel free to change it up for any reason
+DEPLOYMENT_MAIN_PORT=8001
+DEPLOYMENT_ADMIN_PORT=8002

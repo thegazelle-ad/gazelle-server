@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { getConfig } from '../config';
 
 import { parseMarkdown } from 'lib/react-utilities';
 
@@ -178,11 +179,11 @@ export function stringToInt(str) {
 export const has = Object.prototype.hasOwnProperty;
 
 // Environment functions and constants
-export const isProduction = process.env.NODE_ENV === 'production';
-export const isStaging = process.env.NODE_ENV === 'staging';
-export const isCI =
-  process.env.CI === 'true' && process.env.CIRCLECI === 'true';
-export const isDevelopment = !isProduction && !isStaging;
+export const isProduction = () => getConfig().NODE_ENV === 'production';
+export const isStaging = () => getConfig().NODE_ENV === 'staging';
+export const isCI = () =>
+  getConfig().CI === 'true' && getConfig().CIRCLECI === 'true';
+export const isDevelopment = () => !isProduction() && !isStaging();
 
 export function filterByEnvironment(development, beta, production) {
   if (production === undefined) {
@@ -197,16 +198,16 @@ export function filterByEnvironment(development, beta, production) {
       );
     }
 
-    if (isProduction) {
+    if (isProduction()) {
       return beta;
     }
     return development;
   }
 
   // All 3 arguments were specified
-  if (isProduction) {
+  if (isProduction()) {
     return production;
-  } else if (isStaging) {
+  } else if (isStaging()) {
     return beta;
   }
   return development;
