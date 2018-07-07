@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-continue */
 /* eslint-disable no-multi-str */
-// We use 'for of' because 1. it actually doesn't require regenerator
-// runtime as this is native node, and 2. we don't want to enter callbacks
-// where consecutive awaits are hard/impossible to do
+// This isn't the actual code so it's correct to have it in devDependencies
+// eslint-disable-next-line import/no-extraneous-dependencies
 const inquirer = require('inquirer');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const chalk = require('chalk');
 const fs = require('fs');
 
 let sampleEnv;
@@ -48,13 +48,13 @@ function throwError(err) {
 }
 
 // Say hi!
-const WELCOME_MESSAGE = `\
-Hi! Welcome to the setup script for The Gazelle's Engineering Team!
-We'll take you through a short interactive guide for setting up the
-configuration needed to run our code, if you find that there's anything
+const WELCOME_MESSAGE = `\n\
+Hi! Welcome to the setup script for The Gazelle's Engineering Team! \
+We'll take you through a short interactive guide for setting up the \
+configuration needed to run our code, if you find that there's anything \
 that could be helpful in this guide please do edit the code in setup.js to make it more helpful!\
 `;
-console.log(`${WELCOME_MESSAGE}\n`);
+console.log(chalk.underline(`${WELCOME_MESSAGE}\n`));
 
 // I want to use async/await, but only works in an async function
 main();
@@ -82,7 +82,7 @@ async function main() {
           currentText += line;
           if (!text) {
             if (state === SECTION_HEADER) {
-              console.log(`${currentText}\n`);
+              console.log(chalk.cyan.bold(`${currentText}\n`));
             }
             state = NEUTRAL;
           }
@@ -96,7 +96,7 @@ async function main() {
       } else {
         // Comment is done, so we print it and change the state to neutral + reset the loop
         // so the current line can be properly parsed
-        console.log(currentText);
+        console.log(chalk.cyanBright.bold(currentText));
         state = NEUTRAL;
         i -= 1;
         continue;
@@ -117,8 +117,8 @@ async function main() {
       } else if (isTitle(line)) {
         // We assume titles are never more than one line
         const title = extractTitle(line);
-        console.log(title);
-        console.log('-'.repeat(title.length));
+        console.log(chalk.whiteBright.bold(title));
+        console.log(chalk.whiteBright.bold('-'.repeat(title.length)));
         // newline
         console.log();
       } else if (isComment(line)) {
