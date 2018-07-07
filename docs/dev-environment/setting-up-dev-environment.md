@@ -10,7 +10,7 @@ Make sure you have NodeJS and npm installed
 
 You can [install nodejs and npm via nvm](https://github.com/creationix/nvm), feel free to install it any other way, but nvm is a nice way to manage your node versions if you work on different projects that use different versions. We also have a [`.nvmrc`](../../.nvmrc) file so when you `cd` into the directory of the repo, you can just run `nvm use` to change to our version, or `nvm install` both without any arguments as it finds it in `.nvmrc` and it'll install the correct version.
 
-> **IMPORTANT**: For this repo we use **node v9.11.1** and **npm 5.6.0**. Use any other versions at your own peril.
+> **IMPORTANT**: For this repo we use **node v9.11.1** and **npm 6.1.0**. Use any other versions at your own peril. Note that the default npm version with node `9.11.1` is `5.6.0` so you'll have to install the npm version manually `npm i -g npm@6.1.0`.
 
 Then install dependencies locally
 
