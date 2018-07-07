@@ -113,7 +113,11 @@ const generateWebpackConfig = config => {
     },
 
     resolve: {
-      modules: [getAbsolute('src'), getAbsolute('node_modules')],
+      modules: [
+        getAbsolute('.'),
+        getAbsolute('src'),
+        getAbsolute('node_modules'),
+      ],
       extensions: ['.js', '.jsx', '.ts', '.tsx'],
     },
 
