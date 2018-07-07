@@ -43,5 +43,6 @@ AWS_S3_SECRET_ACCESS_KEY=
 SLACK_API_TOKEN=
 
 # Environment related
-## Which environment is this? This value should be either staging or production
-GAZELLE_ENV=
+## Needed to make some important distinctions that are different on staging and
+## production servers. This value should be either staging or production when deploying
+GAZELLE_ENV=development

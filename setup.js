@@ -170,15 +170,28 @@ async function main() {
         currentText = `NOTE: ${extractComment(line)}`;
       } else if (isAssignment(line)) {
         const [variable, defaultValue] = parseAssignment(line);
-        const isPassword = variable.toLowerCase().includes('password');
-        const answer = await inquirer.prompt({
-          type: isPassword ? 'password' : 'input',
-          mask: isPassword ? '*' : undefined,
-          name: variable,
-          default: defaultValue,
-          message: `What value would you like to set ${variable} to?`,
-        });
-        const assignedValue = answer[variable];
+        let assignedValue;
+        const question = `What value would you like to set ${variable} to?`;
+        // If it's GAZELLE_ENV we want to restrict answers to 'staging' or 'production'
+        if (variable === 'GAZELLE_ENV') {
+          const answer = await inquirer.prompt({
+            type: 'list',
+            name: variable,
+            message: question,
+            choices: ['staging', 'production'],
+          });
+          assignedValue = answer[variable];
+        } else {
+          const isPassword = variable.toLowerCase().includes('password');
+          const answer = await inquirer.prompt({
+            type: isPassword ? 'password' : 'input',
+            mask: isPassword ? '*' : undefined,
+            name: variable,
+            default: defaultValue,
+            message: question,
+          });
+          assignedValue = answer[variable];
+        }
         // We aren't handling all the escaping values or setting quotes or not
         // but in most if not all cases this should work. If in the future problems
         // are encountered with this then it would have to be handled with some logic though
