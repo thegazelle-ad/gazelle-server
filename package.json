@@ -36,7 +36,8 @@
       "system of keeping track of merges"
     ],
     "precommit": "if ! [ -s .git/MERGE_HEAD ]; then TEMP_STASH_OUTPUT=$(git stash --keep-index); if [ \"$TEMP_STASH_OUTPUT\" != 'No local changes to save' ]; then lint-staged; PRECOMMIT_PASSED=$(echo $?); MUTE=$(git stash pop); exit $PRECOMMIT_PASSED; fi; exit 0; fi; lint-staged",
-    "postmerge": "npm i && npm run db:migrate"
+    "postmerge": "npm i && npm run db:migrate",
+    "prepush": "scripts/prepush.sh"
   },
   "lint-staged": {
     "*.{js,jsx}": "eslint --max-warnings 0",
