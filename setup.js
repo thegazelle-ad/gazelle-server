@@ -8,19 +8,42 @@ const inquirer = require('inquirer');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const chalk = require('chalk');
 const fs = require('fs');
+const _ = require('lodash');
 
+// Get the sample env file
 let sampleEnv;
 try {
   sampleEnv = fs.readFileSync('.sample-env', { encoding: 'utf8' });
 } catch (e) {
   console.error('\n\n');
   console.error(
-    'ERROR: There was an error opening the .sample-env file, are you sure you\
- are running this command through npm run setup or from the root directory?',
+    'ERROR: There was an error opening the .sample-env file, are you sure you \
+are running this command through npm run setup or from the root directory?',
   );
   console.error('\n\n');
   throw e;
 }
+const trimmedSampleEnvLines = sampleEnv.split('\n').map(x => x.trim());
+
+// Attempt to get the current .env file if it exists
+let envFile;
+try {
+  envFile = fs.readFileSync('.env', { encoding: 'utf8' });
+} catch (e) {
+  // ENOENT means the file didn't exist, in which case we just assume that
+  // the user currently has no .env file which is fine
+  if (e.code !== 'ENOENT') {
+    console.error('\n\n');
+    console.error(
+      'ERROR: There was an error opening the .env file, even though it seems to exist',
+    );
+    console.error('\n\n');
+    throw e;
+  }
+}
+const trimmedEnvFileLines = envFile
+  ? envFile.split('\n').map(x => x.trim())
+  : envFile;
 
 // The different states our parser can be in
 const NEUTRAL = 0;
@@ -29,6 +52,9 @@ const SECTION_HEADER = 2;
 const COMMENT = 3;
 // We use this state if the user doesn't want to do deployment config
 const WRITE_REST = 4;
+
+// A global state of whether we should get defaults from the sample or real env
+let shouldUseCurrentEnv = false;
 
 // Tests for each type
 const isSectionComment = line => /^#.*#$/.test(line);
@@ -94,14 +120,39 @@ async function main() {
   // newline
   console.log();
 
+  // Before we start the actual loop we check whether there already exists a .env file
+  if (trimmedEnvFileLines) {
+    console.log(
+      welcomeGoodbyeStyle('We discovered that you already have a .env \
+file\n'),
+    );
+    if (!sampleAndCurrentHaveSameVariables()) {
+      console.log(
+        welcomeGoodbyeStyle(
+          "It seems that the sample env file has changed \
+the required environment variables though, so we'll still use that as our source\n",
+        ),
+      );
+      shouldUseCurrentEnv = false;
+    } else {
+      const answer = await inquirer.prompt({
+        type: 'confirm',
+        name: 'shouldUseCurrentEnv',
+        default: true,
+        message:
+          'Would you like us to use the currently set values as the defaults?',
+      });
+      ({ shouldUseCurrentEnv } = answer);
+    }
+  }
+
   let state = NEUTRAL;
   let mainDescriptionSeen = false;
   let currentText = '';
   // The file descriptor for the env file
   const fd = fs.openSync('.env', 'w');
-  const trimmedLines = sampleEnv.split('\n').map(x => x.trim());
-  for (let i = 0; i < trimmedLines.length; i++) {
-    const line = trimmedLines[i];
+  for (let i = 0; i < trimmedSampleEnvLines.length; i++) {
+    const line = trimmedSampleEnvLines[i];
     let lineToWrite = line;
     if (state === MAIN_DESCRIPTION || state === SECTION_HEADER) {
       if (isSectionComment(line)) {
@@ -159,7 +210,8 @@ async function main() {
         state = COMMENT;
         currentText = `NOTE: ${extractComment(line)}`;
       } else if (isAssignment(line)) {
-        const [variable, defaultValue] = parseAssignment(line);
+        const [variable] = parseAssignment(line);
+        const defaultValue = getDefaultValue(variable);
         let assignedValue;
         const question = `What value would you like to set ${variable} to?`;
         // If it's GAZELLE_ENV we want to restrict answers to 'staging' or 'production'
@@ -227,4 +279,26 @@ async function shouldContinue(message, type) {
   if (!answer.shouldContinue) {
     process.exit(0);
   }
+}
+
+function sampleAndCurrentHaveSameVariables() {
+  // We use sets as for the deep equality we don't care about order of variables
+  const sampleVariables = new Set(
+    trimmedSampleEnvLines.filter(isAssignment).map(x => parseAssignment(x)[0]),
+  );
+  const currentVariables = new Set(
+    trimmedEnvFileLines.filter(isAssignment).map(x => parseAssignment(x)[0]),
+  );
+  // Perform deep equality comparison on variables
+  return _.isEqual(sampleVariables, currentVariables);
+}
+
+function getDefaultValue(variable) {
+  const trimmedLines = shouldUseCurrentEnv
+    ? trimmedEnvFileLines
+    : trimmedSampleEnvLines;
+  const relevantAssignment = trimmedLines.find(
+    x => isAssignment(x) && parseAssignment(x)[0] === variable,
+  );
+  return parseAssignment(relevantAssignment)[1];
 }
