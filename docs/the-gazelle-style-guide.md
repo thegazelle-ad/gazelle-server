@@ -93,6 +93,8 @@ We also write [end to end (E2E) tests](./guides/developing-end-to-end-tests.md) 
 
 If you are unfamiliar with unit testing here is a good short Quora answer on what unit testing is and why it's important: https://www.quora.com/What-is-software-unit-testing-and-why-is-it-important. Also feel free to follow the link at the bottom of the most upvoted answer which goes a bit more in-depth.
 
+For keeping us honest, we use [Coveralls](https://coveralls.io/) integrated with Github that reports on every Pull Request whether our code coverage (basically means how much of our code is actually run/covered by our tests).
+
 ## Database development
 
 If you ever need to change the database schema we require you to write a migration in the [migrations folder](../database-management/migrations). You create a new migration (this just creates a properly named template, you still have to write the migration) by running
