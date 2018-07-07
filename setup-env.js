@@ -40,9 +40,7 @@ try {
     throw e;
   }
 }
-const trimmedEnvFileLines = envFile
-  ? envFile.split('\n').map(x => x.trim())
-  : envFile;
+const trimmedEnvFileLines = envFile && envFile.split('\n').map(x => x.trim());
 
 // The different states our parser can be in
 const NEUTRAL = 0;
@@ -107,19 +105,20 @@ npm run build && npm start and see if you have The Gazelle running \
 successfully by checking out localhost:3000 and localhost:4000 (or \
 whichever ports you set in the config) in your browser!`;
 
-// We support a command here to check whether .env is outdated (is missing some variables from .sample-env)
-// it makes more sense to put this command in this script than write a separate one as we reuse code and
-// don't have to keep track of as many files
-if (process.argv.length === 3 && process.argv[2] === '--check-outdated') {
-  const exitCode = sampleAndCurrentHaveSameVariables() ? 0 : 1;
-  // We notify the caller of the result through our exit code
-  process.exit(exitCode);
-}
-
 // I want to use async/await, but only works in an async function
 main();
 
 async function main() {
+  // We support a command here to check whether .env is outdated (is missing some variables from .sample-env)
+  // it makes more sense to put this command in this script than write a separate one as we reuse code and
+  // don't have to keep track of as many files.
+  // Before anything else we check whether the user wanted this command or the usual script
+  if (process.argv.length === 3 && process.argv[2] === '--check-outdated') {
+    const exitCode = sampleAndCurrentHaveSameVariables() ? 0 : 1;
+    // We notify the caller of the result through our exit code
+    process.exit(exitCode);
+  }
+
   // Say hi
   console.log(welcomeGoodbyeStyle(`${WELCOME_MESSAGE}\n`));
 
