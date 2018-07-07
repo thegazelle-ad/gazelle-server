@@ -33,8 +33,8 @@ echo "Tests finished, starting cleanup"
 
 forever stopall
 
-kill $SCREEN_PID
+sudo kill $SCREEN_PID
 
 # We also have to kill the node processes that they spawn
-ps -a | grep node | awk '{print $1}' | xargs kill
+ps -a | grep node | awk '{print $1}' | xargs sudo kill
 exit $EXIT_CODE
