@@ -11,6 +11,7 @@ const databaseConnectionConfig = {
   host: envVars.DATABASE_HOST,
   database: envVars.DATABASE_NAME,
   password: envVars.DATABASE_PASSWORD,
+  encoding: envVars.DATABASE_ENCODING,
 };
 
 export const getDatabaseConnection = databaseName => {

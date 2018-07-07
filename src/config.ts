@@ -13,6 +13,7 @@ let config: {
   DATABASE_USER: string;
   DATABASE_NAME: string;
   DATABASE_PASSWORD: string;
+  DATABASE_ENCODING: string;
   AWS_S3_ACCESS_KEY_ID: string;
   AWS_S3_SECRET_ACCESS_KEY: string;
   SLACK_API_TOKEN: string;
@@ -33,6 +34,10 @@ export function getConfig() {
       DATABASE_PASSWORD: validateString(
         process.env.DATABASE_PASSWORD,
         'DATABASE_PASSWORD',
+      ),
+      DATABASE_ENCODING: validateString(
+        process.env.DATABASE_ENCODING,
+        'DATABASE_ENCODING',
       ),
       AWS_S3_ACCESS_KEY_ID: validateString(
         process.env.AWS_S3_ACCESS_KEY_ID,

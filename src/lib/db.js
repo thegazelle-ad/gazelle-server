@@ -14,7 +14,7 @@ export const database = knex({
     user: getConfig().DATABASE_USER,
     password: getConfig().DATABASE_PASSWORD,
     database: getConfig().DATABASE_NAME,
-    charset: 'utf8',
+    charset: getConfig().DATABASE_ENCODING,
   },
   pool: {
     min: 10,
