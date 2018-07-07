@@ -85,7 +85,7 @@ jobs:
           name: Wait for db
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
-      - run: npm run test:unit
+      - run: npm run test:unit:ci
 
   lint:
     <<: *defaults
