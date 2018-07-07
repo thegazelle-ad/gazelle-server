@@ -8,7 +8,7 @@ Also, if not obvious, all instructions in this setup guide assume that you have 
 
 Make sure you have NodeJS and npm installed
 
-You can [install nodejs and npm via nvm](https://github.com/creationix/nvm), feel free to install it any other way, but nvm is a nice way to manage your node versions if you work on different projects that use different versions. We also have a `.nvmrc` file so when you `cd` into the directory of the repo, you can just run `nvm use` to change to our version, or `nvm install` both without any arguments as it finds it in `.nvmrc` and it'll install the correct version.
+You can [install nodejs and npm via nvm](https://github.com/creationix/nvm), feel free to install it any other way, but nvm is a nice way to manage your node versions if you work on different projects that use different versions. We also have a [`.nvmrc`](../../.nvmrc) file so when you `cd` into the directory of the repo, you can just run `nvm use` to change to our version, or `nvm install` both without any arguments as it finds it in `.nvmrc` and it'll install the correct version.
 
 > **IMPORTANT**: For this repo we use **node v9.11.1** and **npm 6.1.0**. Use any other versions at your own peril. Note that the default npm version with node `9.11.1` is `5.6.0` so you'll have to install the npm version manually `npm i -g npm@6.1.0`.
 
@@ -30,29 +30,25 @@ npm run db:migrate
 npm run db:seed
 ```
 
-When running the first command it will ask you for your password for the database client which should have been set during installation of MariaDB/MySQL. It may also just be empty, in which case you can try running the first command without the `-p` flag.
+When running the first command it will ask you for your password for the database client which should have been set during installation of MariaDB/MySQL. It may also just be empty, in which case you can try running the first command without the `-p` flag, or just press enter without entering anything into the password prompt.
 
 > NOTE: This is one of the places some people encounter errors where they somehow didn't get prompted to set a password when installing MariaDB and then the password ends up being unknown, the [`Frequently Encountered issues`](#frequently-encountered-issues) section has some tips on solving this issue.
 
-When this is done copy database.config.example.json5 (it is in the config folder) to its non-example counterpart, you would do this as follows in bash:
+# Setup config
+
+Before you can build the code you need to specify some environment specific configurations such as what the name and password of your database is, and which ports to run the servers on. Luckily we have written a nice little interactive script that should guide you through this, so you should just have to run
 
 ```bash
-cp config/database.config.example.json5 config/database.config.json5
+node setup-env.js
 ```
 
-It is important that you name the config file exactly as specified above.
-
-Now change the config as necessary. The most important is the password and database name of the database being used in database.config.js. Most likely all you will have to change is the password though.
-
-Your database should now be set up!
-
-# Amazon S3
-
-For development purposes all you need for Amazon S3 is a dummy config file as while in dev mode the server doesn't actually try connecting to Amazon's servers
+and you should be guided through the rest. In case you encounter issues with it, it would firstly be great if you submit a PR with a fix when you find out what was wrong, but you can also pretty easily manually setup the configuration by running
 
 ```bash
-cp config/s3.config.example.js config/s3.config.js
+cp .sample-env .env
 ```
+
+and filling out everything manually. This is basically what the setup script does for you.
 
 # Run build tool
 

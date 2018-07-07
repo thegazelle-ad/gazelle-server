@@ -25,6 +25,9 @@ import path from 'path';
 // Used for parsing post requests
 import bodyParser from 'body-parser';
 
+// Our custom config
+import { getConfig } from '../config';
+
 /* Our helper functions */
 import {
   isStaging,
@@ -42,7 +45,7 @@ export default function runMainServer(serverFalcorModel) {
   let cssHash = md5Hash(path.join(__dirname, '../../static/build/main.css'));
 
   const buildHtmlString = (body, cache) => {
-    if (isDevelopment) {
+    if (isDevelopment()) {
       // If it's development we know that the scripts may change while the server is running
       // and we can afford the computational cost of recomputing hashes. This allows us to just
       // refresh the browser instead of having to restart the server in production on the
@@ -163,7 +166,7 @@ export default function runMainServer(serverFalcorModel) {
       );
   });
 
-  if (isStaging) {
+  if (isStaging()) {
     app.get('/robots.txt', (req, res) => {
       res
         .status(200)
@@ -191,7 +194,7 @@ export default function runMainServer(serverFalcorModel) {
             .catch(err => {
               console.error('Failed to render: ', req.url); // eslint-disable-line no-console
               console.error(err.stack || err); // eslint-disable-line no-console
-              if (process.env.NODE_ENV !== 'production') {
+              if (getConfig().NODE_ENV !== 'production') {
                 res.status(500).send(err.stack || err);
               } else {
                 res
@@ -210,12 +213,7 @@ export default function runMainServer(serverFalcorModel) {
     );
   });
 
-  // To start server with PORT=3000 default: run `npm start`
-  // NOTE: On Linux systems, any port below 1024 requires root access (`sudo` command)
-  // To run on port 80:
-  //    Development build: run `sudo PORT=80 npm start`
-  //    Production build: run `sudo npm start`
-  const port = isCI || !process.env.MAIN_PORT ? 3000 : process.env.MAIN_PORT;
+  const port = isCI() ? 3000 : getConfig().MAIN_PORT;
   app.listen(port, err => {
     if (err) {
       console.error(err); // eslint-disable-line no-console

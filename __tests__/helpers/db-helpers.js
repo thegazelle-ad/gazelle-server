@@ -1,15 +1,18 @@
 // Be careful not to mock any of these in your test!
 import path from 'path';
-import fs from 'fs';
-import JSON5 from 'json5';
 import knex from 'knex';
 import _ from 'lodash';
+import * as dotenv from 'dotenv';
 
-const databaseConnectionJSON5String = fs.readFileSync(
-  path.join(__dirname, '../../config/database.config.json5'),
-);
+const envVars = dotenv.config().parsed;
 
-const databaseConnectionConfig = JSON5.parse(databaseConnectionJSON5String);
+const databaseConnectionConfig = {
+  user: envVars.DATABASE_USER,
+  host: envVars.DATABASE_HOST,
+  database: envVars.DATABASE_NAME,
+  password: envVars.DATABASE_PASSWORD,
+  encoding: envVars.DATABASE_ENCODING,
+};
 
 export const getDatabaseConnection = databaseName => {
   const connection = databaseName
