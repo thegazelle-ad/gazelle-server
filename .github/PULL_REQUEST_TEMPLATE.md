@@ -25,4 +25,4 @@
 - [ ] My code follows the code style of this project. (see the [style guide](https://github.com/thegazelle-ad/gazelle-server/tree/master/docs/the-gazelle-style-guide.md))
 - [ ] My change requires a change to the documentation.
 - [ ] I have updated the documentation accordingly.
-- [ ] I have added tests to cover my changes.
+- [ ] Coveralls reported increased code coverage, and full coverage for all the code I added / changed (or I have a good reason that I explained above for why this is not the case)
