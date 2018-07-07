@@ -1,3 +1,6 @@
+[![Coverage Status](https://coveralls.io/repos/github/thegazelle-ad/gazelle-server/badge.svg?branch=master)](https://coveralls.io/github/thegazelle-ad/gazelle-server?branch=master)
+[![CircleCI](https://circleci.com/gh/thegazelle-ad/gazelle-server.svg?style=svg)](https://circleci.com/gh/thegazelle-ad/gazelle-server)
+
 # The Gazelle
 
 This code is written for [The Gazelle's website](https://www.thegazelle.org). The Gazelle is New York University Abu Dhabi's independent online student news publication. The Gazelle's website is developed and maintained entirely by current undergraduate NYUAD students. The publication is managed by a dedicated team of writers, editors, artists, developers and photographers and released to NYUAD, the NYU global network and the greater Abu Dhabi community every Sunday morning.
