@@ -8,4 +8,11 @@ module.exports = {
   transform: {
     [String.raw`^.*\.(t|j)sx?$`]: 'babel-jest',
   },
+  collectCoverageFrom: [
+    '<rootDir>/src/**/*.{js,jsx,ts,tsx}',
+    '!**/__tests__/**/*',
+    '!**/__mocks__/**/*',
+    '!**/__snapshots__/**/*',
+  ],
+  coverageReporters: ['text-lcov'],
 };
