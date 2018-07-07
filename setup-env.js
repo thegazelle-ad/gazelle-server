@@ -80,14 +80,14 @@ const titleStyle = chalk.whiteBright.bold;
 const WELCOME_MESSAGE = `\n\
 Hi! Welcome to the setup script for The Gazelle's Engineering Team! \
 The source code for this script is located in the root directory of this \
-project with file name ${boldCyan('setup.js')}, and it uses ${boldCyan(
+project with file name ${boldCyan('setup-env.js')}, and it uses ${boldCyan(
   '.sample-env',
 )}, also in the root directory, as the source for all the section headers, \
 comments, and environment variables to setup. At the end of this guide the \
 script will output a ${boldCyan('.env')} file to the root directory which \
 our code needs in order to for example connect to the database. If you ever \
 need to edit this file you can either run this script again \
-(${boldCyan('node setup.js')}) or edit ${boldCyan('.env')} directly.
+(${boldCyan('node setup-env.js')}) or edit ${boldCyan('.env')} directly.
 
 When filling out the variables, the default value if you don't input anything \
 will be shown in parenthesis at the end of the prompt. If a default is \
@@ -96,7 +96,7 @@ and unless there's something different about your setup you shouldn't \
 need to change these.
 
 If you find that there's anything that could be better about this guide, \
-please do improve ${boldCyan('setup.js')} or ${boldCyan('.sample-env')} \
+please do improve ${boldCyan('setup-env.js')} or ${boldCyan('.sample-env')} \
 and submit a pull request so the next generation of developers can have \
 an easier time!\
 `;

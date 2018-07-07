@@ -1,10 +1,10 @@
 #######################################################################
 # This is both the template for the file we use for all our           #
 # configuration, and at the same time the 'source code' that our      #
-# script `setup.js` uses to provide headers, titles, comments and     #
+# script `setup-env.js` uses to provide headers, titles, comments and #
 # variable assignments. You're welcome to manually copy this file to  #
 # `.env` and fill it out but the file is formatted to be compatible   #
-# with `setup.js`.                                                    #
+# with `setup-env.js`.                                                #
 # The 'syntax' is:                                                    #
 # - This first box is ignored (denoted by # at start and end of line) #
 # - The rest of boxes like this are section headers and are printed   #
