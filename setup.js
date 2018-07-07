@@ -3,9 +3,8 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-multi-str */
 // This isn't the actual code so it's correct to have it in devDependencies
-// eslint-disable-next-line import/no-extraneous-dependencies
+/* eslint-disable import/no-extraneous-dependencies */
 const inquirer = require('inquirer');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const chalk = require('chalk');
 const fs = require('fs');
 const _ = require('lodash');
@@ -105,8 +104,8 @@ an easier time!\
 const GOODBYE_MESSAGE = `\
 You should now have your environment totally setup! Try out running \
 npm run build && npm start and see if you have The Gazelle running \
-successfully by checking out localhost:3000 and localhost:4000 in \
-your browser!`;
+successfully by checking out localhost:3000 and localhost:4000 (or \
+whichever ports you set in the config) in your browser!`;
 
 // I want to use async/await, but only works in an async function
 main();

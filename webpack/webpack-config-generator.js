@@ -5,6 +5,8 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const environmentVariables = require('dotenv').config().parsed;
+const _ = require('lodash');
 
 const ROOT_DIRECTORY = path.resolve(__dirname, '..');
 const getAbsolute = relativePath => path.resolve(ROOT_DIRECTORY, relativePath);
@@ -30,8 +32,8 @@ const generateWebpackConfig = config => {
   switch (config.NODE_ENV) {
     case 'production':
     case 'staging':
-      MAIN_PORT = 8001;
-      ADMIN_PORT = 8002;
+      MAIN_PORT = environmentVariables.DEPLOYMENT_MAIN_PORT;
+      ADMIN_PORT = environmentVariables.DEPLOYMENT_ADMIN_PORT;
       break;
 
     default:
@@ -43,8 +45,8 @@ const generateWebpackConfig = config => {
         );
       }
 
-      MAIN_PORT = 3000;
-      ADMIN_PORT = 4000;
+      MAIN_PORT = environmentVariables.DEVELOPMENT_MAIN_PORT;
+      ADMIN_PORT = environmentVariables.DEVELOPMENT_ADMIN_PORT;
   }
   switch (config.type) {
     case 'server':
@@ -113,7 +115,7 @@ const generateWebpackConfig = config => {
         getAbsolute('src'),
         getAbsolute('.'),
       ],
-      extensions: ['.js', '.jsx', '.json5', '.ts', '.tsx'],
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
     },
 
     // This makes webpack not bundle in node_modules but leave the require statements
@@ -135,6 +137,7 @@ const generateWebpackConfig = config => {
           ADMIN_PORT,
           CI: JSON.stringify(process.env.CI),
           CIRCLECI: JSON.stringify(process.env.CIRCLECI),
+          ..._.mapValues(environmentVariables, JSON.stringify),
         },
       }),
       // Only add the plugin if we include the scss entry point
@@ -215,11 +218,6 @@ const generateWebpackConfig = config => {
           options: {
             tsConfigFile: 'tsconfig.json',
           },
-        },
-        {
-          test: /\.json5$/,
-          exclude: [getAbsolute('node_modules')],
-          loader: 'json5-loader',
         },
         // Only add the scss loaders if we're actually compiling it
       ].concat(

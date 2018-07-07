@@ -210,11 +210,6 @@ export default function runMainServer(serverFalcorModel) {
     );
   });
 
-  // To start server with PORT=3000 default: run `npm start`
-  // NOTE: On Linux systems, any port below 1024 requires root access (`sudo` command)
-  // To run on port 80:
-  //    Development build: run `sudo PORT=80 npm start`
-  //    Production build: run `sudo npm start`
   const port = isCI || !process.env.MAIN_PORT ? 3000 : process.env.MAIN_PORT;
   app.listen(port, err => {
     if (err) {
