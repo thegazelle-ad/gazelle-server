@@ -114,6 +114,10 @@ async function main() {
   // don't have to keep track of as many files.
   // Before anything else we check whether the user wanted this command or the usual script
   if (process.argv.length === 3 && process.argv[2] === '--check-outdated') {
+    if (!trimmedEnvFileLines) {
+      // It is of course outdated if there is no .env
+      process.exit(1);
+    }
     const exitCode = sampleAndCurrentHaveSameVariables() ? 0 : 1;
     // We notify the caller of the result through our exit code
     process.exit(exitCode);
