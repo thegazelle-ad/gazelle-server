@@ -69,6 +69,32 @@ jobs:
           key: v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
   unit_test:
+    <<: *defaults
+    steps:
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
+
+      - run:
+          name: Make sure workspace exists
+          command: mkdir -p ~/coverage
+
+      - run:
+          name: Run unit tests and save coverage
+          command: npm run test:unit -- --coverage | tee ~/coverage/unit
+
+      - persist_to_workspace:
+          root: ~/coverage
+          paths:
+            - unit
+
+  integration_test:
     <<: *defaults_with_database
     steps:
       - run:
@@ -82,20 +108,39 @@ jobs:
             - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
       - run:
-          name: setup dependencies for code coverage
-          command: sudo npm i -g coveralls
-
-      - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
       - run:
-          name: unit test
-          command: npm run test:unit:ci
+          name: Make sure workspace exists
+          command: mkdir -p ~/coverage
 
       - run:
-          name: gather test coverage data
-          command: npm run test:unit -- --coverage | coveralls
+          name: Run integration tests and save coverage
+          command: npm run test:it -- --coverage | tee ~/coverage/it
+
+      - persist_to_workspace:
+          root: ~/coverage
+          paths:
+            - it
+
+  send_coverage:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/coverage
+
+      - run:
+          name: setup dependencies for code coverage
+          command: sudo npm i -g coveralls
+
+      - run:
+          name: Debug echo
+          command: echo "$(head -n -7 ~/coverage/unit)$(head -n -7 ~/coverage/it)"
+
+      - run:
+          name: Send coverage to Coveralls (the heads remove the summaries)
+          command: echo "$(head -n -7 ~/coverage/unit)$(head -n -7 ~/coverage/it)" | coveralls
 
   lint:
     <<: *defaults
@@ -227,13 +272,20 @@ workflows:
       - unit_test:
           requires:
             - install_dependencies
+      - integration_test:
+          requires:
+            - install_dependencies
       - lint:
           requires:
             - install_dependencies
-
       - build:
           requires:
             - install_dependencies
+
+      - send_coverage:
+          requires:
+            - unit_test
+            - integration_test
 
       - end_to_end_tests:
           requires:
