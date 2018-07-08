@@ -112,7 +112,7 @@ jobs:
           name: save coverage
           command: |
             function f {
-              mysql -uroot -pcircleci_test_gazelle -e "show databases" | egrep -v "Database|mysql|information_schema" |gawk '{print "drop database " $1 ";select sleep(0.1);"}' | mysql -uroot -pcircleci_test_gazelle
+              mysql --protocol=TCP -uroot -pcircleci_test_gazelle -e "show databases" | egrep -v "Database|mysql|information_schema" |gawk '{print "drop database " $1 ";select sleep(0.1);"}' | mysql --protocol=TCP -uroot -pcircleci_test_gazelle
               npm run test:it -- --ci --coverage > coverage/it
             }
             f || f || f
@@ -178,10 +178,9 @@ jobs:
           name: Wait for db
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
-      - run: ./.circleci/scripts/load-test-database.sh
-
-      # Actually run the tests
-      - run: ./.circleci/scripts/run-end-to-end-tests.sh
+      - run:
+          name: Run E2E tests
+          command: ./.circleci/scripts/run-end-to-end-tests.sh
 
   prep_ssh:
     <<: *defaults
