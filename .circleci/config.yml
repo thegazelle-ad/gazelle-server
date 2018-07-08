@@ -35,8 +35,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - '**/*'
-            - '*'
+            - .
 
 
   install_dependencies:
@@ -56,8 +55,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - 'node_modules/**/*'
-            - 'node_modules/*'
+            - node_modules
 
   unit_test:
     <<: *defaults
@@ -67,7 +65,7 @@ jobs:
 
       - run:
           name: Make sure coverage folder exists
-          command: mkdir -p ~/coverage
+          command: mkdir -p coverage
 
       - run:
           name: Run unit tests and save coverage
@@ -86,7 +84,7 @@ jobs:
 
       - run:
           name: Make sure coverage folder exists
-          command: mkdir -p ~/coverage
+          command: mkdir -p coverage
 
       - run:
           name: Wait for db
@@ -144,8 +142,8 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - 'build/*'
-            - 'static/build/*'
+            - 'build'
+            - 'static/build'
 
   end_to_end_tests:
     <<: *defaults_with_database
