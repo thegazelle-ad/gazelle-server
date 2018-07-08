@@ -47,7 +47,7 @@ jobs:
 
       - run:
           name: Prep known hosts
-          command: cp known_hosts ~/.ssh/known_hosts
+          command: mkdir -p ~/.ssh && cp known_hosts ~/.ssh/known_hosts
 
       - run:
           name: Install dependencies in ci mode that is faster and ensures the lockfile is correct
@@ -187,7 +187,7 @@ jobs:
 
       - run:
           name: Prep known hosts
-          command: cp known_hosts ~/.ssh/known_hosts
+          command: mkdir -p ~/.ssh && cp known_hosts ~/.ssh/known_hosts
 
       - run:
           name: Deploy to staging
@@ -201,7 +201,7 @@ jobs:
 
       - run:
           name: Prep known hosts
-          command: cp known_hosts ~/.ssh/known_hosts
+          command: mkdir -p ~/.ssh && cp known_hosts ~/.ssh/known_hosts
 
       - run:
           name: Deploy to production
