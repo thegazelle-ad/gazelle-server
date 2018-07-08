@@ -15,6 +15,7 @@
     "build:staging": "webpack --config webpack/webpack.staging.config.js --bail --progress",
     "build:emulate-ci": "CI=true CIRCLECI=true npm run build:production",
     "test:unit": "jest --config='__tests__/config/jest.unit.config.js' --testLocationInResults",
+    "test:it": "jest --config='__tests__/config/jest.integration.config.js' --testLocationInResults",
     "test:e2e": "npm run db:seed && jest --config='__tests__/config/jest.e2e.config.js' --testLocationInResults --runInBand",
     "///": "When https://github.com/facebook/jest/issues/6470 is merged we'll be able to do this properly, but for now it's just so that flaky tests don't break CI too often",
     "test:unit:ci": "npm run test:unit -- --ci || npm run test:unit -- --ci || npm run test:unit -- --ci",
