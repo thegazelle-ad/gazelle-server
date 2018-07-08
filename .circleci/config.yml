@@ -46,6 +46,10 @@ jobs:
           at: .
 
       - run:
+          name: Prep known hosts
+          command: cp known_hosts ~/.ssh/known_hosts
+
+      - run:
           name: Install dependencies in ci mode that is faster and ensures the lockfile is correct
           command: npm ci
 
@@ -171,15 +175,19 @@ jobs:
           command: ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 
       - persist_to_workspace:
-          root: .
+          root: ~/.ssh
           paths:
-            - ../.ssh/known_hosts
+            - known_hosts
 
   deploy_staging:
     <<: *defaults
     steps:
       - attach_workspace:
           at: .
+
+      - run:
+          name: Prep known hosts
+          command: cp known_hosts ~/.ssh/known_hosts
 
       - run:
           name: Deploy to staging
@@ -190,6 +198,10 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+
+      - run:
+          name: Prep known hosts
+          command: cp known_hosts ~/.ssh/known_hosts
 
       - run:
           name: Deploy to production
@@ -229,7 +241,6 @@ workflows:
       - end_to_end_tests:
           requires:
             - build
-            - prep_ssh
 
       # Deployment related
       - deploy_staging:
