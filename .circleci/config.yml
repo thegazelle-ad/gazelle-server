@@ -36,13 +36,12 @@ jobs:
           root: .
           paths:
             - '**/*'
+            - '*'
 
 
   install_dependencies:
     <<: *defaults
     steps:
-      - attach_workspace:
-          at: ~/.ssh
       - attach_workspace:
           at: .
 
@@ -53,7 +52,8 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - '**/*'
+            - 'node_modules/**/*'
+            - 'node_modules/*'
 
   unit_test:
     <<: *defaults
@@ -72,7 +72,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - '**/*'
+            - coverage/unit
 
   integration_test:
     <<: *defaults_with_database
@@ -95,7 +95,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - '**/*'
+            - coverage/it
 
   send_coverage:
     <<: *defaults
@@ -140,15 +140,14 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - '**/*'
+            - 'build/*'
+            - 'static/build/*'
 
   end_to_end_tests:
     <<: *defaults_with_database
     steps:
       - attach_workspace:
           at: .
-      - attach_workspace:
-          at: ~/.ssh
 
       - run:
           name: Wait for db
@@ -172,15 +171,15 @@ jobs:
           command: ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 
       - persist_to_workspace:
-          root: ~/.ssh
+          root: .
           paths:
-            - known_hosts
+            - ../.ssh/known_hosts
 
   deploy_staging:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/.ssh
+          at: .
 
       - run:
           name: Deploy to staging
@@ -190,7 +189,7 @@ jobs:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/.ssh
+          at: .
 
       - run:
           name: Deploy to production
