@@ -69,11 +69,11 @@ jobs:
 
       - run:
           name: Run unit tests
-          command: npm run test:unit -- --ci
+          command: timeout 1m npm run test:unit -- --ci
 
       - run:
           name: save coverage
-          command: npm run test:unit -- --ci --coverage > coverage/unit
+          command: timeout 1m npm run test:unit -- --ci --coverage > coverage/unit
 
       - persist_to_workspace:
           root: .
@@ -94,7 +94,8 @@ jobs:
           name: Wait for db
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
-      # We rerun integration tests as they can some times be flaky. When https://github.com/facebook/jest/issues/6470 is implemented we can use that instead
+      # We rerun integration tests as they can some times be flaky.
+      # TODO: When https://github.com/facebook/jest/issues/6470 is implemented we can use that instead
       - run:
           name: Run integration tests
           command: |
@@ -102,8 +103,8 @@ jobs:
               # We clear state in between in case after a failed run some databases are still there.
               # If we're good about database names etc. it shouldn't be a problem, but just in case
               # The script is taken from https://stackoverflow.com/questions/22301635/drop-all-databases-in-mysql#comment75681619_22301636
-              mysql -uroot -pcircleci_test_gazelle -e "show databases" | egrep -v "Database|mysql|information_schema" |gawk '{print "drop database " $1 ";select sleep(0.1);"}' | mysql -uroot -pcircleci_test_gazelle
-              npm run test:it -- --ci
+              mysql --protocol=TCP -uroot -pcircleci_test_gazelle -e "show databases" | egrep -v "Database|mysql|information_schema" |gawk '{print "drop database " $1 ";select sleep(0.1);"}' | mysql --protocol=TCP -uroot -pcircleci_test_gazelle
+              timeout 1m npm run test:it -- --ci
             }
             f || f || f
 
@@ -113,7 +114,7 @@ jobs:
           command: |
             function f {
               mysql --protocol=TCP -uroot -pcircleci_test_gazelle -e "show databases" | egrep -v "Database|mysql|information_schema" |gawk '{print "drop database " $1 ";select sleep(0.1);"}' | mysql --protocol=TCP -uroot -pcircleci_test_gazelle
-              npm run test:it -- --ci --coverage > coverage/it
+              timeout 1m npm run test:it -- --ci --coverage > coverage/it
             }
             f || f || f
 
@@ -134,7 +135,7 @@ jobs:
 
       - run:
           name: Send coverage to Coveralls
-          command: echo "$(cat coverage/unit)$(cat coverage/it)" | coveralls
+          command: cat coverage/* | coveralls
 
   lint:
     <<: *defaults

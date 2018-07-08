@@ -10,19 +10,20 @@ function check_server_alive {
   # Wait for servers to start
   IS_UP=1
   MAX_SERVER_RETRIES=30
-  while [ $IS_UP -ne 0 ]
+  while [ $IS_UP -ne 0 ] && [[ $MAX_SERVER_RETRIES -ne 0 ]]
   do
     sleep 0.5
     curl -f http://localhost:3000/alive &> /dev/null
     IS_UP=$(echo $?)
     let "MAX_SERVER_RETRIES--"
-    if [[ $MAX_SERVER_RETRIES -eq 0 ]]
-    then
-      echo "Server seems to not be responding, printing logs below"
-      print_logs
-      exit 1
-    fi
   done
+
+  if [[ $IS_UP -ne 0 ]]
+  then
+    echo "Server seems to not be responding, printing logs below"
+    print_logs
+    exit 1
+  fi
   # Now the server is running
   echo "Gazelle server is responding"
 }
@@ -32,20 +33,14 @@ function run_test {
   forever restartall
   # db:seed is run by the package.json script so not needed
   check_server_alive
-  npm run test:e2e -- --ci
+  timeout 3m npm run test:e2e -- --ci
 }
-
-# Prep the database
-
-# First create the database that we are going to populate
-mysql --protocol=TCP --user=root -pcircleci_test_gazelle -D the_gazelle -e 'create database the_gazelle'
-
-# Create the structure of our database
-npm run db:migrate
-
 
 # Run our server
 cd ~/gazelle-server
+
+# Prep database (database already created in the docker container)
+npm run db:migrate
 
 forever start build/server.js &> /dev/null
 
@@ -61,6 +56,8 @@ echo "Starting testing"
 # Initialize variable
 EXIT_CODE=1
 MAX_TEST_RETRIES=3
+# We rerun E2E tests as they can some times be flaky.
+# TODO: When https://github.com/facebook/jest/issues/6470 is implemented we can use that instead
 while [[ $EXIT_CODE -ne 0 ]] && [[ $MAX_TEST_RETRIES -ne 0 ]]
 do
   echo "$MAX_RETRIES left"
@@ -82,6 +79,6 @@ forever stopall
 
 sudo kill $SCREEN_PID
 
-# We also have to kill the node processes that they spawn
-ps -a | grep node | awk '{print $1}' | xargs sudo kill
+# We also have to kill the node processes that they spawn if there are any
+ps -a | grep node | awk '{print $1}' | xargs --no-run-if-empty sudo kill
 exit $EXIT_CODE
