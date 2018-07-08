@@ -136,11 +136,11 @@ jobs:
 
       - run:
           name: Debug echo
-          command: printf "$(head -n -7 ~/coverage/unit | tail -n +5)\n(head -n -7 ~/coverage/it | tail -n +5)"
+          command: printf "$(head -n -7 ~/coverage/unit | tail -n +5)\n$(head -n -7 ~/coverage/it | tail -n +5)"
 
       - run:
           name: Send coverage to Coveralls (the heads remove the summaries at the end, the tail removes the first lines by npm)
-          command: printf "$(head -n -7 ~/coverage/unit | tail -n +5)\n(head -n -7 ~/coverage/it | tail -n +5)" | coveralls
+          command: printf "$(head -n -7 ~/coverage/unit | tail -n +5)\n$(head -n -7 ~/coverage/it | tail -n +5)" | coveralls
 
   lint:
     <<: *defaults
