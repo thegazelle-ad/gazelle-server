@@ -1,36 +1,21 @@
 #!/bin/bash
 
-DIRECTIVE=$(dirname $0)
-
-mysqldump -u "$DATABASE_USER" -p"$DATABASE_PASSWORD" "$DATABASE_NAME" > "$DIRECTIVE"/helpers/temp.dump
-
-if [ $? -ne 0 ]
-then
-  ERROR_MESSAGE="Creating database dump failed"
+function error {
+  ERROR_MESSAGE=$1
   echo $ERROR_MESSAGE >&2
   node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" error-logging "$GAZELLE_ENV server: $ERROR_MESSAGE"
   exit 1
-fi
+}
 
+DIRECTORY=$(dirname ${BASH_SOURCE[0]})
+DUMP_PATH=$DIRECTIVE/helpers/temp.dump
 
-node $DIRECTIVE/helpers/upload-database-dump.js $DIRECTIVE/helpers/temp.dump
+source $DIRECTIVE/source_env.sh
 
-if [ $? -ne 0 ]
-then
-  ERROR_MESSAGE="Uploading database dump failed"
-  echo $ERROR_MESSAGE >&2
-  node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" error-logging "$GAZELLE_ENV server: $ERROR_MESSAGE"
-  exit 1
-fi
+mysqldump -u $DATABASE_USER -p$DATABASE_PASSWORD $DATABASE_NAME > $DUMP_PATH || error "Creating database dump failed"
 
-rm $DIRECTIVE/helpers/temp.dump
+node $DIRECTIVE/helpers/upload-database-dump.js $DUMP_PATH || error "Uploading database dump failed"
 
-if [ $? -ne 0 ]
-then
-  ERROR_MESSAGE="Removing database dump file failed"
-  echo $ERROR_MESSAGE >&2
-  node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" error-logging "$GAZELLE_ENV server: $ERROR_MESSAGE"
-  exit 1
-fi
+rm $DUMP_PATH || error "Removing database dump file failed"
 
 node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" "$GAZELLE_ENV server: Database backup successfully completed"
