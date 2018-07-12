@@ -1,14 +1,18 @@
-// Inspired by http://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object
-// but code modified extensively
-Date.prototype.yyyymmdd = function() {
-  var yyyy = this.getFullYear();
-  var mm = this.getMonth() + 1; // getMonth() is zero-based
-  var dd = this.getDate();
-  var dateString = yyyy.toString()+'-';
+/* eslint-disable no-console */
+/*
+ * These first two functions are the meat of the code, the rest
+ * is mostly boilerplate from Google to ensure authentication etc.
+ */
+
+const dateToyyyymmdd = date => {
+  const yyyy = date.getFullYear();
+  const mm = date.getMonth() + 1; // getMonth() is zero-based
+  const dd = date.getDate();
+  let dateString = `${yyyy}-`;
   if (mm < 10) {
     dateString += '0';
   }
-  dateString += mm.toString()+'-';
+  dateString += `${mm}-`;
   if (dd < 10) {
     dateString += '0';
   }
@@ -18,95 +22,144 @@ Date.prototype.yyyymmdd = function() {
 
 // Own code
 function uploadDatabaseDump(auth) {
-  var service = google.drive({version: 'v3', auth: auth});
+  const drive = google.drive({ version: 'v3', auth });
   // get file path from arguments
-  var inputFilePath = process.argv[2];
+  const [, , inputFilePath] = process.argv;
   if (!inputFilePath) {
-    console.error("Error: No filename was specified in arguments");
+    console.error('Error: No filename was specified in arguments');
     process.exit(1);
   }
-  var buffer = fs.readFileSync(inputFilePath);
+  const buffer = fs.readFileSync(inputFilePath);
 
-  service.files.list({
-    q: "name='Timestamped Ghost Dumps' and mimeType='application/vnd.google-apps.folder'"
-  }, (err, response) => {
-    if (err) {
-      throw err;
-    }
-    if (response.files.length !== 1) {
-      console.error("found more than one folder named 'Timestamped Ghost Dumps'");
-      process.exit(1);
-    }
-    var folderId = response.files[0].id;
-    var dateString = new Date().yyyymmdd();
-    var outputFileName = dateString + '.dump';
-    service.files.create({
-      resource: {
-        name: outputFileName,
-        mimeType: 'application/octet-stream',
-        parents: [folderId],
-      },
-      media: {
-        mimeType: 'application/octet-stream',
-        body: buffer,
-      },
-      uploadType: "resumable"
-    }, (err, response) => {
+  drive.files.list(
+    {
+      q:
+        "name='Timestamped Ghost Dumps' and mimeType='application/vnd.google-apps.folder'",
+    },
+    (err, response) => {
       if (err) {
-        console.error(err);
+        throw err;
+      }
+      if (response.data.files.length !== 1) {
+        console.error(
+          "found more than one folder named 'Timestamped Ghost Dumps'",
+        );
         process.exit(1);
       }
-    })
-  })
-
+      const folderId = response.files[0].id;
+      const dateString = dateToyyyymmdd(new Date());
+      const uploadedFileName = `${dateString}.dump`;
+      drive.files.create(
+        {
+          resource: {
+            name: uploadedFileName,
+            mimeType: 'application/octet-stream',
+            parents: [folderId],
+          },
+          media: {
+            mimeType: 'application/octet-stream',
+            body: buffer,
+          },
+          uploadType: 'resumable',
+        },
+        createError => {
+          if (createError) {
+            console.error(createError);
+            process.exit(1);
+          }
+        },
+      );
+    },
+  );
 }
 
-// EVERYTHING BELOW HERE COMES FROM https://developers.google.com/drive/v3/web/quickstart/nodejs (with small modifications)
+/*
+ * This is the boilerplate, that has been edited somewhat but is mostly the same as
+ * when taken from the sample at https://developers.google.com/drive/api/v3/quickstart/nodejs.
+ * We pass in uploadDatabaseDump as our callback
+ */
+const fs = require('fs');
+const path = require('path');
+const readline = require('readline');
+const { google } = require('googleapis');
 
-var fs = require('fs');
-var readline = require('readline');
-var google = require('googleapis');
-var googleAuth = require('google-auth-library');
+// If modifying these scopes, delete credentials.json.
+const SCOPES = ['https://www.googleapis.com/auth/drive'];
+const TOKEN_PATH = path.join(__dirname, 'credentials.json');
+const CLIENT_SECRET_PATH = path.join(__dirname, 'client-secret.json');
 
-// If modifying these scopes, delete your previously saved credentials
-// at ~/.credentials/drive-nodejs-quickstart.json
-var SCOPES = ['https://www.googleapis.com/auth/drive'];
-var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
-    process.env.USERPROFILE) + '/.credentials/';
-var TOKEN_PATH = TOKEN_DIR + 'drive-nodejs-quickstart.json';
-
-// Load client secrets from a local file.
-fs.readFile(__dirname+'/client-secret.json', function processClientSecrets(err, content) {
+// Load client secrets from a local file
+fs.readFile(CLIENT_SECRET_PATH, (err, content) => {
   if (err) {
-    console.error('Error loading client secret file: ' + err);
+    console.log('Error loading client secret file:', err);
     process.exit(1);
   }
-  // Authorize a client with the loaded credentials, then call the
-  // Drive API.
+  // Authorize a client with credentials, then call the Google Drive API.
   authorize(JSON.parse(content), uploadDatabaseDump);
 });
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
  * given callback function.
- *
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
 function authorize(credentials, callback) {
-  var clientSecret = credentials.installed.client_secret;
-  var clientId = credentials.installed.client_id;
-  var redirectUrl = credentials.installed.redirect_uris[0];
-  var auth = new googleAuth();
-  var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
-  // Get the stored token
-  fs.readFile(TOKEN_PATH, function(err, token) {
+  const {
+    client_secret: clientSecret,
+    client_id: clientId,
+    redirect_uris: redirectUris,
+  } = credentials.installed;
+  const oAuth2Client = new google.auth.OAuth2(
+    clientId,
+    clientSecret,
+    redirectUris[0],
+  );
+
+  // Check if we have previously stored a token.
+  fs.readFile(TOKEN_PATH, (err, token) => {
     if (err) {
-      console.error("Error: You have to run getGoogleApiOAuthToken.sh first, no token currently stored");
-      process.exit(1);
-    } else {
-      oauth2Client.credentials = JSON.parse(token);
-      callback(oauth2Client);
+      getAccessToken(oAuth2Client, callback);
+      return;
     }
+    oAuth2Client.setCredentials(JSON.parse(token));
+    callback(oAuth2Client);
+  });
+}
+
+/**
+ * Get and store new token after prompting for user authorization, and then
+ * execute the given callback with the authorized OAuth2 client.
+ * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
+ * @param {getEventsCallback} callback The callback for the authorized client.
+ */
+function getAccessToken(oAuth2Client, callback) {
+  const authUrl = oAuth2Client.generateAuthUrl({
+    access_type: 'offline',
+    scope: SCOPES,
+  });
+  console.log('Authorize this app by visiting this url:', authUrl);
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  rl.question('Enter the code from that page here: ', code => {
+    rl.close();
+    oAuth2Client.getToken(code, (err, token) => {
+      if (err) {
+        console.error(err);
+        process.exit(1);
+      }
+      oAuth2Client.setCredentials(token);
+      // Store the token to disk for later program executions
+      fs.writeFile(TOKEN_PATH, JSON.stringify(token), writeErr => {
+        if (writeErr) {
+          console.error(writeErr);
+          process.exit(1);
+        }
+        console.log('Token stored to', TOKEN_PATH);
+      });
+      callback(oAuth2Client);
+    });
   });
 }
