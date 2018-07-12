@@ -29,12 +29,11 @@ function uploadDatabaseDump(auth) {
     console.error('Error: No filename was specified in arguments');
     process.exit(1);
   }
-  const buffer = fs.readFileSync(inputFilePath);
 
   drive.files.list(
     {
       q:
-        "name='Timestamped Ghost Dumps' and mimeType='application/vnd.google-apps.folder'",
+        "name='Database Dumps' and mimeType='application/vnd.google-apps.folder'",
     },
     (err, response) => {
       if (err) {
@@ -46,27 +45,29 @@ function uploadDatabaseDump(auth) {
         );
         process.exit(1);
       }
-      const folderId = response.files[0].id;
+      const folderId = response.data.files[0].id;
       const dateString = dateToyyyymmdd(new Date());
       const uploadedFileName = `${dateString}.dump`;
+      console.log(uploadedFileName);
       drive.files.create(
         {
-          resource: {
+          requestBody: {
             name: uploadedFileName,
             mimeType: 'application/octet-stream',
             parents: [folderId],
           },
           media: {
             mimeType: 'application/octet-stream',
-            body: buffer,
+            body: fs.createReadStream(inputFilePath),
           },
-          uploadType: 'resumable',
         },
-        createError => {
+        (createError, response) => {
           if (createError) {
             console.error(createError);
             process.exit(1);
           }
+          console.log('Sucessfully uploaded database dump');
+          console.log(response.data);
         },
       );
     },
