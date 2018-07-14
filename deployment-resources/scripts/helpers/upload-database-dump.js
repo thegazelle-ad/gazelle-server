@@ -35,20 +35,19 @@ function uploadDatabaseDump(auth) {
       q:
         "name='Database Dumps' and mimeType='application/vnd.google-apps.folder'",
     },
-    (err, response) => {
+    (err, listFileResponse) => {
       if (err) {
         throw err;
       }
-      if (response.data.files.length !== 1) {
+      if (listFileResponse.data.files.length !== 1) {
         console.error(
           "found more than one folder named 'Timestamped Ghost Dumps'",
         );
         process.exit(1);
       }
-      const folderId = response.data.files[0].id;
+      const folderId = listFileResponse.data.files[0].id;
       const dateString = dateToyyyymmdd(new Date());
       const uploadedFileName = `${dateString}.dump`;
-      console.log(uploadedFileName);
       drive.files.create(
         {
           requestBody: {
@@ -61,13 +60,15 @@ function uploadDatabaseDump(auth) {
             body: fs.createReadStream(inputFilePath),
           },
         },
-        (createError, response) => {
+        (createError, createFileResponse) => {
           if (createError) {
             console.error(createError);
             process.exit(1);
           }
           console.log('Sucessfully uploaded database dump');
-          console.log(response.data);
+          console.log(
+            `Response: ${JSON.stringify(createFileResponse.data, null, 4)}`,
+          );
         },
       );
     },
