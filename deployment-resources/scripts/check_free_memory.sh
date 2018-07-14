@@ -1,5 +1,8 @@
 #!/bin/bash
 
+DIRECTORY=$(dirname ${BASH_SOURCE[0]})
+source $DIRECTORY/source_environment.sh
+
 IS_NUM_REGEX="^[0-9]+$"
 
 NOTIFICATION_LOG_PATH=~/.memory_low_notified.txt
@@ -43,6 +46,7 @@ then
   fi
 
   # Log that we have notified the channel at the current limit at the current time
+  # Note the exit statement above that will make this not occur in that logical branch
   echo "$CURRENT_TIME $MEMORY_FREE" > "$NOTIFICATION_LOG_PATH"
 
   TOP_MEMORY_CONSUMING_PROCESSES=$(ps -eo pid,ppid,cmd:5000,%mem,%cpu --sort=-%mem | head)
@@ -53,7 +57,7 @@ The top consuming processes are:
 
 >>> ${TOP_MEMORY_CONSUMING_PROCESSES}"
   # Notify Slack channel
-  node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" "$SLACK_CHANNEL" "$ALERT_MESSAGE"
+  node "$DIRECTORY/send-to-slack.js" "$SLACK_CHANNEL" "$ALERT_MESSAGE"
   if [[ $? -ne 0 ]];
   then
     echo "Slack Deployment Bot failed"
