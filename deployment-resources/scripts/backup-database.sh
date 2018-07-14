@@ -10,7 +10,7 @@ function error {
 DIRECTORY=$(dirname ${BASH_SOURCE[0]})
 DUMP_PATH=$DIRECTORY/helpers/temp.dump
 
-source $DIRECTORY/source_environment.sh
+source $DIRECTORY/source-environment.sh
 
 mysqldump -u $DATABASE_USER -p$DATABASE_PASSWORD $DATABASE_NAME > $DUMP_PATH || error "Creating database dump failed"
 

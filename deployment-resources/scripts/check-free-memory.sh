@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DIRECTORY=$(dirname ${BASH_SOURCE[0]})
-source $DIRECTORY/source_environment.sh
+source $DIRECTORY/source-environment.sh
 
 IS_NUM_REGEX="^[0-9]+$"
 

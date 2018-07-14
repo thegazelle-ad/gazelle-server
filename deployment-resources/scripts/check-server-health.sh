@@ -7,6 +7,9 @@ then
   exit 1
 fi
 
+DIRECTORY=$(dirname ${BASH_SOURCE[0]})
+source $DIRECTORY/source-environment.sh
+
 SLACK_CHANNEL=$1
 
 curl -f http://localhost:8001/alive &> /dev/null
@@ -17,7 +20,7 @@ then
   forever restartall
 
   # Notify Slack channel
-  node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" "$SLACK_CHANNEL" "The $GAZELLE_ENV server stopped responding and was restarted"
+  node "$DIRECTORY/send-to-slack.js" "$SLACK_CHANNEL" "The $GAZELLE_ENV server stopped responding and was restarted"
   if [[ $? -ne 0 ]];
   then
     echo "Slack Deployment Bot failed"
@@ -33,7 +36,7 @@ then
   forever restartall
 
   # Notify Slack channel
-  node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" "$SLACK_CHANNEL" "The $GAZELLE_ENV server stopped responding and was restarted"
+  node "$DIRECTORY/send-to-slack.js" "$SLACK_CHANNEL" "The $GAZELLE_ENV server stopped responding and was restarted"
   if [[ $? -ne 0 ]];
   then
     echo "Slack Deployment Bot failed"
