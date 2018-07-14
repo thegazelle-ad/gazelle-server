@@ -57,7 +57,7 @@ The top consuming processes are:
 
 >>> ${TOP_MEMORY_CONSUMING_PROCESSES}"
   # Notify Slack channel
-  node "$DIRECTORY/send-to-slack.js" "$SLACK_CHANNEL" "$ALERT_MESSAGE"
+  node "$DIRECTORY/helpers/send-to-slack.js" "$SLACK_CHANNEL" "$ALERT_MESSAGE"
   if [[ $? -ne 0 ]];
   then
     echo "Slack Deployment Bot failed"

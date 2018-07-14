@@ -20,7 +20,7 @@ then
   forever restartall
 
   # Notify Slack channel
-  node "$DIRECTORY/send-to-slack.js" "$SLACK_CHANNEL" "The $GAZELLE_ENV server stopped responding and was restarted"
+  node "$DIRECTORY/helpers/send-to-slack.js" "$SLACK_CHANNEL" "The $GAZELLE_ENV server stopped responding and was restarted"
   if [[ $? -ne 0 ]];
   then
     echo "Slack Deployment Bot failed"
@@ -36,7 +36,7 @@ then
   forever restartall
 
   # Notify Slack channel
-  node "$DIRECTORY/send-to-slack.js" "$SLACK_CHANNEL" "The $GAZELLE_ENV server stopped responding and was restarted"
+  node "$DIRECTORY/helpers/send-to-slack.js" "$SLACK_CHANNEL" "The $GAZELLE_ENV server stopped responding and was restarted"
   if [[ $? -ne 0 ]];
   then
     echo "Slack Deployment Bot failed"

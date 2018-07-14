@@ -3,7 +3,7 @@
 function error {
   ERROR_MESSAGE=$1
   echo $ERROR_MESSAGE >&2
-  node $DIRECTORY/send-to-slack.js error-logging "$GAZELLE_ENV server: $ERROR_MESSAGE"
+  node $DIRECTORY/helpers/send-to-slack.js error-logging "$GAZELLE_ENV server: $ERROR_MESSAGE"
   exit 1
 }
 
@@ -18,4 +18,4 @@ node $DIRECTORY/helpers/upload-database-dump.js $DUMP_PATH || error "Uploading d
 
 rm $DUMP_PATH || error "Removing database dump file failed"
 
-node "$DIRECTORY/send-to-slack.js" "$GAZELLE_ENV server: Database backup successfully completed"
+node "$DIRECTORY/helpers/send-to-slack.js" "$GAZELLE_ENV server: Database backup successfully completed"

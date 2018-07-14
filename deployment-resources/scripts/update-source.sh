@@ -8,7 +8,7 @@ function error {
 }
 
 DIRECTORY=$(dirname ${BASH_SOURCE[0]})
-SEND_TO_SLACK_SCRIPT="$DIRECTORY/send-to-slack.js"
+SEND_TO_SLACK_SCRIPT="$DIRECTORY/helpers/send-to-slack.js"
 
 source $DIRECTORY/source-environment.sh
 
