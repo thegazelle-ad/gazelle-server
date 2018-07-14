@@ -1,13 +1,25 @@
 #!/bin/bash
 
+function error {
+  ERROR_MESSAGE=$1
+  echo $ERROR_MESSAGE >&2
+  node $SEND_TO_SLACK_SCRIPT "Deploying $GAZELLE_ENV failed: $ERROR_MESSAGE"
+  exit 1
+}
+
+DIRECTORY=$(dirname ${BASH_SOURCE[0]})
+SEND_TO_SLACK_SCRIPT="$DIRECTORY/send-to-slack.js"
+
+source $DIRECTORY/source-environment.sh
+
 # Tell Slack that we're starting deployment
 if [ "$GAZELLE_ENV" == "staging" ]
 then
-  node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" "Starting deployment to staging.thegazelle.org, and staging.admin.thegazelle.org"
+  node $SEND_TO_SLACK_SCRIPT "Starting deployment to staging.thegazelle.org, and staging.admin.thegazelle.org"
 fi
 if [ "$GAZELLE_ENV" == "production" ]
 then
-  node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" "Starting deployment to www.thegazelle.org, and admin.thegazelle.org"
+  node $SEND_TO_SLACK_SCRIPT "Starting deployment to www.thegazelle.org, and admin.thegazelle.org"
 fi
 if [ $? -ne 0 ]
   then
@@ -16,13 +28,7 @@ if [ $? -ne 0 ]
 fi
 
 # Go to the main repo
-cd "$HOME/server"
-if [ $? -ne 0 ]
-then
-  echo "couldn't find folder" >&2
-  node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" "Deploying $GAZELLE_ENV failed: Couldn't cd into main repo"
-  exit 1
-fi
+cd "$HOME/server" || error "Couldn't cd into main repo"
 
 # Checkout relevant branch
 if [ "$GAZELLE_ENV" == "staging" ]
@@ -33,63 +39,22 @@ if [ "$GAZELLE_ENV" == "production" ]
 then
   git checkout stable
 fi
-if [ $? -ne 0 ]
-then
-  echo "Git checkout failed" >&2
-  node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" "Deploying $GAZELLE_ENV failed: couldn't git checkout the branch"
-  exit 1
-fi
+[[ $? -eq 0 ]] || error "Couldn't git checkout the branch"
 
 # Pull the latest source
-git pull
-if [ $? -ne 0 ]
-then
-  echo "Git pull failed" >&2
-  node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" "Deploying $GAZELLE_ENV failed: couldn't pull new source"
-  exit 1
-fi
+git pull || error "Couldn't pull new source"
 
 # Install the latest dependencies
-npm install
-if [ $? -ne 0 ]
-then
-  echo "npm install failed" >&2
-  node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" "Deploying $GAZELLE_ENV failed: couldn't install new dependencies"
-  exit 1
-fi
+npm ci || "couldn't install latest dependencies"
 
 # Make sure nothing changed
-if [ "$(git diff)" != "" ]
-then
-  echo "source changed during update" >&2
-  node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" "Deploying $GAZELLE_ENV failed: source changed during update"
-  exit 1
-fi
+[[ "$(git diff)" != "" ]] && error "Source unexpectedly changed during update"
 
 # Build the new source
-if [ "$GAZELLE_ENV" == "staging" ]
-then
-  npm run build:staging
-fi
-if [ "$GAZELLE_ENV" == "production" ]
-then
-  npm run build:production
-fi
-if [ $? -ne 0 ]
-then
-  echo "build failed" >&2
-  node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" "Deploying $GAZELLE_ENV failed: couldn't build source"
-  exit 1
-fi
+npm run "build:$GAZELLE_ENV" || error "Couldn't build source"
 
 # Restart the server so it runs the new code
-forever restart server
-if [ $? -ne 0 ]
-then
-  echo "server restart failed" >&2
-  node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" "Deploying $GAZELLE_ENV failed: couldn't restart server"
-  exit 1
-fi
+forever restart server || "Couldn't restart server"
 
 # Announce the deployment success
 cd ..
