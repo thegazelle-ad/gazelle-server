@@ -5,6 +5,7 @@
 
 const fs = require('fs');
 const { WebClient } = require('@slack/client');
+const path = require('path');
 
 const token = process.env.SLACK_API_TOKEN;
 let message;
@@ -25,7 +26,7 @@ if (process.argv.length === 3) {
 const web = new WebClient(token);
 web.chat.postMessage(channel, message, { as_user: true }, err => {
   if (err) {
-    const fd = fs.openSync('slack-bot-errors.log', 'a');
+    const fd = fs.openSync(path.join(__dirname, 'slack-bot-errors.log'), 'a');
     fs.writeSync(fd, `${new Date().toString()}: ${err.toString()}\n`);
     fs.closeSync(fd);
     console.error(err);

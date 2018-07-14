@@ -18,4 +18,4 @@ node $DIRECTORY/helpers/upload-database-dump.js $DUMP_PATH || error "Uploading d
 
 rm $DUMP_PATH || error "Removing database dump file failed"
 
-node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" "$GAZELLE_ENV server: Database backup successfully completed"
+node "$DIRECTORY/send-to-slack.js" "$GAZELLE_ENV server: Database backup successfully completed"
