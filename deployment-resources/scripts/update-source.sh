@@ -45,7 +45,7 @@ fi
 git pull || error "Couldn't pull new source"
 
 # Install the latest dependencies
-npm ci || "couldn't install latest dependencies"
+npm ci || error "couldn't install latest dependencies"
 
 # Make sure nothing changed
 [[ "$(git diff)" != "" ]] && error "Source unexpectedly changed during update"
@@ -53,8 +53,19 @@ npm ci || "couldn't install latest dependencies"
 # Build the new source
 npm run "build:$GAZELLE_ENV" || error "Couldn't build source"
 
+# Migrate database, important that we do this just before restarting server
+# so that the database isn't incompatible for too long in case we did any
+# breaking change migrations
+npm run db:migrate || error "Couldn't migrate database"
+
+# If we are on the staging server then we should also run the new seed to
+# make sure we have the latest dummy data. VERY IMPORTANT NOT TO RUN
+# THIS ON PRODUCTION. It would delete the production database (we
+# of course have backups but let's not have to use them)
+[[ $GAZELLE_ENV == "staging" ]] && (npm run db:seed || error "Couldn't run DB seed")
+
 # Restart the server so it runs the new code
-forever restart server || "Couldn't restart server"
+forever restart server || error "Couldn't restart server"
 
 # Announce the deployment success
 cd ..
