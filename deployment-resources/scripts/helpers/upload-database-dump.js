@@ -88,7 +88,7 @@ const { google } = require('googleapis');
 // If modifying these scopes, delete credentials.json.
 const SCOPES = ['https://www.googleapis.com/auth/drive'];
 const TOKEN_PATH = path.join(__dirname, 'credentials.json');
-const CLIENT_SECRET_PATH = path.join(__dirname, 'client-secret.json');
+const CLIENT_SECRET_PATH = path.join(__dirname, 'client_secret.json');
 
 // Load client secrets from a local file
 fs.readFile(CLIENT_SECRET_PATH, (err, content) => {
