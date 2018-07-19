@@ -48,8 +48,8 @@ AWS_S3_ACCESS_KEY_ID=
 AWS_S3_SECRET_ACCESS_KEY=
 
 # Config for sending notifications to Slack
-## If you don't already have a bot created you can do this here:
-## https://api.slack.com/bot-users. You can then find the token in the bot account
+## If you don't already have a bot created or are unsure where to find the token check out our guide at
+## https://github.com/thegazelle-ad/gazelle-server/tree/master/docs/misc/managing-slack-bot.md
 SLACK_API_TOKEN=
 
 # Environment related
