@@ -211,8 +211,14 @@ jobs:
           command: mkdir -p ~/.ssh && cp known_hosts ~/.ssh/known_hosts
 
       - run:
-          name: Deploy to staging
-          command: ssh "$GAZELLE_SERVER_STAGING_USER@$GAZELLE_SERVER_STAGING_IP" 'bash -ic "deployment-resources/scripts/update-source.sh"'
+          name: Copy compiled javascript to the server
+          command: |
+            scp ./build/* "$GAZELLE_SERVER_STAGING_USER@$GAZELLE_SERVER_STAGING_IP":~/build/
+            scp ./static/build/* "$GAZELLE_SERVER_STAGING_USER@$GAZELLE_SERVER_STAGING_IP":~/static/build/
+
+      - run:
+          name: Finalize deployment
+          command: ssh "$GAZELLE_SERVER_STAGING_USER@$GAZELLE_SERVER_STAGING_IP" 'bash -ic "deployment-resources/scripts/finalize-deployment.sh"'
 
   deploy_production:
     <<: *defaults
@@ -225,8 +231,14 @@ jobs:
           command: mkdir -p ~/.ssh && cp known_hosts ~/.ssh/known_hosts
 
       - run:
-          name: Deploy to production
-          command: ssh "$GAZELLE_SERVER_PRODUCTION_USER@$GAZELLE_SERVER_PRODUCTION_IP" 'bash -ic "deployment-resources/scripts/update-source.sh"'
+          name: Copy compiled javascript to the server
+          command: |
+            scp ./build/* "$GAZELLE_SERVER_PRODUCTION_USER@$GAZELLE_SERVER_PRODUCTION_IP":~/build/
+            scp ./static/build/* "$GAZELLE_SERVER_PRODUCTION_USER@$GAZELLE_SERVER_PRODUCTION_IP":~/static/build/
+
+      - run:
+          name: Finalize deployment
+          command: ssh "$GAZELLE_SERVER_PRODUCTION_USER@$GAZELLE_SERVER_PRODUCTION_IP" 'bash -ic "deployment-resources/scripts/finalize-deployment.sh"'
 
 workflows:
   version: 2
