@@ -211,6 +211,23 @@ jobs:
           command: mkdir -p ~/.ssh && cp known_hosts ~/.ssh/known_hosts
 
       - run:
+          # We need this so that the build is correct as Webpack injects the environment variables in
+          name: Get the environment file from the server
+          command: scp "$GAZELLE_SERVER_STAGING_USER@$GAZELLE_SERVER_STAGING_IP":~/server/.env ./.env
+
+      - run:
+          name: Check environment file is up to date
+          command: |
+            node setup-env.js --check-outdated || (
+              echo "The environment file on the server is outdated, you will have to manually update the environment file before you can rerun this deployment step" &&
+              exit 1
+            )
+
+      - run:
+          name: Rerun the build, but now with the correct environment
+          command: npm run build:staging
+
+      - run:
           name: Copy compiled javascript to the server
           command: |
             scp ./build/* "$GAZELLE_SERVER_STAGING_USER@$GAZELLE_SERVER_STAGING_IP":~/build/
@@ -229,6 +246,23 @@ jobs:
       - run:
           name: Prep known hosts
           command: mkdir -p ~/.ssh && cp known_hosts ~/.ssh/known_hosts
+
+      - run:
+          # We need this so that the build is correct as Webpack injects the environment variables in
+          name: Get the environment file from the server
+          command: scp "$GAZELLE_SERVER_PRODUCTION_USER@$GAZELLE_SERVER_PRODUCTION_IP":~/server/.env ./.env
+
+      - run:
+          name: Check environment file is up to date
+          command: |
+            node setup-env.js --check-outdated || (
+              echo "The environment file on the server is outdated, you will have to manually update the environment file before you can rerun this deployment step" &&
+              exit 1
+            )
+
+      - run:
+          name: Rerun the build, but now with the correct environment
+          command: npm run build:production
 
       - run:
           name: Copy compiled javascript to the server
@@ -278,7 +312,7 @@ workflows:
       # Deployment related
       - deploy_staging:
           requires:
-            - unit_test
+            - send_coverage
             - lint
             - end_to_end_tests
             - prep_ssh
@@ -287,7 +321,7 @@ workflows:
               only: master
       - deploy_production:
           requires:
-            - unit_test
+            - send_coverage
             - lint
             - end_to_end_tests
             - prep_ssh
