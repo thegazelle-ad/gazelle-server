@@ -89,7 +89,7 @@ npm ci
 And then we just quickly want to disable the `postmerge` hook setup by Husky for development (and you might possibly want to disable others as well by doing something similar) by running
 
 ```bash
-echo "#!/bin/sh" > .git/hooks/post-merge
+echo "# Placeholder comment to disable husky" > .git/hooks/post-merge
 ```
 
 You then just follow [the wiki page for setting up the server from the Setup Database section](../dev-environment/setting-up-dev-environment.md#setup-database) up until but not including [the build step](../dev-environment/setting-up-dev-environment.md#build-the-source-code) (which should just be setting up the database and environment variables). But remember to install the `stable` branch for production and `master` for staging!

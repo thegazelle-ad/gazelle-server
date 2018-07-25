@@ -22,21 +22,21 @@ npm install
 
 You should first install MariaDB, which for Linux can be done here: https://downloads.mariadb.org/mariadb/repositories, and a guide for MacOS is here: https://mariadb.com/kb/en/library/installing-mariadb-on-macos-using-homebrew/. We recommend using either a Linux distribution or MacOS as your operating system when developing for The Gazelle. We use version 10.1 of MariaDB in production / CircleCI so that's the recommended version. If you are only setting up for development and not for deployment you can also use MySQL which is 100% compatible.
 
-After having installed MariaDB (or MySQL) setting up a development database should be as easy as running these three commands:
+After having installed MariaDB (or MySQL) we can create the database that we will use with The Gazelle:
 
 ```bash
 mysql -u root -p -e 'create database the_gazelle character set utf8'
-npm run db:migrate
-npm run db:seed
 ```
 
-When running the first command it will ask you for your password for the database client which should have been set during installation of MariaDB/MySQL. It may also just be empty, in which case you can try running the first command without the `-p` flag, or just press enter without entering anything into the password prompt.
+When running the command it will ask you for your password for the database client which should have been set during installation of MariaDB/MySQL. It may also just be empty, in which case you can try running the first command without the `-p` flag, or just press enter without entering anything into the password prompt.
 
 > NOTE: This is one of the places some people encounter errors where they somehow didn't get prompted to set a password when installing MariaDB and then the password ends up being unknown, the [`Frequently Encountered issues`](#frequently-encountered-issues) section has some tips on solving this issue.
 
+Before we can finish the setup of our newly created database, we just need to setup some config variables.
+
 # Setup config
 
-Before you can build the code you need to specify some environment specific configurations such as what the name and password of your database is, and which ports to run the servers on. Luckily we have written a nice little interactive script that should guide you through this, so you should just have to run
+Before you can run certain database commands or build the code you need to specify some environment specific configurations such as what the name and password of your database is, and which ports to run the servers on. Luckily we have written a nice little interactive script that should guide you through this, so you should just have to run
 
 ```bash
 node setup-env.js
@@ -49,6 +49,15 @@ cp .sample-env .env
 ```
 
 and filling out everything manually. This is basically what the setup script does for you.
+
+# Finish Database setup
+
+Now everything should be ready to populate the database we created earler by simply running these two commands
+
+```bash
+npm run db:migrate
+npm run db:seed
+```
 
 # Run build tool
 
