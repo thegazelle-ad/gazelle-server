@@ -14,7 +14,7 @@ It is also handy to run
 sudo apt update
 ```
 
-for the future installations we'll do.
+we'll need that command to have been run for the future installations.
 
 # Setting up git and connecting to Github
 
@@ -35,27 +35,25 @@ git config --global user.email nerds@thegazelle.org
 git config --global core.editor vim
 ```
 
-Then setup SSH on the server by first adding an ssh key as [described here](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/), and then [add the key](https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/) to the Github account of `gazelle-deployment-bot`.
+You should already have created an SSH key in the guide mentioned above, but in case you didn't it is also [described here](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/). Then you should [add the key](https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/) to the Github account of `gazelle-deployment-bot`.
 
 # Install necessary programs
 
-First [install nvm](https://github.com/creationix/nvm) and install the needed versions of node and npm (order is important as we want forever and npm v5.6.0 paired with node v9.3.0)
+First install node, upgrade npm and install our necessary npm packages
 
+```bash
+curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash - # At the time of writing we're using the newest version of node v9
+sudo apt-get install -y nodejs
+npm install -g npm@6.1 # You may want to use sudo here, also note this is just the version at the time of writing
+npm install -g forever # Also may need to use sudo here
 ```
-nvm install 9.3.0
-npm install -g npm@5.6.0
-npm install -g forever
-nvm install 4.2
-```
-
-> Note: Since you install `9.3.0` first, this will become the nvm default on startup (which is intended), but since you install `4.2` last that will be your active version, therefore, if you're doing all this in one go, remember to run `nvm use 9.3.0` (or `nvm use default` should be equivalent if installed correctly) before installing the main repo where this version is our officially supported one.
 
 You will also need python2 for some of the npm packages to run and it doesn't ship with Ubuntu 16.0.4, you can probably install it in many ways but [here](https://askubuntu.com/a/831075) is a simple guide which basically consists of
 
 ```
-sudo apt install python2.7
-sudo apt install python-pip
-sudo apt install python3-pip
+sudo apt install -y python2.7
+sudo apt install -y python-pip
+sudo apt install -y python3-pip
 sudo -H python2 -m pip install --upgrade pip
 sudo -H python3 -m pip install --upgrade pip
 ```
@@ -74,9 +72,27 @@ Which will take you through an interactive guide so you can set the timezone to 
 
 ## Setting up simple dev environment
 
-You just follow [the wiki page for setting up the server](https://github.com/thegazelle-ad/gazelle-server/wiki/Setting-Up-Dev-Environment) up until but not including the build step. Remember to install the `stable` branch for production and `master` for staging. We normally name the main server directory `server` and the ghost + database one `ghost`.
+First clone the main repo
 
-> NOTE: Remember to set the config of the Ghost blog so that the port is 8003 (or to match the Caddy config whatever that is at the moment), and to do this both in `server/config/ghost.config.js` and in `ghost/config.js`
+```bash
+# We normally name the repo directory `server` as the command below will
+git clone git@github.com:thegazelle-ad/gazelle-server.git server
+```
+
+Then (with the repo being your working directory, which you of course do by running `cd server`) run
+
+```bash
+# This is different from the npm install command and is more appropriate for deployment
+npm ci
+```
+
+And then we just quickly want to disable the `postmerge` hook setup by Husky for development (and you might possibly want to disable others as well by doing something similar) by running
+
+```bash
+echo "#!/bin/sh" > .git/hooks/post-merge
+```
+
+You then just follow [the wiki page for setting up the server from the Setup Database section](../dev-environment/setting-up-dev-environment.md#setup-database) up until but not including [the build step](../dev-environment/setting-up-dev-environment.md#build-the-source-code) (which should just be setting up the database and environment variables). But remember to install the `stable` branch for production and `master` for staging!
 
 ## Production specific config/setup
 

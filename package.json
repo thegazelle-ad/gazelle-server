@@ -2,7 +2,7 @@
   "name": "the-gazelle",
   "version": "1.0.0",
   "engines": {
-    "node": "~9.11.1",
+    "node": "~9.11.2",
     "npm": "~6.1.0"
   },
   "description": "Minimal starter kit for React, Falcor, and Universal rendering with ES6",
