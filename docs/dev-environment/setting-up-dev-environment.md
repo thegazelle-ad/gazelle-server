@@ -52,7 +52,7 @@ and filling out everything manually. This is basically what the setup script doe
 
 Also note that if you already have an up to date `.env` file stored somewhere else you should be able to just copy it in (such as if you're changing computers or migrating the servers to a new provider etc.)
 
-# Finish Database setup
+# Finish Database Setup
 
 Now everything should be ready to populate the database we created earler by simply running these two commands
 

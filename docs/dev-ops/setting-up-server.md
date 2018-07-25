@@ -94,17 +94,11 @@ echo "# Placeholder comment to disable husky" > .git/hooks/post-merge
 
 You then just follow [the wiki page for setting up the server from the Setup Database section](../dev-environment/setting-up-dev-environment.md#setup-database) up until but not including [the build step](../dev-environment/setting-up-dev-environment.md#build-the-source-code) (which should just be setting up the database and environment variables). But remember to install the `stable` branch for production and `master` for staging!
 
-## Production specific config/setup
-
-### Amazon S3
-
-In the dev setup you copied the dummy S3 config file `config/s3.config.js`, when setting up for production we also need actual credentials in that file. If you're simply migrating the server you can just copy the `s3.config.js` file from that server. If you're starting from scratch you'll need to generate a new pair of access keys which you do by going to your Amazon AWS account > My Security Credentials > Access Keys (Access Key ID and Secret Access Key) > Generate new key. And then you simply fill out the config file as is clearly outlined by the object.
-
-### Generating static http error code pages
+## Generating static http error code pages
 
 In order to not check in a lot of duplicate html pages we have written a short python generator that takes a template and creates specific error pages for each of the 5xx error codes. Generate these pages by simply running `python3 http-error-static-pages/5xx-static-html-generator.py` at the root of the `server` directory.
 
-### Build the source
+## Build the source
 
 > NOTE: If you are setting this up on a server with a small amount of RAM you might want to setup swap space first or it might not be sufficient to build source
 
