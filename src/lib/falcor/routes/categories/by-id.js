@@ -2,7 +2,7 @@ import falcor from 'falcor';
 import _ from 'lodash';
 
 import { database } from 'lib/db';
-import { categoryQuery, categoryArticleQuery } from './database-calls';
+import { categoryQuery, categoryArticleQuery } from './database-calls.sql';
 
 const $ref = falcor.Model.ref;
 

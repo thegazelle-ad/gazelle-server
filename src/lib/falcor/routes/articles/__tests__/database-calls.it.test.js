@@ -1,4 +1,4 @@
-import { getPaginatedArticle, createNewArticle } from '../database-calls';
+import { getPaginatedArticle, createNewArticle } from '../database-calls.sql';
 import {
   getDatabaseConnection,
   initializeTestDatabase,

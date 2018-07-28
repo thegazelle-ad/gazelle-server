@@ -1,7 +1,7 @@
 import falcor from 'falcor';
 import _ from 'lodash';
 
-import { getPaginatedArticle } from './database-calls';
+import { getPaginatedArticle } from './database-calls.sql';
 import { database } from 'lib/db';
 
 const $ref = falcor.Model.ref;

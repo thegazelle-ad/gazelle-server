@@ -4,12 +4,11 @@ module.exports = {
   rootDir: path.resolve(__dirname, '../..'),
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx'],
   moduleDirectories: ['node_modules', '<rootDir>/src', '<rootDir>'],
-  testRegex: String.raw`.*/__tests__/.*\.test\.(j|t)s$`,
   transform: {
     [String.raw`^.*\.(t|j)sx?$`]: 'babel-jest',
   },
+  // This is just the excludes, when extending the base you should specify which files you actually want coverage from by extending the array
   collectCoverageFrom: [
-    '<rootDir>/src/**/*.{js,jsx,ts,tsx}',
     '!**/__tests__/**/*',
     '!**/__mocks__/**/*',
     '!**/__snapshots__/**/*',
