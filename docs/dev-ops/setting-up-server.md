@@ -139,6 +139,15 @@ We use Cloudflare as our DNS provider. The lead engineers should have access to 
 
 It can be a good idea to setup swap space so that in case a huge load comes in our processes don't simply get killed. [this Digital Ocean guide](https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-16-04) details how to setup swap space. In our current setup on the production server we have bought a 2GB volume (very cheaply) so as to be nice to Digital Ocean and not setup swap space on the SSD and setup a 1.5GB swap file there. As the guide recommends we also changes the `swappiness` to 10 and the `vfs_cache_pressure` to 50.
 
+# Install Caddy
+
+To install caddy first run
+
+```bash
+# This line is generated at https://caddyserver.com/download where you can also add plugins if needed in the future
+curl https://getcaddy.com | bash -s personal
+```
+
 # Run everything
 
 First we start the main server:
@@ -162,18 +171,8 @@ vbell off
 
 Note that if you use the above `.screenrc` the escape key will be `CTRL + f` instead of `CTRL + a`.
 
-Now in the first window start Ghost:
-
 ```
-cd ~/ghost
-nvm use 4.2
-npm start --production
-```
-
-Then open another window in the same screen session (`CTRL + f, c`) and start caddy
-
-```
-~/deployment-resources/scripts/run_caddy.sh
+./deployment-resources/scripts/run_caddy.sh
 ```
 
 And then you can detach from the screen session (`CTRL + f, d`), to ever reattach to it (if you named it main) simply execute `screen -r main`.
