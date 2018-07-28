@@ -30,7 +30,8 @@ jobs:
 
       # Complete setup
       - run: |
-          sed 's/^DATABASE_PASSWORD=.*/DATABASE_PASSWORD=circleci_test_gazelle/' .sample-env > .env
+          sed 's/^DATABASE_PASSWORD=.*/DATABASE_PASSWORD=circleci_test_gazelle/' .sample-env |
+          sed 's/^GAZELLE_ENV=.*/GAZELLE_ENV=CI/' > .env
 
       - persist_to_workspace:
           root: .

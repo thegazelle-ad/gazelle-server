@@ -140,8 +140,6 @@ const generateWebpackConfig = config => {
           NODE_ENV: JSON.stringify(config.NODE_ENV),
           MAIN_PORT,
           ADMIN_PORT,
-          CI: JSON.stringify(process.env.CI),
-          CIRCLECI: JSON.stringify(process.env.CIRCLECI),
           ...stringifedEnvironmentVariables,
         },
       }),

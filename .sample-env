@@ -59,6 +59,8 @@ SLACK_API_TOKEN=
 # Environment related
 ## Needed to make some important distinctions that are different on staging and
 ## production servers. This value should be either staging or production when deploying
+## It should also be set to CI on CI, but CI doesn't use the setup script so we don't allow that
+## option here
 GAZELLE_ENV=development
 
 # Ports to run our servers on
