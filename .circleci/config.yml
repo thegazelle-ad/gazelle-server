@@ -103,7 +103,7 @@ jobs:
               # We clear state in between in case after a failed run some databases are still there.
               # If we're good about database names etc. it shouldn't be a problem, but just in case
               # The script is taken from https://stackoverflow.com/questions/22301635/drop-all-databases-in-mysql#comment75681619_22301636
-              mysql --protocol=TCP -uroot -pcircleci_test_gazelle -e "show databases" | egrep -v "Database|mysql|information_schema" |gawk '{print "drop database " $1 ";select sleep(0.1);"}' | mysql --protocol=TCP -uroot -pcircleci_test_gazelle
+              mysql --protocol=TCP -uroot -pcircleci_test_gazelle -e "show databases" | egrep -v "Database|mysql|information_schema" | awk '{print "drop database " $1 ";select sleep(0.1);"}' | mysql --protocol=TCP -uroot -pcircleci_test_gazelle
               timeout 1m npm run test:it -- --ci
             }
             f || f || f
