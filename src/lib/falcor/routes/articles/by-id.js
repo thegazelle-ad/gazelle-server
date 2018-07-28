@@ -15,7 +15,7 @@ import {
   updateArticles,
   articleQuery,
   articleTagQuery,
-} from './database-calls';
+} from './database-calls.sql';
 import { has } from 'lib/utilities';
 import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
 import { serverModel } from 'index';
