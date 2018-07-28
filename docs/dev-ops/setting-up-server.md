@@ -145,7 +145,7 @@ First we start the main server:
 
 ```
 cd ~/server
-forever start --uid "server" build/server.js
+forever start --uid server build/server.js
 ```
 
 Now startup a GNU Screen session (you can find a cheat sheet [here](http://neophob.com/2007/04/gnu-screen-cheat-sheet/), and several tutorials online). We recommend naming the session by for example running `screen -S main`. We also usually use the following `.screenrc` which you are welcome to setup
@@ -187,7 +187,7 @@ In order to let CircleCI know the IP/user etc. of your servers we need to set so
 - `GAZELLE_SERVER_PRODUCTION_USER`: The user we created for the production Ubuntu server
 - `GAZELLE_SERVER_PRODUCTION_IP`: The IP for the production Ubuntu server
 
-Also remember to add the CI ssh public key to the `.ssh/authorized_keys` file on the server to allow CircleCI to access it
+Also remember to add the CI ssh public key to the `.ssh/authorized_keys` file on the server to allow CircleCI to access it. If you don't have it (as CircleCI hides it) you can probably find it one of the servers currently set up in `authorized_keys`, or worst case scenario generate a new SSH key for CircleCI and authorize it with Github.
 
 # Done!
 
