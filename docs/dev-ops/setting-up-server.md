@@ -6,7 +6,9 @@ At the time of writing we are using Digital Ocean. To setup a new Droplet you ca
 
 # Initial Server Setup
 
-Here is [a really good guide](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-16-04) for setting up an Ubuntu 16.04 server initially (which is what we use), this is the recommended guide to follow regardless of whether the current provider is Digital Ocean or not. Remember to also follow the link about "common UFW operations" at the bottom to allow http(s) connections and possibly database connections from the staging server.
+Here is [a really good guide](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-16-04) for setting up an Ubuntu 16.04 server initially (which is what we use), this is the recommended guide to follow regardless of whether the current provider is Digital Ocean or not.
+
+> NOTE: Remember to also follow the link about "common UFW operations" at the bottom to allow http(s) connections and possibly database connections from the staging server (at the time of writing we don't do this though).
 
 It is also handy to run
 
@@ -127,7 +129,7 @@ npm run build:production
 
 in the root of the `server` directory.
 
-> NOTE: It may be the server doesn't have enough RAM to build the source, in that case you'll have to build the source elsewhere, such as your local computer, and copying the build files over with `scp` or something similar. You can see how this is done in our [CI config](../../.circleci/config.yml).
+> NOTE: It may be the server doesn't have enough RAM to build the source, in that case you'll have to build the source elsewhere, such as your local computer, and copying the build files over with `scp` or something similar. You can see how this is done in our [CI config](../../.circleci/config.yml). EXTRA NOTE: Remember that you'll have to copy the .env file from the server to wherever you build the source if doing this.
 
 # Update DNS
 
