@@ -1,7 +1,7 @@
 import falcor from 'falcor';
 
 import { database } from 'lib/db';
-import { categoryQuery } from './database-calls';
+import { categoryQuery } from './database-calls.sql';
 
 const $ref = falcor.Model.ref;
 

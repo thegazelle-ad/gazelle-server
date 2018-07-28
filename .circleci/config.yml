@@ -8,7 +8,7 @@ docker_no_database: &docker_no_database
 docker_with_database: &docker_with_database
   docker:
     - image: thegazelle/gazelle-main-circleci-primary:0.0.6
-    - image: mariadb:10.1
+    - image: circleci/mariadb:10.1
       environment:
         MYSQL_ROOT_PASSWORD: circleci_test_gazelle
         MYSQL_DATABASE: the_gazelle
@@ -32,83 +32,116 @@ jobs:
       - run: |
           sed 's/^DATABASE_PASSWORD=.*/DATABASE_PASSWORD=circleci_test_gazelle/' .sample-env > .env
 
-      # Cache it
-      - run:
-          name: save the SHA1 hash of git commit being built to file
-          command: echo $CIRCLE_SHA1 > .circle-sha
-
-      - save_cache:
-          key: v1-repo-{{ checksum ".circle-sha" }}
+      - persist_to_workspace:
+          root: .
           paths:
-            - ~/gazelle-server
+            - .
+
 
   install_dependencies:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/.ssh
-      - run:
-          name: save SHA to a file
-          command: echo $CIRCLE_SHA1 > .circle-sha
-      - restore_cache:
-          keys:
-            - v1-repo-{{ checksum ".circle-sha" }}
+          at: .
 
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
+      - run:
+          name: Prep known hosts
+          command: mkdir -p ~/.ssh && cp known_hosts ~/.ssh/known_hosts
 
       - run:
           name: Install dependencies in ci mode that is faster and ensures the lockfile is correct
           command: npm ci
 
-      - save_cache:
+      - persist_to_workspace:
+          root: .
           paths:
             - node_modules
-          key: v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
 
   unit_test:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+
+      - run:
+          name: Make sure coverage folder exists
+          command: mkdir -p coverage
+
+      - run:
+          name: Run unit tests
+          command: timeout 1m npm run test:unit -- --ci
+
+      - run:
+          name: save coverage
+          command: timeout 1m npm run test:unit -- --ci --coverage > coverage/unit
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - coverage/unit
+
+  integration_test:
     <<: *defaults_with_database
     steps:
+      - attach_workspace:
+          at: .
+
       - run:
-          name: save SHA to a file
-          command: echo $CIRCLE_SHA1 > .circle-sha
-      - restore_cache:
-          keys:
-            - v1-repo-{{ checksum ".circle-sha" }}
-      - restore_cache:
-          keys:
-            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
+          name: Make sure coverage folder exists
+          command: mkdir -p coverage
+
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+
+      # We rerun integration tests as they can some times be flaky.
+      # TODO: When https://github.com/facebook/jest/issues/6470 is implemented we can use that instead
+      - run:
+          name: Run integration tests
+          command: |
+            function f {
+              # We clear state in between in case after a failed run some databases are still there.
+              # If we're good about database names etc. it shouldn't be a problem, but just in case
+              # The script is taken from https://stackoverflow.com/questions/22301635/drop-all-databases-in-mysql#comment75681619_22301636
+              mysql --protocol=TCP -uroot -pcircleci_test_gazelle -e "show databases" | egrep -v "Database|mysql|information_schema" | awk '{print "drop database " $1 ";select sleep(0.1);"}' | mysql --protocol=TCP -uroot -pcircleci_test_gazelle
+              timeout 1m npm run test:it -- --ci
+            }
+            f || f || f
+
+
+      - run:
+          name: save coverage
+          command: |
+            function f {
+              mysql --protocol=TCP -uroot -pcircleci_test_gazelle -e "show databases" | egrep -v "Database|mysql|information_schema" |gawk '{print "drop database " $1 ";select sleep(0.1);"}' | mysql --protocol=TCP -uroot -pcircleci_test_gazelle
+              timeout 1m npm run test:it -- --ci --coverage > coverage/it
+            }
+            f || f || f
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - coverage/it
+
+  send_coverage:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
 
       - run:
           name: setup dependencies for code coverage
           command: sudo npm i -g coveralls
 
       - run:
-          name: Wait for db
-          command: dockerize -wait tcp://localhost:3306 -timeout 1m
-
-      - run:
-          name: unit test
-          command: npm run test:unit:ci
-
-      - run:
-          name: gather test coverage data
-          command: npm run test:unit -- --coverage | coveralls
+          name: Send coverage to Coveralls
+          command: cat coverage/* | coveralls
 
   lint:
     <<: *defaults
     steps:
-      - run:
-          name: save SHA to a file
-          command: echo $CIRCLE_SHA1 > .circle-sha
-      - restore_cache:
-          keys:
-            - v1-repo-{{ checksum ".circle-sha" }}
-      - restore_cache:
-          keys:
-            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
 
       - run:
           name: Run ESLint
@@ -125,54 +158,30 @@ jobs:
   build:
     <<: *defaults
     steps:
-      - run:
-          name: save SHA to a file
-          command: echo $CIRCLE_SHA1 > .circle-sha
-      - restore_cache:
-          keys:
-            - v1-repo-{{ checksum ".circle-sha" }}
-      - restore_cache:
-          keys:
-            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
-
-      - restore_cache:
-          keys:
-            - v1-build-{{ arch }}-{{ .Revision }}
+      - attach_workspace:
+          at: .
 
       - run: npm run build:production
 
-      - save_cache:
+      - persist_to_workspace:
+          root: .
           paths:
-            - build
-            - static/build
-          key: v1-build-{{ arch }}-{{ .Revision }}
+            - 'build'
+            - 'static/build'
 
   end_to_end_tests:
     <<: *defaults_with_database
     steps:
       - attach_workspace:
-          at: ~/.ssh
-      - run:
-          name: save SHA to a file
-          command: echo $CIRCLE_SHA1 > .circle-sha
-      - restore_cache:
-          keys:
-            - v1-repo-{{ checksum ".circle-sha" }}
-      - restore_cache:
-          keys:
-            - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          keys:
-            - v1-build-{{ arch }}-{{ .Revision }}
+          at: .
 
       - run:
           name: Wait for db
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
-      - run: ./.circleci/scripts/load-test-database.sh
-
-      # Actually run the tests
-      - run: ./.circleci/scripts/run-end-to-end-tests.sh
+      - run:
+          name: Run E2E tests
+          command: ./.circleci/scripts/run-end-to-end-tests.sh
 
   prep_ssh:
     <<: *defaults
@@ -195,7 +204,11 @@ jobs:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/.ssh
+          at: .
+
+      - run:
+          name: Prep known hosts
+          command: mkdir -p ~/.ssh && cp known_hosts ~/.ssh/known_hosts
 
       - run:
           name: Deploy to staging
@@ -205,7 +218,11 @@ jobs:
     <<: *defaults
     steps:
       - attach_workspace:
-          at: ~/.ssh
+          at: .
+
+      - run:
+          name: Prep known hosts
+          command: mkdir -p ~/.ssh && cp known_hosts ~/.ssh/known_hosts
 
       - run:
           name: Deploy to production
@@ -227,18 +244,24 @@ workflows:
       - unit_test:
           requires:
             - install_dependencies
+      - integration_test:
+          requires:
+            - install_dependencies
       - lint:
           requires:
             - install_dependencies
-
       - build:
           requires:
             - install_dependencies
 
+      - send_coverage:
+          requires:
+            - unit_test
+            - integration_test
+
       - end_to_end_tests:
           requires:
             - build
-            - prep_ssh
 
       # Deployment related
       - deploy_staging:

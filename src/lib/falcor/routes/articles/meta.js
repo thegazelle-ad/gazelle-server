@@ -1,6 +1,6 @@
 import { getNumArticles, database } from 'lib/db';
 import { logger } from 'lib/logger';
-import { createNewArticle } from './database-calls';
+import { createNewArticle } from './database-calls.sql';
 import { buildErrorMessage } from 'lib/error-helpers';
 import { has } from 'lib/utilities';
 import falcor from 'falcor';

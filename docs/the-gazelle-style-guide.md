@@ -71,7 +71,9 @@ So when coding we expect you to in by far most cases type all your code, and if 
 
 We generally name files and directories (folders) in all lower case with separate words separated by hyphens (`like-this`). The exception is React components which we name in [`CamelCase`](https://en.wikipedia.org/wiki/Camel_case) (`LikeThis`). Also, the extension for anything with React (JSX) code inside it is postfixed with an `x`. so `.jsx` or `.tsx`.
 
-Also, all tests are postfixed with the `.test.js` or `.test.ts` extension.
+We also try to separate all files that use SQL through [Knex](https://knexjs.org/) in their own files, and use the `.sql.js` or `.sql.ts` extension for them. We would also usually aspire to only have these functions in the `lib/falcor/routes` folders in files called `database-calls.sql.ts` specifically for each part of the falcor routes.
+
+For tests, we postfix all our unit tests with the `.test.js` or `.test.ts` extension, and we postfix all our integration tests (at the time of writing this is only database tests, so test for the `database-calls.sql.ts` files) with `.it.test.js` or `.it.test.ts`.
 
 ## Promises
 
@@ -89,11 +91,15 @@ The first two could be handled differently with good documentation + manual test
 
 Please do write as many unit tests as possible, the more the better, and we also expect every bug fix to have a regression test to make sure the encountered bug won't resurface later unnoticed.
 
-We also write [end to end (E2E) tests](./guides/developing-end-to-end-tests.md) to give us more confidence when deploying, and with these tests we aim to cover most of the possible user interactions that can occur in our CMS (content management system, the admin interface). We of course also want confidence in thegazelle.org but that site isn't as complex as the CMS, and it therefore doesn't need as much E2E testing. You usually will not have to write new E2E tests unless developing a new feature.
+The most important is definitely writing lots of unit tests, but we also write other kinds of tests such as integration and end to end (E2E) tests. A quick sum up of the differences are:
+
+- Unit tests should basically only test our own code, possibly a little bit of libraries like lodash, but mainly code we wrote. It should definitely never make any network requests and all these should be stubbed/mocked (if these terms confuse you [here's a guide that might help](https://semaphoreci.com/community/tutorials/best-practices-for-spies-stubs-and-mocks-in-sinon-js), note that it hasn't been reviewed by a lead engineer properly though, so if it's unhelpful feel free to submit a PR with a better one!)
+- Integration tests can be understood in many ways, it can be how big parts of your code integrate with each other, or how your code integrates with the outside world. At the time of writing for us it means this is where we put the tests of our SQL as they run against a database that requires network requests (though maybe only on localhost). These tests can be slow and non-deterministic so we don't want to pollute our unit tests with them, as unit tests should be quick and deterministic so they can be run often and if something is wrong you can be confident it's true.
+- E2E tests are when we setup the full environment and use browser automation to act as if a user is actually clicking buttons, and then we make sure that everything works as it should. We don't want to go over board with these as they are just meant to give us confidence things are working, but it's hard to debug based on a failing E2E test as it doesn't give you the detailed breakdown of exactly what is wrong. Also these tests can be flaky. See [this guide on developing E2E tests we wrote](./guides/developing-end-to-end-tests.md).
 
 If you are unfamiliar with unit testing here is a good short Quora answer on what unit testing is and why it's important: https://www.quora.com/What-is-software-unit-testing-and-why-is-it-important. Also feel free to follow the link at the bottom of the most upvoted answer which goes a bit more in-depth.
 
-For keeping us honest, we use [Coveralls](https://coveralls.io/) integrated with Github that reports on every Pull Request whether our code coverage (basically means how much of our code is actually run/covered by our tests).
+For keeping us honest, we also use [Coveralls](https://coveralls.io/) integrated with Github that reports on every Pull Request whether our code coverage (basically means how much of our code is actually run/covered by our tests) has increased or decreased in that pull request.
 
 ## Database development
 
