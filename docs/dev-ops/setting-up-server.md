@@ -94,9 +94,20 @@ echo "# Placeholder comment to disable husky" > .git/hooks/post-merge
 
 You then just follow [the wiki page for setting up the server from the Setup Database section](../dev-environment/setting-up-dev-environment.md#setup-database) up until but not including [the build step](../dev-environment/setting-up-dev-environment.md#build-the-source-code) (which should just be setting up the database and environment variables). But remember to install the `stable` branch for production and `master` for staging!
 
+## Get live database
+
+In staging we at the time of writing just use the dummy data already set up above, and you won't actually have to do anything in this step.
+
+If you are moving the production server on the other hand, you will probably have to move the database from the old server. This is done with `mysqldump` and `mysql < dumpfile.dump`. You can either do it completely manually by taking inspiration from [the backup database script](../../deployment-resources/scripts/backup-database.sh). Or you can just run that script to upload it to Google Drive where you can download the dump. To restore the database at the new server do something like
+
+```bash
+mysql -u root -p -e 'drop database the_gazelle; create database the_gazelle character set utf8;'
+mysql -u root -p the_gazelle < dumpfile.dump
+```
+
 ## Generating static http error code pages
 
-In order to not check in a lot of duplicate html pages we have written a short python generator that takes a template and creates specific error pages for each of the 5xx error codes. Generate these pages by simply running `python3 http-error-static-pages/5xx-static-html-generator.py` at the root of the `server` directory.
+In order to not check in a lot of duplicate html pages we have written a short python generator that takes a template and creates specific error pages for each of the 5xx error codes. Generate these pages by simply running `python3 deployment-resources/http-error-static-pages/5xx-static-html-generator.py` in the `server` directory.
 
 ## Build the source
 
@@ -116,21 +127,17 @@ npm run build:production
 
 in the root of the `server` directory.
 
+> NOTE: It may be the server doesn't have enough RAM to build the source, in that case you'll have to build the source elsewhere, such as your local computer, and copying the build files over with `scp` or something similar. You can see how this is done in our [CI config](../../.circleci/config.yml).
+
 # Update DNS
 
 We use Cloudflare as our DNS provider. The lead engineers should have access to the login for it. Simply go here and update the IPs so they match the correct IPs for the production/staging server.
 
-# Setup slack deployment bot
-
-All you should have to do is clone [this repo](https://github.com/thegazelle-ad/slack-deployment-bot) into the home directory of your server and follow the README.
-
 # Setup Swap Space
 
-It is a good idea to setup swap space so that in case a huge load comes in (or we are deploying and therefore building source, Webpack takes up a lot of RAM!) our processes don't simply get killed. [this Digital Ocean guide](https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-16-04) details how to setup swap space. In our current setup on the production server we have bought a 2GB volume (very cheaply) so as to be nice to Digital Ocean and not setup swap space on the SSD and setup a 1.5GB swap file there. As the guide recommends we also changes the `swappiness` to 10 and the `vfs_cache_pressure` to 50.
+> NOTE: At the time of writing we don't actually use swap space as we moved away from building the source on the server which was the biggest usage of RAM. In case you need it for other reasons though check out the below instructions
 
-# Setup deployment resources
-
-Clone [this repo](https://github.com/thegazelle-ad/deployment-resources) to the root directory of your server and follow the instructions in the README.
+It can be a good idea to setup swap space so that in case a huge load comes in our processes don't simply get killed. [this Digital Ocean guide](https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-16-04) details how to setup swap space. In our current setup on the production server we have bought a 2GB volume (very cheaply) so as to be nice to Digital Ocean and not setup swap space on the SSD and setup a 1.5GB swap file there. As the guide recommends we also changes the `swappiness` to 10 and the `vfs_cache_pressure` to 50.
 
 # Run everything
 
