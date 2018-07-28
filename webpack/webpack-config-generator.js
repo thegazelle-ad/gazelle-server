@@ -11,10 +11,11 @@ const stringifedEnvironmentVariables = _.mapValues(
   JSON.stringify,
 );
 
-const ROOT_DIRECTORY = JSON.parse(
-  stringifedEnvironmentVariables.ROOT_DIRECTORY,
-);
-const getAbsolute = relativePath => path.resolve(ROOT_DIRECTORY, relativePath);
+// As opposed to the environment variable ROOT_DIRECTORY which is used in the source
+// this variable is only used for the webpack build
+const LOCAL_ROOT_DIRECTORY = path.join(__dirname, '..');
+const getAbsolute = relativePath =>
+  path.resolve(LOCAL_ROOT_DIRECTORY, relativePath);
 
 /**
  * @param {Object} config
@@ -103,7 +104,7 @@ const generateWebpackConfig = config => {
 
     target,
 
-    context: ROOT_DIRECTORY,
+    context: LOCAL_ROOT_DIRECTORY,
 
     // This makes __dirname and __filename act as expected based on the src file
     node: {
