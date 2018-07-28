@@ -11,7 +11,9 @@ const stringifedEnvironmentVariables = _.mapValues(
   JSON.stringify,
 );
 
-const ROOT_DIRECTORY = path.resolve(__dirname, '..');
+const ROOT_DIRECTORY = JSON.parse(
+  stringifedEnvironmentVariables.ROOT_DIRECTORY,
+);
 const getAbsolute = relativePath => path.resolve(ROOT_DIRECTORY, relativePath);
 
 /**
@@ -135,7 +137,6 @@ const generateWebpackConfig = config => {
           // We use JSON.stringify here to add the extra quotes as webpack does
           // a direct substition of the string value, so "value" would just
           // substitute value, not "value" which is what we want to be in the code
-          ROOT_DIRECTORY: JSON.stringify(ROOT_DIRECTORY),
           NODE_ENV: JSON.stringify(config.NODE_ENV),
           MAIN_PORT,
           ADMIN_PORT,

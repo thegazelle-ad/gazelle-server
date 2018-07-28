@@ -35,6 +35,10 @@ DATABASE_PASSWORD=
 DEVELOPMENT_MAIN_PORT=3000
 DEVELOPMENT_ADMIN_PORT=4000
 
+# Miscellaneous
+## Absolute path of the root directory of this repository
+ROOT_DIRECTORY=
+
 #######################################################################
 ########                      DEPLOYMENT                       ########
 #######################################################################
