@@ -230,8 +230,8 @@ jobs:
       - run:
           name: Copy compiled javascript to the server
           command: |
-            scp ./build/* "$GAZELLE_SERVER_STAGING_USER@$GAZELLE_SERVER_STAGING_IP":~/build/
-            scp ./static/build/* "$GAZELLE_SERVER_STAGING_USER@$GAZELLE_SERVER_STAGING_IP":~/static/build/
+            scp ./build/* "$GAZELLE_SERVER_STAGING_USER@$GAZELLE_SERVER_STAGING_IP":~/server/build/
+            scp ./static/build/* "$GAZELLE_SERVER_STAGING_USER@$GAZELLE_SERVER_STAGING_IP":~/server/static/build/
 
       - run:
           name: Finalize deployment
@@ -267,8 +267,8 @@ jobs:
       - run:
           name: Copy compiled javascript to the server
           command: |
-            scp ./build/* "$GAZELLE_SERVER_PRODUCTION_USER@$GAZELLE_SERVER_PRODUCTION_IP":~/build/
-            scp ./static/build/* "$GAZELLE_SERVER_PRODUCTION_USER@$GAZELLE_SERVER_PRODUCTION_IP":~/static/build/
+            scp ./build/* "$GAZELLE_SERVER_PRODUCTION_USER@$GAZELLE_SERVER_PRODUCTION_IP":~/server/build/
+            scp ./static/build/* "$GAZELLE_SERVER_PRODUCTION_USER@$GAZELLE_SERVER_PRODUCTION_IP":~/server/static/build/
 
       - run:
           name: Finalize deployment
