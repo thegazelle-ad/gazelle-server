@@ -2,6 +2,8 @@ build/
 static/build/
 **/tmp/*
 .env
+client_secret.json
+credentials.json
 
 ## Below this is automatically generated
 
