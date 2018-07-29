@@ -65,7 +65,7 @@ do
   EXIT_CODE=$(echo $?)
   let "MAX_TEST_RETRIES--"
   # After it failed once we set the DEBUG flag for more information
-  DEBUG=nightmare*
+  export DEBUG=nightmare*
 done
 
 if [[ $EXIT_CODE -ne 0 ]]
