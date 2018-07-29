@@ -6,6 +6,7 @@ import { getConfig } from '../config';
 import _ from 'lodash';
 import moment from 'moment';
 import { has } from 'lib/utilities';
+import { logger } from 'lib/logger';
 
 export const database = knex({
   client: 'mysql',
@@ -684,8 +685,7 @@ export function relatedArticleQuery(ids) {
               if (post === undefined) {
                 // Most likely this means a garbage URL was accessed
                 if (process.env.NODEENV !== 'production') {
-                  // eslint-disable-next-line no-console
-                  console.warn(
+                  logger.warn(
                     `Article ${id} couldn't be found in related articles query`,
                   );
                 }

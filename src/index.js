@@ -22,14 +22,14 @@ import runMainServer from 'server-code/main-server';
 import runAdminServer from 'server-code/admin-server';
 
 /* We need to initialize the logger for the whole application */
-import { initializeLogger } from 'lib/logger';
+import { initializeLogger, logger } from 'lib/logger';
 
 initializeLogger(false);
 
 /* Server code starts */
 // Announce the build version for clarity
 const args = ['DEVELOPMENT BUILD', 'STAGING BUILD', 'PRODUCTION BUILD'];
-console.log(filterByEnvironment(...args)); // eslint-disable-line no-console
+logger.debug(filterByEnvironment(...args));
 
 // Allow node to use sourcemaps
 sourcemap.install();

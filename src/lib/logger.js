@@ -79,9 +79,8 @@ export const logger = {
   warn(warning) {
     validateInitialization();
 
-    const errorObject = warning instanceof Error ? warning : new Error(warning);
     // eslint-disable-next-line no-console
-    console.warn(errorObject);
+    console.warn(warning);
   },
 
   /**
@@ -94,9 +93,8 @@ export const logger = {
   debug(msg) {
     validateInitialization();
 
-    const errorObject = msg instanceof Error ? msg : new Error(msg);
     // eslint-disable-next-line no-console
-    console.log(errorObject);
+    console.log(msg);
   },
 };
 
