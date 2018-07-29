@@ -7,7 +7,7 @@
  */
 
 export type NodeEnv = 'development' | 'staging' | 'production';
-export type GazelleEnv = 'CI' | 'staging' | 'production';
+export type GazelleEnv = 'CI' | 'staging' | 'production' | 'development';
 
 let config: {
   DATABASE_HOST: string;
@@ -128,7 +128,8 @@ function validateGazelleEnv(
     !(
       gazelleEnvString === 'staging' ||
       gazelleEnvString === 'production' ||
-      gazelleEnvString === 'CI'
+      gazelleEnvString === 'CI' ||
+      gazelleEnvString === 'development'
     )
   ) {
     throw new Error(`Invalid GAZELLE_ENV value: ${variable}`);
