@@ -29,7 +29,7 @@ if [ "$GAZELLE_ENV" == "production" ]
 then
   node $SEND_TO_SLACK_SCRIPT "Finalizing deployment to www.thegazelle.org, and admin.thegazelle.org" || FAILED=1
 fi
-[[ $FAILED -ne 0 ]] && (echo "Error posting to slack" >&2; exit 1;)
+[[ $FAILED -ne 0 ]] && echo "Error posting to slack" >&2 && exit 1
 
 # Go to the main repo
 cd "$HOME/server" || error "Couldn't cd into main repo"
@@ -69,15 +69,14 @@ npm run db:migrate || error "Couldn't migrate database"
 forever restart server || error "Couldn't restart server"
 
 # Announce the deployment success
-cd ..
 if [ "$GAZELLE_ENV" == "staging" ]
 then
-  node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" "staging.thegazelle.org and staging.admin.thegazelle.org were deployed successfully!" || FAILED=1
+  node $SEND_TO_SLACK_SCRIPT "staging.thegazelle.org and staging.admin.thegazelle.org were deployed successfully!" || FAILED=1
 fi
 if [ "$GAZELLE_ENV" == "production" ]
 then
-  node "$SLACK_DEPLOYMENT_BOT_DIRECTORY/index.js" "www.thegazelle.org and admin.thegazelle.org were deployed successfully!" || FAILED=1
+  node $SEND_TO_SLACK_SCRIPT "www.thegazelle.org and admin.thegazelle.org were deployed successfully!" || FAILED=1
 fi
-[[ $FAILED -ne 0 ]] && (echo "Error posting to slack" >&2; exit 1;)
+[[ $FAILED -ne 0 ]] && echo "Error posting to slack" >&2 && exit 1
 
 echo "Deployed successfully"
