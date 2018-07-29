@@ -237,7 +237,7 @@ jobs:
 
       - run:
           name: Finalize deployment
-          command: ssh "$GAZELLE_SERVER_STAGING_USER@$GAZELLE_SERVER_STAGING_IP" 'bash -ic "deployment-resources/scripts/finalize-deployment.sh"'
+          command: ssh "$GAZELLE_SERVER_STAGING_USER@$GAZELLE_SERVER_STAGING_IP" 'bash -ic "~/server/deployment-resources/scripts/finalize-deployment.sh"'
 
   deploy_production:
     <<: *defaults
@@ -274,7 +274,7 @@ jobs:
 
       - run:
           name: Finalize deployment
-          command: ssh "$GAZELLE_SERVER_PRODUCTION_USER@$GAZELLE_SERVER_PRODUCTION_IP" 'bash -ic "deployment-resources/scripts/finalize-deployment.sh"'
+          command: ssh "$GAZELLE_SERVER_PRODUCTION_USER@$GAZELLE_SERVER_PRODUCTION_IP" 'bash -ic "~/server/deployment-resources/scripts/finalize-deployment.sh"'
 
 workflows:
   version: 2
