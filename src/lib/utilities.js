@@ -215,12 +215,9 @@ export function filterByEnvironment(development, beta, production) {
 export const nothingAllowedRobotsTxt = 'User-agent: *\nDisallow: /\n';
 
 export const googleClientID =
-  '235485701704-vqb1qkp8lk1hbdhcmjm5jmtocaur3mq7.apps.googleusercontent.com'; // eslint-disable-line max-len
+  '235485701704-vqb1qkp8lk1hbdhcmjm5jmtocaur3mq7.apps.googleusercontent.com';
 export const googleWhitelist = [
-  'tjk343@nyu.edu',
-  'ks3583@nyu.edu',
-  'kw1553@nyu.edu',
-  'hct245@nyu.edu',
-  'zmm228@nyu.edu',
+  'jmp907@nyu.edu',
+  'mm7969@nyu.edu',
   'ego225@nyu.edu',
-]; // eslint-disable-line max-len
+];
