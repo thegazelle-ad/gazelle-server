@@ -13,7 +13,7 @@
     "build:watch": "npm run build -- -w",
     "build:production": "webpack --config webpack/webpack.production.config.js --bail --progress",
     "build:staging": "webpack --config webpack/webpack.staging.config.js --bail --progress",
-    "build:emulate-ci": "CI=true CIRCLECI=true npm run build:production",
+    "build:emulate-ci": "(cp .env .temp-env && sed 's/^GAZELLE_ENV=.*/GAZELLE_ENV=CI/' .temp-env > .env && npm run build:production); mv .temp-env .env",
     "test:unit": "jest --config='__tests__/config/jest.unit.config.js' --testLocationInResults",
     "test:it": "jest --config='__tests__/config/jest.integration.config.js' --testLocationInResults",
     "test:e2e": "npm run db:seed && jest --config='__tests__/config/jest.e2e.config.js' --testLocationInResults --runInBand",
