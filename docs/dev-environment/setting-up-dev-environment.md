@@ -25,7 +25,7 @@ You should first install MariaDB, which for Linux can be done here: https://down
 After having installed MariaDB (or MySQL) we can create the database that we will use with The Gazelle:
 
 ```bash
-mysql -u root -p -e 'create database the_gazelle character set utf8'
+mysql -u root -p -e 'create database the_gazelle'
 ```
 
 When running the command it will ask you for your password for the database client which should have been set during installation of MariaDB/MySQL. It may also just be empty, in which case you can try running the first command without the `-p` flag, or just press enter without entering anything into the password prompt.
