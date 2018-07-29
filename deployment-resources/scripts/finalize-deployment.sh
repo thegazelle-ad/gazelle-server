@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# This script assumes that all built files in <root>/build and <root>/static/build
+# have already been transferred to the server and all that needs to be done is
+# run database migrations, update dependencies and restart the server
+
 function error {
   ERROR_MESSAGE=$1
   echo $ERROR_MESSAGE >&2
@@ -12,14 +16,14 @@ SEND_TO_SLACK_SCRIPT="$DIRECTORY/helpers/send-to-slack.js"
 
 source $DIRECTORY/source-environment.sh
 
-# Tell Slack that we're starting deployment
+# Tell Slack that we're starting the script
 if [ "$GAZELLE_ENV" == "staging" ]
 then
-  node $SEND_TO_SLACK_SCRIPT "Starting deployment to staging.thegazelle.org, and staging.admin.thegazelle.org"
+  node $SEND_TO_SLACK_SCRIPT "Finalizing deployment to staging.thegazelle.org, and staging.admin.thegazelle.org"
 fi
 if [ "$GAZELLE_ENV" == "production" ]
 then
-  node $SEND_TO_SLACK_SCRIPT "Starting deployment to www.thegazelle.org, and admin.thegazelle.org"
+  node $SEND_TO_SLACK_SCRIPT "Finalizing deployment to www.thegazelle.org, and admin.thegazelle.org"
 fi
 if [ $? -ne 0 ]
   then
@@ -49,9 +53,6 @@ npm ci || error "couldn't install latest dependencies"
 
 # Make sure nothing changed
 [[ "$(git diff)" != "" ]] && error "Source unexpectedly changed during update"
-
-# Build the new source
-npm run "build:$GAZELLE_ENV" || error "Couldn't build source"
 
 # Migrate database, important that we do this just before restarting server
 # so that the database isn't incompatible for too long in case we did any

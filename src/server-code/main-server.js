@@ -28,6 +28,8 @@ import bodyParser from 'body-parser';
 // Our custom config
 import { getConfig } from '../config';
 
+import { logger } from 'lib/logger';
+
 /* Our helper functions */
 import {
   isStaging,
@@ -192,8 +194,8 @@ export default function runMainServer(serverFalcorModel) {
               res.status(200).send(html);
             })
             .catch(err => {
-              console.error('Failed to render: ', req.url); // eslint-disable-line no-console
-              console.error(err.stack || err); // eslint-disable-line no-console
+              logger.error('Failed to render: ', req.url);
+              logger.error(err.stack || err);
               if (getConfig().NODE_ENV !== 'production') {
                 res.status(500).send(err.stack || err);
               } else {
@@ -216,10 +218,10 @@ export default function runMainServer(serverFalcorModel) {
   const port = isCI() ? 3000 : getConfig().MAIN_PORT;
   app.listen(port, err => {
     if (err) {
-      console.error(err); // eslint-disable-line no-console
+      logger.error(err);
       return;
     }
-    // eslint-disable-next-line no-console
-    console.log(`The Gazelle Website started on port ${port}`);
+
+    logger.debug(`The Gazelle Website started on port ${port}`);
   });
 }

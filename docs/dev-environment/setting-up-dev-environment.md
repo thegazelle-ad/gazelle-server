@@ -10,7 +10,7 @@ Make sure you have NodeJS and npm installed
 
 You can [install nodejs and npm via nvm](https://github.com/creationix/nvm), feel free to install it any other way, but nvm is a nice way to manage your node versions if you work on different projects that use different versions. We also have a [`.nvmrc`](../../.nvmrc) file so when you `cd` into the directory of the repo, you can just run `nvm use` to change to our version, or `nvm install` both without any arguments as it finds it in `.nvmrc` and it'll install the correct version.
 
-> **IMPORTANT**: For this repo we use **node v9.11.1** and **npm 6.1.0**. Use any other versions at your own peril. Note that the default npm version with node `9.11.1` is `5.6.0` so you'll have to install the npm version manually `npm i -g npm@6.1.0`.
+> **IMPORTANT**: For this repo we use **node v9.11.2** and **npm 6.1.0**. Use any other versions at your own peril. Note that the default npm version with node `9.11.2` is `5.6.0` so you'll have to install the npm version manually `npm i -g npm@6.1.0`.
 
 Then install dependencies locally
 
@@ -22,21 +22,21 @@ npm install
 
 You should first install MariaDB, which for Linux can be done here: https://downloads.mariadb.org/mariadb/repositories, and a guide for MacOS is here: https://mariadb.com/kb/en/library/installing-mariadb-on-macos-using-homebrew/. We recommend using either a Linux distribution or MacOS as your operating system when developing for The Gazelle. We use version 10.1 of MariaDB in production / CircleCI so that's the recommended version. If you are only setting up for development and not for deployment you can also use MySQL which is 100% compatible.
 
-After having installed MariaDB (or MySQL) setting up a development database should be as easy as running these three commands:
+After having installed MariaDB (or MySQL) we can create the database that we will use with The Gazelle:
 
 ```bash
 mysql -u root -p -e 'create database the_gazelle character set utf8'
-npm run db:migrate
-npm run db:seed
 ```
 
-When running the first command it will ask you for your password for the database client which should have been set during installation of MariaDB/MySQL. It may also just be empty, in which case you can try running the first command without the `-p` flag, or just press enter without entering anything into the password prompt.
+When running the command it will ask you for your password for the database client which should have been set during installation of MariaDB/MySQL. It may also just be empty, in which case you can try running the first command without the `-p` flag, or just press enter without entering anything into the password prompt.
 
 > NOTE: This is one of the places some people encounter errors where they somehow didn't get prompted to set a password when installing MariaDB and then the password ends up being unknown, the [`Frequently Encountered issues`](#frequently-encountered-issues) section has some tips on solving this issue.
 
+Before we can finish the setup of our newly created database, we just need to setup some config variables.
+
 # Setup config
 
-Before you can build the code you need to specify some environment specific configurations such as what the name and password of your database is, and which ports to run the servers on. Luckily we have written a nice little interactive script that should guide you through this, so you should just have to run
+Before you can run certain database commands or build the code you need to specify some environment specific configurations such as what the name and password of your database is, and which ports to run the servers on. Luckily we have written a nice little interactive script that should guide you through this, so you should just have to run
 
 ```bash
 node setup-env.js
@@ -49,6 +49,17 @@ cp .sample-env .env
 ```
 
 and filling out everything manually. This is basically what the setup script does for you.
+
+Also note that if you already have an up to date `.env` file stored somewhere else you should be able to just copy it in (such as if you're changing computers or migrating the servers to a new provider etc.)
+
+# Finish Database Setup
+
+Now everything should be ready to populate the database we created earler by simply running these two commands
+
+```bash
+npm run db:migrate
+npm run db:seed
+```
 
 # Run build tool
 

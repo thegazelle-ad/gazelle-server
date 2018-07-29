@@ -7,6 +7,7 @@
  */
 
 export type NodeEnv = 'development' | 'staging' | 'production';
+export type GazelleEnv = 'CI' | 'staging' | 'production' | 'development';
 
 let config: {
   DATABASE_HOST: string;
@@ -19,8 +20,7 @@ let config: {
   SLACK_API_TOKEN: string;
   ROOT_DIRECTORY: string;
   NODE_ENV: NodeEnv;
-  CI: string | undefined;
-  CIRCLECI: string | undefined;
+  GAZELLE_ENV: GazelleEnv;
   MAIN_PORT: number;
   ADMIN_PORT: number;
 };
@@ -56,8 +56,7 @@ export function getConfig() {
         'ROOT_DIRECTORY',
       ),
       NODE_ENV: validateNodeEnv(process.env.NODE_ENV, 'NODE_ENV'),
-      CI: validateString(process.env.CI, 'CI', true),
-      CIRCLECI: validateString(process.env.CIRCLECI, 'CIRCLECI', true),
+      GAZELLE_ENV: validateGazelleEnv(process.env.GAZELLE_ENV, 'GAZELLE_ENV'),
 
       MAIN_PORT: validateNumber(process.env.MAIN_PORT, 'MAIN_PORT'),
       ADMIN_PORT: validateNumber(process.env.ADMIN_PORT, 'ADMIN_PORT'),
@@ -118,4 +117,22 @@ function validateNodeEnv(
     throw new Error(`Invalid NODE_ENV value: ${variable}`);
   }
   return nodeEnvString;
+}
+
+function validateGazelleEnv(
+  variable: typeof process.env[string],
+  name: 'GAZELLE_ENV',
+): GazelleEnv {
+  const gazelleEnvString = validateString(variable, name);
+  if (
+    !(
+      gazelleEnvString === 'staging' ||
+      gazelleEnvString === 'production' ||
+      gazelleEnvString === 'CI' ||
+      gazelleEnvString === 'development'
+    )
+  ) {
+    throw new Error(`Invalid GAZELLE_ENV value: ${variable}`);
+  }
+  return gazelleEnvString;
 }

@@ -32,6 +32,8 @@ import {
   nothingAllowedRobotsTxt,
 } from 'lib/utilities';
 
+import { logger } from 'lib/logger';
+
 import { md5Hash, compressJPEG, deleteFile } from 'lib/server-utilities';
 
 export default function runAdminServer(serverFalcorModel) {
@@ -132,7 +134,7 @@ export default function runAdminServer(serverFalcorModel) {
       exec(RESTART_SERVERS_PATH_NAME, err => {
         if (err) {
           if (getConfig().NODE_ENV !== 'production') {
-            console.error(err); // eslint-disable-line no-console
+            logger.error(err);
           }
           // In the case of an error isRestarted will stay true and so the ping will fail correctly
         }
@@ -189,8 +191,8 @@ export default function runAdminServer(serverFalcorModel) {
         setTimeout(() => {
           res.status(200).send('success test_url');
         }, 2000);
-        // eslint-disable-next-line no-console
-        deleteFile(filePath).catch(error => console.log(error));
+
+        deleteFile(filePath).catch(error => logger.debug(error));
       });
     } else {
       const year = new Date().getFullYear().toString();
@@ -217,20 +219,20 @@ export default function runAdminServer(serverFalcorModel) {
           if (err && err.code === 'NotFound') {
             const s3Uploader = s3Client.uploadFile(s3Params);
             s3Uploader.on('error', s3Err => {
-              console.error(s3Err); // eslint-disable-line no-console
-              // eslint-disable-next-line no-console
-              deleteFile(filePath).catch(error => console.log(error));
+              logger.error(s3Err);
+
+              deleteFile(filePath).catch(error => logger.debug(error));
               return res.status(500).send('Error uploading');
             });
             s3Uploader.on('end', () => {
               const imageUrl = s3.getPublicUrl(Bucket, Key);
-              // eslint-disable-next-line no-console
-              deleteFile(filePath).catch(error => console.log(error));
+
+              deleteFile(filePath).catch(error => logger.debug(error));
               return res.status(200).send(`success ${imageUrl}`);
             });
           }
-          // eslint-disable-next-line no-console
-          deleteFile(filePath).catch(error => console.log(error));
+
+          deleteFile(filePath).catch(error => logger.debug(error));
           return res.status(409).send(`object already exists, ${Key}`);
         });
       });
@@ -298,11 +300,11 @@ export default function runAdminServer(serverFalcorModel) {
   const port = isCI() ? 4000 : getConfig().ADMIN_PORT;
   app.listen(port, err => {
     if (err) {
-      console.error(err); // eslint-disable-line no-console
+      logger.error(err);
+
       return;
     }
 
-    // eslint-disable-next-line no-console
-    console.log(`Admin tools server started on port ${port}`);
+    logger.debug(`Admin tools server started on port ${port}`);
   });
 }

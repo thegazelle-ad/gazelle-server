@@ -213,7 +213,13 @@ file\n'),
         currentText = `NOTE: ${extractComment(line)}`;
       } else if (isAssignment(line)) {
         const [variable] = parseAssignment(line);
-        const defaultValue = getDefaultValue(variable);
+        const savedDefaultValue = getDefaultValue(variable);
+        // If it's ROOT_DIRECTORY we make the default the directory of this script if there
+        // isn't already another default
+        const defaultValue =
+          variable === 'ROOT_DIRECTORY'
+            ? savedDefaultValue || __dirname
+            : savedDefaultValue;
         let assignedValue;
         const question = `What value would you like to set ${variable} to?`;
         // If it's GAZELLE_ENV we want to restrict answers to 'staging' or 'production'

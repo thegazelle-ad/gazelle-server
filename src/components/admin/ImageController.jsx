@@ -5,6 +5,7 @@ import _ from 'lodash';
 import update from 'react-addons-update';
 import { Link } from 'react-router';
 import { updateFieldValue } from 'components/admin/lib/form-field-updaters';
+import { logger } from 'lib/logger';
 
 // material-ui
 import Divider from 'material-ui/Divider';
@@ -100,7 +101,7 @@ export class ImageController extends BaseComponent {
     };
     xhr.onerror = err => {
       // Set upload status to failed
-      console.error(err); // eslint-disable-line no-console
+      logger.error(err);
       const errorMessage =
         'An unknown error occured contacting the server, ' +
         'error logged in developer console';
@@ -148,7 +149,7 @@ export class ImageController extends BaseComponent {
         changed: newChanged,
       });
     } else {
-      console.error("Unexpected error, couldn't find file"); // eslint-disable-line no-console
+      logger.error("Unexpected error, couldn't find file");
     }
     if (!newChanged) {
       this.safeSetState({
@@ -228,7 +229,7 @@ export class ImageController extends BaseComponent {
       }
     };
     reader.onerror = e => {
-      console.error(e); // eslint-disable-line no-console
+      logger.error(e);
     };
 
     reader.readAsDataURL(fileObject.file);

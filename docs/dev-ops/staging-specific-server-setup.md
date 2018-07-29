@@ -2,6 +2,8 @@
 
 This guide is only meant for the case when you are setting up the staging server on a separate machine, if you are setting up both staging and production on the same machine you should be able to follow the guide linked to above, and not read any further.
 
+NOTE: Remember to mention you can use less resources for the staging server
+
 # Staging specific deviations / additions
 
 - You don't need to install the Ghost repo at all (this includes installing MariaDB, no need to look at the README of that repo at all)
