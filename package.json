@@ -35,7 +35,8 @@
       "system of keeping track of merges"
     ],
     "precommit": "if ! [ -s .git/MERGE_HEAD ]; then TEMP_STASH_OUTPUT=$(git stash --keep-index --include-untracked) && MUTE=$(git clean -fd); if [ \"$TEMP_STASH_OUTPUT\" != 'No local changes to save' ]; then lint-staged; PRECOMMIT_PASSED=$(echo $?); MUTE=$(git stash pop); exit $PRECOMMIT_PASSED; fi; exit 0; fi; lint-staged",
-    "postmerge": "npm i && (node setup-env.js --check-outdated || (echo && echo 'NOTE: Your .env file has become out of date, running setup script so you can update it' && sleep 2 && echo && node setup-env.js)) && npm run db:migrate"
+    "postmerge": "npm i && (node setup-env.js --check-outdated || (echo && echo 'NOTE: Your .env file has become out of date, running setup script so you can update it' && sleep 2 && echo && node setup-env.js)) && npm run db:migrate",
+    "prepush": "scripts/prepush.sh"
   },
   "lint-staged": {
     "*.{js,jsx}": "eslint --max-warnings 0",
