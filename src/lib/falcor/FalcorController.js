@@ -6,6 +6,7 @@ import {
 import BaseComponent from 'lib/BaseComponent';
 import { setLoading, signalLeaving } from 'lib/loader';
 import { has, uuid } from 'lib/utilities';
+import { logger } from 'lib/logger';
 
 // Abstract class for fetching falcor objects
 export default class FalcorController extends BaseComponent {
@@ -91,7 +92,7 @@ export default class FalcorController extends BaseComponent {
             )} returned no data.`,
           );
           if (process.env.NODE_ENV !== 'production') {
-            console.error(err); // eslint-disable-line no-console
+            logger.error(err);
           }
           Object.assign(stateToSet, {
             ready: true,
@@ -103,9 +104,9 @@ export default class FalcorController extends BaseComponent {
       })
       .catch(e => {
         if (process.env.NODE_ENV !== 'production') {
-          console.error(e); // eslint-disable-line no-console
+          logger.error(e);
           if (e instanceof Error) {
-            console.error(e.stack); // eslint-disable-line no-console
+            logger.error(e.stack);
           }
         }
       });
@@ -130,9 +131,9 @@ export default class FalcorController extends BaseComponent {
       })
       .catch(e => {
         if (process.env.NODE_ENV !== 'production') {
-          console.error(e); // eslint-disable-line no-console
+          logger.error(e);
           if (e instanceof Error) {
-            console.error(e.stack); // eslint-disable-line no-console
+            logger.error(e.stack);
           }
         }
         let error = null;
@@ -184,9 +185,9 @@ export default class FalcorController extends BaseComponent {
       })
       .catch(e => {
         if (process.env.NODE_ENV !== 'production') {
-          console.error(e); // eslint-disable-line no-console
+          logger.error(e);
           if (e instanceof Error) {
-            console.error(e.stack); // eslint-disable-line no-console
+            logger.error(e.stack);
           }
         }
         let error = null;

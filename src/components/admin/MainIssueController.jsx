@@ -9,6 +9,7 @@ import {
 } from './lib/article-validators';
 import moment from 'moment';
 import { has, debounce } from 'lib/utilities';
+import { logger } from 'lib/logger';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -336,7 +337,7 @@ class MainIssueController extends FalcorController {
         }
       })
       .catch(e => {
-        console.error(e); // eslint-disable-line no-console
+        logger.error(e);
         this.props.displayAlert(
           'There was an error getting the issue data from the database ' +
             'please contact the developers. The error message is in the developers console',

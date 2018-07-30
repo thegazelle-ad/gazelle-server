@@ -35,6 +35,10 @@ DATABASE_PASSWORD=
 DEVELOPMENT_MAIN_PORT=3000
 DEVELOPMENT_ADMIN_PORT=4000
 
+# Miscellaneous
+## Absolute path of the root directory of this repository
+ROOT_DIRECTORY=
+
 #######################################################################
 ########                      DEPLOYMENT                       ########
 #######################################################################
@@ -48,13 +52,15 @@ AWS_S3_ACCESS_KEY_ID=
 AWS_S3_SECRET_ACCESS_KEY=
 
 # Config for sending notifications to Slack
-## If you don't already have a bot created you can do this here:
-## https://api.slack.com/bot-users. You can then find the token in the bot account
+## If you don't already have a bot created or are unsure where to find the token check out our guide at
+## https://github.com/thegazelle-ad/gazelle-server/tree/master/docs/misc/managing-slack-bot.md
 SLACK_API_TOKEN=
 
 # Environment related
 ## Needed to make some important distinctions that are different on staging and
 ## production servers. This value should be either staging or production when deploying
+## It should also be set to CI on CI, but CI doesn't use the setup script so we don't allow that
+## option here
 GAZELLE_ENV=development
 
 # Ports to run our servers on

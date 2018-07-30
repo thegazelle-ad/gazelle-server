@@ -181,8 +181,7 @@ export const has = Object.prototype.hasOwnProperty;
 // Environment functions and constants
 export const isProduction = () => getConfig().NODE_ENV === 'production';
 export const isStaging = () => getConfig().NODE_ENV === 'staging';
-export const isCI = () =>
-  getConfig().CI === 'true' && getConfig().CIRCLECI === 'true';
+export const isCI = () => getConfig().GAZELLE_ENV === 'CI';
 export const isDevelopment = () => !isProduction() && !isStaging();
 
 export function filterByEnvironment(development, beta, production) {
