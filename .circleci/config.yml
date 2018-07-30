@@ -8,7 +8,7 @@ docker_no_database: &docker_no_database
 docker_with_database: &docker_with_database
   docker:
     - image: thegazelle/gazelle-main-circleci-primary:0.0.6
-    - image: circleci/mariadb:10.1
+    - image: circleci/mariadb:10.2
       environment:
         MYSQL_ROOT_PASSWORD: circleci_test_gazelle
         MYSQL_DATABASE: the_gazelle
