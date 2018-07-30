@@ -23,7 +23,7 @@ describe('searchScoredQuery', () => {
   beforeAll(async () => {
     await initializeTestDatabase(database, databaseName);
     await Promise.all(
-      dummyArticles.map(article => database('articles').insert(article)),
+      dummyArticles.forEach(article => database('articles').insert(article)),
     );
   });
   afterAll(() => cleanupTestDatabase(databaseName));
