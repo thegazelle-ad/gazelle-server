@@ -109,19 +109,19 @@ Array [
 
 exports[`getPaginatedArticle fetches expected rows from database 1`] = `
 Array [
-  Object {
+  RowDataPacket {
     "slug": "slug-200",
   },
-  Object {
+  RowDataPacket {
     "slug": "slug-199",
   },
-  Object {
+  RowDataPacket {
     "slug": "slug-198",
   },
-  Object {
+  RowDataPacket {
     "slug": "slug-197",
   },
-  Object {
+  RowDataPacket {
     "slug": "slug-196",
   },
 ]

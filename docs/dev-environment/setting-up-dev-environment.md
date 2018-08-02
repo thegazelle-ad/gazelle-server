@@ -20,12 +20,12 @@ npm install
 
 # Setup Database
 
-You should first install MariaDB, which for Linux can be done here: https://downloads.mariadb.org/mariadb/repositories, and a guide for MacOS is here: https://mariadb.com/kb/en/library/installing-mariadb-on-macos-using-homebrew/. We recommend using either a Linux distribution or MacOS as your operating system when developing for The Gazelle. We use version 10.1 of MariaDB in production / CircleCI so that's the recommended version. If you are only setting up for development and not for deployment you can also use MySQL which is 100% compatible.
+You should first install MariaDB, which for Linux can be done here: https://downloads.mariadb.org/mariadb/repositories, and a guide for MacOS is here: https://mariadb.com/kb/en/library/installing-mariadb-on-macos-using-homebrew/. We recommend using either a Linux distribution or MacOS as your operating system when developing for The Gazelle. We use version 10.2 of MariaDB in production / CircleCI so that's the recommended version. If you are only setting up for development and not for deployment you can also use MySQL which is 100% compatible.
 
 After having installed MariaDB (or MySQL) we can create the database that we will use with The Gazelle:
 
 ```bash
-mysql -u root -p -e 'create database the_gazelle character set utf8'
+mysql -u root -p -e 'create database the_gazelle'
 ```
 
 When running the command it will ask you for your password for the database client which should have been set during installation of MariaDB/MySQL. It may also just be empty, in which case you can try running the first command without the `-p` flag, or just press enter without entering anything into the password prompt.

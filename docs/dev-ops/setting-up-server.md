@@ -103,7 +103,7 @@ In staging we at the time of writing just use the dummy data already set up abov
 If you are moving the production server on the other hand, you will probably have to move the database from the old server. This is done with `mysqldump` and `mysql < dumpfile.dump`. You can either do it completely manually by taking inspiration from [the backup database script](../../deployment-resources/scripts/backup-database.sh). Or you can just run that script to upload it to Google Drive where you can download the dump. To restore the database at the new server do something like
 
 ```bash
-mysql -u root -p -e 'drop database the_gazelle; create database the_gazelle character set utf8;'
+mysql -u root -p -e 'drop database the_gazelle; create database the_gazelle;'
 mysql -u root -p the_gazelle < dumpfile.dump
 ```
 
