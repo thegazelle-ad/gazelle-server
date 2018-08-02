@@ -18,17 +18,19 @@ const convertTableQueryToDatabaseQuery = query =>
 const getConvertDatabaseToUtf8mb4Query = databaseName =>
   convertTableQueryToDatabaseQuery(getConvertToUtf8mb4Query(databaseName));
 
-const knexfile = require('../../knexfile');
-
-const informationSchema = require('knex')({
-  client: 'mysql',
-  connection: {
-    ...knexfile.connection,
-    database: 'information_schema',
-  },
-});
+const getKnexConnection = require('knex');
 
 exports.up = async theGazelle => {
+  const { config } = theGazelle.client;
+  const informationSchema = getKnexConnection({
+    ...config,
+    connection: {
+      ...config.connection,
+      database: 'information_schema',
+    },
+  });
+  const databaseName = config.connection.database;
+
   // When we fix the encoding this causes a slug collision as there are 2 Adam Nagys
   // in the database (maybe with different encodings of the slug? It's a mess anyway).
   // The one we're deleting is the one without anything associated with it. Without this
@@ -44,13 +46,13 @@ exports.up = async theGazelle => {
     columnsToConvert = await informationSchema
       .select('table_name', 'column_name')
       .from('columns')
-      .where('table_schema', '=', 'the_gazelle')
+      .where('table_schema', '=', databaseName)
       .whereNotNull('character_set_name')
       .where('table_name', 'not like', 'knex%');
     tablesToConvert = (await informationSchema
       .distinct('table_name')
       .from('tables')
-      .where('table_schema', '=', 'the_gazelle')
+      .where('table_schema', '=', databaseName)
       .where('table_name', 'not like', 'knex%')).map(x => x.table_name);
   } catch (e) {
     // Cleaning up for good practice
@@ -77,9 +79,7 @@ exports.up = async theGazelle => {
   );
 
   // We finally also change the database default to utf8mb4 so we don't have to worry about this in the future
-  await theGazelle.raw(
-    getConvertDatabaseToUtf8mb4Query(knexfile.connection.database),
-  );
+  await theGazelle.raw(getConvertDatabaseToUtf8mb4Query(databaseName));
 };
 
 /**
