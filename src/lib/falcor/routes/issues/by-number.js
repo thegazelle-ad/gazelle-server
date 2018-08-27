@@ -310,6 +310,8 @@ export default [
     call: (callPath, args) =>
       new Promise(resolve => {
         const issue = args[0];
+        issue.issue_order = issue.issueNumber;
+        delete issue.issueNumber;
         const fields = Object.keys(issue);
         db.addIssue(issue).then(flag => {
           if (flag !== true) {
