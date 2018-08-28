@@ -105,9 +105,6 @@ export default class FalcorController extends BaseComponent {
       .catch(e => {
         if (process.env.NODE_ENV !== 'production') {
           logger.error(e);
-          if (e instanceof Error) {
-            logger.error(e.stack);
-          }
         }
       });
   }
@@ -132,9 +129,6 @@ export default class FalcorController extends BaseComponent {
       .catch(e => {
         if (process.env.NODE_ENV !== 'production') {
           logger.error(e);
-          if (e instanceof Error) {
-            logger.error(e.stack);
-          }
         }
         let error = null;
         if (e instanceof Error) {
@@ -186,9 +180,6 @@ export default class FalcorController extends BaseComponent {
       .catch(e => {
         if (process.env.NODE_ENV !== 'production') {
           logger.error(e);
-          if (e instanceof Error) {
-            logger.error(e.stack);
-          }
         }
         let error = null;
         if (e instanceof Error) {
