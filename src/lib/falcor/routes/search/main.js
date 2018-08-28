@@ -1,7 +1,7 @@
 import falcor from 'falcor';
 import _ from 'lodash';
 
-import { searchScoredQuery } from './database-calls';
+import { searchScoredQuery } from './database-calls.sql';
 
 const $ref = falcor.Model.ref;
 
