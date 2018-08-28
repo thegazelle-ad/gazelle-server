@@ -1,21 +1,27 @@
+// @ts-nocheck
 /* eslint-disable import/no-extraneous-dependencies */
 const webpack = require('webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const _ = require('lodash');
+const stringifedEnvironmentVariables = _.mapValues(
+  require('dotenv').config().parsed,
+  JSON.stringify,
+);
 
-const ROOT_DIRECTORY = path.resolve(__dirname, '..');
-const getAbsolute = relativePath => path.resolve(ROOT_DIRECTORY, relativePath);
+// As opposed to the environment variable ROOT_DIRECTORY which is used in the source
+// this variable is only used for the webpack build
+const LOCAL_ROOT_DIRECTORY = path.join(__dirname, '..');
+const getAbsolute = relativePath =>
+  path.resolve(LOCAL_ROOT_DIRECTORY, relativePath);
 
 /**
- * The config option is an object of the form
- * {
- *   NODE_ENV: string,
- *   type: one of 'server', 'admin-client', 'main-client',
- *   compileScss: boolean
- * }
  * @param {Object} config
+ * @param {'production' | 'staging' | 'development'} config.NODE_ENV
+ * @param {'server' | 'admin-client' | 'main-client'} config.type
+ * @param {boolean} config.compileScss
  * @returns {Object[]}
  */
 const generateWebpackConfig = config => {
@@ -29,21 +35,21 @@ const generateWebpackConfig = config => {
   switch (config.NODE_ENV) {
     case 'production':
     case 'staging':
-      MAIN_PORT = 8001;
-      ADMIN_PORT = 8002;
+      MAIN_PORT = stringifedEnvironmentVariables.DEPLOYMENT_MAIN_PORT;
+      ADMIN_PORT = stringifedEnvironmentVariables.DEPLOYMENT_ADMIN_PORT;
       break;
 
     default:
       // Validate that it is undefined as expected
-      if (config.NODE_ENV !== undefined) {
+      if (config.NODE_ENV !== 'development') {
         throw new Error(
           "webpack config option NODE_ENV is to either be 'production', " +
-            "'beta' or undefined",
+            "'staging' or 'development'",
         );
       }
 
-      MAIN_PORT = 3000;
-      ADMIN_PORT = 4000;
+      MAIN_PORT = stringifedEnvironmentVariables.DEVELOPMENT_MAIN_PORT;
+      ADMIN_PORT = stringifedEnvironmentVariables.DEVELOPMENT_ADMIN_PORT;
   }
   switch (config.type) {
     case 'server':
@@ -81,7 +87,7 @@ const generateWebpackConfig = config => {
   }
 
   if (config.compileScss) {
-    entry = [entry, 'src/styles/main.scss'];
+    entry = [entry, getAbsolute('src/styles/main.scss')];
   }
 
   const extractScss = new ExtractTextPlugin({
@@ -98,7 +104,7 @@ const generateWebpackConfig = config => {
 
     target,
 
-    context: ROOT_DIRECTORY,
+    context: LOCAL_ROOT_DIRECTORY,
 
     // This makes __dirname and __filename act as expected based on the src file
     node: {
@@ -108,18 +114,22 @@ const generateWebpackConfig = config => {
 
     resolve: {
       modules: [
-        getAbsolute('node_modules'),
-        getAbsolute('src'),
         getAbsolute('.'),
+        getAbsolute('src'),
+        getAbsolute('node_modules'),
       ],
-      extensions: ['.js', '.jsx', '.json5'],
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
     },
 
     // This makes webpack not bundle in node_modules but leave the require statements
     // since this is unnecessary on the serverside
     externals:
       config.type === 'server'
-        ? [nodeExternals({ modulesDir: getAbsolute('node_modules') })]
+        ? [
+            nodeExternals({
+              modulesDir: getAbsolute('node_modules'),
+            }),
+          ]
         : undefined,
 
     plugins: [
@@ -128,12 +138,10 @@ const generateWebpackConfig = config => {
           // We use JSON.stringify here to add the extra quotes as webpack does
           // a direct substition of the string value, so "value" would just
           // substitute value, not "value" which is what we want to be in the code
-          ROOT_DIRECTORY: JSON.stringify(ROOT_DIRECTORY),
           NODE_ENV: JSON.stringify(config.NODE_ENV),
           MAIN_PORT,
           ADMIN_PORT,
-          CI: JSON.stringify(process.env.CI),
-          CIRCLECI: JSON.stringify(process.env.CIRCLECI),
+          ...stringifedEnvironmentVariables,
         },
       }),
       // Only add the plugin if we include the scss entry point
@@ -141,7 +149,7 @@ const generateWebpackConfig = config => {
       .concat(config.compileScss ? [extractScss] : [])
       // Minimize code in production environments
       .concat(
-        config.NODE_ENV !== undefined
+        config.NODE_ENV !== 'development'
           ? [
               new UglifyJSPlugin({
                 sourceMap: true,
@@ -158,16 +166,17 @@ const generateWebpackConfig = config => {
     module: {
       rules: [
         {
-          test: /\.jsx?$/,
+          test: /\.(j|t)sx?$/,
           exclude: [getAbsolute('node_modules'), getAbsolute('config')],
 
           use: [
-            // Babel for transpiling ESNext and React
+            // Notice we are using babel loader after the typescript loader
             {
               loader: 'babel-loader',
               options: {
                 presets: [
                   '@babel/preset-react',
+                  '@babel/preset-typescript',
                   [
                     '@babel/preset-env',
                     {
@@ -189,22 +198,30 @@ const generateWebpackConfig = config => {
                   '@babel/plugin-proposal-object-rest-spread',
                   '@babel/plugin-proposal-class-properties',
                 ],
-                minified: config.NODE_ENV !== undefined,
-              },
-            },
-            // Lint all that is compiled, notice the order so eslint runs before babel
-            {
-              loader: 'eslint-loader',
-              options: {
-                emitWarning: true,
+                minified: config.NODE_ENV !== 'development',
               },
             },
           ],
         },
+        // Lint all that is compiled, notice enforce: 'pre' that ensures they run first
         {
-          test: /\.json5$/,
-          exclude: [getAbsolute('node_modules')],
-          loader: 'json5-loader',
+          test: /\.jsx?$/,
+          loader: 'eslint-loader',
+          exclude: [getAbsolute('node_modules'), getAbsolute('config')],
+          enforce: 'pre',
+          options: {
+            emitWarning: true, // Emit linting errors as warnings
+          },
+        },
+        {
+          test: /\.tsx?$/,
+          loader: 'tslint-loader',
+          exclude: [getAbsolute('node_modules'), getAbsolute('config')],
+          enforce: 'pre',
+          // Tslint errors are warnings by default so no option needed
+          options: {
+            tsConfigFile: 'tsconfig.json',
+          },
         },
         // Only add the scss loaders if we're actually compiling it
       ].concat(
@@ -221,7 +238,7 @@ const generateWebpackConfig = config => {
                 {
                   loader: 'css-loader',
                   options: {
-                    minimize: config.NODE_ENV !== undefined,
+                    minimize: config.NODE_ENV !== 'development',
                     sourceMap: true,
                   },
                 },

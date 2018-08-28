@@ -2,14 +2,13 @@ import React from 'react';
 import { browserHistory } from 'react-router';
 import _ from 'lodash';
 import Plain from 'slate-plain-serializer';
-import showdown from 'showdown';
 import moment from 'moment';
 
 // Lib
 import { debounce } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 import { getArticleListPath } from 'routes/admin-helpers';
-import { validateChanges, buildJsonGraphEnvelope } from './articleLogic';
+import { validateChanges, buildJsonGraphEnvelope } from './article-logic';
 
 // Custom Components
 import {
@@ -45,7 +44,6 @@ class ArticleController extends FalcorController {
     this.returnToApp = this.returnToApp.bind(this);
     this.isFormChanged = this.isFormChanged.bind(this);
     this.falcorToState = this.falcorToState.bind(this);
-    this.converter = new showdown.Converter();
     this.updateTitle = title => this.safeSetState({ title });
     this.updateSlug = slug => this.safeSetState({ slug });
     this.updateAuthors = authors => this.safeSetState({ authors });

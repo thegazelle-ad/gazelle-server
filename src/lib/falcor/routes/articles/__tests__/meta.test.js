@@ -1,5 +1,5 @@
 import { routes } from '../meta';
-import * as dbMethods from '../database-calls';
+import * as dbMethods from '../database-calls.sql';
 import { logger } from 'lib/logger';
 
 jest.mock('lib/db');

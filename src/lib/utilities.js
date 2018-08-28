@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { getConfig } from '../config';
 
 import { parseMarkdown } from 'lib/react-utilities';
 
@@ -178,11 +179,10 @@ export function stringToInt(str) {
 export const has = Object.prototype.hasOwnProperty;
 
 // Environment functions and constants
-export const isProduction = process.env.NODE_ENV === 'production';
-export const isStaging = process.env.NODE_ENV === 'staging';
-export const isCI =
-  process.env.CI === 'true' && process.env.CIRCLECI === 'true';
-export const isDevelopment = !isProduction && !isStaging;
+export const isProduction = () => getConfig().NODE_ENV === 'production';
+export const isStaging = () => getConfig().NODE_ENV === 'staging';
+export const isCI = () => getConfig().GAZELLE_ENV === 'CI';
+export const isDevelopment = () => !isProduction() && !isStaging();
 
 export function filterByEnvironment(development, beta, production) {
   if (production === undefined) {
@@ -197,16 +197,16 @@ export function filterByEnvironment(development, beta, production) {
       );
     }
 
-    if (isProduction) {
+    if (isProduction()) {
       return beta;
     }
     return development;
   }
 
   // All 3 arguments were specified
-  if (isProduction) {
+  if (isProduction()) {
     return production;
-  } else if (isStaging) {
+  } else if (isStaging()) {
     return beta;
   }
   return development;
@@ -215,12 +215,9 @@ export function filterByEnvironment(development, beta, production) {
 export const nothingAllowedRobotsTxt = 'User-agent: *\nDisallow: /\n';
 
 export const googleClientID =
-  '235485701704-vqb1qkp8lk1hbdhcmjm5jmtocaur3mq7.apps.googleusercontent.com'; // eslint-disable-line max-len
+  '235485701704-vqb1qkp8lk1hbdhcmjm5jmtocaur3mq7.apps.googleusercontent.com';
 export const googleWhitelist = [
-  'tjk343@nyu.edu',
-  'ks3583@nyu.edu',
-  'kw1553@nyu.edu',
-  'hct245@nyu.edu',
-  'zmm228@nyu.edu',
+  'jmp907@nyu.edu',
+  'mm7969@nyu.edu',
   'ego225@nyu.edu',
-]; // eslint-disable-line max-len
+];

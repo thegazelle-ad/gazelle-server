@@ -166,7 +166,7 @@ class AppController extends BaseComponent {
 
   signOut() {
     // if CI, just blindly redirect
-    if (isCI) {
+    if (isCI()) {
       browserHistory.push('/login');
     }
     if (window.THE_GAZELLE.googleAPILoaded) {

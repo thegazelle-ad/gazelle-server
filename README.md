@@ -1,10 +1,15 @@
+[![Coverage Status](https://coveralls.io/repos/github/thegazelle-ad/gazelle-server/badge.svg?branch=master)](https://coveralls.io/github/thegazelle-ad/gazelle-server?branch=master)
+[![CircleCI](https://circleci.com/gh/thegazelle-ad/gazelle-server.svg?style=svg)](https://circleci.com/gh/thegazelle-ad/gazelle-server)
+
 # The Gazelle
 
-This code is written for [The Gazelle's](https://www.thegazelle.org) website. The Gazelle is New York University Abu Dhabi's independent online student news publication. The Gazelle's website is developed and maintained entirely by current undergraduate NYUAD students. The publication is managed by a dedicated team of writers, editors, artists, developers and photographers and released to NYUAD, the NYU global network and the greater Abu Dhabi community every Sunday morning.
+This code is written for [The Gazelle's website](https://www.thegazelle.org). The Gazelle is New York University Abu Dhabi's independent online student news publication. The Gazelle's website is developed and maintained entirely by current undergraduate NYUAD students. The publication is managed by a dedicated team of writers, editors, artists, developers and photographers and released to NYUAD, the NYU global network and the greater Abu Dhabi community every Sunday morning.
 
 ## Documentation
 
-For documentation on how to setup the development environment, our coding style guide, dev ops guides, and tips for a nicer development experience, see our [documentation folder](./docs).
+For documentation on how to setup the development environment, our coding style guide, dev ops guides, and tips for a nicer development experience, see our [documentation folder](./docs), please do explore the resources we have in there.
+
+> NOTE: If you are a new developer looking through this, the first place you want to go is probably the [Setting Up Your Development Environment Guide](./docs/dev-environment/setting-up-dev-environment.md). And the [Coding Style Guide](./docs/the-gazelle-style-guide.md) is also a must read.
 
 ## Join the Herd
 

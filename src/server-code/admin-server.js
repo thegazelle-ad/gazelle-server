@@ -9,8 +9,9 @@ import AWS from 'aws-sdk';
 import s3 from 's3';
 // Needed for receiving the multi-part file upload
 import multer from 'multer';
+
 // Our own custom config
-import s3Config from 'config/s3.config';
+import { getConfig } from '../config';
 
 /* Helper libraries */
 import fs from 'fs';
@@ -31,6 +32,8 @@ import {
   nothingAllowedRobotsTxt,
 } from 'lib/utilities';
 
+import { logger } from 'lib/logger';
+
 import { md5Hash, compressJPEG, deleteFile } from 'lib/server-utilities';
 
 export default function runAdminServer(serverFalcorModel) {
@@ -41,7 +44,7 @@ export default function runAdminServer(serverFalcorModel) {
   let cssHash = md5Hash(path.join(__dirname, '../../static/admin.css'));
 
   const buildHtmlString = () => {
-    if (isDevelopment) {
+    if (isDevelopment()) {
       // As described in the main server file we only recompute hashes in development
       clientScriptHash = md5Hash(
         path.join(__dirname, '../../static/build/admin-client.js'),
@@ -110,7 +113,9 @@ export default function runAdminServer(serverFalcorModel) {
   app.use(allowCrossDomain);
 
   const RESTART_SERVERS_PATH_NAME = JSON.stringify(
-    `${process.env.ROOT_DIRECTORY}/scripts/restart-servers.sh`,
+    `${
+      getConfig().ROOT_DIRECTORY
+    }/deployment-resources/scripts/restart-servers.sh`,
   );
 
   let isRestarted = false;
@@ -128,8 +133,8 @@ export default function runAdminServer(serverFalcorModel) {
       res.sendStatus(200);
       exec(RESTART_SERVERS_PATH_NAME, err => {
         if (err) {
-          if (process.env.NODE_ENV !== 'production') {
-            console.error(err); // eslint-disable-line no-console
+          if (getConfig().NODE_ENV !== 'production') {
+            logger.error(err);
           }
           // In the case of an error isRestarted will stay true and so the ping will fail correctly
         }
@@ -144,7 +149,7 @@ export default function runAdminServer(serverFalcorModel) {
   });
 
   /* Image Uploader */
-  const uploadDir = `${process.env.ROOT_DIRECTORY}/tmp`;
+  const uploadDir = `${getConfig().ROOT_DIRECTORY}/tmp`;
 
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
@@ -161,9 +166,13 @@ export default function runAdminServer(serverFalcorModel) {
 
   const upload = multer({ storage });
 
-  const awsSdkClient = new AWS.S3(
-    Object.assign(s3Config, { apiVersion: '2006-03-01' }),
-  );
+  const s3Config = {
+    accessKeyId: getConfig().AWS_S3_ACCESS_KEY_ID,
+    secretAccessKey: getConfig().AWS_S3_SECRET_ACCESS_KEY,
+    apiVersion: '2006-03-01',
+  };
+
+  const awsSdkClient = new AWS.S3(s3Config);
 
   const s3Client = s3.createClient({
     s3Client: awsSdkClient,
@@ -172,7 +181,7 @@ export default function runAdminServer(serverFalcorModel) {
   app.post('/upload', upload.single('image'), (req, res) => {
     const filePath = req.file.path;
 
-    if (isDevelopment) {
+    if (isDevelopment()) {
       /**
        * As we are in dev-mode, we don't actually want to upload to s3.
        * You can either compile with production mode or remove this
@@ -182,8 +191,8 @@ export default function runAdminServer(serverFalcorModel) {
         setTimeout(() => {
           res.status(200).send('success test_url');
         }, 2000);
-        // eslint-disable-next-line no-console
-        deleteFile(filePath).catch(error => console.log(error));
+
+        deleteFile(filePath).catch(error => logger.debug(error));
       });
     } else {
       const year = new Date().getFullYear().toString();
@@ -210,20 +219,20 @@ export default function runAdminServer(serverFalcorModel) {
           if (err && err.code === 'NotFound') {
             const s3Uploader = s3Client.uploadFile(s3Params);
             s3Uploader.on('error', s3Err => {
-              console.error(s3Err); // eslint-disable-line no-console
-              // eslint-disable-next-line no-console
-              deleteFile(filePath).catch(error => console.log(error));
+              logger.error(s3Err);
+
+              deleteFile(filePath).catch(error => logger.debug(error));
               return res.status(500).send('Error uploading');
             });
             s3Uploader.on('end', () => {
               const imageUrl = s3.getPublicUrl(Bucket, Key);
-              // eslint-disable-next-line no-console
-              deleteFile(filePath).catch(error => console.log(error));
+
+              deleteFile(filePath).catch(error => logger.debug(error));
               return res.status(200).send(`success ${imageUrl}`);
             });
           }
-          // eslint-disable-next-line no-console
-          deleteFile(filePath).catch(error => console.log(error));
+
+          deleteFile(filePath).catch(error => logger.debug(error));
           return res.status(409).send(`object already exists, ${Key}`);
         });
       });
@@ -237,7 +246,7 @@ export default function runAdminServer(serverFalcorModel) {
       .send(nothingAllowedRobotsTxt);
   });
 
-  if (!isDevelopment) {
+  if (!isDevelopment()) {
     // If we are in staging or production we redirect to a forced login
     app.get('/login', (req, res) => {
       res.status(200).send(buildHtmlString());
@@ -275,7 +284,7 @@ export default function runAdminServer(serverFalcorModel) {
       if (aud.trim() === googleClientID) {
         // in dev mode, allow any valid email address
         // in production, require email to be in whitelist (defined in utilities.js)
-        if (isDevelopment) {
+        if (isDevelopment()) {
           res.sendStatus(200);
         } else if (googleWhitelist.indexOf(email) !== -1) {
           res.sendStatus(200);
@@ -288,14 +297,14 @@ export default function runAdminServer(serverFalcorModel) {
     });
   });
 
-  const port = isCI || !process.env.ADMIN_PORT ? 4000 : process.env.ADMIN_PORT;
+  const port = isCI() ? 4000 : getConfig().ADMIN_PORT;
   app.listen(port, err => {
     if (err) {
-      console.error(err); // eslint-disable-line no-console
+      logger.error(err);
+
       return;
     }
 
-    // eslint-disable-next-line no-console
-    console.log(`Admin tools server started on port ${port}`);
+    logger.debug(`Admin tools server started on port ${port}`);
   });
 }

@@ -1,9 +1,9 @@
 build/
 static/build/
-config/database.config.json5
-config/s3.config.js
-scripts/backup-database.sh
 **/tmp/*
+.env
+client_secret.json
+credentials.json
 
 ## Below this is automatically generated
 

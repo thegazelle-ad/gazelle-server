@@ -44,9 +44,7 @@ describe('logger', () => {
     logger.warn('some warning');
 
     expect(console.warn).toHaveBeenCalled();
-    expect(console.warn.mock.calls[0][0]).toBeInstanceOf(Error);
-    expect(console.warn.mock.calls[0][0].message).toBe('some warning');
-    expect(console.warn.mock.calls[0][0].stack).toMatch(hasStackTraceRegex);
+    expect(console.warn.mock.calls[0][0]).toBe('some warning');
   });
 
   it('calls console.log with error object in logger.debug', () => {
@@ -54,9 +52,7 @@ describe('logger', () => {
     logger.debug('some debug statement');
 
     expect(console.log).toHaveBeenCalled();
-    expect(console.log.mock.calls[0][0]).toBeInstanceOf(Error);
-    expect(console.log.mock.calls[0][0].message).toBe('some debug statement');
-    expect(console.log.mock.calls[0][0].stack).toMatch(hasStackTraceRegex);
+    expect(console.log.mock.calls[0][0]).toBe('some debug statement');
   });
 
   it('calls console.error and exits on fatal serverside error', () => {

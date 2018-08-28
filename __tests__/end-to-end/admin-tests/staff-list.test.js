@@ -127,6 +127,7 @@ describe('Admin interface staff member list', () => {
         // We reuse the variable since we know .then only runs because there were no exceptions
         // so .end() has finished successfully, and also this means that the afterEach function will
         // correctly terminate the nightmare instance if an error happens in this step
+        nightmare.halt();
         nightmare = new Nightmare(NIGHTMARE_CONFIG);
         // This returns a promise so we won't do anything else until the server is done restarting
         return restartServer(nightmare);
@@ -135,6 +136,7 @@ describe('Admin interface staff member list', () => {
         // We reuse the variable since we know .then only runs because there were no exceptions
         // so .end() has finished successfully, and also this means that the afterEach function will
         // correctly terminate the nightmare instance if an error happens in this step
+        nightmare.halt();
         nightmare = new Nightmare(NIGHTMARE_CONFIG);
         // We have restarted the server which also clears the cache which allows us to test that
         // the data we inserted actually propagated to the database

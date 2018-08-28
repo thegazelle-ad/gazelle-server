@@ -2,14 +2,21 @@
 // We disable camelcase here due to SQL naming conventions
 import knex from 'knex';
 import stable from 'stable';
-import databaseConnectionConfig from 'config/database.config.json5';
+import { getConfig } from '../config';
 import _ from 'lodash';
 import moment from 'moment';
 import { has } from 'lib/utilities';
+import { logger } from 'lib/logger';
 
 export const database = knex({
   client: 'mysql',
-  connection: databaseConnectionConfig,
+  connection: {
+    host: getConfig().DATABASE_HOST,
+    user: getConfig().DATABASE_USER,
+    password: getConfig().DATABASE_PASSWORD,
+    database: getConfig().DATABASE_NAME,
+    charset: getConfig().DATABASE_ENCODING,
+  },
   pool: {
     min: 10,
     max: 50,
@@ -678,8 +685,7 @@ export function relatedArticleQuery(ids) {
               if (post === undefined) {
                 // Most likely this means a garbage URL was accessed
                 if (process.env.NODEENV !== 'production') {
-                  // eslint-disable-next-line no-console
-                  console.warn(
+                  logger.warn(
                     `Article ${id} couldn't be found in related articles query`,
                   );
                 }

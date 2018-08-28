@@ -2,12 +2,15 @@
 'use strict';
 
 const path = require('path');
-const fs = require('fs');
-const JSON5 = require('json5');
-const databaseConnectionJSON5String = fs.readFileSync(
-  path.join(__dirname, 'config/database.config.json5'),
-);
-const databaseConnectionConfig = JSON5.parse(databaseConnectionJSON5String);
+const envVars = require('dotenv').config().parsed;
+
+const databaseConnectionConfig = {
+  user: envVars.DATABASE_USER,
+  host: envVars.DATABASE_HOST,
+  database: envVars.DATABASE_NAME,
+  password: envVars.DATABASE_PASSWORD,
+  charset: envVars.DATABASE_ENCODING,
+};
 
 module.exports = {
   client: 'mysql',

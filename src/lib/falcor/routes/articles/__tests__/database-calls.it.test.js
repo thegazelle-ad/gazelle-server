@@ -1,4 +1,4 @@
-import { getPaginatedArticle, createNewArticle } from '../database-calls';
+import { getPaginatedArticle, createNewArticle } from '../database-calls.sql';
 import {
   getDatabaseConnection,
   initializeTestDatabase,
@@ -23,12 +23,12 @@ const database = getDatabaseConnection(databaseName);
 const maxSlugNum = 200;
 
 // End the knex connection after all tests are done
-afterAll(() => database.destroy());
+afterAll(async () => database.destroy());
 
 describe('getPaginatedArticle', () => {
   // We can use All instead of Each as these are only select queries
-  beforeAll(() => initializeTestDatabase(database, databaseName));
-  afterAll(() => cleanupTestDatabase(databaseName));
+  beforeAll(async () => initializeTestDatabase(database, databaseName));
+  afterAll(async () => cleanupTestDatabase(databaseName));
 
   it('fetches expected rows from database', async () => {
     await expect(

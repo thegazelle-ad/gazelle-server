@@ -1,0 +1,54 @@
+# Frontend on 8001
+# Admin interface on 8002
+# Ghost on 8003
+
+thegazelle.org {
+  log  /var/log/thegazelle.org.log
+  redir / https://www.thegazelle.org{uri}
+}
+
+www.thegazelle.org {
+  log  /var/log/www.thegazelle.org.log {
+    rotate_size 10
+    rotate_age 7
+    rotate_keep 1
+  }
+  proxy / localhost:8001
+  errors {
+    500 ~/server/deployment-resources/http-error-static-pages/build/500.html
+    501 ~/server/deployment-resources/http-error-static-pages/build/501.html
+    502 ~/server/deployment-resources/http-error-static-pages/build/502.html
+    503 ~/server/deployment-resources/http-error-static-pages/build/503.html
+    504 ~/server/deployment-resources/http-error-static-pages/build/504.html
+    505 ~/server/deployment-resources/http-error-static-pages/build/505.html
+    506 ~/server/deployment-resources/http-error-static-pages/build/506.html
+    507 ~/server/deployment-resources/http-error-static-pages/build/507.html
+    508 ~/server/deployment-resources/http-error-static-pages/build/508.html
+    509 ~/server/deployment-resources/http-error-static-pages/build/509.html
+    510 ~/server/deployment-resources/http-error-static-pages/build/510.html
+    511 ~/server/deployment-resources/http-error-static-pages/build/511.html
+  }
+}
+
+admin.thegazelle.org {
+  log /var/log/admin.thegazelle.org.log {
+    rotate_size 10
+    rotate_age 7
+    rotate_keep 1
+  }
+  proxy / localhost:8002
+  errors {
+    500 ~/server/deployment-resources/http-error-static-pages/build/500.html
+    501 ~/server/deployment-resources/http-error-static-pages/build/501.html
+    502 ~/server/deployment-resources/http-error-static-pages/build/502.html
+    503 ~/server/deployment-resources/http-error-static-pages/build/503.html
+    504 ~/server/deployment-resources/http-error-static-pages/build/504.html
+    505 ~/server/deployment-resources/http-error-static-pages/build/505.html
+    506 ~/server/deployment-resources/http-error-static-pages/build/506.html
+    507 ~/server/deployment-resources/http-error-static-pages/build/507.html
+    508 ~/server/deployment-resources/http-error-static-pages/build/508.html
+    509 ~/server/deployment-resources/http-error-static-pages/build/509.html
+    510 ~/server/deployment-resources/http-error-static-pages/build/510.html
+    511 ~/server/deployment-resources/http-error-static-pages/build/511.html
+  }
+}
