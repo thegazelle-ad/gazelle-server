@@ -21,15 +21,15 @@ export default class SearchController extends FalcorController {
     return [
       [
         'search',
-        'posts',
+        'main',
         queryParams.q,
         { length: 20 },
         ['title', 'teaser', 'issueNumber', 'slug', 'image_url', 'published_at'],
       ],
-      ['search', 'posts', queryParams.q, { length: 20 }, 'category', 'slug'],
+      ['search', 'main', queryParams.q, { length: 20 }, 'category', 'slug'],
       [
         'search',
-        'posts',
+        'main',
         queryParams.q,
         { length: 20 },
         'staff',
@@ -55,7 +55,7 @@ export default class SearchController extends FalcorController {
       }
       const query = this.props.location.query.q;
       const results = _.filter(
-        this.state.data.search.posts[query],
+        this.state.data.search.main[query],
         article => article.published_at,
       );
       return <ArticleList className="search" articles={results} />;
