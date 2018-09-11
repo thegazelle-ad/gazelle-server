@@ -109,9 +109,10 @@ class IssueListController extends FalcorController {
       return;
     }
 
-    const issue = {};
-    issue.name = issueName;
-    issue.issueNumber = stringToInt(issueNumber);
+    const issue = {
+      name: issueName,
+      issue_number: stringToInt(issueNumber),
+    };
 
     const callback = () => {
       // Set next issue default

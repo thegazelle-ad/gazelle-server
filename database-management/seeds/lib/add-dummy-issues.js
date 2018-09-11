@@ -8,7 +8,7 @@ module.exports.addDummyIssues = (knex, numIssues) => {
       id: i,
       name: `issue${i}`,
       published_at: START_DATE.add(i, 'days').toDate(),
-      issue_order: i,
+      issue_number: i,
     });
   }
   return knex('issues').insert(rows);
