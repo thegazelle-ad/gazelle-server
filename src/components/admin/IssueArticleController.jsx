@@ -225,6 +225,7 @@ class IssueArticleController extends FalcorController {
   handleArticlesChange(newArticles, mode) {
     const { issueNumber } = this.props.params;
     const data = this.state.data.issues.byNumber[issueNumber];
+
     // Get all the variables set for each corresponding mode
     let originalArticles;
     let field1;
