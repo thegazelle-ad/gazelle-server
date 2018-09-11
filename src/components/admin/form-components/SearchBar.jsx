@@ -15,6 +15,7 @@ class SearchResult extends React.PureComponent {
       id: this.props.id,
       title: this.props.title,
       slug: this.props.slug,
+      ...this.props.extraInfo,
     });
   };
 
@@ -112,6 +113,7 @@ export class SearchBar extends React.Component {
                   id={item.id}
                   title={item.title}
                   slug={item.slug}
+                  extraInfo={_.omit(item, ['slug', 'id', 'title'])}
                   handleClick={this.handleClick}
                   disabled={this.props.disabled}
                 />
