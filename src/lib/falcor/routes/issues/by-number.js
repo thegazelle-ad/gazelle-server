@@ -16,7 +16,7 @@ export default [
           const results = [];
           data.forEach(row => {
             results.push({
-              path: ['issues', 'byNumber', row.issue_order, 'featured'],
+              path: ['issues', 'byNumber', row.issue_number, 'featured'],
               value: $ref(['articles', 'bySlug', row.slug]),
             });
           });
@@ -142,7 +142,7 @@ export default [
       const mapFields = field => {
         switch (field) {
           case 'issueNumber':
-            return 'issue_order';
+            return 'issue_number';
           default:
             return field;
         }
@@ -163,7 +163,12 @@ export default [
             }
             requestedFields.forEach(field => {
               results.push({
-                path: ['issues', 'byNumber', processedIssue.issue_order, field],
+                path: [
+                  'issues',
+                  'byNumber',
+                  processedIssue.issue_number,
+                  field,
+                ],
                 value: processedIssue[mapFields(field)],
               });
             });
@@ -310,6 +315,7 @@ export default [
     call: (callPath, args) =>
       new Promise(resolve => {
         const issue = args[0];
+        verifyIssue(issue);
         const fields = Object.keys(issue);
         db.addIssue(issue).then(flag => {
           if (flag !== true) {
@@ -333,3 +339,21 @@ export default [
       }),
   },
 ];
+
+function verifyIssue(issue) {
+  const requiredFields = ['name', 'issue_number'];
+  const optionalFields = ['published_at'];
+  requiredFields.every(field => {
+    if (!has.call(issue, field)) {
+      throw new Error(`Required field ${field} was not present`);
+    }
+    return true;
+  });
+  const allFields = requiredFields.concat(optionalFields);
+  Object.keys(issue).every(issueField => {
+    if (!allFields.includes(issueField)) {
+      throw new Error(`Unknown field ${issueField} was found on issue`);
+    }
+    return true;
+  });
+}

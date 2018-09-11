@@ -119,7 +119,7 @@ export function infoPagesQuery(slugs, columns) {
 
 export async function articleIssueQuery(ids) {
   const rows = await database
-    .select('article_id as articleId', 'issue_order as issueNumber')
+    .select('article_id as articleId', 'issue_number as issueNumber')
     .from('issues_articles_order')
     .innerJoin('issues', 'issue_id', '=', 'issues.id')
     .whereIn('article_id', ids)
@@ -194,9 +194,9 @@ export function latestIssueQuery() {
   // returns the newest issue number
   return new Promise(resolve => {
     database
-      .select('issue_order')
+      .select('issue_number')
       .from('issues')
-      .orderBy('issue_order', 'desc')
+      .orderBy('issue_number', 'desc')
       .whereNotNull('published_at')
       .limit(1)
       .then(rows => {
@@ -317,7 +317,7 @@ export function featuredArticleQuery(issueNumbers) {
   // Get the featured articles from all the issueNumbers
   return new Promise(resolve => {
     database
-      .select('articles.slug', 'issue_order')
+      .select('articles.slug', 'issue_number')
       .from('articles')
       .innerJoin(
         'issues_articles_order',
@@ -326,7 +326,7 @@ export function featuredArticleQuery(issueNumbers) {
         'articles.id',
       )
       .innerJoin('issues', 'issues.id', '=', 'issues_articles_order.issue_id')
-      .whereIn('issues.issue_order', issueNumbers)
+      .whereIn('issues.issue_number', issueNumbers)
       .andWhere('type', '=', 1)
       .then(rows => {
         // database.destroy();
@@ -343,7 +343,7 @@ export function editorPickQuery(issueNumbers) {
   // Get the editor's picks from all the issueNumbers
   return new Promise(resolve => {
     database
-      .select('articles.slug', 'issue_order')
+      .select('articles.slug', 'issue_number')
       .from('articles')
       .innerJoin(
         'issues_articles_order',
@@ -352,15 +352,15 @@ export function editorPickQuery(issueNumbers) {
         'articles.id',
       )
       .innerJoin('issues', 'issues.id', '=', 'issues_articles_order.issue_id')
-      .whereIn('issues.issue_order', issueNumbers)
+      .whereIn('issues.issue_number', issueNumbers)
       .andWhere('type', '=', 2)
       .then(rows => {
         const results = {};
         rows.forEach(row => {
-          if (!has.call(results, row.issue_order)) {
-            results[row.issue_order] = [row.slug];
+          if (!has.call(results, row.issue_number)) {
+            results[row.issue_number] = [row.slug];
           } else {
-            results[row.issue_order].push(row.slug);
+            results[row.issue_number].push(row.slug);
           }
         });
         // database.destroy();
@@ -389,8 +389,8 @@ export function issueCategoryQuery(issueNumbers, fields) {
           throw new Error('Unexpected field passed to dbIssueCategoryQuery');
       }
     });
-    // Add issue_order as we need to know which issue the data belongs to
-    columns.push('issue_order', 'categories_order');
+    // Add issue_number as we need to know which issue the data belongs to
+    columns.push('issue_number', 'categories_order');
     database
       .select(...columns)
       .from('issues')
@@ -406,12 +406,12 @@ export function issueCategoryQuery(issueNumbers, fields) {
         '=',
         'categories.id',
       )
-      .whereIn('issues.issue_order', issueNumbers)
+      .whereIn('issues.issue_number', issueNumbers)
       .orderBy('categories_order', 'asc')
       .then(rows => {
         const results = {};
         rows.forEach(row => {
-          const issueNumber = row.issue_order;
+          const issueNumber = row.issue_number;
           const categoryIndex = row.categories_order;
           const categoryObject = {};
           fields.forEach(field => {
@@ -443,7 +443,7 @@ export function issueCategoryArticleQuery(issueNumbers) {
   return new Promise(resolve => {
     database
       .select(
-        'issue_order',
+        'issue_number',
         'articles.slug',
         'article_order',
         'articles.category_id',
@@ -461,13 +461,13 @@ export function issueCategoryArticleQuery(issueNumbers) {
         '=',
         'issues_articles_order.article_id',
       )
-      .whereIn('issues.issue_order', issueNumbers)
+      .whereIn('issues.issue_number', issueNumbers)
       .andWhere('type', '=', 0)
       .orderBy('article_order', 'ASC')
       .then(articleRows => {
         database
           .select(
-            'issue_order',
+            'issue_number',
             'categories_order',
             'issues_categories_order.category_id',
           )
@@ -478,14 +478,14 @@ export function issueCategoryArticleQuery(issueNumbers) {
             '=',
             'issues_categories_order.issue_id',
           )
-          .whereIn('issues.issue_order', issueNumbers)
+          .whereIn('issues.issue_number', issueNumbers)
           .orderBy('categories_order', 'ASC')
           .then(categoryRows => {
             const results = {};
             const categoriesHashMap = {};
             articleRows.forEach(postRow => {
               // I make a lot of assumptions about correctness of data returned here
-              const issueNumber = postRow.issue_order;
+              const issueNumber = postRow.issue_number;
               // Here I handle finding the corresponding category row and thereby the order
               // this category should be in, and also use hashing as we will be looking this up often.
               let categoryIndex;
@@ -498,7 +498,7 @@ export function issueCategoryArticleQuery(issueNumbers) {
               } else {
                 const correspondingCategoryRow = categoryRows.find(
                   categoryRow =>
-                    categoryRow.issue_order === issueNumber &&
+                    categoryRow.issue_number === issueNumber &&
                     categoryRow.category_id === postRow.category_id,
                 );
                 if (correspondingCategoryRow === undefined) {
@@ -564,16 +564,16 @@ export function issueQuery(issueNumbers, columns) {
   return new Promise(resolve => {
     let processedColumns = columns;
     const hasIssueNumber =
-      processedColumns.find(col => col === 'issue_order') !== undefined;
+      processedColumns.find(col => col === 'issue_number') !== undefined;
     if (!hasIssueNumber) {
       // use concat to do a copy instead of changing original pathSet
       // we push this so that we know which issue we are fetching data for
-      processedColumns = processedColumns.concat(['issue_order']);
+      processedColumns = processedColumns.concat(['issue_number']);
     }
     database
       .select(...processedColumns)
       .from('issues')
-      .whereIn('issues.issue_order', issueNumbers)
+      .whereIn('issues.issue_number', issueNumbers)
       .then(rows => {
         // database.destroy();
         resolve(rows);
@@ -590,7 +590,7 @@ export function trendingQuery() {
     database
       .select('id')
       .from('issues')
-      .orderBy('issue_order', 'desc')
+      .orderBy('issue_number', 'desc')
       .whereNotNull('published_at')
       .limit(1)
       .then(issueRows => {
@@ -627,7 +627,7 @@ export function relatedArticleQuery(ids) {
     database
       .select('id')
       .from('issues')
-      .orderBy('issue_order', 'desc')
+      .orderBy('issue_number', 'desc')
       .whereNotNull('published_at')
       .limit(1)
       .then(issueRows => {
@@ -890,10 +890,10 @@ export function updateIssueArticles(
     database
       .select('id', 'published_at')
       .from('issues')
-      .where('issue_order', '=', issueNumber)
+      .where('issue_number', '=', issueNumber)
       .then(issues => {
         if (issues.length !== 1) {
-          throw new Error('issue_order should be unique');
+          throw new Error('issue_number should be unique');
         }
         const issue_id = issues[0].id;
         const issuePublished = issues[0].published_at instanceof Date;
@@ -1239,10 +1239,10 @@ export function updateIssueData(jsonGraphArg) {
       );
     }
     if (has.call(issueObject, 'issueNumber') && issueObject.issueNumber) {
-      updateObject.issue_order = issueObject.issueNumber;
+      updateObject.issue_number = issueObject.issueNumber;
     }
     database('issues')
-      .where('issue_order', '=', issueNumber)
+      .where('issue_number', '=', issueNumber)
       .update(updateObject)
       .then(() => {
         resolve(true);
@@ -1319,7 +1319,7 @@ export function updateIssueCategories(issueNumber, idArray) {
     database
       .select('id')
       .from('issues')
-      .where('issue_order', '=', issueNumber)
+      .where('issue_number', '=', issueNumber)
       .then(rows => {
         if (!rows || !rows.length || !rows[0].id) {
           throw new Error(

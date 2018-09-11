@@ -14,7 +14,7 @@ export default [
           resolve([
             {
               path: ['issues', 'latest'],
-              value: $ref(['issues', 'byNumber', row[0].issue_order]),
+              value: $ref(['issues', 'byNumber', row[0].issue_number]),
             },
           ]);
         });
