@@ -1,12 +1,14 @@
 exports.up = async knex => {
-  await knex.raw(
-    'ALTER TABLE articles ADD FULLTEXT `article-search-index` (title, markdown)',
-  );
+  await Promise.all([
+    knex.raw('ALTER TABLE articles ADD FULLTEXT(title)'),
+    knex.raw('ALTER TABLE articles ADD FULLTEXT(markdown)'),
+  ]);
   // Using a raw query above since knex does not support fulltext indexing
 };
 
 exports.down = async knex => {
-  await knex.schema.table('articles', table => {
-    table.dropIndex(['title', 'markdown'], 'article-search-index');
-  });
+  await Promise.all([
+    knex.raw('ALTER TABLE articles DROP INDEX title'),
+    knex.raw('ALTER TABLE articles DROP INDEX markdown'),
+  ]);
 };

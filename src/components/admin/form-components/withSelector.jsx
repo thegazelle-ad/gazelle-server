@@ -117,6 +117,7 @@ export const withSelector = Finder => {
                 key={object.id || object.id === 0 ? object.id : object.name}
                 id={object.id}
                 title={object.name}
+                slug={object.slug}
                 onDelete={this.handleDelete}
                 style={{
                   margin: 4,
