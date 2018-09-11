@@ -22,11 +22,11 @@ describe('issuesByNumber falcor routes', () => {
       addIssue.call({}, [
         { invalidKey: 'something', name: 'someName', issue_number: 3 },
       ]),
-    ).rejects.toThrow();
+    ).rejects.toThrow('Unknown field');
   });
 
   it("doesn't accept issue with missing required fields", async () => {
-    await expect(addIssue.call({}, [{}])).rejects.toThrow();
+    await expect(addIssue.call({}, [{}])).rejects.toThrow('Required field');
   });
 
   it('accepts valid issue', async () => {
