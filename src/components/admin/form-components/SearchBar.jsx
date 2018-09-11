@@ -38,12 +38,14 @@ SearchResult.propTypes = {
   id: PropTypes.number,
   disabled: PropTypes.bool,
   isNew: PropTypes.bool,
+  extraInfo: PropTypes.shape({}),
 };
 
 SearchResult.defaultProps = {
   id: null,
   disabled: false,
   isNew: false,
+  extraInfo: {},
 };
 
 export class SearchBar extends React.Component {

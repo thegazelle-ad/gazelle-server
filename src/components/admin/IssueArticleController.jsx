@@ -225,7 +225,6 @@ class IssueArticleController extends FalcorController {
   handleArticlesChange(newArticles, mode) {
     const { issueNumber } = this.props.params;
     const data = this.state.data.issues.byNumber[issueNumber];
-
     // Get all the variables set for each corresponding mode
     let originalArticles;
     let field1;
@@ -686,7 +685,7 @@ class IssueArticleController extends FalcorController {
               length={3}
               fields={ARTICLE_FIELDS}
               disabled={this.state.saving}
-              extraPathSets={[['staff', 0, 'slug']]}
+              extraPathSets={[['authors', 0, 'slug'], ['category', 'slug']]}
               fullWidth
             />
             {featuredArticles.map(article => (
@@ -722,7 +721,7 @@ class IssueArticleController extends FalcorController {
               length={3}
               fields={ARTICLE_FIELDS}
               disabled={this.state.saving}
-              extraPathSets={[['staff', 0, 'slug']]}
+              extraPathSets={[['authors', 0, 'slug'], ['category', 'slug']]}
               fullWidth
             />
             {picks.map(article => (
@@ -758,7 +757,7 @@ class IssueArticleController extends FalcorController {
               length={3}
               fields={ARTICLE_FIELDS}
               disabled={this.state.saving}
-              extraPathSets={[['staff', 0, 'slug']]}
+              extraPathSets={[['authors', 0, 'slug'], ['category', 'slug']]}
               fullWidth
             />
             <div style={{ overflow: 'auto', maxHeight: '20vh' }}>
