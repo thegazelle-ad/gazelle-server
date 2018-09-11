@@ -315,6 +315,7 @@ export default [
     call: (callPath, args) =>
       new Promise(resolve => {
         const issue = args[0];
+        verifyIssue(issue);
         const fields = Object.keys(issue);
         db.addIssue(issue).then(flag => {
           if (flag !== true) {
@@ -338,3 +339,21 @@ export default [
       }),
   },
 ];
+
+function verifyIssue(issue) {
+  const requiredFields = ['name', 'issue_number'];
+  const optionalFields = ['published_at'];
+  requiredFields.every(field => {
+    if (!has.call(issue, field)) {
+      throw new Error(`Required field ${field} was not present`);
+    }
+    return true;
+  });
+  const allFields = requiredFields.concat(optionalFields);
+  Object.keys(issue).every(issueField => {
+    if (!allFields.includes(issueField)) {
+      throw new Error(`Unknown field ${issueField} was found on issue`);
+    }
+    return true;
+  });
+}
