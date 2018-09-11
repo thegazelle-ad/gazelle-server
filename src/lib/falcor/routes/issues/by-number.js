@@ -16,7 +16,7 @@ export default [
           const results = [];
           data.forEach(row => {
             results.push({
-              path: ['issues', 'byNumber', row.issue_order, 'featured'],
+              path: ['issues', 'byNumber', row.issue_number, 'featured'],
               value: $ref(['articles', 'bySlug', row.slug]),
             });
           });
@@ -142,7 +142,7 @@ export default [
       const mapFields = field => {
         switch (field) {
           case 'issueNumber':
-            return 'issue_order';
+            return 'issue_number';
           default:
             return field;
         }
@@ -163,7 +163,12 @@ export default [
             }
             requestedFields.forEach(field => {
               results.push({
-                path: ['issues', 'byNumber', processedIssue.issue_order, field],
+                path: [
+                  'issues',
+                  'byNumber',
+                  processedIssue.issue_number,
+                  field,
+                ],
                 value: processedIssue[mapFields(field)],
               });
             });
@@ -310,8 +315,6 @@ export default [
     call: (callPath, args) =>
       new Promise(resolve => {
         const issue = args[0];
-        issue.issue_order = issue.issueNumber;
-        delete issue.issueNumber;
         const fields = Object.keys(issue);
         db.addIssue(issue).then(flag => {
           if (flag !== true) {
