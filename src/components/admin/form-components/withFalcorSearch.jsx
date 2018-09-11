@@ -43,7 +43,7 @@ export const withFalcorSearch = (fields, formatter, mode) => WrappedField => {
           return { suggestions: [] };
         }
         const suggestions = parseFalcorPseudoArray(x.json.search[mode][query])
-          .filter(item => item !== undefined)
+          .filter(item => item !== undefined && item.id !== undefined)
           .map(item => ({
             title: formatter(item),
             id: item.id,
