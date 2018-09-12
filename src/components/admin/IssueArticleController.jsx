@@ -686,7 +686,7 @@ class IssueArticleController extends FalcorController {
               length={3}
               fields={ARTICLE_FIELDS}
               disabled={this.state.saving}
-              extraPathSets={[['staff', 0, 'slug']]}
+              extraPathSets={[['authors', 0, 'slug'], ['category', 'slug']]}
               fullWidth
             />
             {featuredArticles.map(article => (
@@ -722,7 +722,7 @@ class IssueArticleController extends FalcorController {
               length={3}
               fields={ARTICLE_FIELDS}
               disabled={this.state.saving}
-              extraPathSets={[['staff', 0, 'slug']]}
+              extraPathSets={[['authors', 0, 'slug'], ['category', 'slug']]}
               fullWidth
             />
             {picks.map(article => (
@@ -758,7 +758,7 @@ class IssueArticleController extends FalcorController {
               length={3}
               fields={ARTICLE_FIELDS}
               disabled={this.state.saving}
-              extraPathSets={[['staff', 0, 'slug']]}
+              extraPathSets={[['authors', 0, 'slug'], ['category', 'slug']]}
               fullWidth
             />
             <div style={{ overflow: 'auto', maxHeight: '20vh' }}>
