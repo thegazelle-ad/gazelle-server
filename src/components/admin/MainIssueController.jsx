@@ -93,26 +93,22 @@ class MainIssueController extends FalcorController {
     ];
   }
 
+  falcorCallback = data => {
+    const issue = data.issues.byNumber[this.props.params.issueNumber];
+    const name = issue.name || '';
+    const publishedAt = issue.published_at
+      ? new Date(issue.published_at)
+      : null;
+    const issueNumber = issue.issueNumber || '';
+    this.safeSetState({ name, published_at: publishedAt, issueNumber });
+  };
+
   componentWillMount() {
-    const falcorCallback = data => {
-      const issue = data.issues.byNumber[this.props.params.issueNumber];
-      const name = issue.name || '';
-      const publishedAt = new Date(issue.published_at) || null;
-      const issueNumber = issue.issueNumber || '';
-      this.safeSetState({ name, published_at: publishedAt, issueNumber });
-    };
-    super.componentWillMount(falcorCallback);
+    super.componentWillMount(this.falcorCallback);
   }
 
   componentWillReceiveProps(nextProps) {
-    const falcorCallback = data => {
-      const issue = data.issues.byNumber[nextProps.params.issueNumber];
-      const name = issue.name || '';
-      const publishedAt = new Date(issue.published_at) || null;
-      const issueNumber = issue.issueNumber || '';
-      this.safeSetState({ name, published_at: publishedAt, issueNumber });
-    };
-    super.componentWillReceiveProps(nextProps, undefined, falcorCallback);
+    super.componentWillReceiveProps(nextProps, undefined, this.falcorCallback);
     this.safeSetState({
       changed: false,
       saving: false,
@@ -381,7 +377,7 @@ class MainIssueController extends FalcorController {
     const changedFlag =
       this.isFormFieldChanged(this.state.name, falcorData.name) ||
       this.isFormFieldChanged(
-        this.state.published_at.getTime(),
+        this.state.published_at && this.state.published_at.getTime(),
         falcorData.published_at,
       ) ||
       this.isFormFieldChanged(
@@ -520,16 +516,17 @@ class MainIssueController extends FalcorController {
               disabled
             />
             <br />
-            <DatePicker
-              disabled={
-                !published || this.state.saving || this.state.publishing
-              }
-              floatingLabelText="Published At"
-              firstDayOfWeek={0}
-              shouldDisableDate={this.disableDate}
-              value={this.state.published_at}
-              onChange={this.handleDateChange}
-            />
+            {!published ||
+              this.state.saving ||
+              this.state.publishing || (
+                <DatePicker
+                  floatingLabelText="Published At"
+                  firstDayOfWeek={0}
+                  shouldDisableDate={this.disableDate}
+                  value={this.state.published_at}
+                  onChange={this.handleDateChange}
+                />
+              )}
             <br />
             <RaisedButton
               type="submit"
