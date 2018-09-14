@@ -568,7 +568,7 @@ class IssueArticleController extends FalcorController {
   createArticleListElement(mode, article) {
     let date;
     if (article.published_at) {
-      date = moment(new Date(article.published_at).format('YYYY-MM-DD'));
+      date = moment(article.published_at).format('YYYY-MM-DD');
     } else {
       date = 'Unpublished';
     }
