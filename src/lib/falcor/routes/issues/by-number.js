@@ -313,29 +313,31 @@ export default [
   {
     route: "issues['byNumber']['addIssue']",
     call: (callPath, args) =>
-      new Promise(resolve => {
+      new Promise((resolve, reject) => {
         const issue = args[0];
         verifyIssue(issue);
         const fields = Object.keys(issue);
-        db.addIssue(issue).then(flag => {
-          if (flag !== true) {
-            throw new Error(
-              'For some reason addIssue db function returned a non-true flag',
-            );
-          }
-          const results = [];
-          fields.forEach(field => {
-            results.push({
-              path: ['issues', 'byNumber', issue.issueNumber, field],
-              value: issue[field],
+        db.addIssue(issue)
+          .then(flag => {
+            if (flag !== true) {
+              throw new Error(
+                'For some reason addIssue db function returned a non-true flag',
+              );
+            }
+            const results = [];
+            fields.forEach(field => {
+              results.push({
+                path: ['issues', 'byNumber', issue.issue_number, field],
+                value: issue[field],
+              });
             });
-          });
-          results.push({
-            path: ['issues', 'latest'],
-            invalidated: true,
-          });
-          resolve(results);
-        });
+            results.push({
+              path: ['issues', 'latest'],
+              invalidated: true,
+            });
+            resolve(results);
+          })
+          .catch(reject);
       }),
   },
 ];
