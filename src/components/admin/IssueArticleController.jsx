@@ -149,7 +149,7 @@ class IssueArticleController extends FalcorController {
         'articles',
         'byPage',
         ARTICLE_LIST_LENGTH,
-        1,
+        0,
         { length: ARTICLE_LIST_LENGTH },
         ARTICLE_FIELDS,
       ],
@@ -157,7 +157,7 @@ class IssueArticleController extends FalcorController {
         'articles',
         'byPage',
         ARTICLE_LIST_LENGTH,
-        1,
+        0,
         { length: ARTICLE_LIST_LENGTH },
         'category',
         'slug',
@@ -166,7 +166,7 @@ class IssueArticleController extends FalcorController {
         'articles',
         'byPage',
         ARTICLE_LIST_LENGTH,
-        1,
+        0,
         { length: ARTICLE_LIST_LENGTH },
         'authors',
         0,
@@ -595,7 +595,7 @@ class IssueArticleController extends FalcorController {
       const modes = ['picks', 'featured', 'main'];
       if (modes.find(mode => mode === this.state.showArticleListMode)) {
         // Filter picked articles
-        let articles = this.state.data.articles.byPage[ARTICLE_LIST_LENGTH][1];
+        let articles = this.state.data.articles.byPage[ARTICLE_LIST_LENGTH][0];
         const seen = {};
         const allArticles = this.state.mainArticles.concat(
           this.state.featuredArticles,
