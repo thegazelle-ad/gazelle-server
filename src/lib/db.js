@@ -1300,7 +1300,7 @@ export function publishIssue(issue_id) {
 }
 
 export function addIssue(issueObject) {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const insertObject = {};
     _.forEach(issueObject, (value, key) => {
       insertObject[key] = value;
@@ -1309,7 +1309,8 @@ export function addIssue(issueObject) {
       .insert(insertObject)
       .then(() => {
         resolve(true);
-      });
+      })
+      .catch(reject);
   });
 }
 
