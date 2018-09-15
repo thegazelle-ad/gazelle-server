@@ -41,7 +41,10 @@ export default function runAdminServer(serverFalcorModel) {
   let clientScriptHash = md5Hash(
     path.join(__dirname, '../../static/build/admin-client.js'),
   );
-  let cssHash = md5Hash(path.join(__dirname, '../../static/admin.css'));
+  let adminCssHash = md5Hash(path.join(__dirname, '../../static/admin.css'));
+  let mainCssHash = md5Hash(
+    path.join(__dirname, '../../static/build/main.css'),
+  );
 
   const buildHtmlString = () => {
     if (isDevelopment()) {
@@ -49,7 +52,10 @@ export default function runAdminServer(serverFalcorModel) {
       clientScriptHash = md5Hash(
         path.join(__dirname, '../../static/build/admin-client.js'),
       );
-      cssHash = md5Hash(path.join(__dirname, '../../static/admin.css'));
+      adminCssHash = md5Hash(path.join(__dirname, '../../static/admin.css'));
+      mainCssHash = md5Hash(
+        path.join(__dirname, '../../static/build/main.css'),
+      );
     }
 
     return `
@@ -58,7 +64,8 @@ export default function runAdminServer(serverFalcorModel) {
         <head>
           <title>The Gazelle's Admin Interface</title>
           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
-          <link rel="stylesheet" type="text/css" href="/admin.css?h=${cssHash}">
+          <link rel="stylesheet" type="text/css" href="/admin.css?h=${adminCssHash}">
+          <link rel="stylesheet" type="text/css" href="/build/main.css?h=${mainCssHash}">
           <meta name="viewport" content="width=device-width, initial-scale=1">
           <meta name="google-signin-client_id" content="${googleClientID}">
           <script>
