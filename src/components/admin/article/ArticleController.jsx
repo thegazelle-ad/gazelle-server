@@ -511,7 +511,7 @@ class ArticleController extends FalcorController {
               changed={this.state.changed}
             />
             <RaisedButton
-              label="Dialog"
+              label="Article Preview"
               primary
               onClick={()=>this.setState({open:true})}
             />
