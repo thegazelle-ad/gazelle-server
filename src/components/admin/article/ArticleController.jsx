@@ -37,6 +37,9 @@ import Paper from 'material-ui/Paper';
 import CircularProgress from 'material-ui/CircularProgress';
 import FlatButton from 'material-ui/FlatButton';
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
+import Dialog from 'material-ui/Dialog';
+import RaisedButton from 'material-ui/RaisedButton'
+
 
 // HOCs
 import { withModals } from 'components/admin/hocs/modals/withModals';
@@ -306,6 +309,13 @@ class ArticleController extends FalcorController {
   }
 
   render() {
+    const dialogActions = [
+      <FlatButton
+        label="Cancel"
+        primary
+        onClick={()=>this.setState({open: false})}
+      />
+    ]
     const styles = {
       grid: {
         display: 'grid',
@@ -500,15 +510,29 @@ class ArticleController extends FalcorController {
               saving={this.state.saving}
               changed={this.state.changed}
             />
+            <RaisedButton
+              label="Dialog"
+              primary
+              onClick={()=>this.setState({open:true})}
+            />
+            <Dialog 
+              title="Article Preview"
+              actions={dialogActions}
+              modal={false}
+              open={this.state.open}
+              onRequestClose={()=>this.setState({open: false})}
+            >
+            <ArticlePreview
+              title={this.state.title}
+              teaser={this.state.teaser}
+              html={buildHtmlFromMarkdown(Plain.serialize(this.state.markdown))}
+              authors={[{ slug: 'dummy', name: 'Dummy Author' }]}
+              url="https://www.thegazelle.org/dummy/url"
+              published_at={new Date().getTime()}
+            />
+            </Dialog>
           </div>
-          <ArticlePreview
-            title={this.state.title}
-            teaser={this.state.teaser}
-            html={buildHtmlFromMarkdown(Plain.serialize(this.state.markdown))}
-            authors={[{ slug: 'dummy', name: 'Dummy Author' }]}
-            url="https://www.thegazelle.org/dummy/url"
-            published_at={new Date().getTime()}
-          />
+          
         </Paper>
       );
     }
