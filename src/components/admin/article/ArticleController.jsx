@@ -511,15 +511,16 @@ class ArticleController extends FalcorController {
               changed={this.state.changed}
             />
             <RaisedButton
-              label="Article Preview"
-              primary
+              label="Preview"
               onClick={()=>this.setState({open:true})}
+              style={styles.buttons}
             />
             <Dialog 
               title="Article Preview"
               actions={dialogActions}
               modal={false}
               open={this.state.open}
+              autoScrollBodyContent
               onRequestClose={()=>this.setState({open: false})}
             >
             <ArticlePreview
