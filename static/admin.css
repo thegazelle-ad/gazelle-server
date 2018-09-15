@@ -63,3 +63,9 @@ a:visited:not(.active-link) {
   align-items: center;
   justify-content: center;
 }
+
+/* Overwriting something for the article preview */
+.article__body img {
+  width: 100% !important;
+  left: 0 !important;
+}

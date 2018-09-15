@@ -8,7 +8,11 @@ import moment from 'moment';
 import { debounce } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 import { getArticleListPath } from 'routes/admin-helpers';
-import { validateChanges, buildJsonGraphEnvelope } from './article-logic';
+import {
+  validateChanges,
+  buildJsonGraphEnvelope,
+  buildHtmlFromMarkdown,
+} from './article-logic';
 
 // Custom Components
 import {
@@ -26,12 +30,15 @@ import ListSelector from 'components/admin/form-components/ListSelector';
 import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
 import { MarkdownEditor } from 'components/admin/editor/MarkdownEditor';
 import { MAX_TEASER_LENGTH } from 'components/admin/lib/constants';
+import ArticlePreview from 'components/admin/article/components/ArticlePreview';
 
 // material-ui
 import Paper from 'material-ui/Paper';
 import CircularProgress from 'material-ui/CircularProgress';
 import FlatButton from 'material-ui/FlatButton';
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
+import Dialog from 'material-ui/Dialog';
+import RaisedButton from 'material-ui/RaisedButton';
 
 // HOCs
 import { withModals } from 'components/admin/hocs/modals/withModals';
@@ -301,21 +308,29 @@ class ArticleController extends FalcorController {
   }
 
   render() {
+    const dialogActions = [
+      <FlatButton
+        label="Cancel"
+        primary
+        onClick={() => this.setState({ open: false })}
+      />,
+    ];
     const styles = {
       grid: {
         display: 'grid',
         gridGap: '10px',
-        gridTemplateColumns: '30% 70%',
+        gridTemplateColumns: '1fr 1fr 1fr',
         gridTemplateRows: '5% 85% 10%',
         gridTemplateAreas:
-          '"header header" "content content" "negative positive"',
+          '"header header header" "content content content" "first second third"',
         height: '80vh',
         marginTop: '5vh',
         padding: '2vmax',
       },
       header: { gridArea: 'header' },
-      positive: { gridArea: 'positive' },
-      negative: { gridArea: 'negative' },
+      first: { gridArea: 'first' },
+      second: { gridArea: 'second' },
+      third: { gridArea: 'third' },
       content: {
         background:
           'linear-gradient(to top, rgba(0, 0, 0, .2) 0%, rgba(0, 0, 0, 0) 2%)',
@@ -479,7 +494,7 @@ class ArticleController extends FalcorController {
               />
             </div>
           </div>
-          <div style={styles.negative}>
+          <div style={styles.first}>
             <UnpublishButton
               save={this.save}
               id={this.props.params.id}
@@ -488,7 +503,14 @@ class ArticleController extends FalcorController {
               published_at={article.published_at}
             />
           </div>
-          <div style={styles.positive}>
+          <div style={styles.second}>
+            <RaisedButton
+              label="Preview"
+              onClick={() => this.setState({ open: true })}
+              style={styles.buttons}
+            />
+          </div>
+          <div style={styles.third}>
             <SaveButton
               onClick={this.handleSaveChanges}
               style={styles.buttons}
@@ -496,6 +518,23 @@ class ArticleController extends FalcorController {
               changed={this.state.changed}
             />
           </div>
+          <Dialog
+            title="Article Preview"
+            actions={dialogActions}
+            modal={false}
+            open={this.state.open}
+            autoScrollBodyContent
+            onRequestClose={() => this.setState({ open: false })}
+          >
+            <ArticlePreview
+              title={this.state.title}
+              teaser={this.state.teaser}
+              html={buildHtmlFromMarkdown(Plain.serialize(this.state.markdown))}
+              authors={[{ slug: 'dummy', name: 'Dummy Author' }]}
+              url="https://www.thegazelle.org/dummy/url"
+              published_at={new Date().getTime()}
+            />
+          </Dialog>
         </Paper>
       );
     }

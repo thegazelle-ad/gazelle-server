@@ -197,7 +197,7 @@ export function buildJsonGraphEnvelope(
   jsonGraphEnvelope.jsonGraph.articles.byId[articleId].markdown = markdown;
   jsonGraphEnvelope.jsonGraph.articles.byId[
     articleId
-  ].html = new Converter().makeHtml(markdown);
+  ].html = buildHtmlFromMarkdown(markdown);
   jsonGraphEnvelope.jsonGraph.articles.byId[articleId].teaser =
     componentState.teaser;
   jsonGraphEnvelope.jsonGraph.articles.byId[articleId].image_url =
@@ -208,4 +208,8 @@ export function buildJsonGraphEnvelope(
       componentState.category;
   }
   return jsonGraphEnvelope;
+}
+
+export function buildHtmlFromMarkdown(markdown: string) {
+  return new Converter().makeHtml(markdown);
 }
