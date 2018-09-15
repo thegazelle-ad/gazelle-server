@@ -38,8 +38,7 @@ import CircularProgress from 'material-ui/CircularProgress';
 import FlatButton from 'material-ui/FlatButton';
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 import Dialog from 'material-ui/Dialog';
-import RaisedButton from 'material-ui/RaisedButton'
-
+import RaisedButton from 'material-ui/RaisedButton';
 
 // HOCs
 import { withModals } from 'components/admin/hocs/modals/withModals';
@@ -313,24 +312,25 @@ class ArticleController extends FalcorController {
       <FlatButton
         label="Cancel"
         primary
-        onClick={()=>this.setState({open: false})}
-      />
-    ]
+        onClick={() => this.setState({ open: false })}
+      />,
+    ];
     const styles = {
       grid: {
         display: 'grid',
         gridGap: '10px',
-        gridTemplateColumns: '30% 70%',
+        gridTemplateColumns: '1fr 1fr 1fr',
         gridTemplateRows: '5% 85% 10%',
         gridTemplateAreas:
-          '"header header" "content content" "negative positive"',
+          '"header header header" "content content content" "first second third"',
         height: '80vh',
         marginTop: '5vh',
         padding: '2vmax',
       },
       header: { gridArea: 'header' },
-      positive: { gridArea: 'positive' },
-      negative: { gridArea: 'negative' },
+      first: { gridArea: 'first' },
+      second: { gridArea: 'second' },
+      third: { gridArea: 'third' },
       content: {
         background:
           'linear-gradient(to top, rgba(0, 0, 0, .2) 0%, rgba(0, 0, 0, 0) 2%)',
@@ -494,7 +494,7 @@ class ArticleController extends FalcorController {
               />
             </div>
           </div>
-          <div style={styles.negative}>
+          <div style={styles.first}>
             <UnpublishButton
               save={this.save}
               id={this.props.params.id}
@@ -503,26 +503,29 @@ class ArticleController extends FalcorController {
               published_at={article.published_at}
             />
           </div>
-          <div style={styles.positive}>
+          <div style={styles.second}>
+            <RaisedButton
+              label="Preview"
+              onClick={() => this.setState({ open: true })}
+              style={styles.buttons}
+            />
+          </div>
+          <div style={styles.third}>
             <SaveButton
               onClick={this.handleSaveChanges}
               style={styles.buttons}
               saving={this.state.saving}
               changed={this.state.changed}
             />
-            <RaisedButton
-              label="Preview"
-              onClick={()=>this.setState({open:true})}
-              style={styles.buttons}
-            />
-            <Dialog 
-              title="Article Preview"
-              actions={dialogActions}
-              modal={false}
-              open={this.state.open}
-              autoScrollBodyContent
-              onRequestClose={()=>this.setState({open: false})}
-            >
+          </div>
+          <Dialog
+            title="Article Preview"
+            actions={dialogActions}
+            modal={false}
+            open={this.state.open}
+            autoScrollBodyContent
+            onRequestClose={() => this.setState({ open: false })}
+          >
             <ArticlePreview
               title={this.state.title}
               teaser={this.state.teaser}
@@ -531,9 +534,7 @@ class ArticleController extends FalcorController {
               url="https://www.thegazelle.org/dummy/url"
               published_at={new Date().getTime()}
             />
-            </Dialog>
-          </div>
-          
+          </Dialog>
         </Paper>
       );
     }
