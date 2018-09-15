@@ -59,6 +59,8 @@ export default function runAdminServer(serverFalcorModel) {
           <title>The Gazelle's Admin Interface</title>
           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
           <link rel="stylesheet" type="text/css" href="/admin.css?h=${cssHash}">
+            <link rel="stylesheet"
+              type="text/css" href="/build/main.css">
           <meta name="viewport" content="width=device-width, initial-scale=1">
           <meta name="google-signin-client_id" content="${googleClientID}">
           <script>
