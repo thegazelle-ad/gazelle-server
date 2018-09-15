@@ -8,7 +8,11 @@ import moment from 'moment';
 import { debounce } from 'lib/utilities';
 import FalcorController from 'lib/falcor/FalcorController';
 import { getArticleListPath } from 'routes/admin-helpers';
-import { validateChanges, buildJsonGraphEnvelope } from './article-logic';
+import {
+  validateChanges,
+  buildJsonGraphEnvelope,
+  buildHtmlFromMarkdown,
+} from './article-logic';
 
 // Custom Components
 import {
@@ -26,6 +30,7 @@ import ListSelector from 'components/admin/form-components/ListSelector';
 import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
 import { MarkdownEditor } from 'components/admin/editor/MarkdownEditor';
 import { MAX_TEASER_LENGTH } from 'components/admin/lib/constants';
+import ArticlePreview from 'components/admin/article/components/ArticlePreview';
 
 // material-ui
 import Paper from 'material-ui/Paper';
@@ -496,6 +501,14 @@ class ArticleController extends FalcorController {
               changed={this.state.changed}
             />
           </div>
+          <ArticlePreview
+            title={this.state.title}
+            teaser={this.state.teaser}
+            html={buildHtmlFromMarkdown(Plain.serialize(this.state.markdown))}
+            authors={[{ slug: 'dummy', name: 'Dummy Author' }]}
+            url="https://www.thegazelle.org/dummy/url"
+            published_at={new Date().getTime()}
+          />
         </Paper>
       );
     }
