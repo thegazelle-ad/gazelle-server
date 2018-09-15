@@ -3,7 +3,7 @@
  */
 
 /*
- * Teaser length is constrained to 156 characters so
+ * Teaser length is constrained to 250 characters so
  * that the teaser is not cut off by search engines
  */
-export const MAX_TEASER_LENGTH = 156;
+export const MAX_TEASER_LENGTH = 250;
