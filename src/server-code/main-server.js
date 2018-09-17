@@ -66,7 +66,7 @@ export default function runMainServer(serverFalcorModel) {
           (tagString, currentValue) =>
             `${tagString}<meta property="${currentValue.property}" content="${
               currentValue.content
-            }">`,
+            }" data-react-helmet="true">`, // We add this so React Helmet overwrites it
           '',
         )
       : '';
