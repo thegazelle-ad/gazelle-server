@@ -43,7 +43,7 @@ export default class TextPageController extends FalcorController {
       {
         property: 'og:image',
         content:
-          'https://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png',
+          'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/header-logo.png',
       },
       {
         property: 'og:description',

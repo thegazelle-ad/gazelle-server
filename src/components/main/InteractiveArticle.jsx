@@ -108,7 +108,7 @@ export default class InteractiveArticle extends FalcorController {
         { name: 'description', content: articleData.teaser },
 
         // Social media sharing
-        InteractiveArticle.getOpenGraphInformation(
+        ...InteractiveArticle.getOpenGraphInformation(
           this.props.params,
           this.state.data,
         ),

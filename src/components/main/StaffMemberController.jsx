@@ -92,7 +92,7 @@ export default class StaffMemberController extends FalcorController {
         { name: 'description', content: staffData.biography },
 
         // Social media
-        StaffMemberController.getOpenGraphInformation(
+        ...StaffMemberController.getOpenGraphInformation(
           this.props.params,
           this.state.data,
         ),

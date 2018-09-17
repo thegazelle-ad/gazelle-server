@@ -67,7 +67,7 @@ export default class ArchivesController extends FalcorController {
         },
 
         // Social media
-        ArchivesController.getOpenGraphInformation(),
+        ...ArchivesController.getOpenGraphInformation(),
       ];
       return (
         <div>
