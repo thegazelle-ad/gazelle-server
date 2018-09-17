@@ -26,6 +26,18 @@ export default class TeamPageController extends FalcorController {
     ];
   }
 
+  static getOpenGraphInformation() {
+    return [
+      { property: 'og:title', content: 'Our Team | The Gazelle' },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:url', content: 'www.thegazelle.org/team' },
+      {
+        property: 'og:description',
+        content: "The Gazelle's dedicated student team.",
+      },
+    ];
+  }
+
   render() {
     if (this.state.ready) {
       if (!this.state.data || Object.keys(this.state.data).length === 0) {
@@ -43,13 +55,7 @@ export default class TeamPageController extends FalcorController {
         },
 
         // Social media
-        { property: 'og:title', content: 'Our Team | The Gazelle' },
-        { property: 'og:type', content: 'website' },
-        { property: 'og:url', content: 'www.thegazelle.org/team' },
-        {
-          property: 'og:description',
-          content: "The Gazelle's dedicated student team.",
-        },
+        ...TeamPageController.getOpenGraphInformation(),
       ];
       // Top level elements can't have classes or it will break transitions
       return (
