@@ -46,7 +46,9 @@ export default function runMainServer(serverFalcorModel) {
   );
   let cssHash = md5Hash(path.join(__dirname, '../../static/build/main.css'));
 
-  const buildHtmlString = (body, cache) => {
+  // openGraphInfo is an array of objects with keys property and content such as
+  // { property: 'image', content 'https://www.images.com/some/image' }
+  const buildHtmlString = (body, cache, openGraphInfo) => {
     if (isDevelopment()) {
       // If it's development we know that the scripts may change while the server is running
       // and we can afford the computational cost of recomputing hashes. This allows us to just
@@ -58,6 +60,16 @@ export default function runMainServer(serverFalcorModel) {
       );
       cssHash = md5Hash(path.join(__dirname, '../../static/build/main.css'));
     }
+
+    const openGraphMetaTags = openGraphInfo
+      ? openGraphInfo.reduce(
+          (tagString, currentValue) =>
+            `${tagString}<meta property="og:${
+              currentValue.property
+            }" content="${currentValue.content}">`,
+          '',
+        )
+      : '';
 
     const head = Helmet.rewind();
 
@@ -75,6 +87,7 @@ export default function runMainServer(serverFalcorModel) {
             <link rel="mask-icon" href="https://s3.amazonaws.com/thegazelle/favicons/safari-pinned-tab.svg" color="#5bbad5">
             <meta name="theme-color" content="#ffffff">
             <meta name="viewport" content="width=device-width, initial-scale=1">
+            ${openGraphMetaTags}
             ${head.meta}
           </head>
           <body>
