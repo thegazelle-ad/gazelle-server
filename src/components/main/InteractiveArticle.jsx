@@ -34,6 +34,29 @@ export default class InteractiveArticle extends FalcorController {
     ];
   }
 
+  static getOpenGraphInformation(urlParams, falcorData) {
+    const { articleSlug } = urlParams;
+    // Access data fetched via Falcor
+    const articleData = falcorData.articles.bySlug[articleSlug];
+    // make sure article meta image has default
+    const articleMetaImage =
+      articleData.image_url ||
+      'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
+    return [
+      { property: 'og:title', content: `${articleData.title} | The Gazelle` },
+      { property: 'og:type', content: 'article' },
+      {
+        property: 'og:url',
+        content: `https://www.thegazelle.org/interactive/${articleData.slug}/`,
+      },
+      { property: 'og:image', content: articleMetaImage },
+      { property: 'og:image:width', content: '540' }, // 1.8:1 ratio
+      { property: 'og:image:height', content: '300' },
+      { property: 'og:description', content: articleData.teaser },
+      { property: 'og:site_name', content: 'The Gazelle' },
+    ];
+  }
+
   evaluateJavascript() {
     const articleData = this.state.data.articles.bySlug[
       this.props.params.articleSlug
@@ -80,26 +103,15 @@ export default class InteractiveArticle extends FalcorController {
       // Access data fetched via Falcor
       const articleData = this.state.data.articles.bySlug[articleSlug];
       const interactiveCode = articleData.interactiveData;
-      // make sure article meta image has default
-      const articleMetaImage =
-        articleData.image_url ||
-        'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
       const meta = [
         // Search results
         { name: 'description', content: articleData.teaser },
 
         // Social media sharing
-        { property: 'og:title', content: `${articleData.title} | The Gazelle` },
-        { property: 'og:type', content: 'article' },
-        {
-          property: 'og:url',
-          content: `www.thegazelle.org/interactive/${articleData.slug}/`,
-        },
-        { property: 'og:image', content: articleMetaImage },
-        { property: 'og:image:width', content: '540' }, // 1.8:1 ratio
-        { property: 'og:image:height', content: '300' },
-        { property: 'og:description', content: articleData.teaser },
-        { property: 'og:site_name', content: 'The Gazelle' },
+        InteractiveArticle.getOpenGraphInformation(
+          this.props.params,
+          this.state.data,
+        ),
       ];
       const reactHtml = {
         __html: `<div id="interactive-root">${interactiveCode.html}</div>`,
