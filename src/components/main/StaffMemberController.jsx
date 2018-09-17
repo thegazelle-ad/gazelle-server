@@ -48,6 +48,25 @@ export default class StaffMemberController extends FalcorController {
     ];
   }
 
+  static getOpenGraphInformation(urlParams, falcorData) {
+    const { staffSlug } = urlParams;
+    // Access data fetched via Falcor
+    const staffData = falcorData.staff.bySlug[staffSlug];
+    return [
+      { property: 'og:title', content: `${staffData.name} | The Gazelle` },
+      { property: 'og:type', content: 'website' },
+      {
+        property: 'og:url',
+        content: `https://www.thegazelle.org/staff-member/${staffData.slug}`,
+      },
+      {
+        property: 'og:image',
+        content: staffData.image_url,
+      },
+      { property: 'og:description', content: staffData.biography },
+    ];
+  }
+
   render() {
     if (this.state.ready) {
       if (
@@ -73,13 +92,10 @@ export default class StaffMemberController extends FalcorController {
         { name: 'description', content: staffData.biography },
 
         // Social media
-        { property: 'og:title', content: `${staffData.name} | The Gazelle` },
-        { property: 'og:type', content: 'website' },
-        {
-          property: 'og:url',
-          content: `www.thegazelle.org/staff-member/${staffData.slug}`,
-        },
-        { property: 'og:description', content: staffData.biography },
+        StaffMemberController.getOpenGraphInformation(
+          this.props.params,
+          this.state.data,
+        ),
       ];
       return (
         <div>
