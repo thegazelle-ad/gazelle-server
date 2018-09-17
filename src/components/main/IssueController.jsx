@@ -202,6 +202,40 @@ export default class IssueController extends FalcorController {
     ];
   }
 
+  static getOpenGraphInformation(urlParams, falcorData) {
+    let issueData;
+    let issueUrl = 'https://www.thegazelle.org';
+    if (!urlParams.issueNumber) {
+      issueData = falcorData.issues.latest;
+    } else {
+      issueData =
+        falcorData.issues.byNumber[
+          mapLegacyIssueSlugsToIssueNumber(urlParams.issueNumber)
+        ];
+      issueUrl += `/issue/${urlParams.issueNumber}`;
+    }
+    // Make sure issueImage has a default
+    const issueImage =
+      issueData.featured.image_url ||
+      'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
+
+    return [
+      {
+        property: 'og:title',
+        content: `Issue ${issueData.issueNumber} | The Gazelle`,
+      },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:url', content: issueUrl },
+      { property: 'og:image', content: issueImage },
+      {
+        property: 'og:description',
+        content:
+          'The Gazelle is a weekly student publication ' +
+          'serving the NYU Abu Dhabi community.',
+      },
+    ];
+  }
+
   render() {
     if (this.state.ready) {
       if (
@@ -241,11 +275,6 @@ export default class IssueController extends FalcorController {
           </div>
         ));
 
-      // Make sure issueImage has a default
-      const issueImage =
-        issueData.featured.image_url ||
-        'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
-
       const meta = [
         // Search results
         {
@@ -256,19 +285,10 @@ export default class IssueController extends FalcorController {
         },
 
         // Social media
-        {
-          property: 'og:title',
-          content: `Issue ${issueData.issueNumber} | The Gazelle`,
-        },
-        { property: 'og:type', content: 'website' },
-        { property: 'og:url', content: 'www.thegazelle.org' },
-        { property: 'og:image', content: issueImage },
-        {
-          property: 'og:description',
-          content:
-            'The Gazelle is a weekly student publication ' +
-            'serving the NYU Abu Dhabi community.',
-        },
+        IssueController.getOpenGraphInformation(
+          this.props.params,
+          this.state.data,
+        ),
       ];
       // Top level elements can't have classes or it will break transitions
       return (
