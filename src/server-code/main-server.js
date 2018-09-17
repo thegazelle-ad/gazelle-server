@@ -64,9 +64,9 @@ export default function runMainServer(serverFalcorModel) {
     const openGraphMetaTags = openGraphInfo
       ? openGraphInfo.reduce(
           (tagString, currentValue) =>
-            `${tagString}<meta property="og:${
-              currentValue.property
-            }" content="${currentValue.content}">`,
+            `${tagString}<meta property="${currentValue.property}" content="${
+              currentValue.content
+            }">`,
           '',
         )
       : '';
@@ -102,7 +102,7 @@ export default function runMainServer(serverFalcorModel) {
 
   // Asynchronously render the application
   // Returns a promise
-  const renderApp = renderProps => {
+  const renderApp = async renderProps => {
     let falcorPaths = _.compact(
       renderProps.routes.map(route => {
         const { component } = route;
@@ -139,6 +139,34 @@ export default function runMainServer(serverFalcorModel) {
       source: serverFalcorModel.asDataSource(),
     });
 
+    const graphInfos = await Promise.all(
+      renderProps.routes.map(async route => {
+        const { component } = route;
+        // We use the most specific one always, which means if we find a component with the getOpenGraphInformation
+        // static method on it later in the components array we simply overwrite
+        if (component.getOpenGraphInformation) {
+          const pathSets = component.getFalcorPathSets(
+            renderProps.params,
+            renderProps.location.query,
+          );
+          const falcorResponse =
+            pathSets[0] instanceof Array
+              ? await serverFalcorModel.get(...pathSets)
+              : await serverFalcorModel.get(pathSets);
+
+          return component.getOpenGraphInformation(
+            renderProps.params,
+            falcorResponse.json,
+          );
+        }
+        return null;
+      }),
+    );
+
+    const filteredGraphInfos = graphInfos.filter(x => x);
+    // Only take the most specific one, which is the last one
+    const openGraphInfo = filteredGraphInfos.pop();
+
     // If the component doesn't want any data
     if (
       !falcorPaths ||
@@ -146,13 +174,13 @@ export default function runMainServer(serverFalcorModel) {
       (falcorPaths[0].length === 0 && falcorPaths.length === 1)
     ) {
       return new Promise(resolve => {
-        resolve(buildHtmlString('', localModel.getCache()));
+        resolve(buildHtmlString('', localModel.getCache(), openGraphInfo));
       });
     }
 
     return localModel
       .preload(...falcorPaths)
-      .then(() => buildHtmlString('', localModel.getCache()));
+      .then(() => buildHtmlString('', localModel.getCache(), openGraphInfo));
   };
 
   // The Gazelle website server
