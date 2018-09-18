@@ -80,6 +80,31 @@ export default class ArticleController extends FalcorController {
     ];
   }
 
+  static getOpenGraphInformation(urlParams, falcorData) {
+    const { articleSlug } = urlParams;
+    // Access data fetched via Falcor
+    const articleData = falcorData.articles.bySlug[articleSlug];
+    // make sure article meta image has default
+    const articleMetaImage =
+      articleData.image_url ||
+      'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
+    return [
+      { property: 'og:title', content: `${articleData.title} | The Gazelle` },
+      { property: 'og:type', content: 'article' },
+      {
+        property: 'og:url',
+        content:
+          `https://www.thegazelle.org/issue/${articleData.issueNumber}/` +
+          `${articleData.category.slug}/${articleData.slug}`,
+      },
+      { property: 'og:image', content: articleMetaImage },
+      { property: 'og:image:width', content: '540' }, // 1.8:1 ratio
+      { property: 'og:image:height', content: '300' },
+      { property: 'og:description', content: articleData.teaser },
+      { property: 'og:site_name', content: 'The Gazelle' },
+    ];
+  }
+
   componentDidMount() {
     super.componentDidMount();
     const slug = this.props.params.articleSlug;
@@ -121,28 +146,14 @@ export default class ArticleController extends FalcorController {
       const articleData = this.state.data.articles.bySlug[articleSlug];
       const trendingData = this.state.data.trending;
       const relatedArticlesData = articleData.related;
-      // make sure article meta image has default
-      const articleMetaImage =
-        articleData.image_url ||
-        'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/saadiyat-reflection.jpg';
       const meta = [
         // Search results
         { name: 'description', content: this.props.teaser },
-
         // Social media sharing
-        { property: 'og:title', content: `${articleData.title} | The Gazelle` },
-        { property: 'og:type', content: 'article' },
-        {
-          property: 'og:url',
-          content:
-            `www.thegazelle.org/issue/${articleData.issueNumber}/` +
-            `${articleData.category.slug}/${articleData.slug}`,
-        },
-        { property: 'og:image', content: articleMetaImage },
-        { property: 'og:image:width', content: '540' }, // 1.8:1 ratio
-        { property: 'og:image:height', content: '300' },
-        { property: 'og:description', content: articleData.teaser },
-        { property: 'og:site_name', content: 'The Gazelle' },
+        ...ArticleController.getOpenGraphInformation(
+          this.props.params,
+          this.state.data,
+        ),
       ];
       return (
         <div>

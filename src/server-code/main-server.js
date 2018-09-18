@@ -46,7 +46,9 @@ export default function runMainServer(serverFalcorModel) {
   );
   let cssHash = md5Hash(path.join(__dirname, '../../static/build/main.css'));
 
-  const buildHtmlString = (body, cache) => {
+  // openGraphInfo is an array of objects with keys property and content such as
+  // { property: 'og:image', content 'https://www.images.com/some/image' }
+  const buildHtmlString = (body, cache, openGraphInfo) => {
     if (isDevelopment()) {
       // If it's development we know that the scripts may change while the server is running
       // and we can afford the computational cost of recomputing hashes. This allows us to just
@@ -58,6 +60,16 @@ export default function runMainServer(serverFalcorModel) {
       );
       cssHash = md5Hash(path.join(__dirname, '../../static/build/main.css'));
     }
+
+    const openGraphMetaTags = openGraphInfo
+      ? openGraphInfo.reduce(
+          (tagString, currentValue) =>
+            `${tagString}<meta property="${currentValue.property}" content="${
+              currentValue.content
+            }" data-react-helmet="true">`, // We add this so React Helmet overwrites it
+          '',
+        )
+      : '';
 
     const head = Helmet.rewind();
 
@@ -75,6 +87,7 @@ export default function runMainServer(serverFalcorModel) {
             <link rel="mask-icon" href="https://s3.amazonaws.com/thegazelle/favicons/safari-pinned-tab.svg" color="#5bbad5">
             <meta name="theme-color" content="#ffffff">
             <meta name="viewport" content="width=device-width, initial-scale=1">
+            ${openGraphMetaTags}
             ${head.meta}
           </head>
           <body>
@@ -89,7 +102,7 @@ export default function runMainServer(serverFalcorModel) {
 
   // Asynchronously render the application
   // Returns a promise
-  const renderApp = renderProps => {
+  const renderApp = async renderProps => {
     let falcorPaths = _.compact(
       renderProps.routes.map(route => {
         const { component } = route;
@@ -126,6 +139,34 @@ export default function runMainServer(serverFalcorModel) {
       source: serverFalcorModel.asDataSource(),
     });
 
+    const graphInfos = await Promise.all(
+      renderProps.routes.map(async route => {
+        const { component } = route;
+        // We use the most specific one always, which means if we find a component with the getOpenGraphInformation
+        // static method on it later in the components array we simply overwrite
+        if (component.getOpenGraphInformation) {
+          const pathSets = component.getFalcorPathSets(
+            renderProps.params,
+            renderProps.location.query,
+          );
+          const falcorResponse =
+            pathSets[0] instanceof Array
+              ? await serverFalcorModel.get(...pathSets)
+              : await serverFalcorModel.get(pathSets);
+
+          return component.getOpenGraphInformation(
+            renderProps.params,
+            falcorResponse.json,
+          );
+        }
+        return null;
+      }),
+    );
+
+    const filteredGraphInfos = graphInfos.filter(x => x);
+    // Only take the most specific one, which is the last one
+    const openGraphInfo = filteredGraphInfos.pop();
+
     // If the component doesn't want any data
     if (
       !falcorPaths ||
@@ -133,13 +174,13 @@ export default function runMainServer(serverFalcorModel) {
       (falcorPaths[0].length === 0 && falcorPaths.length === 1)
     ) {
       return new Promise(resolve => {
-        resolve(buildHtmlString('', localModel.getCache()));
+        resolve(buildHtmlString('', localModel.getCache(), openGraphInfo));
       });
     }
 
     return localModel
       .preload(...falcorPaths)
-      .then(() => buildHtmlString('', localModel.getCache()));
+      .then(() => buildHtmlString('', localModel.getCache(), openGraphInfo));
   };
 
   // The Gazelle website server
