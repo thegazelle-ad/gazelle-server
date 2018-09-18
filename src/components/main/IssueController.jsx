@@ -285,7 +285,7 @@ export default class IssueController extends FalcorController {
         },
 
         // Social media
-        IssueController.getOpenGraphInformation(
+        ...IssueController.getOpenGraphInformation(
           this.props.params,
           this.state.data,
         ),

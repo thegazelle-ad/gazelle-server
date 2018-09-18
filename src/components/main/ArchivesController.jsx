@@ -30,7 +30,7 @@ export default class ArchivesController extends FalcorController {
     return [
       { property: 'og:title', content: 'Archives | The Gazelle' },
       { property: 'og:type', content: 'website' },
-      { property: 'og:url', content: 'www.thegazelle.org/archives' },
+      { property: 'og:url', content: 'https://www.thegazelle.org/archives' },
       {
         property: 'og:image',
         content:

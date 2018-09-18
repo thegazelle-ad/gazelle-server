@@ -47,7 +47,7 @@ export default function runMainServer(serverFalcorModel) {
   let cssHash = md5Hash(path.join(__dirname, '../../static/build/main.css'));
 
   // openGraphInfo is an array of objects with keys property and content such as
-  // { property: 'image', content 'https://www.images.com/some/image' }
+  // { property: 'og:image', content 'https://www.images.com/some/image' }
   const buildHtmlString = (body, cache, openGraphInfo) => {
     if (isDevelopment()) {
       // If it's development we know that the scripts may change while the server is running

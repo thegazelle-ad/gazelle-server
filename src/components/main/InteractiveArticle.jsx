@@ -47,7 +47,7 @@ export default class InteractiveArticle extends FalcorController {
       { property: 'og:type', content: 'article' },
       {
         property: 'og:url',
-        content: `https://www.thegazelle.org/interactive/${articleData.slug}/`,
+        content: `https://www.thegazelle.org/interactive/${articleData.slug}`,
       },
       { property: 'og:image', content: articleMetaImage },
       { property: 'og:image:width', content: '540' }, // 1.8:1 ratio
