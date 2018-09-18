@@ -5,6 +5,15 @@ import ArticleList from 'components/main/ArticleList';
 import NotFound from 'components/main/NotFound';
 import _ from 'lodash';
 
+const uppercase = str => {
+  const array = str.split(' ');
+  const newArray = [];
+
+  for (let x = 0; x < array.length; x++) {
+    newArray.push(array[x].charAt(0).toUpperCase() + array[x].slice(1));
+  }
+  return newArray.join(' ');
+};
 export default class CategoryController extends FalcorController {
   static getFalcorPathSets(params) {
     // URL Format: thegazelle.org/category/:category
@@ -43,6 +52,24 @@ export default class CategoryController extends FalcorController {
     ];
   }
 
+  static getOpenGraphInformation(urlParams, falcorData) {
+    const { category } = urlParams;
+    const categoryData = falcorData.categories.bySlug[category];
+    return [
+      { property: 'og:title', content: 'The Gazelle' },
+      { property: 'og:type', content: 'website' },
+      {
+        property: 'og:url',
+        content: `https://www.thegazelle.org/category/${categoryData.slug}`,
+      },
+      {
+        property: 'og:description',
+        content:
+          'The Gazelle is a weekly student publication serving the NYU Abu Dhabi community.',
+      },
+    ];
+  }
+
   render() {
     if (this.state.ready) {
       if (
@@ -53,15 +80,6 @@ export default class CategoryController extends FalcorController {
       }
       const { category } = this.props.params;
       const categoryData = this.state.data.categories.bySlug[category];
-      const uppercase = str => {
-        const array = str.split(' ');
-        const newArray = [];
-
-        for (let x = 0; x < array.length; x++) {
-          newArray.push(array[x].charAt(0).toUpperCase() + array[x].slice(1));
-        }
-        return newArray.join(' ');
-      };
       const meta = [
         // Search results
         {
@@ -72,17 +90,10 @@ export default class CategoryController extends FalcorController {
         },
 
         // Social media
-        { property: 'og:title', content: 'The Gazelle' },
-        { property: 'og:type', content: 'website' },
-        {
-          property: 'og:url',
-          content: `www.thegazelle.org/category/${categoryData.slug}`,
-        },
-        {
-          property: 'og:description',
-          content:
-            'The Gazelle is a weekly student publication serving the NYU Abu Dhabi community.',
-        },
+        ...CategoryController.getOpenGraphInformation(
+          this.props.params,
+          this.state.data,
+        ),
       ];
       return (
         <div className="category">

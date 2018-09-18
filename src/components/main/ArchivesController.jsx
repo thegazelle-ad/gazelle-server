@@ -26,6 +26,25 @@ export default class ArchivesController extends FalcorController {
     ];
   }
 
+  static getOpenGraphInformation() {
+    return [
+      { property: 'og:title', content: 'Archives | The Gazelle' },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:url', content: 'https://www.thegazelle.org/archives' },
+      {
+        property: 'og:image',
+        content:
+          'https://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png',
+      },
+      {
+        property: 'og:description',
+        content:
+          'The Gazelle is a weekly student publication ' +
+          'serving the NYU Abu Dhabi community.',
+      },
+    ];
+  }
+
   render() {
     if (this.state.ready) {
       if (
@@ -48,20 +67,7 @@ export default class ArchivesController extends FalcorController {
         },
 
         // Social media
-        { property: 'og:title', content: 'Archives | The Gazelle' },
-        { property: 'og:type', content: 'website' },
-        { property: 'og:url', content: 'www.thegazelle.org/archives' },
-        {
-          property: 'og:image',
-          content:
-            'https://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png',
-        },
-        {
-          property: 'og:description',
-          content:
-            'The Gazelle is a weekly student publication ' +
-            'serving the NYU Abu Dhabi community.',
-        },
+        ...ArchivesController.getOpenGraphInformation(),
       ];
       return (
         <div>

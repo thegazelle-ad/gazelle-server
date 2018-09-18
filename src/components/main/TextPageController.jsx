@@ -13,9 +13,45 @@ import TextPage from 'components/main/TextPage';
 import NotFound from 'components/main/NotFound';
 import TextPageLoad from 'transitions/TextPageLoad';
 
+const uppercase = str => {
+  const array = str.split(' ');
+  const newArray = [];
+
+  for (let x = 0; x < array.length; x++) {
+    newArray.push(array[x].charAt(0).toUpperCase() + array[x].slice(1));
+  }
+  return newArray.join(' ');
+};
+
 export default class TextPageController extends FalcorController {
   static getFalcorPathSets(params) {
     return [['infoPages', params.slug, ['title', 'html', 'slug']]];
+  }
+
+  static getOpenGraphInformation(urlParams, falcorData) {
+    const data = falcorData.infoPages[urlParams.slug];
+    return [
+      {
+        property: 'og:title',
+        content: `${uppercase(data.title)} | The Gazelle`,
+      },
+      { property: 'og:type', content: 'website' },
+      {
+        property: 'og:url',
+        content: `https://www.thegazelle.org/${data.slug}`,
+      },
+      {
+        property: 'og:image',
+        content:
+          'https://thegazelle.s3.amazonaws.com/gazelle/2016/02/header-logo.png',
+      },
+      {
+        property: 'og:description',
+        content:
+          'The Gazelle is a weekly student publication ' +
+          'serving the NYU Abu Dhabi community.',
+      },
+    ];
   }
 
   render() {
@@ -27,15 +63,6 @@ export default class TextPageController extends FalcorController {
         return <NotFound />;
       }
       const data = this.state.data.infoPages[this.props.params.slug];
-      const uppercase = str => {
-        const array = str.split(' ');
-        const newArray = [];
-
-        for (let x = 0; x < array.length; x++) {
-          newArray.push(array[x].charAt(0).toUpperCase() + array[x].slice(1));
-        }
-        return newArray.join(' ');
-      };
       const meta = [
         // Search results
         {
@@ -46,23 +73,10 @@ export default class TextPageController extends FalcorController {
         },
 
         // Social media
-        {
-          property: 'og:title',
-          content: `${uppercase(data.title)} | The Gazelle`,
-        },
-        { property: 'og:type', content: 'website' },
-        { property: 'og:url', content: `www.thegazelle.org/${data.slug}` },
-        {
-          property: 'og:image',
-          content:
-            'https://www.thegazelle.org/wp-content/themes/gazelle/images/gazelle_logo.png',
-        },
-        {
-          property: 'og:description',
-          content:
-            'The Gazelle is a weekly student publication ' +
-            'serving the NYU Abu Dhabi community.',
-        },
+        ...TextPageController.getOpenGraphInformation(
+          this.props.params,
+          this.state.data,
+        ),
       ];
       return (
         <div>
