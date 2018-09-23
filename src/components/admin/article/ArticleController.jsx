@@ -25,6 +25,7 @@ import UnpublishButton from 'components/admin/article/components/UnpublishButton
 import {
   HttpsUrlField,
   ShortRequiredTextField,
+  SlugField,
 } from 'components/admin/form-components/validated-fields';
 import ListSelector from 'components/admin/form-components/ListSelector';
 import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
@@ -417,7 +418,7 @@ class ArticleController extends FalcorController {
               disabled={this.state.saving}
             />
             <div style={styles.contentStyles.twoThirds}>
-              <ShortRequiredTextField
+              <SlugField
                 floatingLabelText="Slug"
                 value={this.state.slug}
                 onUpdate={this.updateSlug}
