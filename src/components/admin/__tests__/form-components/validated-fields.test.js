@@ -40,13 +40,13 @@ describe('shorterThanDbVarChar', () => {
   });
 });
 
-describe('isPrettyslug', () => {
+describe('isPrettySlug', () => {
   it('Returns proper error message for null field.', () => {
     expect(isPrettySlug('Ugly Human Slug')).toBe(
       'This slug could cause errors in the URL, please use the format "your-slug-here".',
     );
   });
   it('Returns null for non-null links.', () => {
-    expect(isPrettySlug('beautiful-computer-slug')).toBe(null);
+    expect(isPrettySlug('beautiful-computer-slug-4')).toBe(null);
   });
 });

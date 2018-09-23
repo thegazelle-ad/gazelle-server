@@ -25,7 +25,7 @@ export const shorterThanDbVarChar = value => {
 };
 
 export const isPrettySlug = value => {
-  const prettySlug = /^[a-z-]+$/g;
+  const prettySlug = /^[a-z1-9-]+$/g;
   if (value && !prettySlug.test(value)) {
     return 'This slug could cause errors in the URL, please use the format "your-slug-here".';
   }
