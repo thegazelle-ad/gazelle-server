@@ -24,6 +24,14 @@ export const shorterThanDbVarChar = value => {
   return null;
 };
 
+export const isPrettySlug = value => {
+  const prettySlug = /^[a-z1-9-]+$/g;
+  if (value && !prettySlug.test(value)) {
+    return 'This slug could cause errors in the URL, please use the format "your-slug-here".';
+  }
+  return null;
+};
+
 export const HttpsUrlField = withValidate(hasHttps, shorterThanDbVarChar)(
   DirectTextField,
 );
@@ -32,3 +40,5 @@ export const ShortRequiredTextField = withValidate(
   cannotNull,
   shorterThanDbVarChar,
 )(DirectTextField);
+
+export const SlugField = withValidate(isPrettySlug)(ShortRequiredTextField);
