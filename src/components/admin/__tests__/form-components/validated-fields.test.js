@@ -47,6 +47,6 @@ describe('isPrettySlug', () => {
     );
   });
   it('Returns null for non-null links.', () => {
-    expect(isPrettySlug('beautiful-computer-slug-4')).toBe(null);
+    expect(isPrettySlug('beautiful-computer-slug-40')).toBe(null);
   });
 });
