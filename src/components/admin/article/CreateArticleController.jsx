@@ -13,6 +13,7 @@ import { buildErrorMessage } from 'lib/error-helpers';
 import {
   HttpsUrlField,
   ShortRequiredTextField,
+  SlugField,
 } from 'components/admin/form-components/validated-fields';
 import ListSelector from 'components/admin/form-components/ListSelector';
 import MaxLenTextField from 'components/admin/form-components/MaxLenTextField';
@@ -166,7 +167,7 @@ class CreateArticleController extends React.Component {
           disabled={this.state.saving}
         />
         <br />
-        <ShortRequiredTextField
+        <SlugField
           floatingLabelText="Slug"
           value={this.state.slug}
           onUpdate={this.updateSlug}
