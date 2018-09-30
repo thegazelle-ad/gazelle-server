@@ -8,6 +8,7 @@ import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import Description from 'material-ui/svg-icons/action/description';
 import Person from 'material-ui/svg-icons/social/person';
+import Group from 'material-ui/svg-icons/social/group';
 import Photo from 'material-ui/svg-icons/image/photo';
 import Info from 'material-ui/svg-icons/action/info';
 import LibraryBooks from 'material-ui/svg-icons/av/library-books';
@@ -35,6 +36,9 @@ export default class Navigation extends BaseComponent {
           </Link>
           <Link to="/staff">
             <MenuItem leftIcon={<Person />}>Staff</MenuItem>
+          </Link>
+          <Link to="/teams">
+            <MenuItem leftIcon={<Group />}>Teams</MenuItem>
           </Link>
           <Link to="/images/upload">
             <MenuItem leftIcon={<Photo />}>Images</MenuItem>
