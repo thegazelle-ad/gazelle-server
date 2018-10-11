@@ -4,6 +4,11 @@ You should read this guide very carefully, if you are encountering issues it is 
 
 Also, if not obvious, all instructions in this setup guide assume that you have already cloned [this repo](https://github.com/thegazelle-ad/gazelle-server) which the repo is located in, and that your current working directory is this repo.
 
+# SSH + Github
+
+Some npm packages require ssh authentication. Follow this guide to connect SSH with Github.
+(https://help.github.com/articles/connecting-to-github-with-ssh/)
+
 # Install
 
 Make sure you have NodeJS and npm installed
