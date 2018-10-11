@@ -6,7 +6,7 @@ Also, if not obvious, all instructions in this setup guide assume that you have 
 
 # SSH + Github
 
-Some npm packages require ssh authentication. Follow this guide to connect SSH with Github. 
+Some npm packages require ssh authentication. Follow this guide to connect SSH with Github.
 (https://help.github.com/articles/connecting-to-github-with-ssh/)
 
 # Install
