@@ -236,7 +236,7 @@ class StaffController extends FalcorController {
       this.props.model
         .get(['staff', 'bySlug', this.state.slug, 'slug'])
         .then(x => {
-          if (x) {
+          if (x.json.staff.bySlug[this.state.slug].slug) {
             x = cleanupFalcorKeys(x); // eslint-disable-line no-param-reassign
             // This slug is already taken as something was returned
             this.props.displayAlert(
