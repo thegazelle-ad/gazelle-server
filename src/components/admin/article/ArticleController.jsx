@@ -1,5 +1,5 @@
 import React from 'react';
-import { browserHistory } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import _ from 'lodash';
 import Plain from 'slate-plain-serializer';
 import moment from 'moment';
@@ -40,6 +40,8 @@ import FlatButton from 'material-ui/FlatButton';
 import ExitToApp from 'material-ui/svg-icons/action/exit-to-app';
 import Dialog from 'material-ui/Dialog';
 import RaisedButton from 'material-ui/RaisedButton';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 
 // HOCs
 import { withModals } from 'components/admin/hocs/modals/withModals';
@@ -518,6 +520,20 @@ class ArticleController extends FalcorController {
               saving={this.state.saving}
               changed={this.state.changed}
             />
+          </div>
+          <div>
+            <Link to="/articles/page/0/new">
+              <FloatingActionButton
+                style={{
+                  position: 'fixed',
+                  zIndex: 50,
+                  bottom: '50px',
+                  right: '100px',
+                }}
+              >
+                <ContentAdd />
+              </FloatingActionButton>
+            </Link>
           </div>
           <Dialog
             title="Article Preview"
