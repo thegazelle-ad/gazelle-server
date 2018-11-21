@@ -694,6 +694,7 @@ export function relatedArticleQuery(ids) {
                 // and whether the category is the same
                 _.forEach(articles, currentPost => {
                   let cnt = 0;
+                  if (currentPost.id === id) return;
                   currentPost.tags.forEach(currentTag => {
                     if (post.tags.find(postTag => postTag === currentTag)) {
                       cnt += 1;

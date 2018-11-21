@@ -4,6 +4,7 @@ static/build/
 .env
 client_secret.json
 credentials.json
+package-lock.json
 
 ## Below this is automatically generated
 
