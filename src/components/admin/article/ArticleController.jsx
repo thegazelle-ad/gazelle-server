@@ -521,8 +521,9 @@ class ArticleController extends FalcorController {
               changed={this.state.changed}
             />
           </div>
+          {this.props.children}
           <div>
-            <Link to="/articles/page/0/new">
+            <Link to={`/articles/id/${this.props.params.id}/new`}>
               <FloatingActionButton
                 style={{
                   position: 'fixed',
