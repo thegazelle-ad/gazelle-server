@@ -249,4 +249,3 @@ const EnhancedCreateArticleController = compose(
 )(CreateArticleController);
 
 export { EnhancedCreateArticleController as CreateArticleController };
-
