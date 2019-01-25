@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import BaseComponent from 'lib/BaseComponent';
-
+import { Link } from 'react-router';
 import TeamMembersList from 'components/main/TeamMembersList';
 
 export default class TeamPage extends BaseComponent {
@@ -17,6 +17,7 @@ export default class TeamPage extends BaseComponent {
     return (
       <div className="team-page">
         <h2 className="team-page__title">Our Team</h2>
+        <Link to="/semester" className="team-page__semester">{this.props.semester}</Link>
         {renderTeams}
       </div>
     );
@@ -36,4 +37,5 @@ TeamPage.propTypes = {
 
 TeamPage.defaultProps = {
   teamData: [],
+  semester: '',
 };

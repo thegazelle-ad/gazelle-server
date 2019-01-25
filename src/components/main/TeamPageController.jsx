@@ -57,11 +57,12 @@ export default class TeamPageController extends FalcorController {
         // Social media
         ...TeamPageController.getOpenGraphInformation(),
       ];
+      const semester = "Spring 2018"; // for now, write in route soon
       // Top level elements can't have classes or it will break transitions
       return (
         <div>
           <Helmet meta={meta} title="Our Team | The Gazelle" />
-          <TeamPage teamData={teamData} />
+          <TeamPage teamData={teamData} semester={semester} />
         </div>
       );
     }

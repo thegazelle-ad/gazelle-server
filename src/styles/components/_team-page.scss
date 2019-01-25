@@ -10,6 +10,15 @@
       margin: 0.75rem 0;
     }
   }
+  &__semester {
+    @include uppercase;
+    font-size: 1.7rem;
+    text-align: center;
+    display: flex;
+    padding-bottom: 0.5rem;
+    justify-content: center;
+    color: $dark-grey;
+  }
   &__team__members {
     display: flex;
     flex-wrap: wrap;
