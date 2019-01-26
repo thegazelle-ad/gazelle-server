@@ -138,7 +138,7 @@ export default [
     // eslint-disable-next-line max-len
     route:
       "issues['byNumber'][{integers:issueNumbers}]['id', 'published_at', 'name', 'issueNumber']",
-    get: pathSet => {
+    get: async pathSet => {
       const mapFields = field => {
         switch (field) {
           case 'issueNumber':
@@ -147,35 +147,37 @@ export default [
             return field;
         }
       };
-      return new Promise(resolve => {
-        const requestedFields = pathSet[3];
-        const dbColumns = requestedFields.map(mapFields);
-        db.issueQuery(pathSet.issueNumbers, dbColumns).then(data => {
-          const results = [];
-          data.forEach(issue => {
-            // Convert Date object to time integer
-            const processedIssue = { ...issue };
-            if (
-              has.call(processedIssue, 'published_at') &&
-              processedIssue.published_at instanceof Date
-            ) {
-              processedIssue.published_at = processedIssue.published_at.getTime();
-            }
-            requestedFields.forEach(field => {
-              results.push({
-                path: [
-                  'issues',
-                  'byNumber',
-                  processedIssue.issue_number,
-                  field,
-                ],
-                value: processedIssue[mapFields(field)],
-              });
-            });
+      const requestedFields = pathSet[3];
+      const dbColumns = requestedFields.map(mapFields);
+      const data = await db.simpleQuery(
+        'issues',
+        'issue_number',
+        pathSet.issueNumbers,
+        dbColumns
+      );
+      const results = [];
+      data.forEach(issue => {
+        // Convert Date object to time integer
+        const processedIssue = { ...issue };
+        if (
+          has.call(processedIssue, 'published_at') &&
+          processedIssue.published_at instanceof Date
+        ) {
+          processedIssue.published_at = processedIssue.published_at.getTime();
+        }
+        requestedFields.forEach(field => {
+          results.push({
+            path: [
+              'issues',
+              'byNumber',
+              processedIssue.issue_number,
+              field,
+            ],
+            value: processedIssue[mapFields(field)],
           });
-          resolve(results);
         });
       });
+      return results;
     },
     set: jsonGraphArg =>
       new Promise(resolve => {

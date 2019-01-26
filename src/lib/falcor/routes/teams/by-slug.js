@@ -9,22 +9,25 @@ const $ref = falcor.Model.ref;
 export default [
   {
     route: "teams['bySlug'][{keys:slugs}]['slug', 'id', 'name', 'description']",
-    get: pathSet =>
-      new Promise(resolve => {
-        const requestedFields = pathSet[3];
-        db.teamQuery(pathSet.slugs, requestedFields).then(data => {
-          const results = [];
-          data.forEach(team => {
-            requestedFields.forEach(field => {
-              results.push({
-                path: ['teams', 'bySlug', team.slug, field],
-                value: team[field],
-              });
-            });
+    get: async pathSet => {
+      const requestedFields = pathSet[3];
+      const data = await db.simpleQuery(
+        'teams',
+        'slug',
+        pathSet.slugs,
+        requestedFields
+      );
+      const results = [];
+      data.forEach(team => {
+        requestedFields.forEach(field => {
+          results.push({
+            path: ['teams', 'bySlug', team.slug, field],
+            value: team[field],
           });
-          resolve(results);
         });
-      }),
+      });
+      return results;
+    },
     set: jsonGraphArg =>
       new Promise((resolve, reject) => {
         const teamsBySlug = jsonGraphArg.teams.bySlug;

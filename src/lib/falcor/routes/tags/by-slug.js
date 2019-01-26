@@ -1,8 +1,9 @@
 import falcor from 'falcor';
 import _ from 'lodash';
 
-import { tagQuery, addTag } from './database-calls';
+import { addTag } from './database-calls';
 import { has } from 'lib/utilities';
+import { simpleQuery } from 'lib/db';
 
 const $ref = falcor.Model.ref;
 
@@ -10,7 +11,7 @@ export const routes = [
   {
     route: "tags['bySlug'][{keys:slugs}]",
     get: async pathSet => {
-      const tags = await tagQuery('slug', pathSet.slugs, ['id', 'slug']);
+      const tags = await simpleQuery('tags', 'slug', pathSet.slugs, ['id', 'slug']);
       const results = tags.map(tagObject => ({
         path: ['tags', 'bySlug', tagObject.slug],
         value: $ref(['tags', 'byId', tagObject.id]),
@@ -20,7 +21,7 @@ export const routes = [
 
     set: async jsonGraphArg => {
       const slugs = Object.keys(jsonGraphArg.tags.bySlug);
-      const tags = await tagQuery('slug', slugs, ['id', 'slug']);
+      const tags = await simpleQuery('tags', 'slug', slugs, ['id', 'slug']);
       const results = tags.map(tagObject => ({
         path: ['tags', 'bySlug', tagObject.slug],
         value: $ref(['tags', 'byId', tagObject.id]),

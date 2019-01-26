@@ -23,6 +23,25 @@ export const database = knex({
   },
 });
 
+/**
+ * Fetches direct meta data from corresponding database table
+ * @param {string} table - Which table to fetch from
+ * @param {string} queryField - Indicates which field to query by
+ * @param {string[]} queryParams - Array of parameters of type queryField to fetch
+ * @param {string[]} columns - Which columns of the table to fetch
+ * @returns {Promise<Object[]>}
+ */
+export async function simpleQuery(table, queryField, queryParams, columns) {
+  // In order to be able to identify the rows we get back we need to include the queryField
+  if (!columns.includes(queryField)) {
+    columns.push(queryField);
+  }
+  return database
+    .select(...columns)
+    .from(table)
+    .whereIn(queryField, queryParams);
+}
+
 export function staffTeamQuery(slugs) {
   // Arguments: `slugs`: array of staff member slugs
   // Returns: an object with staff member slugs (keys), each mapped
@@ -81,34 +100,6 @@ export function authorArticleQuery(slugs) {
         });
         // database.destroy();
         resolve(data);
-      })
-      .catch(e => {
-        // database.destroy();
-        throw new Error(e);
-      });
-  });
-}
-
-export function infoPagesQuery(slugs, columns) {
-  // parameters are both expected to be arrays
-  // first one with page slugs to fetch
-  // second one which columns to fetch from the db
-  return new Promise(resolve => {
-    // So the Falcor Router knows which page we're talking about
-    let processedColumns = columns;
-    if (processedColumns.find(col => col === 'slug') === undefined) {
-      // Use concat to make a copy, if you just push
-      // it will change pathSet in the falcorPath
-      // as objects are passed by reference
-      processedColumns = processedColumns.concat(['slug']);
-    }
-    database
-      .select(...processedColumns)
-      .from('info_pages')
-      .whereIn('slug', slugs)
-      .then(rows => {
-        // database.destroy();
-        resolve(rows);
       })
       .catch(e => {
         // database.destroy();
@@ -257,25 +248,6 @@ export function teamArrayQuery() {
           }
         });
         resolve(result);
-      })
-      .catch(e => {
-        throw new Error(e);
-      });
-  });
-}
-
-export function teamQuery(slugs, columns) {
-  return new Promise(resolve => {
-    let processedColumns = columns;
-    if (processedColumns.find(col => col === 'slug') === undefined) {
-      processedColumns = processedColumns.concat(['slug']);
-    }
-    database
-      .select(...processedColumns)
-      .from('teams')
-      .whereIn('slug', slugs)
-      .then(rows => {
-        resolve(rows);
       })
       .catch(e => {
         throw new Error(e);
@@ -560,31 +532,6 @@ or missing category at issue number ${issueNumber} index ${i}`);
   });
 }
 
-export function issueQuery(issueNumbers, columns) {
-  return new Promise(resolve => {
-    let processedColumns = columns;
-    const hasIssueNumber =
-      processedColumns.find(col => col === 'issue_number') !== undefined;
-    if (!hasIssueNumber) {
-      // use concat to do a copy instead of changing original pathSet
-      // we push this so that we know which issue we are fetching data for
-      processedColumns = processedColumns.concat(['issue_number']);
-    }
-    database
-      .select(...processedColumns)
-      .from('issues')
-      .whereIn('issues.issue_number', issueNumbers)
-      .then(rows => {
-        // database.destroy();
-        resolve(rows);
-      })
-      .catch(e => {
-        // database.destroy();
-        throw new Error(e);
-      });
-  });
-}
-
 export function trendingQuery() {
   return new Promise(resolve => {
     database
@@ -694,6 +641,7 @@ export function relatedArticleQuery(ids) {
                 // and whether the category is the same
                 _.forEach(articles, currentPost => {
                   let cnt = 0;
+                  if (currentPost.id === id) return;
                   currentPost.tags.forEach(currentTag => {
                     if (post.tags.find(postTag => postTag === currentTag)) {
                       cnt += 1;

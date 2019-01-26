@@ -1,8 +1,8 @@
 import falcor from 'falcor';
 import _ from 'lodash';
 
-import { database } from 'lib/db';
-import { categoryQuery, categoryArticleQuery } from './database-calls.sql';
+import { database, simpleQuery } from 'lib/db';
+import { categoryArticleQuery } from './database-calls.sql';
 
 const $ref = falcor.Model.ref;
 
@@ -12,8 +12,8 @@ export const routes = [
     route: "categories['byId'][{keys:ids}]['id', 'name', 'slug']",
     get: async pathSet => {
       const requestedFields = pathSet[3];
-      const data = await categoryQuery(
-        database,
+      const data = await simpleQuery(
+        'categories',
         'id',
         pathSet.ids,
         requestedFields,

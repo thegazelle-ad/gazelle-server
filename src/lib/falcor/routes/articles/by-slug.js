@@ -1,7 +1,6 @@
 import falcor from 'falcor';
 
-import { database } from 'lib/db';
-import { articleQuery } from './database-calls.sql';
+import { simpleQuery } from 'lib/db';
 
 const $ref = falcor.Model.ref;
 
@@ -9,7 +8,7 @@ export default [
   {
     route: "articles['bySlug'][{keys:slugs}]",
     get: async pathSet => {
-      const data = await articleQuery(database, 'slug', pathSet.slugs, [
+      const data = await simpleQuery('articles', 'slug', pathSet.slugs, [
         'slug',
         'id',
       ]);

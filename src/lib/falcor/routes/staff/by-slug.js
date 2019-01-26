@@ -2,7 +2,6 @@ import falcor from 'falcor';
 import _ from 'lodash';
 
 import * as db from 'lib/db';
-import { staffQuery } from './database-calls.sql';
 import { has } from 'lib/utilities';
 
 const $ref = falcor.Model.ref;
@@ -15,7 +14,7 @@ export default [
     get: pathSet =>
       new Promise(resolve => {
         const requestedFields = pathSet[3];
-        staffQuery(db.database, 'slug', pathSet.slugs, requestedFields).then(
+        db.simpleQuery('staff', 'slug', pathSet.slugs, requestedFields).then(
           data => {
             // always returns slug in the object no matter what.
             const results = [];

@@ -1,7 +1,6 @@
 import falcor from 'falcor';
 
-import { database } from 'lib/db';
-import { categoryQuery } from './database-calls.sql';
+import { simpleQuery } from 'lib/db';
 
 const $ref = falcor.Model.ref;
 
@@ -9,7 +8,7 @@ export const routes = [
   {
     route: "categories['bySlug'][{keys:slugs}]",
     get: async pathSet => {
-      const data = await categoryQuery(database, 'slug', pathSet.slugs, [
+      const data = await simpleQuery('categories', 'slug', pathSet.slugs, [
         'slug',
         'id',
       ]);
