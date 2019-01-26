@@ -13,9 +13,9 @@ import {
 import {
   updateArticleTags,
   updateArticles,
-  articleQuery,
   articleTagQuery,
 } from './database-calls.sql';
+import { simpleQuery } from 'lib/database-queries.sql';
 import { has } from 'lib/utilities';
 import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
 import { serverModel } from 'index';
@@ -29,8 +29,9 @@ export default [
       "articles['byId'][{keys:ids}]['id', 'image_url', 'slug', 'title', 'markdown', 'html', 'teaser', 'published_at', 'views', 'is_interactive']",
     get: async pathSet => {
       const requestedFields = pathSet[3];
-      const data = await articleQuery(
+      const data = await simpleQuery(
         database,
+        'articles',
         'id',
         pathSet.ids,
         requestedFields,
@@ -72,7 +73,7 @@ export default [
   {
     route: "articles['byId'][{keys:ids}]['category']",
     get: async pathSet => {
-      const data = await articleQuery(database, 'id', pathSet.ids, [
+      const data = await simpleQuery(database, 'articles', 'id', pathSet.ids, [
         'category_id',
       ]);
       const results = data

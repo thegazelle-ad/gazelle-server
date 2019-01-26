@@ -1,6 +1,9 @@
 import _ from 'lodash';
 
-import { tagQuery, updateTags } from './database-calls';
+import { updateTags } from './database-calls';
+import { simpleQuery } from 'lib/database-queries.sql';
+
+import { database } from 'lib/db';
 
 export const routes = [
   {
@@ -8,7 +11,7 @@ export const routes = [
     get: pathSet =>
       new Promise(resolve => {
         const requestedFields = pathSet[3];
-        tagQuery('id', pathSet.ids, requestedFields).then(data => {
+        simpleQuery(database, 'tags', 'id', pathSet.ids, requestedFields).then(data => {
           const results = [];
           data.forEach(tag => {
             requestedFields.forEach(field => {
