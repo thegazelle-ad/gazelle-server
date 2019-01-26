@@ -31,7 +31,7 @@ export const database = knex({
  * @param {string[]} columns - Which columns of the table to fetch
  * @returns {Promise<Object[]>}
  */
-export async function simpleQuery(table, queryField, queryParams, columns) {
+export function simpleQuery(table, queryField, queryParams, columns) {
   // In order to be able to identify the rows we get back we need to include the queryField
   if (!columns.includes(queryField)) {
     columns.push(queryField);
