@@ -1345,10 +1345,10 @@ export function updateTeams(jsonGraphArg) {
   });
 }
 
-export function getLatestSemester() {
+export function getLatestSemester(queryField) {
   return new Promise(resolve => {
     database
-      .select('name')
+      .select(queryField)
       .from('semesters')
       .orderBy('date', 'DESC')
       .limit(1)
@@ -1356,7 +1356,7 @@ export function getLatestSemester() {
         if (rows.length !== 1) {
           throw new Error('Problems fetching latest semester');
         }
-        resolve(rows[0].name);
+        resolve(rows[0][queryField]);
       })
       .catch(e => {
         throw e;

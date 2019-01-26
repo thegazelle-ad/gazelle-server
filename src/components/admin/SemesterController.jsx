@@ -31,24 +31,42 @@ const styles = {
 class SemesterController extends FalcorController {
   constructor(props) {
     super(props);
+    this.falcorToState = this.falcorToState.bind(this);
     this.updateSemester = currentSemester =>
       this.safeSetState({
         currentSemester,
-        semesterName: this.state.data.semesters.byId[currentSemester].name,
       });
     this.safeSetState({
       currentSemester: null, // semester id
-      semesterName: '', // current semester name
     });
   }
 
   static getFalcorPathSets() {
-    return [['semesters', 'byId', { from: 0, to: 5 }, ['id', 'name']]];
+    return [
+      ['semesters', 'byId', { from: 0, to: 5 }, ['id', 'name']],
+      ['semesters', 'latest', 'info', ['id']],
+    ];
   }
 
-  componentDidUpdate(prevState) {
+  falcorToState(data) {
+    this.safeSetState({
+      currentSemester: data.semesters.latest.info.id,
+    })
+  }
+
+  componentWillMount() {
+    super.componentWillMount(this.falcorToState);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
     if (prevState.currentSemester !== this.state.currentSemester) {
-      browserHistory.push(`/semesters/${this.state.semesterName}`);
+      if (this.state.currentSemester === null) {
+        browserHistory.push('/semesters');
+      } else {
+        const semesterName =
+          this.state.data.semesters.byId[this.state.currentSemester].name;
+        browserHistory.push(`/semesters/${semesterName}`);
+      }
     }
   }
 
