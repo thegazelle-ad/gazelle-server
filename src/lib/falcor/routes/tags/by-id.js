@@ -1,29 +1,25 @@
 import _ from 'lodash';
 
 import { updateTags } from './database-calls';
-import { simpleQuery } from 'lib/database-queries.sql';
-
-import { database } from 'lib/db';
+import { simpleQuery } from 'lib/db';
 
 export const routes = [
   {
     route: "tags['byId'][{keys:ids}]['id', 'name', 'slug']",
-    get: pathSet =>
-      new Promise(resolve => {
-        const requestedFields = pathSet[3];
-        simpleQuery(database, 'tags', 'id', pathSet.ids, requestedFields).then(data => {
-          const results = [];
-          data.forEach(tag => {
-            requestedFields.forEach(field => {
-              results.push({
-                path: ['tags', 'byId', tag.id, field],
-                value: tag[field],
-              });
-            });
+    get: async pathSet => {
+      const requestedFields = pathSet[3];
+      const data = await simpleQuery('tags', 'id', pathSet.ids, requestedFields);
+      const results = [];
+      data.forEach(tag => {
+        requestedFields.forEach(field => {
+          results.push({
+            path: ['tags', 'byId', tag.id, field],
+            value: tag[field],
           });
-          resolve(results);
         });
-      }),
+      });
+      return results;
+    },
     set: jsonGraphArg =>
       new Promise((resolve, reject) => {
         const tagsById = jsonGraphArg.tags.byId;

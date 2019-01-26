@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 import * as db from 'lib/db';
 import { has } from 'lib/utilities';
-import { simpleQuery } from 'lib/database-queries.sql';
 
 const $ref = falcor.Model.ref;
 
@@ -12,8 +11,7 @@ export default [
     route: "teams['bySlug'][{keys:slugs}]['slug', 'id', 'name', 'description']",
     get: async pathSet => {
       const requestedFields = pathSet[3];
-      const data = await simpleQuery(
-        db.database,
+      const data = await db.simpleQuery(
         'teams',
         'slug',
         pathSet.slugs,

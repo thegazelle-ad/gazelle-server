@@ -9,13 +9,13 @@ import {
   relatedArticleQuery,
   addView,
   database,
+  simpleQuery,
 } from 'lib/db';
 import {
   updateArticleTags,
   updateArticles,
   articleTagQuery,
 } from './database-calls.sql';
-import { simpleQuery } from 'lib/database-queries.sql';
 import { has } from 'lib/utilities';
 import { parseFalcorPseudoArray } from 'lib/falcor/falcor-utilities';
 import { serverModel } from 'index';
@@ -30,7 +30,6 @@ export default [
     get: async pathSet => {
       const requestedFields = pathSet[3];
       const data = await simpleQuery(
-        database,
         'articles',
         'id',
         pathSet.ids,
@@ -73,7 +72,7 @@ export default [
   {
     route: "articles['byId'][{keys:ids}]['category']",
     get: async pathSet => {
-      const data = await simpleQuery(database, 'articles', 'id', pathSet.ids, [
+      const data = await simpleQuery('articles', 'id', pathSet.ids, [
         'category_id',
       ]);
       const results = data

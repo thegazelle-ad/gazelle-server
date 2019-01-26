@@ -1,13 +1,12 @@
-import { database } from 'lib/db';
+import { simpleQuery } from 'lib/db';
 import { has } from 'lib/utilities';
-import { simpleQuery } from 'lib/database-queries.sql';
 
 export default [
   {
     route: "infoPages[{keys:slugs}]['title', 'html', 'slug']",
     get: async pathSet => {
       const requestedFields = pathSet[2];
-      const data = await simpleQuery(database, 'info_pages', 'slug', pathSet.slugs, requestedFields);
+      const data = await simpleQuery('info_pages', 'slug', pathSet.slugs, requestedFields);
       const results = [];
       data.forEach(row => {
         requestedFields.forEach(key => {

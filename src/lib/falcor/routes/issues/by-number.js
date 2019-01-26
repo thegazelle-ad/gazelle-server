@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 import * as db from 'lib/db';
 import { has } from 'lib/utilities';
-import { simpleQuery } from 'lib/database-queries.sql';
 
 const $ref = falcor.Model.ref;
 
@@ -150,8 +149,7 @@ export default [
       };
       const requestedFields = pathSet[3];
       const dbColumns = requestedFields.map(mapFields);
-      const data = await simpleQuery(
-        db.database,
+      const data = await db.simpleQuery(
         'issues',
         'issue_number',
         pathSet.issueNumbers,
