@@ -548,7 +548,7 @@ class ArticleController extends FalcorController {
               title={this.state.title}
               teaser={this.state.teaser}
               html={buildHtmlFromMarkdown(Plain.serialize(this.state.markdown))}
-              authors={[{ slug: 'dummy', name: 'Dummy Author' }]}
+              authors={this.state.authors}
               url="https://www.thegazelle.org/dummy/url"
               published_at={new Date().getTime()}
             />
