@@ -77,7 +77,12 @@ class CreateArticleController extends React.Component {
   updateCategory = category => this.setState({ category });
 
   handleDialogClose = () => {
-    browserHistory.push(getArticleListPath(this.props.params.page));
+    if (this.props.params.page) {
+      browserHistory.push(getArticleListPath(this.props.params.page));
+    }
+    if (this.props.params.id) {
+      browserHistory.push(getArticlePath(this.props.params.id));
+    }
   };
 
   validateArticle = async () => {
@@ -138,7 +143,7 @@ class CreateArticleController extends React.Component {
       // Finally runs even if we return from the function in try and catch
       this.setState({ saving: false });
     }
-    const pathname = getArticlePath(newArticle.id, this.props.params.page);
+    const pathname = getArticlePath(newArticle.id);
     browserHistory.push({ pathname, state: { refresh: true } });
   };
 
@@ -217,9 +222,14 @@ class CreateArticleController extends React.Component {
 }
 
 CreateArticleController.propTypes = {
-  params: PropTypes.shape({
-    page: PropTypes.string.isRequired,
-  }).isRequired,
+  params: PropTypes.oneOfType([
+    PropTypes.shape({
+      page: PropTypes.string.isRequired,
+    }).isRequired,
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+    }).isRequired,
+  ]).isRequired,
   categories: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
