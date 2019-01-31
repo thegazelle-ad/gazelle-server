@@ -17,7 +17,9 @@ export default class TeamPage extends BaseComponent {
     return (
       <div className="team-page">
         <h2 className="team-page__title">Our Team</h2>
-        <Link to="/semester" className="team-page__semester">{this.props.semester}</Link>
+        <Link to="/semester" className="team-page__semester">
+          {this.props.semester}
+        </Link>
         {renderTeams}
       </div>
     );

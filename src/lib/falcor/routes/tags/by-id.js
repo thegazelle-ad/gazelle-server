@@ -8,7 +8,12 @@ export const routes = [
     route: "tags['byId'][{keys:ids}]['id', 'name', 'slug']",
     get: async pathSet => {
       const requestedFields = pathSet[3];
-      const data = await simpleQuery('tags', 'id', pathSet.ids, requestedFields);
+      const data = await simpleQuery(
+        'tags',
+        'id',
+        pathSet.ids,
+        requestedFields,
+      );
       const results = [];
       data.forEach(tag => {
         requestedFields.forEach(field => {

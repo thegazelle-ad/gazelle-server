@@ -51,7 +51,7 @@ class SemesterController extends FalcorController {
   falcorToState(data) {
     this.safeSetState({
       currentSemester: data.semesters.latest.info.id,
-    })
+    });
   }
 
   componentWillMount() {
@@ -63,8 +63,9 @@ class SemesterController extends FalcorController {
       if (this.state.currentSemester === null) {
         browserHistory.push('/semesters');
       } else {
-        const semesterName =
-          this.state.data.semesters.byId[this.state.currentSemester].name;
+        const semesterName = this.state.data.semesters.byId[
+          this.state.currentSemester
+        ].name;
         browserHistory.push(`/semesters/${semesterName}`);
       }
     }
@@ -102,7 +103,7 @@ class SemesterController extends FalcorController {
           </Paper>
           {this.props.children}
         </div>
-      )
+      );
     }
     return (
       <div className="circular-progress">

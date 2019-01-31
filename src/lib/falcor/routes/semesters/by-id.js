@@ -21,5 +21,5 @@ export default [
         .flatten();
       return results;
     },
-  }
-]
+  },
+];

@@ -7,7 +7,7 @@ import { CreateArticleController } from 'components/admin/article/CreateArticleC
 import { ArticleController } from 'components/admin/article/ArticleController';
 import { StaffListController } from 'components/admin/StaffListController';
 import { StaffController } from 'components/admin/StaffController';
-import { SemesterController} from 'components/admin/SemesterController';
+import { SemesterController } from 'components/admin/SemesterController';
 import { TeamListController } from 'components/admin/TeamListController';
 import { IssueListController } from 'components/admin/IssueListController';
 import { MainIssueController } from 'components/admin/MainIssueController';
@@ -35,7 +35,9 @@ export default (
       <Route path=":slug" component={StaffController} />
     </Route>
     <Route path="semesters" component={SemesterController}>
-      <Route path=":semesterName" component={TeamListController} />
+      <Route path=":semesterName" component={TeamListController}>
+        <Route path=":teamSlug" />
+      </Route>
     </Route>
     <Route path="issues" component={IssueListController}>
       <Route path=":issueNumber">

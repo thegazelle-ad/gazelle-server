@@ -38,6 +38,7 @@ const styles = {
     marginBottom: 12,
   },
   staffMenu: {
+    // not used?
     display: 'inline-block',
     margin: 0,
   },

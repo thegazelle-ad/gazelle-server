@@ -1,12 +1,18 @@
 import React from 'react';
-import FalcorController from 'lib/falcor/FalcorController';
+import { browserHistory } from 'react-router';
 import _ from 'lodash';
-import { has, slugify } from 'lib/utilities';
-import LoadingOverlay from './LoadingOverlay';
+
+// Lib
+import { has, slugify, debounce } from 'lib/utilities';
+import FalcorController from 'lib/falcor/FalcorController';
+import { getTeamPath } from 'routes/admin-helpers';
 
 // Custom Components
 import ListSelector from 'components/admin/form-components/ListSelector';
 import { ShortRequiredTextField } from 'components/admin/form-components/validated-fields';
+import { SearchableAuthorsSelector } from 'components/admin/form-components/searchables';
+import LoadingOverlay from './LoadingOverlay';
+import SaveButton from 'components/admin/article/components/SaveButton';
 
 // material-ui
 import Paper from 'material-ui/Paper';
@@ -44,42 +50,83 @@ class TeamListController extends FalcorController {
   constructor(props) {
     super(props);
     this.createTeam = this.createTeam.bind(this);
-    this.falcorToState = this.falcorToState.bind(this);
-    this.updateTeam = currentTeam => this.safeSetState({ currentTeam });
-    this.updateSemester = currentSemester =>
-      this.safeSetState({ currentSemester });
+    this.updateTeam = this.updateTeam.bind(this);
+    this.handleSaveChanges = this.handleSaveChanges.bind(this);
+    this.updateTeamMembers = teamMembers => this.safeSetState( teamMembers );
     this.inputName = inputName => this.safeSetState({ inputName });
     this.inputSlug = inputSlug => this.safeSetState({ inputSlug });
     this.safeSetState({
+      changed: false,
       saving: false,
       inputName: '',
       inputSlug: '',
       currentTeam: null, // contains id of team
-      currentSemester: 'none',
+      teamIndex: null,
+      teamMembers: [],
     });
+
+    this.debouncedHandleFormStateChanges = debounce(() => {
+      // We don't want the debounced event to happen if we're saving
+      if (this.state.saving) return;
+    
+      const changedFlag = this.isFormChanged();
+      if (changedFlag !== this.state.changed) {
+        this.safeSetState({ changed: changedFlag });
+      }
+    }, 500);
   }
 
-  static getFalcorPathSets() {
+  static getFalcorPathSets(params) {
     return [
       ['teams', 'byIndex', { from: 0, to: 9 }, ['id', 'name']],
       [
         'semesters',
-        'latest',
+        'byName',
+        params.semesterName,
         { length: 10 },
         'teamInfo',
         ['id', 'name', 'slug'],
       ],
+      [
+        'semesters',
+        'byName',
+        params.semesterName,
+        { length: 10 },
+        'members',
+        { length: 30 },
+        ['id', 'name'],
+      ],
     ];
   }
 
-  falcorToState(data) {
-    this.safeSetState({
-      currentTeam: data.teams.byIndex[0].id,
-    });
-  }
-
-  componentWillMount() {
-    super.componentWillMount(this.falcorToState);
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.params.semesterName !== this.props.params.semesterName) {
+      // semester has been changed, reset teams
+      this.safeSetState({
+        currentTeam: null,
+        teamIndex: null,
+      });
+    }
+    if (prevState.currentTeam !== this.state.currentTeam && this.state.currentTeam != null) {
+      // team has been changed, update URL
+      const semester = this.props.params.semesterName;
+      const semesterData = this.state.data.semesters.byName[semester];
+      if (this.state.teamIndex !== null) {
+        const team = semesterData[this.state.teamIndex].teamInfo.slug;
+        browserHistory.push(getTeamPath(semester, team));
+      } else {
+        browserHistory.push(getTeamPath(`/semesters/${semester}`));
+      }
+    }
+    if (
+      prevProps.params.semesterName === this.props.params.semesterName &&
+      prevState.currentTeam === this.state.currentTeam &&
+      this.isFormFieldChanged(prevState.teamMembers, this.state.teamMembers) &&
+      this.state.ready
+    ) {
+      // The update wasn't due to a change in semester or teams
+      this.debouncedHandleFormStateChanges();
+    }
   }
 
   createTeam(e) {
@@ -120,9 +167,58 @@ class TeamListController extends FalcorController {
     );
   }
 
+  updateTeam(currentTeam, teams) {
+    this.safeSetState({ currentTeam });
+    const semesterData = this.state.data.semesters.byName[this.props.params.semesterName];
+    for (let i = 0; i < teams.length; i++) {
+      if (teams[i].id === currentTeam) {
+        this.safeSetState({
+          teamIndex: i,
+          teamMembers: _.toArray(semesterData[i].members),
+          // should only happen when team is changed, find a way to incorporate prevProps?
+        });
+      }
+    }
+  }
+
+  handleSaveChanges = async () => {
+    if (!this.isFormChanged()) {
+      throw new Error(
+        'Tried to save changes but there were no changes. ' +
+          'the save changes button is supposed to be disabled in this case',
+      );
+    }
+  }
+  
+  areAuthorsChanged(currentAuthors, falcorAuthors) {
+    const falcorAuthorsArray = _.map(falcorAuthors, author => author);
+    return (
+      falcorAuthorsArray.length !== currentAuthors.length ||
+      currentAuthors.some(
+        author =>
+          falcorAuthorsArray.find(
+            falcorAuthor => author.id === falcorAuthor.id,
+          ) === undefined,
+      )
+    );
+  }
+
+  isFormChanged() {
+    const falcorData = this.state.data.semesters.byName[this.props.params.semesterName];
+    return this.areAuthorsChanged(this.state.teamMembers, falcorData[this.state.teamIndex].members);
+  }
+
+  isFormFieldChanged(a, b) {
+    return a !== b && !(!a && !b);
+  }
+
   render() {
     if (this.state.ready) {
-      if (!this.state.data || !this.state.data.teams || !this.state.data.semesters) {
+      if (
+        !this.state.data ||
+        !this.state.data.teams ||
+        !this.state.data.semesters
+      ) {
         return (
           <div>
             An error occured while fetching team data, please contact the
@@ -131,9 +227,11 @@ class TeamListController extends FalcorController {
         );
       }
 
-      const teams = _.toArray(this.state.data.semesters.latest).map(
-        index => index.teamInfo,
-      );
+      const semesterTeams = this.state.data.semesters.byName[this.props.params.semesterName]
+      const teams = _.toArray(semesterTeams).map(index => index.teamInfo);
+      // should probably make teams part of state to make my life easier but can't because have to wait for falcor to fetch new semester data
+
+      const currentTeamSlug = this.props.params.teamSlug;
 
       return (
         <div>
@@ -149,7 +247,7 @@ class TeamListController extends FalcorController {
                   <ListSelector
                     label="Team"
                     chosenElement={this.state.currentTeam}
-                    update={this.updateTeam}
+                    update={(currentTeam) => this.updateTeam(currentTeam, teams)}
                     elements={teams}
                     disabled={this.state.saving}
                   />
@@ -189,7 +287,32 @@ class TeamListController extends FalcorController {
               </Tab>
             </Tabs>
           </Paper>
-          {this.props.children}
+          <div>
+            {currentTeamSlug ? (
+              <div>
+                <h1>Members</h1>
+                <Divider />
+                <Paper style={styles.paper} zDepth={2}>
+                  <div style={styles.tabs}>
+                    <SearchableAuthorsSelector
+                      elements={this.state.teamMembers}
+                      onChange={this.debouncedHandleFormStateChanges}
+                      onUpdate={this.updateTeamMembers}
+                      disabled={this.state.saving}
+                      mode="staff"
+                      fullWidth
+                    />
+                    <SaveButton
+                      onClick={this.handleSaveChanges}
+                      style={styles.buttons}
+                      saving={this.state.saving}
+                      changed={this.state.changed}
+                    />
+                  </div>
+                </Paper>
+              </div>
+            ) : null}
+          </div>
         </div>
       );
     }

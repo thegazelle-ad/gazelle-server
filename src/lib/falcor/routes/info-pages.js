@@ -6,7 +6,12 @@ export default [
     route: "infoPages[{keys:slugs}]['title', 'html', 'slug']",
     get: async pathSet => {
       const requestedFields = pathSet[2];
-      const data = await simpleQuery('info_pages', 'slug', pathSet.slugs, requestedFields);
+      const data = await simpleQuery(
+        'info_pages',
+        'slug',
+        pathSet.slugs,
+        requestedFields,
+      );
       const results = [];
       data.forEach(row => {
         requestedFields.forEach(key => {

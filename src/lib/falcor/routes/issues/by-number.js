@@ -153,7 +153,7 @@ export default [
         'issues',
         'issue_number',
         pathSet.issueNumbers,
-        dbColumns
+        dbColumns,
       );
       const results = [];
       data.forEach(issue => {
@@ -167,12 +167,7 @@ export default [
         }
         requestedFields.forEach(field => {
           results.push({
-            path: [
-              'issues',
-              'byNumber',
-              processedIssue.issue_number,
-              field,
-            ],
+            path: ['issues', 'byNumber', processedIssue.issue_number, field],
             value: processedIssue[mapFields(field)],
           });
         });

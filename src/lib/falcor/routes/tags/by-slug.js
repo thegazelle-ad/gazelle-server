@@ -11,7 +11,10 @@ export const routes = [
   {
     route: "tags['bySlug'][{keys:slugs}]",
     get: async pathSet => {
-      const tags = await simpleQuery('tags', 'slug', pathSet.slugs, ['id', 'slug']);
+      const tags = await simpleQuery('tags', 'slug', pathSet.slugs, [
+        'id',
+        'slug',
+      ]);
       const results = tags.map(tagObject => ({
         path: ['tags', 'bySlug', tagObject.slug],
         value: $ref(['tags', 'byId', tagObject.id]),

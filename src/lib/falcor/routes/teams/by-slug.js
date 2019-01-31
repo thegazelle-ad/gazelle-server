@@ -15,7 +15,7 @@ export default [
         'teams',
         'slug',
         pathSet.slugs,
-        requestedFields
+        requestedFields,
       );
       const results = [];
       data.forEach(team => {
