@@ -2,7 +2,12 @@ If you encounter unexpected errors during setup, or later during usage, see the 
 
 You should read this guide very carefully, if you are encountering issues it is most likely because you missed a step in the guide because of skimming or not following a URL you had to follow. All the URLs linked to are important, and it's in most cases assumed that you go to the URLs linked and follow instructions there before coming back and continuing the guide. In case you do find that something was missing or unclear in this guide though, and you either figure out the issue yourself or reach out for help from the lead developers, please submit a pull request editing this guide so that future new developers won't encounter the same issue.
 
-Also, if not obvious, all instructions in this setup guide assume that you have already cloned [this repo](https://github.com/thegazelle-ad/gazelle-server) which the repo is located in, and that your current working directory is this repo.
+Also, if not obvious, all instructions in this setup guide assume that you have already cloned [this repo](https://github.com/thegazelle-ad/gazelle-server) which the repo is located in, and that your current working directory is this repo. To do so, navigate to the directory where you would like to keep your working copy of The Gazelle, then clone.
+
+```bash
+git clone https://github.com/thegazelle-ad/gazelle-server
+cd gazelle-server
+```
 
 # SSH + Github
 
