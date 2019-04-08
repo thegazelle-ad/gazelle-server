@@ -16,7 +16,7 @@ import NotFound from 'components/main/NotFound';
 export default class ArchivesController extends FalcorController {
   static getFalcorPathSets() {
     return [
-      // Returns 230 archived issues
+      // Returns 230 archived issues (timed for Kyle Adams' senior year)
       [
         'issues',
         'byNumber',
