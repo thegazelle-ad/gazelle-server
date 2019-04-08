@@ -48,7 +48,7 @@ export class ArticleListController extends FalcorController {
 
   /* When we route back to ArticleListController after making changes
    * the FalcorData in ArticleListController is now out of date.
-   * This makes ArticleListController update it's state to reflect
+   * This makes ArticleListController update its state to reflect
    * the data in the DB after making edits to an Article.
    * TODO - Pub-Sub model with React-Falcor||Falcor-React
    */
