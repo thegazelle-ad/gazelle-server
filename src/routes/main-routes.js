@@ -26,9 +26,11 @@ export default [
     />
     <Route path="staff-member/:staffSlug" component={StaffMemberController} />
     <Route path="issue/:issueNumber" component={IssueController} />
-    <Route path="category/:category" component={CategoryController} />
+    <Route path="category">
+      <Route path="team" component={TeamPageController} />
+      <Route path=":category" component={CategoryController} />
+    </Route>
     <Route path="archives" component={ArchivesController} />
-    <Route path="team" component={TeamPageController} />
     <Route path="search" component={SearchController} />
     <Route path=":slug" component={TextPageController} />
     <Route path="*" component={NotFoundController} />

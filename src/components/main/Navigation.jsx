@@ -23,6 +23,10 @@ export default class Navigation extends BaseComponent {
         name: 'multimedia',
         slug: 'media',
       },
+      {
+        name: 'team',
+        slug: 'team',
+      },
     ];
     if (this.props.navigationData != null) {
       // Wait for navigation data to come in asynchronously
