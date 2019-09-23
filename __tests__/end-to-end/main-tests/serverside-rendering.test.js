@@ -19,8 +19,6 @@ describe('The Gazelle server side rendering', () => {
 
   it('renders front page correctly', () =>
     testPathServersideRender(nightmare, HOST, ''));
-  it('renders team page correctly', () =>
-    testPathServersideRender(nightmare, HOST, '/team'));
   it('renders archive page correctly', () =>
     testPathServersideRender(nightmare, HOST, '/archives'));
   it('renders about page correctly', () =>
@@ -29,6 +27,8 @@ describe('The Gazelle server side rendering', () => {
     testPathServersideRender(nightmare, HOST, '/ethics'));
   it('renders category page correctly', () =>
     testPathServersideRender(nightmare, HOST, '/category/news'));
+  it('renders team page correctly', () =>
+    testPathServersideRender(nightmare, HOST, '/category/team'));
   it('renders non-default issue page correctly', () =>
     testPathServersideRender(nightmare, HOST, '/issue/100'));
   it('renders search page correctly', () =>
