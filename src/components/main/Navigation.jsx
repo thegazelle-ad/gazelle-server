@@ -23,20 +23,47 @@ export default class Navigation extends BaseComponent {
         name: 'multimedia',
         slug: 'media',
       },
+      {
+        name: 'team',
+        slug: 'team',
+      },
     ];
     if (this.props.navigationData != null) {
       // Wait for navigation data to come in asynchronously
       const data = this.props.navigationData;
-      const renderCategories = _.map(categories || [], category => (
-        <li key={category.slug} className="navigation__categories__item">
-          <Link
-            to={`/category/${category.slug}`}
-            activeClassName="navigation__categories__item--active"
-          >
-            {category.name}
-          </Link>
-        </li>
-      ));
+      // const renderCategories = _.map(categories || [], category => (
+      //   <li key={category.slug} className="navigation__categories__item">
+      //     <Link
+      //       to={`/category/${category.slug}`}
+      //       activeClassName="navigation__categories__item--active"
+      //     >
+      //       {category.name}
+      //     </Link>
+      //   </li>
+      // ));
+
+      const renderCategories = _.map(categories || [], (category)=>{
+        if (category.slug==='team'){
+          return (
+          <li>
+            <Link
+              to="/team"
+              activeClassName="navigation__categories__item--active"
+            >
+              {category.name}
+            </Link>
+          </li>)
+        }
+          return (
+            <li>
+              <Link
+                to={`/category/${category.slug}`}
+                activeClassName="navigation__categories__item--active"
+              >
+                {category.name}
+              </Link>
+            </li>)
+      })
 
       return (
         <div>
