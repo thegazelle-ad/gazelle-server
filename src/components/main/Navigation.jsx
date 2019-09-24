@@ -31,18 +31,8 @@ export default class Navigation extends BaseComponent {
     if (this.props.navigationData != null) {
       // Wait for navigation data to come in asynchronously
       const data = this.props.navigationData;
-      // const renderCategories = _.map(categories || [], category => (
-      //   <li key={category.slug} className="navigation__categories__item">
-      //     <Link
-      //       to={`/category/${category.slug}`}
-      //       activeClassName="navigation__categories__item--active"
-      //     >
-      //       {category.name}
-      //     </Link>
-      //   </li>
-      // ));
 
-      const renderCategories = _.map(categories || [], (category) => {
+      const renderCategories = _.map(categories || [], category => {
         if (category.slug === 'team') {
           return (
             <li key={category.slug} className="navigation__categories__item">
@@ -52,7 +42,8 @@ export default class Navigation extends BaseComponent {
               >
                 {category.name}
               </Link>
-            </li>)
+            </li>
+          );
         }
         return (
           <li key={category.slug} className="navigation__categories__item">
@@ -62,8 +53,9 @@ export default class Navigation extends BaseComponent {
             >
               {category.name}
             </Link>
-          </li>)
-      })
+          </li>
+        );
+      });
 
       return (
         <div>
