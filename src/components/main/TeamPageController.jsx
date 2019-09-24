@@ -30,7 +30,10 @@ export default class TeamPageController extends FalcorController {
     return [
       { property: 'og:title', content: 'Our Team | The Gazelle' },
       { property: 'og:type', content: 'website' },
-      { property: 'og:url', content: 'https://www.thegazelle.org/category/team' },
+      {
+        property: 'og:url',
+        content: 'https://www.thegazelle.org/category/team',
+      },
       {
         property: 'og:description',
         content: "The Gazelle's dedicated student team.",
