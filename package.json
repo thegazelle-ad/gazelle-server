@@ -172,7 +172,7 @@
     "react-tap-event-plugin": "^2.0.1",
     "request": "^2.87.0",
     "s3": "^4.4.0",
-    "showdown": "^1.8.6",
+    "showdown": "^1.9.1",
     "slate": "^0.33.4",
     "slate-plain-serializer": "^0.5.10",
     "slate-react": "^0.12.4",
