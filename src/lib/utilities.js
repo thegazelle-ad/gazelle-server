@@ -226,4 +226,9 @@ export const googleWhitelist = [
   'alh8@nyu.edu',
   'kkh312@nyu.edu',
   'sa4901@nyu.edu',
+  'ata381@nyu.edu',
+  'mmh690@nyu.edu',
+  'hsj276@nyu.edu',
+  'mzv205@nyu.edu',
+  'maa1150@nyu.edu',
 ];
