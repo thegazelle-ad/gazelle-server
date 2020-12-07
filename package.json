@@ -149,7 +149,7 @@
     "falcor-router": "^0.8.1",
     "googleapis": "^39.1.0",
     "imagemin": "^5.3.1",
-    "imagemin-jpeg-recompress": "^5.1.0",
+    "imagemin-jpeg-recompress": "^6.0.0",
     "immutable": "^3.8.2",
     "knex": "git+ssh://git@github.com/emilgoldsmith/knex.git",
     "lodash": "^4.17.10",
