@@ -217,12 +217,18 @@ export const nothingAllowedRobotsTxt = 'User-agent: *\nDisallow: /\n';
 export const googleClientID =
   '235485701704-vqb1qkp8lk1hbdhcmjm5jmtocaur3mq7.apps.googleusercontent.com';
 export const googleWhitelist = [
-  'jmp907@nyu.edu',
-  'mm7969@nyu.edu',
+  'lma502@nyu.edu',
+  'dp2686@nyu.edu',
   'ego225@nyu.edu',
   'ns3774@nyu.edu',
-  'yt1289@nyu.edu',
-  'jhe251@nyu.edu',
-  'pet240@nyu.edu',
-  'an2713@nyu.edu',
+  'ss12044@nyu.edu',
+  'at4049@nyu.edu',
+  'alh8@nyu.edu',
+  'kkh312@nyu.edu',
+  'sa4901@nyu.edu',
+  'ata381@nyu.edu',
+  'mmh690@nyu.edu',
+  'hsj276@nyu.edu',
+  'mzv205@nyu.edu',
+  'maa1150@nyu.edu',
 ];

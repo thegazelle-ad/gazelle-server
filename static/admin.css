@@ -69,3 +69,12 @@ a:visited:not(.active-link) {
   width: 100% !important;
   left: 0 !important;
 }
+
+.article__body iframe{
+  width: 100% !important;
+  left: 0 !important;
+}
+.article__body video{
+  width: 100% !important;
+  left: 0 !important;
+}
