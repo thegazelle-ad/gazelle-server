@@ -75,7 +75,7 @@ jobs:
 
       - run:
           name: save coverage
-          command: timeout 1m npm run test:unit -- --ci --coverage > coverage/unit
+          command: timeout 5m npm run test:unit -- --ci --coverage > coverage/unit
 
       - persist_to_workspace:
           root: .
