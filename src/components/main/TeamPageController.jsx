@@ -14,11 +14,11 @@ import NotFound from 'components/main/NotFound';
 export default class TeamPageController extends FalcorController {
   static getFalcorPathSets() {
     return [
-      ['semesters', 'latest', { length: 10 }, 'teamInfo', 'name'],
+      ['semesters', 'latest', { length: 15 }, 'teamInfo', 'name'],
       [
         'semesters',
         'latest',
-        { length: 10 },
+        { length: 15 },
         'members',
         { length: 50 },
         ['name', 'slug', 'job_title', 'image_url'],
