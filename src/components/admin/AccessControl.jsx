@@ -12,6 +12,7 @@ import List from 'material-ui/List/List';
 import Subheader from 'material-ui/Subheader';
 
 import ContentAdd from 'material-ui/svg-icons/content/add';
+import DeleteIcon from 'material-ui/svg-icons/action/delete';
 
 // HOCs
 import { withModals } from 'components/admin/hocs/modals/withModals';
@@ -44,7 +45,8 @@ class AccessController extends FalcorController {
   constructor(props) {
     super(props);
     this.safeSetState({
-      listOfNetIDs: ['abc72', 'abd94', 'bde32', 'cd232', 'de23', 'di23823', 'ef237']
+      listOfNetIDs: ['abc72', 'abd94', 'bde32', 'cd232', 'de23', 'di23823', 'ef237'],
+      currentlyHoveredElement: -1
     })
   }
 
@@ -66,10 +68,39 @@ class AccessController extends FalcorController {
               <Paper style={styles.paper} zDepth={1} id='cat'>
                 <List style={{ overflow: 'auto', maxHeight: '250px' }}>
                   <Subheader>NetIDs</Subheader>
-                  {netIDList.map(netid =>
-                    (<ListItem
+                  {netIDList.map((netid, index)=>
+                    (<ListItem 
                       primaryText={netid}
-                    />)
+                      style={{
+                        height: 56,
+                      }}
+                      innerDivStyle={{
+                        display: 'flex',
+                        flexDirection: 'row-reverse',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '0px 0px 0px 16px',
+                        height: 56,
+                      }}
+                      onMouseEnter={() => this.setState({ currentlyHoveredElement: index })}
+                      onMouseLeave={() => this.setState({ currentlyHoveredElement: -1 })}
+                    >
+                      {this.state.currentlyHoveredElement === index ?
+                        <div
+                          style={{ 
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: 'red',
+                          height: 56,
+                          width: 56,
+                        }}
+                        >
+                          <DeleteIcon color='white' /> 
+                        </div>
+                        : <div />
+                      }
+                     </ListItem>)
                   )}
                 </List>
               </Paper>
