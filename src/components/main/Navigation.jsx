@@ -27,6 +27,10 @@ export default class Navigation extends BaseComponent {
         name: 'team',
         slug: 'team',
       },
+      {
+        name: 'column',
+        slug: 'column',
+      },
     ];
     if (this.props.navigationData != null) {
       // Wait for navigation data to come in asynchronously

@@ -11,6 +11,7 @@ import { IssueListController } from 'components/admin/IssueListController';
 import { MainIssueController } from 'components/admin/MainIssueController';
 import { IssueArticleController } from 'components/admin/IssueArticleController';
 import { IssueCategoryController } from 'components/admin/IssueCategoryController';
+import { AccessControl } from 'components/admin/AccessControl';
 import NotFound from 'components/admin/NotFound';
 import { Login } from 'components/admin/Login';
 import { ImageController } from 'components/admin/ImageController';
@@ -47,6 +48,7 @@ export default (
       <Route path="archive" component={ImageArchive} />
     </Route>
     <Route path="readme" component={Readme} />
+    <Route path="access" component={AccessControl} />
 
     <Route path="*" component={NotFound} />
   </Route>

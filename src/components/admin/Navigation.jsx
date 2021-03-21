@@ -10,6 +10,7 @@ import Description from 'material-ui/svg-icons/action/description';
 import Person from 'material-ui/svg-icons/social/person';
 import Photo from 'material-ui/svg-icons/image/photo';
 import Info from 'material-ui/svg-icons/action/info';
+import Lock from 'material-ui/svg-icons/action/lock';
 import LibraryBooks from 'material-ui/svg-icons/av/library-books';
 
 const styles = {
@@ -41,6 +42,9 @@ export default class Navigation extends BaseComponent {
           </Link>
           <Link to="/readme">
             <MenuItem leftIcon={<Info />}>Readme</MenuItem>
+          </Link>
+          <Link to="/access">
+            <MenuItem leftIcon={<Lock />}>Access</MenuItem>
           </Link>
         </Drawer>
       </div>
