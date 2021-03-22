@@ -45,9 +45,17 @@ class AccessController extends FalcorController {
   constructor(props) {
     super(props);
     this.safeSetState({
-      listOfNetIDs: ['abc72', 'abd94', 'bde32', 'cd232', 'de23', 'di23823', 'ef237'],
-      currentlyHoveredElement: -1
-    })
+      listOfNetIDs: [
+        'abc72',
+        'abd94',
+        'bde32',
+        'cd232',
+        'de23',
+        'di23823',
+        'ef237',
+      ],
+      currentlyHoveredElement: -1,
+    });
   }
 
   static getFalcorPathSets() {
@@ -55,7 +63,7 @@ class AccessController extends FalcorController {
   }
 
   render() {
-    const netIDList = this.state.listOfNetIDs 
+    const netIDList = this.state.listOfNetIDs;
     if (this.state.listOfNetIDs) {
       return (
         <div>
@@ -65,11 +73,11 @@ class AccessController extends FalcorController {
             <div style={styles.tabs}>
               <h2> List of NetIDS with access </h2>
 
-              <Paper style={styles.paper} zDepth={1} id='cat'>
+              <Paper style={styles.paper} zDepth={1} id="cat">
                 <List style={{ overflow: 'auto', maxHeight: '250px' }}>
                   <Subheader>NetIDs</Subheader>
-                  {netIDList.map((netid, index)=>
-                    (<ListItem 
+                  {netIDList.map((netid, index) => (
+                    <ListItem
                       primaryText={netid}
                       style={{
                         height: 56,
@@ -82,33 +90,39 @@ class AccessController extends FalcorController {
                         padding: '0px 0px 0px 16px',
                         height: 56,
                       }}
-                      onMouseEnter={() => this.setState({ currentlyHoveredElement: index })}
-                      onMouseLeave={() => this.setState({ currentlyHoveredElement: -1 })}
-                    >
-                      {this.state.currentlyHoveredElement === index ?
-                        <div
-                          style={{ 
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          backgroundColor: 'red',
-                          height: 56,
-                          width: 56,
-                        }}
-                        >
-                          <DeleteIcon color='white' /> 
-                        </div>
-                        : <div />
+                      onMouseEnter={() =>
+                        this.setState({ currentlyHoveredElement: index })
                       }
-                     </ListItem>)
-                  )}
+                      onMouseLeave={() =>
+                        this.setState({ currentlyHoveredElement: -1 })
+                      }
+                    >
+                      {this.state.currentlyHoveredElement === index ? (
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: 'red',
+                            height: 56,
+                            width: 56,
+                          }}
+                        >
+                          <DeleteIcon color="white" />
+                        </div>
+                      ) : (
+                        <div />
+                      )}
+                    </ListItem>
+                  ))}
                 </List>
               </Paper>
 
-              <div style={{
+              <div
+                style={{
                   display: 'flex',
                   flexDirection: 'row',
-                  justifyContent: 'space-between'
+                  justifyContent: 'space-between',
                 }}
               >
                 <RaisedButton
@@ -118,11 +132,8 @@ class AccessController extends FalcorController {
                   style={styles.buttons}
                   disabled={false}
                 />
-                <Link to='/'>
-                  <RaisedButton
-                    primary
-                    style={styles.buttons}
-                  >
+                <Link to="/">
+                  <RaisedButton primary style={styles.buttons}>
                     <ContentAdd color="white" />
                   </RaisedButton>
                 </Link>
