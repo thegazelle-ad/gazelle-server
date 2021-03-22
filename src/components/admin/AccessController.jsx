@@ -1,6 +1,6 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
-import { Link } from 'react-router';
+import { browserHistory } from 'react-router';
 
 // material-ui
 import CircularProgress from 'material-ui/CircularProgress';
@@ -11,7 +11,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 import List from 'material-ui/List/List';
 import Subheader from 'material-ui/Subheader';
 
-import ContentAdd from 'material-ui/svg-icons/content/add';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
 
 // HOCs
@@ -56,6 +55,10 @@ class AccessController extends FalcorController {
       ],
       currentlyHoveredElement: -1,
     });
+  }
+
+  handleClickAddNew() {
+    browserHistory.push('/access/new');
   }
 
   static getFalcorPathSets() {
@@ -132,11 +135,13 @@ class AccessController extends FalcorController {
                   style={styles.buttons}
                   disabled={false}
                 />
-                <Link to="/">
-                  <RaisedButton primary style={styles.buttons}>
-                    <ContentAdd color="white" />
-                  </RaisedButton>
-                </Link>
+                <RaisedButton 
+                  label="Add New"
+                  primary
+                  style={styles.buttons}
+                  disabled={false}
+                  onClick={() => this.handleClickAddNew()}
+                />
               </div>
             </div>
             <Divider />
@@ -157,4 +162,4 @@ class AccessController extends FalcorController {
 }
 
 const EnhancedAccessController = withModals(AccessController);
-export { EnhancedAccessController as AccessControl };
+export { EnhancedAccessController as AccessController };
