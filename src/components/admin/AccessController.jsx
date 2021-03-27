@@ -53,12 +53,22 @@ class AccessController extends FalcorController {
         'di23823',
         'ef237',
       ],
+      listOfNetIDsMarkedForDeletion: [],
       currentlyHoveredElement: -1,
     });
   }
 
   handleClickAddNew() {
     browserHistory.push('/access/new');
+  }
+
+  markForDeletion(netid) {
+    this.state.listOfNetIDsMarkedForDeletion.push(netid)
+  }
+
+  unmarkForDeletion(netid) {
+    const newArrWithoutNetID = this.state.listOfNetIDsMarkedForDeletion.filter(x => x !== netid)
+    this.setState({ listOfNetIDsMarkedForDeletion: newArrWithoutNetID })
   }
 
   static getFalcorPathSets() {
@@ -79,45 +89,94 @@ class AccessController extends FalcorController {
               <Paper style={styles.paper} zDepth={1} id="cat">
                 <List style={{ overflow: 'auto', maxHeight: '250px' }}>
                   <Subheader>NetIDs</Subheader>
-                  {netIDList.map((netid, index) => (
-                    <ListItem
-                      primaryText={netid}
-                      style={{
-                        height: 56,
-                      }}
-                      innerDivStyle={{
-                        display: 'flex',
-                        flexDirection: 'row-reverse',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        padding: '0px 0px 0px 16px',
-                        height: 56,
-                      }}
-                      onMouseEnter={() =>
-                        this.setState({ currentlyHoveredElement: index })
-                      }
-                      onMouseLeave={() =>
-                        this.setState({ currentlyHoveredElement: -1 })
-                      }
-                    >
-                      {this.state.currentlyHoveredElement === index ? (
-                        <div
+                  {netIDList.map((netid, index) => {
+                    if (this.state.listOfNetIDsMarkedForDeletion.includes(netid)) {
+                      return (
+                        <ListItem
+                          primaryText={netid}
                           style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: 'red',
                             height: 56,
-                            width: 56,
+                            backgroundColor: '#f7c3be' // TOFIX: hover colour does not change
                           }}
+                          innerDivStyle={{
+                            display: 'flex',
+                            flexDirection: 'row-reverse',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '0px 0px 0px 16px',
+                            height: 56,
+                          }}
+                          onMouseEnter={() =>
+                            this.setState({ currentlyHoveredElement: index })
+                          }
+                          onMouseLeave={() =>
+                            this.setState({ currentlyHoveredElement: -1 })
+                          }
                         >
-                          <DeleteIcon color="white" />
-                        </div>
-                      ) : (
-                        <div />
-                      )}
-                    </ListItem>
-                  ))}
+                          {this.state.currentlyHoveredElement === index ? (
+                            <button
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                border: 'none',
+                                justifyContent: 'center',
+                                padding: '0px 10px',
+                                backgroundColor: 'lightgray',
+                                height: 56,
+                              }}
+                              onClick={() => this.unmarkForDeletion(netid)}
+                            >
+                              Cancel
+                            </button>
+                          ) : (
+                            <div />
+                          )}
+                        </ListItem>
+                      )
+                    } 
+                      return (
+                      <ListItem
+                        primaryText={netid}
+                        style={{
+                          height: 56,
+                        }}
+                        innerDivStyle={{
+                          display: 'flex',
+                          flexDirection: 'row-reverse',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '0px 0px 0px 16px',
+                          height: 56,
+                        }}
+                        onMouseEnter={() =>
+                          this.setState({ currentlyHoveredElement: index })
+                        }
+                        onMouseLeave={() =>
+                          this.setState({ currentlyHoveredElement: -1 })
+                        }
+                      >
+                        {this.state.currentlyHoveredElement === index ? (
+                          <button
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              border: 'none',
+                              justifyContent: 'center',
+                              backgroundColor: 'red',
+                              height: 56,
+                              width: 56,
+                            }}
+                            onClick={() => this.markForDeletion(netid)}
+                          >
+                            <DeleteIcon color="white" />
+                          </button>
+                        ) : (
+                          <div />
+                        )}
+                      </ListItem>)
+                    }
+                      
+                    )}
                 </List>
               </Paper>
 
