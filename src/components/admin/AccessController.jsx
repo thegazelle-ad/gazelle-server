@@ -1,8 +1,10 @@
 import React from 'react';
 import FalcorController from 'lib/falcor/FalcorController';
-import { browserHistory } from 'react-router';
+import { updateFieldValue } from './lib/form-field-updaters';
 
 // material-ui
+import Dialog from 'material-ui/Dialog';
+import TextField from 'material-ui/TextField';
 import CircularProgress from 'material-ui/CircularProgress';
 import ListItem from 'material-ui/List/ListItem';
 import Paper from 'material-ui/Paper';
@@ -43,6 +45,10 @@ const styles = {
 class AccessController extends FalcorController {
   constructor(props) {
     super(props);
+    this.fieldUpdaters = {
+      name: updateFieldValue.bind(this, 'name', undefined),
+      newNetID: updateFieldValue.bind(this, 'newNetID', undefined),
+    };
     this.safeSetState({
       listOfNetIDs: [
         'abc72',
@@ -55,11 +61,22 @@ class AccessController extends FalcorController {
       ],
       listOfNetIDsMarkedForDeletion: [],
       currentlyHoveredElement: -1,
+      showAddNewModal: false,
+
+      name: "",
+      newNetID: "",
     });
+
+    this.handleModalClose = this.handleModalClose.bind(this);
   }
 
-  handleClickAddNew() {
-    browserHistory.push('/access/new');
+  addNewAdmin() {
+    const tempArr = [ ...this.state.listOfNetIDs, this.state.newNetID ];
+    this.setState({ listOfNetIDs: tempArr });
+  }
+
+  handleModalClose() {
+    this.setState({ showAddNewModal: false, name: "", newNetID: "" });
   }
 
   markForDeletion(netid) {
@@ -80,6 +97,35 @@ class AccessController extends FalcorController {
     if (this.state.listOfNetIDs) {
       return (
         <div>
+          <Dialog
+            title="Add new admin"
+            open={this.state.showAddNewModal}
+            autoScrollBodyContent
+            onRequestClose={() => this.handleModalClose()}
+            contentStyle={{ width: '40%', margin: 'auto' }}
+          >
+            <TextField
+              value={this.state.newNetID}
+              floatingLabelText="NetID"
+              onChange={this.fieldUpdaters.newNetID}
+            />
+            <br />
+            <TextField
+              value={this.state.name}
+              floatingLabelText="Name"
+              onChange={this.fieldUpdaters.name}
+            />
+            <br />
+            <RaisedButton
+              label="Add"
+              type="submit"
+              primary
+              style={styles.buttons}
+              onClick={() => this.addNewAdmin()}
+            />
+          </Dialog>
+    
+
           <h1>Access</h1>
           <Divider />
           <Paper style={styles.paper} zDepth={2}>
@@ -199,7 +245,7 @@ class AccessController extends FalcorController {
                   primary
                   style={styles.buttons}
                   disabled={false}
-                  onClick={() => this.handleClickAddNew()}
+                  onClick={() => this.setState({ showAddNewModal: true })}
                 />
               </div>
             </div>
