@@ -10,9 +10,14 @@ import AuthorList from 'components/main/AuthorList';
 export default class ArticlePreview extends BaseComponent {
   render() {
     const { article } = this.props;
-    let url = `/issue/${article.issueNumber.toString()}/${
-      article.category.slug
-    }/${article.slug}`;
+    let url;
+    if (article.issueNumber) {
+      url = `/issue/${article.issueNumber.toString()}/${
+        article.category.slug
+      }/${article.slug}`;
+    } else {
+      return null;
+    }
     if (article.is_interactive) {
       // We don't use standard url for interactive articles
       url = `/interactive/${article.slug}`;
