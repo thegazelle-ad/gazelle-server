@@ -12,8 +12,9 @@ export default class ArticlePreview extends BaseComponent {
     const { article } = this.props;
     let url;
     if (article.issueNumber) {
-      url = `/issue/${article.issueNumber.toString()}/${article.category.slug
-        }/${article.slug}`;
+      url = `/issue/${article.issueNumber.toString()}/${
+        article.category.slug
+      }/${article.slug}`;
     } else {
       return null;
     }
