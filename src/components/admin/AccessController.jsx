@@ -74,7 +74,8 @@ class AccessController extends FalcorController {
 
   addNewAdmin() {
     const newAdmin = { name: this.state.newName, netid: this.state.newNetID };
-    this.setState({ listOfAdmins: [ ...this.state.listOfAdmins, newAdmin ] });
+    this.setState({ listOfAdmins: [ newAdmin, ...this.state.listOfAdmins ] });
+    this.setState({ listOfCreatedNetIDs: [ newAdmin.netid, ...this.state.listOfCreatedNetIDs ] });
 
     // to display the latest added admin for 2 secs
     this.setState({ newlyAddedNetID: newAdmin.netid });
@@ -85,22 +86,37 @@ class AccessController extends FalcorController {
     this.setState({ showAddNewModal: false, newName: "", newNetID: "" });
   }
 
-  handleChanges() {
+  // TODO : get data from DB
+  componentWillMount() {
 
   }
 
+  // TODO : save to DB
+  handleChanges() {
+
+  }
+  
+  static getFalcorPathSets() {
+    return [];
+  }
+
   markForDeletion(netid) {
-    const newArr = [ ...this.state.listOfDeletedNetIDs, netid ]
-    this.setState({ listOfDeletedNetIDs: newArr })
+    // if this netid was newly added ( not in DB yet ), just remove it
+    if (this.state.listOfCreatedNetIDs.includes(netid)) {
+      const newArr = this.state.listOfCreatedNetIDs.filter(x => x !== netid)
+      this.setState({ listOfCreatedNetIDs: newArr })
+
+      const newListOfAdmins = this.state.listOfAdmins.filter(x => x.netid !== netid)
+      this.setState({ listOfAdmins: newListOfAdmins })
+    } else { // else, mark it for deletion
+      const newArr = [ ...this.state.listOfDeletedNetIDs, netid ]
+      this.setState({ listOfDeletedNetIDs: newArr })
+    }
   }
 
   unmarkForDeletion(netid) {
     const newArr = this.state.listOfDeletedNetIDs.filter(x => x !== netid)
     this.setState({ listOfDeletedNetIDs: newArr })
-  }
-
-  static getFalcorPathSets() {
-    return [];
   }
 
   renderListButton(netid) {
@@ -186,7 +202,12 @@ class AccessController extends FalcorController {
                 <List style={{ overflow: 'auto', maxHeight: '250px' }}>
                   <Subheader>NetIDs</Subheader>
                   {adminList.map((admin, index) => {
-                    const backgroundColor = this.state.listOfDeletedNetIDs.includes(admin.netid) && '#f7c3be'
+                    let backgroundColor = null;
+                    if (this.state.listOfDeletedNetIDs.includes(admin.netid)) {
+                      backgroundColor = '#f7c3be'
+                    } else if (this.state.listOfCreatedNetIDs.includes(admin.netid)) {
+                      backgroundColor = '#a0d98d'
+                    }
                     return (
                       <ListItem
                         primaryText={`${admin.name} - ${admin.netid}`}
