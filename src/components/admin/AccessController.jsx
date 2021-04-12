@@ -90,16 +90,52 @@ class AccessController extends FalcorController {
   }
 
   markForDeletion(netid) {
-    this.state.listOfDeletedNetIDs.push(netid)
+    const newArr = [ ...this.state.listOfDeletedNetIDs, netid ]
+    this.setState({ listOfDeletedNetIDs: newArr })
   }
 
   unmarkForDeletion(netid) {
-    const newArrWithoutNetID = this.state.listOfDeletedNetIDs.filter(x => x !== netid)
-    this.setState({ listOfDeletedNetIDs: newArrWithoutNetID })
+    const newArr = this.state.listOfDeletedNetIDs.filter(x => x !== netid)
+    this.setState({ listOfDeletedNetIDs: newArr })
   }
 
   static getFalcorPathSets() {
     return [];
+  }
+
+  renderListButton(netid) {
+  if (this.state.listOfDeletedNetIDs.includes(netid)) {
+    return ( 
+    <button
+      style={{
+          display: 'flex',
+          alignItems: 'center',
+          border: 'none',
+          justifyContent: 'center',
+          padding: '0px 10px',
+          backgroundColor: 'lightgray',
+          height: 56,
+        }}
+      onClick={() => this.unmarkForDeletion(netid)}
+    >
+      Cancel
+    </button> )
+  }
+  return ( 
+    <button
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        border: 'none',
+        justifyContent: 'center',
+        backgroundColor: 'red',
+        height: 56,
+        width: 56,
+      }}
+      onClick={() => this.markForDeletion(netid)}
+    >
+      <DeleteIcon color="white" />
+    </button> )
   }
 
   render() {
@@ -150,55 +186,13 @@ class AccessController extends FalcorController {
                 <List style={{ overflow: 'auto', maxHeight: '250px' }}>
                   <Subheader>NetIDs</Subheader>
                   {adminList.map((admin, index) => {
-                    if (this.state.listOfDeletedNetIDs.includes(admin.netid)) {
-                      return (
-                        <ListItem
-                          primaryText={`${admin.name} - ${admin.netid}`}
-                          style={{
-                            height: 56,
-                            backgroundColor: '#f7c3be' // TOFIX: hover colour does not change
-                          }}
-                          innerDivStyle={{
-                            display: 'flex',
-                            flexDirection: 'row-reverse',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            padding: '0px 0px 0px 16px',
-                            height: 56,
-                          }}
-                          onMouseEnter={() =>
-                            this.setState({ currentlyHoveredElement: index })
-                          }
-                          onMouseLeave={() =>
-                            this.setState({ currentlyHoveredElement: -1 })
-                          }
-                        >
-                          {this.state.currentlyHoveredElement === index ? (
-                            <button
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                border: 'none',
-                                justifyContent: 'center',
-                                padding: '0px 10px',
-                                backgroundColor: 'lightgray',
-                                height: 56,
-                              }}
-                              onClick={() => this.unmarkForDeletion(admin.netid)}
-                            >
-                              Cancel
-                            </button>
-                          ) : (
-                            <div />
-                          )}
-                        </ListItem>
-                      )
-                    } 
-                      return (
+                    const backgroundColor = this.state.listOfDeletedNetIDs.includes(admin.netid) && '#f7c3be'
+                    return (
                       <ListItem
                         primaryText={`${admin.name} - ${admin.netid}`}
                         style={{
                           height: 56,
+                          backgroundColor // TOFIX: hover colour does not change
                         }}
                         innerDivStyle={{
                           display: 'flex',
@@ -215,28 +209,12 @@ class AccessController extends FalcorController {
                           this.setState({ currentlyHoveredElement: -1 })
                         }
                       >
-                        {this.state.currentlyHoveredElement === index ? (
-                          <button
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              border: 'none',
-                              justifyContent: 'center',
-                              backgroundColor: 'red',
-                              height: 56,
-                              width: 56,
-                            }}
-                            onClick={() => this.markForDeletion(admin.netid)}
-                          >
-                            <DeleteIcon color="white" />
-                          </button>
-                        ) : (
-                          <div />
-                        )}
-                      </ListItem>)
-                    }
-                      
-                    )}
+                        {this.state.currentlyHoveredElement === index ? 
+                          this.renderListButton(admin.netid)
+                         : <div />
+                        }
+                      </ListItem>
+                    )})}
                 </List>
               </Paper>
 
