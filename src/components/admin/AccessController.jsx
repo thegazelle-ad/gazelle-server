@@ -65,6 +65,7 @@ class AccessController extends FalcorController {
 
       name: "",
       newNetID: "",
+      newlyAddedNetID: "",
     });
 
     this.handleModalClose = this.handleModalClose.bind(this);
@@ -72,7 +73,9 @@ class AccessController extends FalcorController {
 
   addNewAdmin() {
     const tempArr = [ ...this.state.listOfNetIDs, this.state.newNetID ];
-    this.setState({ listOfNetIDs: tempArr });
+    this.setState({ newlyAddedNetID: this.state.newNetID });
+    this.setState({ listOfNetIDs: tempArr, name: "", newNetID: "" });
+    setTimeout(() => this.setState({ newlyAddedNetID: "" }), 2000)
   }
 
   handleModalClose() {
@@ -93,6 +96,8 @@ class AccessController extends FalcorController {
   }
 
   render() {
+    const bothFormsFilled = this.state.newNetID && this.state.name;
+
     const netIDList = this.state.listOfNetIDs;
     if (this.state.listOfNetIDs) {
       return (
@@ -120,9 +125,11 @@ class AccessController extends FalcorController {
               label="Add"
               type="submit"
               primary
+              disabled={!bothFormsFilled}
               style={styles.buttons}
               onClick={() => this.addNewAdmin()}
             />
+            { this.state.newlyAddedNetID && <span>Added {this.state.newlyAddedNetID}</span> }
           </Dialog>
     
 
