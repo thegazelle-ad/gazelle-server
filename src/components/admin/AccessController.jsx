@@ -46,24 +46,25 @@ class AccessController extends FalcorController {
   constructor(props) {
     super(props);
     this.fieldUpdaters = {
-      name: updateFieldValue.bind(this, 'name', undefined),
+      name: updateFieldValue.bind(this, 'newName', undefined),
       newNetID: updateFieldValue.bind(this, 'newNetID', undefined),
     };
     this.safeSetState({
-      listOfNetIDs: [
-        'abc72',
-        'abd94',
-        'bde32',
-        'cd232',
-        'de23',
-        'di23823',
-        'ef237',
+      listOfAdmins: [
+        { name: 'John Doe', netid: 'abc72' },
+        { name: 'Jun Ooi', netid: 'jmo460' },
+        { name: 'Twinings', netid: 'twns37' },
+        { name: 'Darjeeling', netid: 'djl01' },
+        { name: 'Oolong Tea', netid: 'ool1' },
+        { name: 'Jane Doe', netid: 'jd83' },
       ],
-      listOfNetIDsMarkedForDeletion: [],
+      listOfDeletedNetIDs: [],
+      listOfCreatedNetIDs: [],
+
       currentlyHoveredElement: -1,
       showAddNewModal: false,
 
-      name: "",
+      newName: "",
       newNetID: "",
       newlyAddedNetID: "",
     });
@@ -72,23 +73,29 @@ class AccessController extends FalcorController {
   }
 
   addNewAdmin() {
-    const tempArr = [ ...this.state.listOfNetIDs, this.state.newNetID ];
-    this.setState({ newlyAddedNetID: this.state.newNetID });
-    this.setState({ listOfNetIDs: tempArr, name: "", newNetID: "" });
+    const newAdmin = { name: this.state.newName, netid: this.state.newNetID };
+    this.setState({ listOfAdmins: [ ...this.state.listOfAdmins, newAdmin ] });
+
+    // to display the latest added admin for 2 secs
+    this.setState({ newlyAddedNetID: newAdmin.netid });
     setTimeout(() => this.setState({ newlyAddedNetID: "" }), 2000)
   }
 
   handleModalClose() {
-    this.setState({ showAddNewModal: false, name: "", newNetID: "" });
+    this.setState({ showAddNewModal: false, newName: "", newNetID: "" });
+  }
+
+  handleChanges() {
+
   }
 
   markForDeletion(netid) {
-    this.state.listOfNetIDsMarkedForDeletion.push(netid)
+    this.state.listOfDeletedNetIDs.push(netid)
   }
 
   unmarkForDeletion(netid) {
-    const newArrWithoutNetID = this.state.listOfNetIDsMarkedForDeletion.filter(x => x !== netid)
-    this.setState({ listOfNetIDsMarkedForDeletion: newArrWithoutNetID })
+    const newArrWithoutNetID = this.state.listOfDeletedNetIDs.filter(x => x !== netid)
+    this.setState({ listOfDeletedNetIDs: newArrWithoutNetID })
   }
 
   static getFalcorPathSets() {
@@ -96,10 +103,10 @@ class AccessController extends FalcorController {
   }
 
   render() {
-    const bothFormsFilled = this.state.newNetID && this.state.name;
+    const bothFormsFilled = this.state.newNetID && this.state.newName;
 
-    const netIDList = this.state.listOfNetIDs;
-    if (this.state.listOfNetIDs) {
+    const adminList = this.state.listOfAdmins;
+    if (adminList) { // might take time to load from DB
       return (
         <div>
           <Dialog
@@ -110,15 +117,15 @@ class AccessController extends FalcorController {
             contentStyle={{ width: '40%', margin: 'auto' }}
           >
             <TextField
-              value={this.state.newNetID}
-              floatingLabelText="NetID"
-              onChange={this.fieldUpdaters.newNetID}
+              value={this.state.newName}
+              floatingLabelText="Name"
+              onChange={this.fieldUpdaters.name}
             />
             <br />
             <TextField
-              value={this.state.name}
-              floatingLabelText="Name"
-              onChange={this.fieldUpdaters.name}
+              value={this.state.newNetID}
+              floatingLabelText="NetID"
+              onChange={this.fieldUpdaters.newNetID}
             />
             <br />
             <RaisedButton
@@ -142,11 +149,11 @@ class AccessController extends FalcorController {
               <Paper style={styles.paper} zDepth={1} id="cat">
                 <List style={{ overflow: 'auto', maxHeight: '250px' }}>
                   <Subheader>NetIDs</Subheader>
-                  {netIDList.map((netid, index) => {
-                    if (this.state.listOfNetIDsMarkedForDeletion.includes(netid)) {
+                  {adminList.map((admin, index) => {
+                    if (this.state.listOfDeletedNetIDs.includes(admin.netid)) {
                       return (
                         <ListItem
-                          primaryText={netid}
+                          primaryText={`${admin.name} - ${admin.netid}`}
                           style={{
                             height: 56,
                             backgroundColor: '#f7c3be' // TOFIX: hover colour does not change
@@ -177,7 +184,7 @@ class AccessController extends FalcorController {
                                 backgroundColor: 'lightgray',
                                 height: 56,
                               }}
-                              onClick={() => this.unmarkForDeletion(netid)}
+                              onClick={() => this.unmarkForDeletion(admin.netid)}
                             >
                               Cancel
                             </button>
@@ -189,7 +196,7 @@ class AccessController extends FalcorController {
                     } 
                       return (
                       <ListItem
-                        primaryText={netid}
+                        primaryText={`${admin.name} - ${admin.netid}`}
                         style={{
                           height: 56,
                         }}
@@ -219,7 +226,7 @@ class AccessController extends FalcorController {
                               height: 56,
                               width: 56,
                             }}
-                            onClick={() => this.markForDeletion(netid)}
+                            onClick={() => this.markForDeletion(admin.netid)}
                           >
                             <DeleteIcon color="white" />
                           </button>
@@ -246,6 +253,7 @@ class AccessController extends FalcorController {
                   primary
                   style={styles.buttons}
                   disabled={false}
+                  onClick={() => this.handleChanges()}
                 />
                 <RaisedButton 
                   label="Add New"
