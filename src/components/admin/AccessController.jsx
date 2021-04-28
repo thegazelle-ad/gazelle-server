@@ -80,6 +80,9 @@ class AccessController extends FalcorController {
     // to display the latest added admin for 2 secs
     this.setState({ newlyAddedNetID: newAdmin.netid });
     setTimeout(() => this.setState({ newlyAddedNetID: "" }), 2000)
+
+    // clear the forms
+    this.setState({ newName: "", newNetID: "" });
   }
 
   handleModalClose() {
