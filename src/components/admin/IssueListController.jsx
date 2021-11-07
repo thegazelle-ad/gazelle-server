@@ -64,7 +64,7 @@ class IssueListController extends FalcorController {
   }
 
   static getFalcorPathSets() {
-    return ['issues', 'byNumber', { from: 1, to: 200 }, 'name'];
+    return ['issues', 'byNumber', { from: 1, to: 400 }, 'name'];
   }
 
   componentWillMount() {
