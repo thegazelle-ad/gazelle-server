@@ -35,7 +35,9 @@ import {
   isStaging,
   isCI,
   isDevelopment,
+  isProduction,
   nothingAllowedRobotsTxt,
+  allAllowedRobotsTxt,
 } from 'lib/utilities';
 import { md5Hash } from 'lib/server-utilities';
 
@@ -215,6 +217,13 @@ export default function runMainServer(serverFalcorModel) {
         .status(200)
         .type('txt')
         .send(nothingAllowedRobotsTxt);
+    });
+  } else if (isProduction()) {
+    app.get('/robots.txt', (req, res) => {
+      res
+        .status(200)
+        .type('txt')
+        .send(allAllowedRobotsTxt);
     });
   }
 

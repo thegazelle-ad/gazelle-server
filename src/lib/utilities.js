@@ -213,6 +213,7 @@ export function filterByEnvironment(development, beta, production) {
 }
 
 export const nothingAllowedRobotsTxt = 'User-agent: *\nDisallow: /\n';
+export const allAllowedRobotsTxt = 'User-agent: *\nAllow: /\n';
 
 export const googleClientID =
   '235485701704-vqb1qkp8lk1hbdhcmjm5jmtocaur3mq7.apps.googleusercontent.com';
