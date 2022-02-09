@@ -118,7 +118,7 @@
     "lint-staged": "^5.0.0",
     "mockdate": "^2.0.2",
     "nightmare": "^2.10.0",
-    "node-sass": "^4.9.2",
+    "node-sass": "^7.0.0",
     "postcss-cssnext": "^3.0.2",
     "postcss-loader": "^2.0.9",
     "prettier": "^1.13.5",
