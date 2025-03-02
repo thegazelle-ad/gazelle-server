@@ -152,7 +152,7 @@
     "imagemin-jpeg-recompress": "^5.1.0",
     "immutable": "^3.8.2",
     "knex": "git+ssh://git@github.com/emilgoldsmith/knex.git",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.12",
     "material-ui": "^0.17.1",
     "moment": "^2.14.1",
     "moment-timezone": "^0.5.14",
